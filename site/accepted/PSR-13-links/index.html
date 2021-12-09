@@ -1,0 +1,751 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Link definition interfaces - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#link-definition-interfaces" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Link definition interfaces
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-specification" class="md-nav__link">
+    1. Specification
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Specification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-basic-links" class="md-nav__link">
+    1.1 Basic links
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-attributes" class="md-nav__link">
+    1.2 Attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-relationships" class="md-nav__link">
+    1.3 Relationships
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-link-templates" class="md-nav__link">
+    1.4 Link Templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-evolvable-providers" class="md-nav__link">
+    1.5 Evolvable providers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-evolvable-link-objects" class="md-nav__link">
+    1.6 Evolvable link objects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-package" class="md-nav__link">
+    2. Package
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-interfaces" class="md-nav__link">
+    3. Interfaces
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Interfaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-psrlinklinkinterface" class="md-nav__link">
+    3.1 Psr\Link\LinkInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-psrlinkevolvablelinkinterface" class="md-nav__link">
+    3.2 Psr\Link\EvolvableLinkInterface
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Psr\Link\EvolvableLinkInterface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#32-psrlinklinkproviderinterface" class="md-nav__link">
+    3.2 Psr\Link\LinkProviderInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-psrlinkevolvablelinkproviderinterface" class="md-nav__link">
+    3.3 Psr\Link\EvolvableLinkProviderInterface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="link-definition-interfaces">Link definition interfaces</h1>
+<p>Hypermedia links are becoming an increasingly important part of the web, in both HTML contexts
+and various API format contexts. However, there is no single common hypermedia format, nor
+is there a common way to represent links between formats.</p>
+<p>This specification aims to provide PHP developers with a simple, common way of representing a
+hypermedia link independently of the serialization format that is used. That in turn allows
+a system to serialize a response with hypermedia links into one or more wire formats independently
+of the process of deciding what those links should be.</p>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h3 id="references">References</h3>
+<ul>
+<li><a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a></li>
+<li><a href="https://tools.ietf.org/html/rfc4287">RFC 4287</a></li>
+<li><a href="https://tools.ietf.org/html/rfc5988">RFC 5988</a></li>
+<li><a href="https://tools.ietf.org/html/rfc6570">RFC 6570</a></li>
+<li><a href="http://www.iana.org/assignments/link-relations/link-relations.xhtml">IANA Link Relations Registry</a></li>
+<li><a href="http://microformats.org/wiki/existing-rel-values#HTML5_link_type_extensions">Microformats Relations List</a></li>
+</ul>
+<h2 id="1-specification">1. Specification</h2>
+<h3 id="11-basic-links">1.1 Basic links</h3>
+<p>A Hypermedia Link consists of, at minimum:
+- A URI representing the target resource being referenced.
+- A relationship defining how the target resource relates to the source.</p>
+<p>Various other attributes of the Link may exist, depending on the format used. As additional attributes
+are not well-standardized or universal, this specification does not seek to standardize them.</p>
+<p>For the purposes of this specification, the following definitions apply.</p>
+<ul>
+<li>
+<p><strong>Implementing Object</strong> - An object that implements one of the interfaces defined by this
+specification.</p>
+</li>
+<li>
+<p><strong>Serializer</strong> - A library or other system that takes one or more Link objects and produces
+a serialized representation of it in some defined format.</p>
+</li>
+</ul>
+<h3 id="12-attributes">1.2 Attributes</h3>
+<p>All links MAY include zero or more additional attributes beyond the URI and relationship.
+There is no formal registry of the values that are allowed here, and validity of values
+is dependent on context and often on a particular serialization format. Commonly supported
+values include 'hreflang', 'title', and 'type'.</p>
+<p>Serializers MAY omit attributes on a link object if required to do so by the serialization
+format. However, serializers SHOULD encode all provided attributes possible in order to
+allow for user-extension unless prevented by a serialization format's definition.</p>
+<p>Some attributes (commonly <code>hreflang</code>) may appear more than once in their context. Therefore,
+an attribute value MAY be an array of values rather than a simple value. Serializers MAY
+encode that array in whatever format is appropriate for the serialized format (such
+as a space-separated list, comma-separated list, etc.). If a given attribute is not
+allowed to have multiple values in a particular context, serializers MUST use the first
+value provided and ignore all subsequent values.</p>
+<p>If an attribute value is boolean <code>true</code>, serializers MAY use abbreviated forms if appropriate
+and supported by a serialization format. For example, HTML permits attributes to
+have no value when the attribute's presence has a boolean meaning. This rule applies
+if and only if the attribute is boolean <code>true</code>, not for any other "truthy" value
+in PHP such as integer 1.</p>
+<p>If an attribute value is boolean <code>false</code>, serializers SHOULD omit the attribute entirely
+unless doing so changes the semantic meaning of the result. This rule applies if
+and only if the attribute is boolean <code>false</code>, not for any other "falsey" value in PHP
+such as integer 0.</p>
+<h3 id="13-relationships">1.3 Relationships</h3>
+<p>Link relationships are defined as strings, and are either a simple keyword in
+case of a publicly defined relationship or an absolute URI in the case of a
+private relationships.</p>
+<p>In case a simple keyword is used, it SHOULD match one from the IANA registry at:</p>
+<p>http://www.iana.org/assignments/link-relations/link-relations.xhtml</p>
+<p>Optionally the microformats.org registry MAY be used, but this may not be valid
+in every context:</p>
+<p>http://microformats.org/wiki/existing-rel-values</p>
+<p>A relationship that is not defined in one of the above registries or a similar
+public registry is considered "private", that is, specific to a particular
+application or use case. Such relationships MUST use an absolute URI.</p>
+<h2 id="14-link-templates">1.4 Link Templates</h2>
+<p><a href="https://tools.ietf.org/html/rfc6570">RFC 6570</a> defines a format for URI templates, that is,
+a pattern for a URI that is expected to be filled in with values provided by a client
+tool. Some hypermedia formats support templated links while others do not, and may
+have a special way to denote that a link is a template. A Serializer for a format
+that does not support URI Templates MUST ignore any templated Links it encounters.</p>
+<h2 id="15-evolvable-providers">1.5 Evolvable providers</h2>
+<p>In some cases, a Link Provider may need the ability to have additional links
+added to it. In others, a link provider is necessarily read-only, with links
+derived at runtime from some other data source. For that reason, modifiable providers
+are a secondary interface that may optionally be implemented.</p>
+<p>Additionally, some Link Provider objects, such as PSR-7 Response objects, are
+by design immutable. That means methods to add links to them in-place would be
+incompatible. Therefore, the <code>EvolvableLinkProviderInterface</code>'s single method
+requires that a new object be returned, identical to the original but with
+an additional Link object included.</p>
+<h2 id="16-evolvable-link-objects">1.6 Evolvable link objects</h2>
+<p>Link objects are in most cases value objects. As such, allowing them to evolve
+in the same fashion as PSR-7 value objects is a useful option. For that reason,
+an additional EvolvableLinkInterface is included that provides methods to
+produce new object instances with a single change. The same model is used by PSR-7
+and, thanks to PHP's copy-on-write behavior, is still CPU and memory efficient.</p>
+<p>There is no evolvable method for templated values, however, as the templated value of a
+link is based exclusively on the href value. It MUST NOT be set independently, but
+derived from whether or not the href value is an RFC 6570 link template.</p>
+<h2 id="2-package">2. Package</h2>
+<p>The interfaces and classes described are provided as part of the
+<a href="https://packagist.org/packages/psr/link">psr/link</a> package.</p>
+<h2 id="3-interfaces">3. Interfaces</h2>
+<h3 id="31-psrlinklinkinterface">3.1 <code>Psr\Link\LinkInterface</code></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Link;
+
+/**
+ * A readable link object.
+ */
+interface LinkInterface
+{
+    /**
+     * Returns the target of the link.
+     *
+     * The target link must be one of:
+     * - An absolute URI, as defined by RFC 5988.
+     * - A relative URI, as defined by RFC 5988. The base of the relative link
+     *     is assumed to be known based on context by the client.
+     * - A URI template as defined by RFC 6570.
+     *
+     * If a URI template is returned, isTemplated() MUST return True.
+     *
+     * @return string
+     */
+    public function getHref();
+
+    /**
+     * Returns whether or not this is a templated link.
+     *
+     * @return bool
+     *   True if this link object is templated, False otherwise.
+     */
+    public function isTemplated();
+
+    /**
+     * Returns the relationship type(s) of the link.
+     *
+     * This method returns 0 or more relationship types for a link, expressed
+     * as an array of strings.
+     *
+     * @return string[]
+     */
+    public function getRels();
+
+    /**
+     * Returns a list of attributes that describe the target URI.
+     *
+     * @return array
+     *   A key-value list of attributes, where the key is a string and the value
+     *  is either a PHP primitive or an array of PHP strings. If no values are
+     *  found an empty array MUST be returned.
+     */
+    public function getAttributes();
+}
+</code></pre>
+<h3 id="32-psrlinkevolvablelinkinterface">3.2 <code>Psr\Link\EvolvableLinkInterface</code></h3>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Link;
+
+/**
+ * An evolvable link value object.
+ */
+interface EvolvableLinkInterface extends LinkInterface
+{
+    /**
+     * Returns an instance with the specified href.
+     *
+     * @param string $href
+     *   The href value to include. It must be one of:
+     *     - An absolute URI, as defined by RFC 5988.
+     *     - A relative URI, as defined by RFC 5988. The base of the relative link
+     *       is assumed to be known based on context by the client.
+     *     - A URI template as defined by RFC 6570.
+     *     - An object implementing __toString() that produces one of the above
+     *       values.
+     *
+     * An implementing library SHOULD evaluate a passed object to a string
+     * immediately rather than waiting for it to be returned later.
+     *
+     * @return static
+     */
+    public function withHref($href);
+
+    /**
+     * Returns an instance with the specified relationship included.
+     *
+     * If the specified rel is already present, this method MUST return
+     * normally without errors, but without adding the rel a second time.
+     *
+     * @param string $rel
+     *   The relationship value to add.
+     * @return static
+     */
+    public function withRel($rel);
+
+    /**
+     * Returns an instance with the specified relationship excluded.
+     *
+     * If the specified rel is already not present, this method MUST return
+     * normally without errors.
+     *
+     * @param string $rel
+     *   The relationship value to exclude.
+     * @return static
+     */
+    public function withoutRel($rel);
+
+    /**
+     * Returns an instance with the specified attribute added.
+     *
+     * If the specified attribute is already present, it will be overwritten
+     * with the new value.
+     *
+     * @param string $attribute
+     *   The attribute to include.
+     * @param string $value
+     *   The value of the attribute to set.
+     * @return static
+     */
+    public function withAttribute($attribute, $value);
+
+    /**
+     * Returns an instance with the specified attribute excluded.
+     *
+     * If the specified attribute is not present, this method MUST return
+     * normally without errors.
+     *
+     * @param string $attribute
+     *   The attribute to remove.
+     * @return static
+     */
+    public function withoutAttribute($attribute);
+}
+</code></pre>
+<h4 id="32-psrlinklinkproviderinterface">3.2 <code>Psr\Link\LinkProviderInterface</code></h4>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Link;
+
+/**
+ * A link provider object.
+ */
+interface LinkProviderInterface
+{
+    /**
+     * Returns an iterable of LinkInterface objects.
+     *
+     * The iterable may be an array or any PHP \Traversable object. If no links
+     * are available, an empty array or \Traversable MUST be returned.
+     *
+     * @return LinkInterface[]|\Traversable
+     */
+    public function getLinks();
+
+    /**
+     * Returns an iterable of LinkInterface objects that have a specific relationship.
+     *
+     * The iterable may be an array or any PHP \Traversable object. If no links
+     * with that relationship are available, an empty array or \Traversable MUST be returned.
+     *
+     * @return LinkInterface[]|\Traversable
+     */
+    public function getLinksByRel($rel);
+}
+</code></pre>
+<h4 id="33-psrlinkevolvablelinkproviderinterface">3.3 <code>Psr\Link\EvolvableLinkProviderInterface</code></h4>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Link;
+
+/**
+ * An evolvable link provider value object.
+ */
+interface EvolvableLinkProviderInterface extends LinkProviderInterface
+{
+    /**
+     * Returns an instance with the specified link included.
+     *
+     * If the specified link is already present, this method MUST return normally
+     * without errors. The link is present if $link is === identical to a link
+     * object already in the collection.
+     *
+     * @param LinkInterface $link
+     *   A link object that should be included in this collection.
+     * @return static
+     */
+    public function withLink(LinkInterface $link);
+
+    /**
+     * Returns an instance with the specified link removed.
+     *
+     * If the specified link is not present, this method MUST return normally
+     * without errors. The link is present if $link is === identical to a link
+     * object already in the collection.
+     *
+     * @param LinkInterface $link
+     *   The link to remove.
+     * @return static
+     */
+    public function withoutLink(LinkInterface $link);
+}
+</code></pre>
+<p>Since <a href="https://packagist.org/packages/psr/link#1.1.0">psr/link version 1.1</a>, the above interfaces have been updated to add argument type hints.
+Since <a href="https://packagist.org/packages/psr/link#2.0.0">psr/link version 2.0</a>, the above interfaces have been updated to add return type hints.  References to <code>array|\Traversable</code> have been replaced with <code>iterable</code>.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

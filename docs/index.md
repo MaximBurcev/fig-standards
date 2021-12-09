@@ -1,6 +1,6 @@
 # PHP Standard Recommendations
 
-According to the [PSR Workflow Bylaw][workflow] each PSR has a status as it is being worked on. Once a proposal has passed the Entrance Vote it will be listed here as "Draft". Unless a PSR is marked as "Accepted" it is subject to change. Draft can change drastically, but Review will only have minor changes.
+В соответствии с [регламентом рабочего процесса PSR][workflow] каждый PSR имеет статус в процессе работы. После того, как предложение пройдет вступительное голосование, оно будет указано здесь как «Черновик». Если PSR не отмечен как «Принято», он может быть изменен. Черновик может кардинально измениться, но в Ревью будут внесены лишь незначительные изменения.
 
 As also described in the [PSR Workflow Bylaw][workflow]. The Editor, or editors, of a proposal are the essentially the lead contributors and writers of the PSRs and they are supported by two voting members. Those voting members are the Coordinator who is responsible for managing the review stage and votes; and a second sponsor.
 
@@ -73,7 +73,7 @@ As also described in the [PSR Workflow Bylaw][workflow]. The Editor, or editors,
 | 19  | [PHPDoc tags][psr19]                 | Chuck Burgess                  | Draft      |
 | 20  | [Clock][psr20]                       | Chris Seufert                  | Draft      |
 
-[workflow]: https://github.com/php-fig/fig-standards/blob/master/bylaws/002-psr-workflow.md
+[workflow]: /bylaws/002-psr-workflow.md
 [psr0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
 [psr1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [psr2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md

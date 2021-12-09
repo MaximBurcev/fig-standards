@@ -1,0 +1,541 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Basic Coding Standard - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#basic-coding-standard" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Basic Coding Standard
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    1. Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-files" class="md-nav__link">
+    2. Files
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-php-tags" class="md-nav__link">
+    2.1. PHP Tags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-character-encoding" class="md-nav__link">
+    2.2. Character Encoding
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-side-effects" class="md-nav__link">
+    2.3. Side Effects
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-namespace-and-class-names" class="md-nav__link">
+    3. Namespace and Class Names
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-class-constants-properties-and-methods" class="md-nav__link">
+    4. Class Constants, Properties, and Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Class Constants, Properties, and Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-constants" class="md-nav__link">
+    4.1. Constants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-properties" class="md-nav__link">
+    4.2. Properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-methods" class="md-nav__link">
+    4.3. Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="basic-coding-standard">Basic Coding Standard</h1>
+<p>This section of the standard comprises what should be considered the standard
+coding elements that are required to ensure a high level of technical
+interoperability between shared PHP code.</p>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="1-overview">1. Overview</h2>
+<ul>
+<li>
+<p>Files MUST use only <code>&lt;?php</code> and <code>&lt;?=</code> tags.</p>
+</li>
+<li>
+<p>Files MUST use only UTF-8 without BOM for PHP code.</p>
+</li>
+<li>
+<p>Files SHOULD <em>either</em> declare symbols (classes, functions, constants, etc.)
+  <em>or</em> cause side-effects (e.g. generate output, change .ini settings, etc.)
+  but SHOULD NOT do both.</p>
+</li>
+<li>
+<p>Namespaces and classes MUST follow an "autoloading" PSR: [[PSR-0], [PSR-4]].</p>
+</li>
+<li>
+<p>Class names MUST be declared in <code>StudlyCaps</code>.</p>
+</li>
+<li>
+<p>Class constants MUST be declared in all upper case with underscore separators.</p>
+</li>
+<li>
+<p>Method names MUST be declared in <code>camelCase</code>.</p>
+</li>
+</ul>
+<h2 id="2-files">2. Files</h2>
+<h3 id="21-php-tags">2.1. PHP Tags</h3>
+<p>PHP code MUST use the long <code>&lt;?php ?&gt;</code> tags or the short-echo <code>&lt;?= ?&gt;</code> tags; it
+MUST NOT use the other tag variations.</p>
+<h3 id="22-character-encoding">2.2. Character Encoding</h3>
+<p>PHP code MUST use only UTF-8 without BOM.</p>
+<h3 id="23-side-effects">2.3. Side Effects</h3>
+<p>A file SHOULD declare new symbols (classes, functions, constants,
+etc.) and cause no other side effects, or it SHOULD execute logic with side
+effects, but SHOULD NOT do both.</p>
+<p>The phrase "side effects" means execution of logic not directly related to
+declaring classes, functions, constants, etc., <em>merely from including the
+file</em>.</p>
+<p>"Side effects" include but are not limited to: generating output, explicit
+use of <code>require</code> or <code>include</code>, connecting to external services, modifying ini
+settings, emitting errors or exceptions, modifying global or static variables,
+reading from or writing to a file, and so on.</p>
+<p>The following is an example of a file with both declarations and side effects;
+i.e, an example of what to avoid:</p>
+<pre><code class="language-php">&lt;?php
+// side effect: change ini settings
+ini_set('error_reporting', E_ALL);
+
+// side effect: loads a file
+include &quot;file.php&quot;;
+
+// side effect: generates output
+echo &quot;&lt;html&gt;\n&quot;;
+
+// declaration
+function foo()
+{
+    // function body
+}
+</code></pre>
+<p>The following example is of a file that contains declarations without side
+effects; i.e., an example of what to emulate:</p>
+<pre><code class="language-php">&lt;?php
+// declaration
+function foo()
+{
+    // function body
+}
+
+// conditional declaration is *not* a side effect
+if (! function_exists('bar')) {
+    function bar()
+    {
+        // function body
+    }
+}
+</code></pre>
+<h2 id="3-namespace-and-class-names">3. Namespace and Class Names</h2>
+<p>Namespaces and classes MUST follow an "autoloading" PSR: [[PSR-0], [PSR-4]].</p>
+<p>This means each class is in a file by itself, and is in a namespace of at
+least one level: a top-level vendor name.</p>
+<p>Class names MUST be declared in <code>StudlyCaps</code>.</p>
+<p>Code written for PHP 5.3 and after MUST use formal namespaces.</p>
+<p>For example:</p>
+<pre><code class="language-php">&lt;?php
+// PHP 5.3 and later:
+namespace Vendor\Model;
+
+class Foo
+{
+}
+</code></pre>
+<p>Code written for 5.2.x and before SHOULD use the pseudo-namespacing convention
+of <code>Vendor_</code> prefixes on class names.</p>
+<pre><code class="language-php">&lt;?php
+// PHP 5.2.x and earlier:
+class Vendor_Model_Foo
+{
+}
+</code></pre>
+<h2 id="4-class-constants-properties-and-methods">4. Class Constants, Properties, and Methods</h2>
+<p>The term "class" refers to all classes, interfaces, and traits.</p>
+<h3 id="41-constants">4.1. Constants</h3>
+<p>Class constants MUST be declared in all upper case with underscore separators.
+For example:</p>
+<pre><code class="language-php">&lt;?php
+namespace Vendor\Model;
+
+class Foo
+{
+    const VERSION = '1.0';
+    const DATE_APPROVED = '2012-06-01';
+}
+</code></pre>
+<h3 id="42-properties">4.2. Properties</h3>
+<p>This guide intentionally avoids any recommendation regarding the use of
+<code>$StudlyCaps</code>, <code>$camelCase</code>, or <code>$under_score</code> property names.</p>
+<p>Whatever naming convention is used SHOULD be applied consistently within a
+reasonable scope. That scope may be vendor-level, package-level, class-level,
+or method-level.</p>
+<h3 id="43-methods">4.3. Methods</h3>
+<p>Method names MUST be declared in <code>camelCase()</code>.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

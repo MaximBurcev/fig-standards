@@ -1,0 +1,913 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR 12 extended coding style guide meta - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#extended-coding-style-guide-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR 12 extended coding style guide meta
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="extended-coding-style-guide-meta-document">Extended Coding Style Guide Meta Document</h1>
+<h1 id="1-summary">1. Summary</h1>
+<p>This document describes the process and discussions that led to the Extended Coding
+Style PSR. Its goal is to explain the reasons behind each decision.</p>
+<h1 id="2-why-bother">2. Why Bother?</h1>
+<p>PSR-2 was accepted in 2012 and since then a number of changes have been made to PHP,
+most notably recent changes for PHP 7, which have implications for coding style
+guidelines. Whilst PSR-2 is very comprehensive of PHP functionality that existed at
+the time of writing, new functionality is very open to interpretation. PSR-12 seeks
+to provide a set way that both coding style tools can implement, projects can declare
+adherence to and developers can easily relate on between different projects for these
+coding style reducing cognitive friction.</p>
+<p>PSR-2 was created based upon the common practices of the PHP-FIG projects at the time
+but ultimately this meant it was a compromise of many of the different projects' guidelines.
+The repercussions of projects changing their coding guidelines to align with PSR-2 (Almost
+all projects do align with PSR-1, even if it is not explicitly stated) were seen to be too
+great (losing git history, huge changesets and breaking existing patches/pull requests).</p>
+<p>PSR-2 required adopters to reformat large amounts of existing code which stifled adoption.
+To help alleviate this issue with PSR-12, we have taken a more prescriptive approach and
+defined the standards for new language features as they are released.</p>
+<p>However it is for a lack of wanting to be dictatorial that we will aim to apply PSR-2
+styling, rationale and stances (Described in Section 4, Approaches) in PSR-12 instead of
+establishing new conventions.</p>
+<h1 id="3-scope">3. Scope</h1>
+<h2 id="31-goals">3.1. Goals</h2>
+<p>This PSR shares the same goals as PSR-2.</p>
+<blockquote>
+<p>The intent of this guide is to reduce cognitive friction when scanning code from
+different authors. It does so by enumerating a shared set of rules and expectations
+about how to format PHP code.
+When various authors collaborate across multiple projects, it helps to have one set
+of guidelines to be used among all those projects. Thus, the benefit of this guide is
+not in the rules themselves, but in the sharing of those rules.</p>
+</blockquote>
+<p>This PSR is an extension of PSR-2, and therefore also an extension of PSR-1. The basis of
+PSR-12 is PSR-2 and therefore a list of differences is provided below to assist with migration
+but it should be considered as an independent specification.</p>
+<p>This PSR will include coding style guidelines related to new functionality added to PHP
+after the publication of PSR-2; this includes PHP 5.5, PHP 5.6 and PHP 7.0. This PSR will
+also include clarifications on the text of PSR-2, as described in the PSR-2 Errata.</p>
+<h2 id="32-non-goals">3.2. Non-Goals</h2>
+<p>It is not the intention of this PSR to add entirely new coding style guidelines. PSR-12 will
+also not change anything stipulated in PSR-1 and PSR-2.</p>
+<h1 id="4-approaches">4. Approaches</h1>
+<p>The overarching approach is to attempt to apply existing PSR-2 styling and rationale to
+new functionality as opposed to establishing new conventions.</p>
+<h2 id="41-strict-types-declarations">4.1. Strict Types Declarations</h2>
+<p>There was a discussion about whether or not strict types should be enforced in the standard
+https://github.com/cs-extended/fig-standards/issues/7. All were in agreement we should only
+use a MUST or MUST NOT statement and avoid the use of a SHOULD statement and nobody wanted
+to say that strict types could not be declared. The discussion was whether it should be
+considered a coding style item which should be covered or whether it was out of scope and it
+was decided to be out of scope of a coding style guide.</p>
+<h2 id="42-finally-and-return-types-declaration-spacing">4.2. Finally and Return Types Declaration Spacing</h2>
+<p>Numerous different options were suggested and they can be seen
+<a href="https://gist.github.com/michaelcullum/c025f3870c9ea1dd2668#file-returntypesspacing-php">here for return type declarations</a> or
+<a href="https://gist.github.com/michaelcullum/c025f3870c9ea1dd2668#file-finallyblocks-php">here for finally blocks</a>
+and the current implementation was chosen due to consistency with other parts of the PSR-12
+specification that came from PSR-2.</p>
+<h2 id="43-enforcing-short-form-for-all-type-keywords">4.3. Enforcing short form for all type keywords</h2>
+<p>PHP 7.0 introduced <a href="http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration">scalar types declaration</a>
+which does not support long type aliases. Therefore it makes sense to enforce primary short type forms to be used to
+have uniform syntax and prevent possible confusion.</p>
+<h2 id="44-public-survey">4.4. Public Survey</h2>
+<p>In order to settle things using data, survey was conducted and responses from 142 people
+including 17 project representatives were gathered:</p>
+<h3 id="441-php-fig-representative-results">4.4.1. PHP-FIG Representative Results</h3>
+<table>
+<thead>
+<tr>
+<th>Representative</th>
+<th>Project</th>
+<th>Compound namespaces with a depth of two or more MUST not be used</th>
+<th>Header statement grouping and ordering</th>
+<th>Declare statements must each be on their own line</th>
+<th>Declare statements in PHP files containing markup</th>
+<th>Declare statements have no spaces: <code>declare(strict_types=1);</code></th>
+<th>Block declare statement formatting</th>
+<th><code>new</code> keyword usage, parenthesis required</th>
+<th>Return type declaration formatting</th>
+<th>Use statement leading slashes disallowed</th>
+<th>Block namespace declaration formatting</th>
+<th>General operator spacing</th>
+<th>Try, Catch, Finally formatting</th>
+<th>Anonymous class declaration formatting</th>
+<th>Keyword casing, only lower case</th>
+<th>Type keywords, short form only</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alexander Makarov</td>
+<td>Yii framework</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Korvin Szanto</td>
+<td>concrete5</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Leo Feyer</td>
+<td>Contao</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Larry Garfield</td>
+<td>Drupal</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>André R.</td>
+<td>eZ</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Jan Schneider</td>
+<td>Horde</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Karsten Dambekalns</td>
+<td>Neos and Flow</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Andres Gutierrez</td>
+<td>Phalcon</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Ryan Thompson</td>
+<td>PyroCMS</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Matteo Beccati</td>
+<td>Revive Adserver</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Damian Mooyman</td>
+<td>SilverStripe</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Brian Retterer</td>
+<td>Stormpath PHP SDK</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>❌</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Matthew Weier O'Phinney</td>
+<td>Zend Framework</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Jordi Boggiano</td>
+<td>Composer</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>❌</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Ben Marks</td>
+<td>Magento</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Chuck Burgess</td>
+<td>PEAR</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Totals</strong>:</td>
+<td>13/3</td>
+<td>15/1</td>
+<td>15/1</td>
+<td>13/3</td>
+<td>14/2</td>
+<td>15/1</td>
+<td>14/2</td>
+<td>15/1</td>
+<td>14/2</td>
+<td>14/2</td>
+<td>15/1</td>
+<td>16/0</td>
+<td>15/1</td>
+<td>15/1</td>
+<td>15/1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="442-general-non-representative-voters">4.4.2. General non-representative voters</h3>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>For</th>
+<th>Against</th>
+<th>Percentage For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compound namespaces required depth</td>
+<td>114</td>
+<td>12</td>
+<td>89.47%</td>
+</tr>
+<tr>
+<td>Header statement grouping and ordering</td>
+<td>113</td>
+<td>13</td>
+<td>88.5%</td>
+</tr>
+<tr>
+<td>Declare statements must each be on their own line</td>
+<td>120</td>
+<td>6</td>
+<td>95%</td>
+</tr>
+<tr>
+<td>Declare statements in PHP files containing markup</td>
+<td>119</td>
+<td>7</td>
+<td>94.12%</td>
+</tr>
+<tr>
+<td>Declare statements have no spaces</td>
+<td>116</td>
+<td>10</td>
+<td>91.38%</td>
+</tr>
+<tr>
+<td>Block declare statement formatting</td>
+<td>118</td>
+<td>8</td>
+<td>93.22%</td>
+</tr>
+<tr>
+<td><code>new</code> keyword usage, parenthesis required</td>
+<td>116</td>
+<td>10</td>
+<td>91.38%</td>
+</tr>
+<tr>
+<td>Return type declaration formatting</td>
+<td>115</td>
+<td>11</td>
+<td>90.43%</td>
+</tr>
+<tr>
+<td>Use statement leading slashes disallowed</td>
+<td>118</td>
+<td>8</td>
+<td>93.22%</td>
+</tr>
+<tr>
+<td>Block namespace declaration formatting</td>
+<td>120</td>
+<td>6</td>
+<td>95%</td>
+</tr>
+<tr>
+<td>General operator spacing</td>
+<td>123</td>
+<td>3</td>
+<td>97.56%</td>
+</tr>
+<tr>
+<td>Try, Catch, Finally formatting</td>
+<td>124</td>
+<td>2</td>
+<td>98.39%</td>
+</tr>
+<tr>
+<td>Anonymous class declaration formatting</td>
+<td>117</td>
+<td>9</td>
+<td>92.31%</td>
+</tr>
+<tr>
+<td>Keyword casing, only lower case</td>
+<td>124</td>
+<td>2</td>
+<td>98.39%</td>
+</tr>
+<tr>
+<td>Type keywords, short form only</td>
+<td>121</td>
+<td>5</td>
+<td>95.87%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="45-multiline-function-arguments-mixed-with-multiline-return">4.5. Multiline Function Arguments Mixed With Multiline Return</h2>
+<p>A potential readability issue <a href="https://groups.google.com/d/msg/php-fig/ULSL4gqK8GY/cgDELuPOCQAJ">was raised on the mailing list</a>.
+We reviewed options for changes to the specification that could provide better readability and
+the floated option was to require a blank line after the opening bracket of a function if the
+arguments and the return are both multiline. Instead it was pointed out that this specification
+<em>already</em> allows you to decide where you'd like to add blank lines and so we will leave it to
+the implementors to decide.</p>
+<h1 id="5-changelog-from-psr-2">5. Changelog from PSR-2</h1>
+<p>Please note this changelog is not a verbose list of changes from PSR-2 but highlights the most
+notable changes. It should be considered a new specification and therefore you should read the
+specification for a full understanding of its contents.</p>
+<h2 id="51-new-statements">5.1. New Statements</h2>
+<ul>
+<li>Lowercase for all keywords - Section 2.5</li>
+<li>Short form for all type keywords - Section 2.5</li>
+<li>Use statement grouping - Section 3</li>
+<li>Use statement blocks - Section 3</li>
+<li>Declare statement/Strict types declaration usage - Section 3</li>
+<li>Parentheses are always required for class instantiation - Section 4</li>
+<li>Typed properties - Section 4.3</li>
+<li>Return type declarations - Section 4.5</li>
+<li>Variadic and reference argument operators - Section 4.5</li>
+<li>Type hints - Section 4.5</li>
+<li>Add finally block - Section 5.6</li>
+<li>Operators - Section 6</li>
+<li>Unary operators - Section 6.1</li>
+<li>Binary operators - Section 6.2</li>
+<li>Ternary operators - Section 6.3</li>
+<li>Anonymous classes - Section 8</li>
+</ul>
+<h2 id="52-clarifications-and-errata">5.2. Clarifications and Errata</h2>
+<ul>
+<li>Adjust 'methods' to 'methods and functions' in a number of instances - Throughout</li>
+<li>Adjust references to classes and interfaces to also include traits - Throughout</li>
+<li>StudlyCaps meaning clarified as PascalCase - Section 2.1</li>
+<li>The last line should not be blank but contain an EOL character - Section 2.2</li>
+<li>Blank lines may be added for readability except where explicitly forbidden within the PSR - Section 2.3</li>
+<li>PSR-2 errata statement about multi-line arguments - Section 4</li>
+<li>PSR-2 errata statement about extending multiple interfaces - Section 4</li>
+<li>Forbid blank lines before/after closing/opening braces for classes - Section 4</li>
+</ul>
+<h1 id="6-people">6. People</h1>
+<h2 id="61-editor">6.1.  Editor:</h2>
+<ul>
+<li>Korvin Szanto</li>
+</ul>
+<h2 id="62-sponsor">6.2. Sponsor:</h2>
+<ul>
+<li>Chris Tankersley</li>
+</ul>
+<h2 id="63-working-group-members">6.3. Working Group Members:</h2>
+<ul>
+<li>Alessandro Lai</li>
+<li>Alexander Makarov</li>
+<li>Michael Cullum</li>
+<li>Robert Deutz</li>
+</ul>
+<h2 id="64-special-thanks">6.4. Special Thanks</h2>
+<ul>
+<li>Michael Cullum for drafting the original specification</li>
+<li>Alexandar Makarov for coordinating the draft during PHP-FIG 2.0</li>
+<li>Cees-Jan Kiewiet for moral support</li>
+</ul>
+<h1 id="7-votes">7. Votes</h1>
+<ul>
+<li><strong>Entrance Vote:</strong> https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!msg/php-fig/P9atZLOcUBM/_jwkvlYKEAAJ</li>
+<li><strong>Approval Vote:</strong> https://groups.google.com/forum/#!topic/php-fig/1uaeSMaDGbk</li>
+</ul>
+<h1 id="8-relevant-links">8. Relevant Links</h1>
+<p><em><strong>Note:</strong> Order descending chronologically.</em></p>
+<ul>
+<li><a href="https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!topic/php-fig/wh9avopSR9k">Inspiration Mailing List Thread</a></li>
+<li><a href="https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!topic/php-fig/MkFacLdfGso">Initial Mailing List PSR Proposal Thread</a></li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

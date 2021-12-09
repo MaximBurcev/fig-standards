@@ -1,0 +1,618 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR 18 http client meta - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#http-client-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR 18 http client meta
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-bother" class="md-nav__link">
+    Why bother?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    Scope
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#goals" class="md-nav__link">
+    Goals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-goals" class="md-nav__link">
+    Non-Goals
+  </a>
+  
+    <nav class="md-nav" aria-label="Non-Goals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asynchronous-http-client" class="md-nav__link">
+    Asynchronous HTTP client
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#approaches" class="md-nav__link">
+    Approaches
+  </a>
+  
+    <nav class="md-nav" aria-label="Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-behavior" class="md-nav__link">
+    Default behavior
+  </a>
+  
+    <nav class="md-nav" aria-label="Default behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-rationale" class="md-nav__link">
+    Naming rationale
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exception-model" class="md-nav__link">
+    Exception Model
+  </a>
+  
+    <nav class="md-nav" aria-label="Exception Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#throwing-exceptions-for-4xx-and-5xx-responses" class="md-nav__link">
+    Throwing exceptions for 4xx and 5xx responses
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#middleware-and-wrapping-a-client" class="md-nav__link">
+    Middleware and wrapping a client
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#people" class="md-nav__link">
+    People
+  </a>
+  
+    <nav class="md-nav" aria-label="People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-editor" class="md-nav__link">
+    5.1 Editor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sponsors" class="md-nav__link">
+    5.2 Sponsors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-workgroup" class="md-nav__link">
+    5.3 Workgroup
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#votes" class="md-nav__link">
+    Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposed-implementations" class="md-nav__link">
+    Proposed implementations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="http-client-meta-document">HTTP Client Meta Document</h1>
+<h2 id="summary">Summary</h2>
+<p>HTTP requests and responses are the two fundamental objects in web programming.
+All clients communicating to an external API use some form of HTTP client. Many
+libraries are coupled to one specific client or implement a client and/or
+adapter layer themselves. This leads to bad library design, version conflicts,
+or code unrelated to the library domain.</p>
+<h2 id="why-bother">Why bother?</h2>
+<p>Thanks to PSR-7 we know how HTTP requests and responses ideally look, but nothing
+defines how a request should be sent and a response received. A common interface for HTTP
+clients will allow libraries to be decoupled from specific implementations.</p>
+<h2 id="scope">Scope</h2>
+<h3 id="goals">Goals</h3>
+<ul>
+<li>A common interface for sending PSR-7 messages and returning PSR-7 responses.</li>
+</ul>
+<h3 id="non-goals">Non-Goals</h3>
+<ul>
+<li>Support for asynchronous HTTP requests is left for another future PSR.</li>
+<li>This PSR does not define how to configure an HTTP client. It only specifies the
+  default behaviours.</li>
+<li>This PSR is neutral about the use of middleware.</li>
+</ul>
+<h4 id="asynchronous-http-client">Asynchronous HTTP client</h4>
+<p>The reason asynchronous requests are not covered by this PSR is the lack of a
+common standard for Promises. Promises are sufficiently complex enough that they
+deserve their own specification, and should not be wrapped into this one.</p>
+<p>A separate interface for asynchronous requests can be defined in a separate PSR
+once a Promise PSR is accepted. The method signature for asynchronous requests
+MUST be different from the method signature for synchronous requests because
+the return type of asynchronous calls will be a Promise. Thus this PSR is forwards
+compatible, and clients will be able to implement one or both interfaces based
+on the features they wish to expose.</p>
+<h2 id="approaches">Approaches</h2>
+<h3 id="default-behavior">Default behavior</h3>
+<p>The intention of this PSR is to provide library developers with HTTP clients that
+have a well defined behaviour. A library should be able to use any compliant client
+without special code to handle client implementation details (Liskov substitution
+principle). The PSR does not try to restrict nor define how to configure HTTP clients.</p>
+<p>An alternative approach would be to pass configuration to the client. That approach
+would have a few drawbacks:</p>
+<ul>
+<li>Configuration must be defined by the PSR.</li>
+<li>All clients must support the defined configuration.</li>
+<li>If no configuration is passed to the client, the behavior is unpredictable.</li>
+</ul>
+<h4 id="naming-rationale">Naming rationale</h4>
+<p>The main interface behaviour is defined by the method <code>sendRequest(RequestInterface $request): ResponseInterface</code>.<br />
+While the shorter method name <code>send()</code> has been proposed, this was already used by existing and very common HTTP clients like Guzzle. As such, if they are to adopt this standard, they may need to break backwards compatibility in order to implement the specification. By defining <code>sendRequest()</code> instead, we ensure they can adopt without any immediate BC breaks.</p>
+<h3 id="exception-model">Exception Model</h3>
+<p>The domain exceptions <code>NetworkExceptionInterface</code> and <code>RequestExceptionInterface</code> define
+a contract very similar to each other. The chosen approach is to not let them extend each other
+because inheritance does not make sense in the domain model. A <code>RequestExceptionInterface</code> is simply not a
+<code>NetworkExceptionInterface</code>.</p>
+<p>Allowing exceptions to extend a <code>RequestAwareException</code> and/or <code>ResponseAwareException</code> interface
+has been discussed but that is a convenience shortcut that one should not take. One should rather
+catch the specific exceptions and handle them accordingly.</p>
+<p>One could be more granular when defining exceptions. For example, <code>TimeOutException</code> and <code>HostNotFoundException</code>
+could be subtypes of <code>NetworkExceptionInterface</code>. The chosen approach is not to define such subtypes because
+the exception handling in a consuming library would in most cases not be different between those exceptions.</p>
+<h4 id="throwing-exceptions-for-4xx-and-5xx-responses">Throwing exceptions for 4xx and 5xx responses</h4>
+<p>The initial idea was to allow the client to be configured to throw exceptions for responses
+with HTTP status 4xx and 5xx. That approach is not desired because consuming libraries would
+have to check for 4xx and 5xx responses twice: first, by verifying the status code on the response,
+and second by catching potential exceptions.</p>
+<p>To make the specification more predictable, it was decided that HTTP clients never will throw
+exceptions for 4xx and 5xx responses.</p>
+<h2 id="middleware-and-wrapping-a-client">Middleware and wrapping a client</h2>
+<p>The specification does not put any limitations on middleware or classes that want 
+to wrap/decorate an HTTP client. If the decorating class also implements <code>ClientInterface</code>
+then it must also follow the specification. </p>
+<p>It is temping to allow configuration or add middleware to an HTTP client so it could i.e.
+follow redirects or throw exceptions. If that is a decision from an application developer, 
+they have specifically said they want to break the specification. That is an issue (or feature)
+the application developer should handle. Third party libraries MUST NOT assume that
+a HTTP client breaks the specification.</p>
+<h2 id="background">Background</h2>
+<p>The HTTP client PSR has been inspired and created by the <a href="https://github.com/orgs/php-http/people">php-http team</a>.
+Back in 2015, they created HTTPlug as a common interface for HTTP clients. They wanted an
+abstraction that third party libraries could use so as not to rely on a specific HTTP client
+implementation. A stable version was tagged in January 2016, and the project has been 
+widely adopted since then. With over 3 million downloads in the two years
+following the initial stable version, it was time to convert this "de-facto"
+standard into a formal specification.</p>
+<h2 id="people">People</h2>
+<h3 id="51-editor">5.1 Editor</h3>
+<ul>
+<li>Tobias Nyholm</li>
+</ul>
+<h3 id="52-sponsors">5.2 Sponsors</h3>
+<ul>
+<li>Sara Golemon</li>
+</ul>
+<h3 id="53-workgroup">5.3 Workgroup</h3>
+<ul>
+<li>Simon Asika (Windwalker)</li>
+<li>David Buchmann (HTTPlug)</li>
+<li>David De Boer (HTTPlug)</li>
+<li>Sara Golemon (Sponsor)</li>
+<li>Jeremy Lindblom (Guzzle)</li>
+<li>Christian Lück (Buzz react)</li>
+<li>Tobias Nyholm (Editor)</li>
+<li>Matthew Weier O'Phinney (Zend)</li>
+<li>Mark Sagi-Kazar (Guzzle)</li>
+<li>Joel Wurtz (HTTPlug)</li>
+</ul>
+<h2 id="votes">Votes</h2>
+<ul>
+<li><a href="https://groups.google.com/d/topic/php-fig/MJGYRXfUJGk/discussion">Entrance vote</a></li>
+<li><a href="https://groups.google.com/d/topic/php-fig/dV9zIaOooZ4/discussion">Review Period Initiation</a></li>
+<li><a href="https://groups.google.com/d/topic/php-fig/rScdiW38nLM/discussion">Acceptance</a></li>
+</ul>
+<h2 id="proposed-implementations">Proposed implementations</h2>
+<p>Below are the two implementations provided by the working group to pass the review period:</p>
+<ul>
+<li>HTTPlug has prepared a 2.0 to make sure it is supporting the new PSR. 
+   They are just waiting for the PSR to be released: https://github.com/php-http/httplug/tree/2.x</li>
+<li>Buzz has been adapting to every version of the PSR and has their 0.17.3 release with the latest 
+   version of psr/http-client: https://github.com/kriswallsmith/Buzz</li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

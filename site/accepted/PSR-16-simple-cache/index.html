@@ -1,0 +1,582 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR 16 simple cache - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#common-interface-for-caching-libraries" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR 16 simple cache
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="common-interface-for-caching-libraries">Common Interface for Caching Libraries</h1>
+<p>This document describes a simple yet extensible interface for a cache item and
+a cache driver.</p>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<p>The final implementations MAY decorate the objects with more
+functionality than the one proposed but they MUST implement the indicated
+interfaces/functionality first.</p>
+<h1 id="1-specification">1. Specification</h1>
+<h2 id="11-introduction">1.1 Introduction</h2>
+<p>Caching is a common way to improve the performance of any project, making
+caching libraries one of the most common features of many frameworks and
+libraries. Interoperability at this level means libraries can drop their
+own caching implementations and easily rely on the one given to them by the
+framework, or another dedicated cache library.</p>
+<p>PSR-6 solves this problem already, but in a rather formal and verbose way for
+what the most simple use cases need. This simpler approach aims to build a
+standardized streamlined interface for common cases. It is independent of
+PSR-6 but has been designed to make compatibility with PSR-6 as straightforward
+as possible.</p>
+<h2 id="12-definitions">1.2 Definitions</h2>
+<p>Definitions for Calling Library, Implementing Library, TTL, Expiration and Key
+are copied from PSR-6 as the same assumptions are true.</p>
+<ul>
+<li>
+<p><strong>Calling Library</strong> - The library or code that actually needs the cache
+services. This library will utilize caching services that implement this
+standard's interfaces, but will otherwise have no knowledge of the
+implementation of those caching services.</p>
+</li>
+<li>
+<p><strong>Implementing Library</strong> - This library is responsible for implementing
+this standard in order to provide caching services to any Calling Library. The
+Implementing Library MUST provide a class implementing the Psr\SimpleCache\CacheInterface interface.
+Implementing Libraries MUST support at minimum TTL functionality as described
+below with whole-second granularity.</p>
+</li>
+<li>
+<p><strong>TTL</strong> - The Time To Live (TTL) of an item is the amount of time between
+when that item is stored and it is considered stale. The TTL is normally defined
+by an integer representing time in seconds, or a DateInterval object.</p>
+</li>
+<li>
+<p><strong>Expiration</strong> - The actual time when an item is set to go stale. This is
+  calculated by adding the TTL to the time when an object is stored.</p>
+</li>
+</ul>
+<p>An item with a 300 second TTL stored at 1:30:00 will have an expiration of 1:35:00.</p>
+<p>Implementing Libraries MAY expire an item before its requested Expiration Time,
+  but MUST treat an item as expired once its Expiration Time is reached. If a calling
+  library asks for an item to be saved but does not specify an expiration time, or
+  specifies a null expiration time or TTL, an Implementing Library MAY use a configured
+  default duration. If no default duration has been set, the Implementing Library
+  MUST interpret that as a request to cache the item forever, or for as long as the
+  underlying implementation supports.</p>
+<p>If a negative or zero TTL is provided, the item MUST be deleted from the cache
+  if it exists, as it is expired already.</p>
+<ul>
+<li>
+<p><strong>Key</strong> - A string of at least one character that uniquely identifies a
+cached item. Implementing libraries MUST support keys consisting of the
+characters <code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>_</code>, and <code>.</code> in any order in UTF-8 encoding and a
+length of up to 64 characters. Implementing libraries MAY support additional
+characters and encodings or longer lengths, but MUST support at least that
+minimum. Libraries are responsible for their own escaping of key strings
+as appropriate, but MUST be able to return the original unmodified key string.
+The following characters are reserved for future extensions and MUST NOT be
+supported by implementing libraries: <code>{}()/\@:</code></p>
+</li>
+<li>
+<p><strong>Cache</strong> - An object that implements the <code>Psr\SimpleCache\CacheInterface</code> interface.</p>
+</li>
+<li>
+<p><strong>Cache Misses</strong> - A cache miss will return null and therefore detecting
+if one stored <code>null</code> is not possible. This is the main deviation from PSR-6's
+assumptions.</p>
+</li>
+</ul>
+<h2 id="13-cache">1.3 Cache</h2>
+<p>Implementations MAY provide a mechanism for a user to specify a default TTL
+if one is not specified for a specific cache item. If no user-specified default
+is provided implementations MUST default to the maximum legal value allowed by
+the underlying implementation. If the underlying implementation does not
+support TTL, the user-specified TTL MUST be silently ignored.</p>
+<h2 id="14-data">1.4 Data</h2>
+<p>Implementing libraries MUST support all serializable PHP data types, including:</p>
+<ul>
+<li><strong>Strings</strong> - Character strings of arbitrary size in any PHP-compatible encoding.</li>
+<li><strong>Integers</strong> - All integers of any size supported by PHP, up to 64-bit signed.</li>
+<li><strong>Floats</strong> - All signed floating point values.</li>
+<li><strong>Booleans</strong> - True and False.</li>
+<li><strong>Null</strong> - The null value (although it will not be distinguishable from a
+cache miss when reading it back out).</li>
+<li><strong>Arrays</strong> - Indexed, associative and multidimensional arrays of arbitrary depth.</li>
+<li><strong>Objects</strong> - Any object that supports lossless serialization and
+deserialization such that $o == unserialize(serialize($o)). Objects MAY
+leverage PHP's Serializable interface, <code>__sleep()</code> or <code>__wakeup()</code> magic methods,
+or similar language functionality if appropriate.</li>
+</ul>
+<p>All data passed into the Implementing Library MUST be returned exactly as
+passed. That includes the variable type. That is, it is an error to return
+(string) 5 if (int) 5 was the value saved. Implementing Libraries MAY use PHP's
+serialize()/unserialize() functions internally but are not required to do so.
+Compatibility with them is simply used as a baseline for acceptable object values.</p>
+<p>If it is not possible to return the exact saved value for any reason, implementing
+libraries MUST respond with a cache miss rather than corrupted data.</p>
+<h1 id="2-interfaces">2. Interfaces</h1>
+<h2 id="21-cacheinterface">2.1 CacheInterface</h2>
+<p>The cache interface defines the most basic operations on a collection of cache-entries, which
+entails basic reading, writing and deleting individual cache items.</p>
+<p>In addition, it has methods for dealing with multiple sets of cache entries such as writing, reading or
+deleting multiple cache entries at a time. This is useful when you have lots of cache reads/writes
+to perform, and lets you perform your operations in a single call to the cache server cutting down latency
+times dramatically.</p>
+<p>An instance of CacheInterface corresponds to a single collection of cache items with a single key namespace,
+and is equivalent to a "Pool" in PSR-6. Different CacheInterface instances MAY be backed by the same
+datastore, but MUST be logically independent.</p>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\SimpleCache;
+
+interface CacheInterface
+{
+    /**
+     * Fetches a value from the cache.
+     *
+     * @param string $key     The unique key of this item in the cache.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
+     * @return mixed The value of the item from the cache, or $default in case of cache miss.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function get($key, $default = null);
+
+    /**
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+     *
+     * @param string                 $key   The key of the item to store.
+     * @param mixed                  $value The value of the item to store. Must be serializable.
+     * @param null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *                                      the driver supports TTL then the library may set a default value
+     *                                      for it or let the driver take care of that.
+     *
+     * @return bool True on success and false on failure.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function set($key, $value, $ttl = null);
+
+    /**
+     * Delete an item from the cache by its unique key.
+     *
+     * @param string $key The unique cache key of the item to delete.
+     *
+     * @return bool True if the item was successfully removed. False if there was an error.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function delete($key);
+
+    /**
+     * Wipes clean the entire cache's keys.
+     *
+     * @return bool True on success and false on failure.
+     */
+    public function clear();
+
+    /**
+     * Obtains multiple cache items by their unique keys.
+     *
+     * @param iterable $keys    A list of keys that can obtained in a single operation.
+     * @param mixed    $default Default value to return for keys that do not exist.
+     *
+     * @return iterable A list of key =&gt; value pairs. Cache keys that do not exist or are stale will have $default as value.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $keys is neither an array nor a Traversable,
+     *   or if any of the $keys are not a legal value.
+     */
+    public function getMultiple($keys, $default = null);
+
+    /**
+     * Persists a set of key =&gt; value pairs in the cache, with an optional TTL.
+     *
+     * @param iterable               $values A list of key =&gt; value pairs for a multiple-set operation.
+     * @param null|int|\DateInterval $ttl    Optional. The TTL value of this item. If no value is sent and
+     *                                       the driver supports TTL then the library may set a default value
+     *                                       for it or let the driver take care of that.
+     *
+     * @return bool True on success and false on failure.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $values is neither an array nor a Traversable,
+     *   or if any of the $values are not a legal value.
+     */
+    public function setMultiple($values, $ttl = null);
+
+    /**
+     * Deletes multiple cache items in a single operation.
+     *
+     * @param iterable $keys A list of string-based keys to be deleted.
+     *
+     * @return bool True if the items were successfully removed. False if there was an error.
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $keys is neither an array nor a Traversable,
+     *   or if any of the $keys are not a legal value.
+     */
+    public function deleteMultiple($keys);
+
+    /**
+     * Determines whether an item is present in the cache.
+     *
+     * NOTE: It is recommended that has() is only to be used for cache warming type purposes
+     * and not to be used within your live applications operations for get/set, as this method
+     * is subject to a race condition where your has() will return true and immediately after,
+     * another script can remove it, making the state of your app out of date.
+     *
+     * @param string $key The cache item key.
+     *
+     * @return bool
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function has($key);
+}
+</code></pre>
+<h2 id="22-cacheexception">2.2 CacheException</h2>
+<pre><code class="language-php">
+&lt;?php
+
+namespace Psr\SimpleCache;
+
+/**
+ * Interface used for all types of exceptions thrown by the implementing library.
+ */
+interface CacheException
+{
+}
+</code></pre>
+<h2 id="23-invalidargumentexception">2.3 InvalidArgumentException</h2>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\SimpleCache;
+
+/**
+ * Exception interface for invalid cache arguments.
+ *
+ * When an invalid argument is passed, it must throw an exception which implements
+ * this interface.
+ */
+interface InvalidArgumentException extends CacheException
+{
+}
+</code></pre>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

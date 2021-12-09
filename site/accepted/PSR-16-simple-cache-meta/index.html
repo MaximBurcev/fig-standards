@@ -1,0 +1,531 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR-16 Meta Document - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#psr-16-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR-16 Meta Document
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-summary" class="md-nav__link">
+    1. Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-why-bother" class="md-nav__link">
+    2. Why Bother?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scope" class="md-nav__link">
+    3. Scope
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-goals" class="md-nav__link">
+    3.1 Goals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-non-goals" class="md-nav__link">
+    3.2 Non-Goals
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-approaches" class="md-nav__link">
+    4. Approaches
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-people" class="md-nav__link">
+    5. People
+  </a>
+  
+    <nav class="md-nav" aria-label="5. People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-editors" class="md-nav__link">
+    5.1 Editor(s)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sponsors" class="md-nav__link">
+    5.2 Sponsors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-contributors" class="md-nav__link">
+    5.3 Contributors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-votes" class="md-nav__link">
+    6. Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-relevant-links" class="md-nav__link">
+    7. Relevant Links
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-errata" class="md-nav__link">
+    8. Errata
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Errata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-throwable" class="md-nav__link">
+    8.1 Throwable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-type-additions" class="md-nav__link">
+    8.2 Type additions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="psr-16-meta-document">PSR-16 Meta Document</h1>
+<h2 id="1-summary">1. Summary</h2>
+<p>Caching is a common way to improve the performance of any project, and many
+libraries make use or could make use of it. Interoperability at this level
+means libraries can drop their own caching implementations and easily rely
+on the one given to them by the framework, or another dedicated cache
+library the user picked.</p>
+<h2 id="2-why-bother">2. Why Bother?</h2>
+<p>PSR-6 solves this problem already, but in a rather formal and verbose way for
+what the most simple use cases need. This simpler approach aims to build a
+standardized layer of simplicity on top of the existing PSR-6 interfaces.</p>
+<h2 id="3-scope">3. Scope</h2>
+<h3 id="31-goals">3.1 Goals</h3>
+<ul>
+<li>A simple interface for cache operations.</li>
+<li>Basic support for operations on multiple keys for performance (round-trip-time)
+  reasons.</li>
+<li>Providing an adapter class that turns a PSR-6 implementation into a
+  PSR-Simple-Cache one.</li>
+<li>It should be possible to expose both caching PSRs from a caching library.</li>
+</ul>
+<h3 id="32-non-goals">3.2 Non-Goals</h3>
+<ul>
+<li>Solving all possible edge cases, PSR-6 does this well already.</li>
+</ul>
+<h2 id="4-approaches">4. Approaches</h2>
+<p>The approach chosen here is very barebones by design, as it is to be used
+only by the most simple cases. It does not have to be implementable by all
+possible cache backends, nor be usable for all usages. It is merely a layer
+of convenience on top of PSR-6.</p>
+<h2 id="5-people">5. People</h2>
+<h3 id="51-editors">5.1 Editor(s)</h3>
+<ul>
+<li>Paul Dragoonis (@dragoonis)</li>
+</ul>
+<h3 id="52-sponsors">5.2 Sponsors</h3>
+<ul>
+<li>Jordi Boggiano (@seldaek) - Composer (Coordinator)</li>
+<li>Fabien Potencier (@fabpot) - Symfony</li>
+</ul>
+<h3 id="53-contributors">5.3 Contributors</h3>
+<p>For their role in the writing the initial version of this cache PSR:</p>
+<ul>
+<li>Evert Pot (@evert)</li>
+<li>Florin Pățan (@dlsniper)</li>
+</ul>
+<p>For being an early reviewer</p>
+<ul>
+<li>Daniel Messenger (@dannym87)</li>
+</ul>
+<h2 id="6-votes">6. Votes</h2>
+<ul>
+<li><strong>Entrance Vote:</strong>  https://groups.google.com/d/topic/php-fig/vyQTKHS6pJ8/discussion</li>
+<li><strong>Acceptance Vote:</strong>  https://groups.google.com/d/msg/php-fig/A8e6GvDRGIk/HQBJGEhbDQAJ</li>
+</ul>
+<h2 id="7-relevant-links">7. Relevant Links</h2>
+<ul>
+<li><a href="https://docs.google.com/spreadsheet/ccc?key=0Ak2JdGialLildEM2UjlOdnA4ekg3R1Bfeng5eGlZc1E#gid=0">Survey of existing cache implementations</a>, by @dragoonis</li>
+</ul>
+<h2 id="8-errata">8. Errata</h2>
+<h3 id="81-throwable">8.1 Throwable</h3>
+<p>The 2.0 release of the <code>psr/simple-cache</code> package updates <code>Psr\SimpleCache\CacheException</code> to extend <code>\Throwable</code>.  This is considered a backwards compatible change for implementing libraries as of PHP 7.4.</p>
+<h3 id="82-type-additions">8.2 Type additions</h3>
+<p>The 2.0 release of the <code>psr/simple-cache</code> package includes scalar parameter types and increases the minimum PHP version to 8.0.  This is considered a backwards compatible change for implementing libraries as PHP 7.2 introduces covariance for parameters.  Any implementation of 1.0 is compatible with 2.0. For calling libraries, however, this reduces the types that they may pass (as previously any parameter that could be cast to string could be accepted) and as such requires incrementing the major version.</p>
+<p>The 3.0 release includes return types.  Return types break backwards compatibility for implementing libraries as PHP does not support return type widening.</p>
+<p>Implementing libraries <strong>MAY</strong> add return types to their own packages at their discretion, provided that:</p>
+<ul>
+<li>the return types match those in the 3.0 package.</li>
+<li>the implementation specifies a minimum PHP version of 8.0.0 or later</li>
+<li>the implementation depends on <code>"psr/simple-cache": "^2 || ^3"</code> so as to exclude the untyped 1.0 version.</li>
+</ul>
+<p>Implementing libraries <strong>MAY</strong> add parameter types to their own package in a new minor release, either at the same time as adding return types or in a subsequent release, provided that:</p>
+<ul>
+<li>the parameter types match or widen those in the 2.0 package</li>
+<li>the implementation specifies a minimum PHP version of 8.0 if using mixed or union types or later.</li>
+<li>the implementation depends on <code>"psr/simple-cache": "^2 || ^3"</code> so as to exclude the untyped 1.0 version.</li>
+</ul>
+<p>Implementing libraries are encouraged, but not required to transition their packages toward the 3.0 version of the package at their earliest convenience.</p>
+<p>Calling libraries are encouraged to ensure they are sending the correct types and to update their requirement to <code>"psr/simple-cache": "^1 || ^2 || ^3"</code> at their earliest convenience.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

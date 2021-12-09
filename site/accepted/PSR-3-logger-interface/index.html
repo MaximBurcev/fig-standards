@@ -1,0 +1,687 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR 3 logger interface - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#logger-interface" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR 3 logger interface
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-specification" class="md-nav__link">
+    1. Specification
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Specification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-basics" class="md-nav__link">
+    1.1 Basics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-message" class="md-nav__link">
+    1.2 Message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-context" class="md-nav__link">
+    1.3 Context
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-helper-classes-and-interfaces" class="md-nav__link">
+    1.4 Helper classes and interfaces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-package" class="md-nav__link">
+    2. Package
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-psrlogloggerinterface" class="md-nav__link">
+    3. Psr\Log\LoggerInterface
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-psrlogloggerawareinterface" class="md-nav__link">
+    4. Psr\Log\LoggerAwareInterface
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-psrlogloglevel" class="md-nav__link">
+    5. Psr\Log\LogLevel
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="logger-interface">Logger Interface</h1>
+<p>This document describes a common interface for logging libraries.</p>
+<p>The main goal is to allow libraries to receive a <code>Psr\Log\LoggerInterface</code>
+object and write logs to it in a simple and universal way. Frameworks
+and CMSs that have custom needs MAY extend the interface for their own
+purpose, but SHOULD remain compatible with this document. This ensures
+that the third-party libraries an application uses can write to the
+centralized application logs.</p>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<p>The word <code>implementor</code> in this document is to be interpreted as someone
+implementing the <code>LoggerInterface</code> in a log-related library or framework.
+Users of loggers are referred to as <code>user</code>.</p>
+<h2 id="1-specification">1. Specification</h2>
+<h3 id="11-basics">1.1 Basics</h3>
+<ul>
+<li>
+<p>The <code>LoggerInterface</code> exposes eight methods to write logs to the eight
+  <a href="http://tools.ietf.org/html/rfc5424">RFC 5424</a> levels (debug, info, notice, warning, error, critical, alert,
+  emergency).</p>
+</li>
+<li>
+<p>A ninth method, <code>log</code>, accepts a log level as the first argument. Calling this
+  method with one of the log level constants MUST have the same result as
+  calling the level-specific method. Calling this method with a level not
+  defined by this specification MUST throw a <code>Psr\Log\InvalidArgumentException</code>
+  if the implementation does not know about the level. Users SHOULD NOT use a
+  custom level without knowing for sure the current implementation supports it.</p>
+</li>
+</ul>
+<h3 id="12-message">1.2 Message</h3>
+<ul>
+<li>
+<p>Every method accepts a string as the message, or an object with a
+  <code>__toString()</code> method. Implementors MAY have special handling for the passed
+  objects. If that is not the case, implementors MUST cast it to a string.</p>
+</li>
+<li>
+<p>The message MAY contain placeholders which implementors MAY replace with
+  values from the context array.</p>
+</li>
+</ul>
+<p>Placeholder names MUST correspond to keys in the context array.</p>
+<p>Placeholder names MUST be delimited with a single opening brace <code>{</code> and
+  a single closing brace <code>}</code>. There MUST NOT be any whitespace between the
+  delimiters and the placeholder name.</p>
+<p>Placeholder names SHOULD be composed only of the characters <code>A-Z</code>, <code>a-z</code>,
+  <code>0-9</code>, underscore <code>_</code>, and period <code>.</code>. The use of other characters is
+  reserved for future modifications of the placeholders specification.</p>
+<p>Implementors MAY use placeholders to implement various escaping strategies
+  and translate logs for display. Users SHOULD NOT pre-escape placeholder
+  values since they can not know in which context the data will be displayed.</p>
+<p>The following is an example implementation of placeholder interpolation
+  provided for reference purposes only:</p>
+<p>~~~php
+  &lt;?php</p>
+<p>/*<em>
+   * Interpolates context values into the message placeholders.
+   </em>/
+  function interpolate($message, array $context = array())
+  {
+      // build a replacement array with braces around the context keys
+      $replace = array();
+      foreach ($context as $key =&gt; $val) {
+          // check that the value can be cast to string
+          if (!is_array($val) &amp;&amp; (!is_object($val) || method_exists($val, '__toString'))) {
+              $replace['{' . $key . '}'] = $val;
+          }
+      }</p>
+<pre><code>  // interpolate replacement values into the message and return
+  return strtr($message, $replace);
+</code></pre>
+<p>}</p>
+<p>// a message with brace-delimited placeholder names
+  $message = "User {username} created";</p>
+<p>// a context array of placeholder names =&gt; replacement values
+  $context = array('username' =&gt; 'bolivar');</p>
+<p>// echoes "User bolivar created"
+  echo interpolate($message, $context);
+  ~~~</p>
+<h3 id="13-context">1.3 Context</h3>
+<ul>
+<li>
+<p>Every method accepts an array as context data. This is meant to hold any
+  extraneous information that does not fit well in a string. The array can
+  contain anything. Implementors MUST ensure they treat context data with
+  as much lenience as possible. A given value in the context MUST NOT throw
+  an exception nor raise any php error, warning or notice.</p>
+</li>
+<li>
+<p>If an <code>Exception</code> object is passed in the context data, it MUST be in the
+  <code>'exception'</code> key. Logging exceptions is a common pattern and this allows
+  implementors to extract a stack trace from the exception when the log
+  backend supports it. Implementors MUST still verify that the <code>'exception'</code>
+  key is actually an <code>Exception</code> before using it as such, as it MAY contain
+  anything.</p>
+</li>
+</ul>
+<h3 id="14-helper-classes-and-interfaces">1.4 Helper classes and interfaces</h3>
+<ul>
+<li>
+<p>The <code>Psr\Log\AbstractLogger</code> class lets you implement the <code>LoggerInterface</code>
+  very easily by extending it and implementing the generic <code>log</code> method.
+  The other eight methods are forwarding the message and context to it.</p>
+</li>
+<li>
+<p>Similarly, using the <code>Psr\Log\LoggerTrait</code> only requires you to
+  implement the generic <code>log</code> method. Note that since traits can not implement
+  interfaces, in this case you still have to implement <code>LoggerInterface</code>.</p>
+</li>
+<li>
+<p>The <code>Psr\Log\NullLogger</code> is provided together with the interface. It MAY be
+  used by users of the interface to provide a fall-back "black hole"
+  implementation if no logger is given to them. However, conditional logging
+  may be a better approach if context data creation is expensive.</p>
+</li>
+<li>
+<p>The <code>Psr\Log\LoggerAwareInterface</code> only contains a
+  <code>setLogger(LoggerInterface $logger)</code> method and can be used by frameworks to
+  auto-wire arbitrary instances with a logger.</p>
+</li>
+<li>
+<p>The <code>Psr\Log\LoggerAwareTrait</code> trait can be used to implement the equivalent
+  interface easily in any class. It gives you access to <code>$this-&gt;logger</code>.</p>
+</li>
+<li>
+<p>The <code>Psr\Log\LogLevel</code> class holds constants for the eight log levels.</p>
+</li>
+</ul>
+<h2 id="2-package">2. Package</h2>
+<p>The interfaces and classes described as well as relevant exception classes
+and a test suite to verify your implementation are provided as part of the
+<a href="https://packagist.org/packages/psr/log">psr/log</a> package.</p>
+<h2 id="3-psrlogloggerinterface">3. <code>Psr\Log\LoggerInterface</code></h2>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Log;
+
+/**
+ * Describes a logger instance.
+ *
+ * The message MUST be a string or object implementing __toString().
+ *
+ * The message MAY contain placeholders in the form: {foo} where foo
+ * will be replaced by the context data in key &quot;foo&quot;.
+ *
+ * The context array can contain arbitrary data, the only assumption that
+ * can be made by implementors is that if an Exception instance is given
+ * to produce a stack trace, it MUST be in a key named &quot;exception&quot;.
+ *
+ * See https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+ * for the full interface specification.
+ */
+interface LoggerInterface
+{
+    /**
+     * System is unusable.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function emergency($message, array $context = array());
+
+    /**
+     * Action must be taken immediately.
+     *
+     * Example: Entire website down, database unavailable, etc. This should
+     * trigger the SMS alerts and wake you up.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function alert($message, array $context = array());
+
+    /**
+     * Critical conditions.
+     *
+     * Example: Application component unavailable, unexpected exception.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function critical($message, array $context = array());
+
+    /**
+     * Runtime errors that do not require immediate action but should typically
+     * be logged and monitored.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function error($message, array $context = array());
+
+    /**
+     * Exceptional occurrences that are not errors.
+     *
+     * Example: Use of deprecated APIs, poor use of an API, undesirable things
+     * that are not necessarily wrong.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function warning($message, array $context = array());
+
+    /**
+     * Normal but significant events.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function notice($message, array $context = array());
+
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function info($message, array $context = array());
+
+    /**
+     * Detailed debug information.
+     *
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function debug($message, array $context = array());
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
+    public function log($level, $message, array $context = array());
+}
+</code></pre>
+<h2 id="4-psrlogloggerawareinterface">4. <code>Psr\Log\LoggerAwareInterface</code></h2>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Log;
+
+/**
+ * Describes a logger-aware instance.
+ */
+interface LoggerAwareInterface
+{
+    /**
+     * Sets a logger instance on the object.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function setLogger(LoggerInterface $logger);
+}
+</code></pre>
+<h2 id="5-psrlogloglevel">5. <code>Psr\Log\LogLevel</code></h2>
+<pre><code class="language-php">&lt;?php
+
+namespace Psr\Log;
+
+/**
+ * Describes log levels.
+ */
+class LogLevel
+{
+    const EMERGENCY = 'emergency';
+    const ALERT     = 'alert';
+    const CRITICAL  = 'critical';
+    const ERROR     = 'error';
+    const WARNING   = 'warning';
+    const NOTICE    = 'notice';
+    const INFO      = 'info';
+    const DEBUG     = 'debug';
+}
+</code></pre>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

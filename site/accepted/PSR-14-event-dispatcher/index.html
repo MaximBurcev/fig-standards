@@ -1,0 +1,540 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR 14 event dispatcher - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#event-dispatcher" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR 14 event dispatcher
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    Goal
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#definitions" class="md-nav__link">
+    Definitions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    Events
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stoppable-events" class="md-nav__link">
+    Stoppable Events
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listeners" class="md-nav__link">
+    Listeners
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dispatcher" class="md-nav__link">
+    Dispatcher
+  </a>
+  
+    <nav class="md-nav" aria-label="Dispatcher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error handling
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listener-provider" class="md-nav__link">
+    Listener Provider
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-composition" class="md-nav__link">
+    Object composition
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interfaces" class="md-nav__link">
+    Interfaces
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="event-dispatcher">Event Dispatcher</h1>
+<p>Event Dispatching is a common and well-tested mechanism to allow developers to inject logic into an application easily and consistently.</p>
+<p>The goal of this PSR is to establish a common mechanism for event-based extension and collaboration so that libraries and components may be reused more freely between various applications and frameworks.</p>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h2 id="goal">Goal</h2>
+<p>Having common interfaces for dispatching and handling events allows developers to create libraries that can interact with many frameworks and other libraries in a common fashion.</p>
+<p>Some examples:</p>
+<ul>
+<li>A security framework that will prevent saving/accessing data when a user doesn't have permission.</li>
+<li>A common full page caching system.</li>
+<li>Libraries that extend other libraries, regardless of what framework they are both integrated into.</li>
+<li>A logging package to track all actions taken within the application</li>
+</ul>
+<h2 id="definitions">Definitions</h2>
+<ul>
+<li><strong>Event</strong> - An Event is a message produced by an <em>Emitter</em>.  It may be any arbitrary PHP object.</li>
+<li><strong>Listener</strong> - A Listener is any PHP callable that expects to be passed an Event.  Zero or more Listeners may be passed the same Event.  A Listener MAY enqueue some other asynchronous behavior if it so chooses.</li>
+<li><strong>Emitter</strong> - An Emitter is any arbitrary code that wishes to dispatch an Event.  This is also known as the "calling code".  It is not represented by any particular data structure but refers to the use case.</li>
+<li><strong>Dispatcher</strong> - A Dispatcher is a service object that is given an Event object by an Emitter.  The Dispatcher is responsible for ensuring that the Event is passed to all relevant Listeners, but MUST defer determining the responsible listeners to a Listener Provider.</li>
+<li><strong>Listener Provider</strong> - A Listener Provider is responsible for determining what Listeners are relevant for a given Event, but MUST NOT call the Listeners itself.  A Listener Provider may specify zero or more relevant Listeners.</li>
+</ul>
+<h2 id="events">Events</h2>
+<p>Events are objects that act as the unit of communication between an Emitter and appropriate Listeners.</p>
+<p>Event objects MAY be mutable should the use case call for Listeners providing information back to the Emitter.  However, if no such bidirectional communication is needed then it is RECOMMENDED that the Event be defined as immutable; i.e., defined such that it lacks mutator methods.</p>
+<p>Implementers MUST assume that the same object will be passed to all Listeners.</p>
+<p>It is RECOMMENDED, but NOT REQUIRED, that Event objects support lossless serialization and deserialization; <code>$event == unserialize(serialize($event))</code> SHOULD hold true.  Objects MAY leverage PHP’s <code>Serializable</code> interface, <code>__sleep()</code> or <code>__wakeup()</code> magic methods, or similar language functionality if appropriate.</p>
+<h2 id="stoppable-events">Stoppable Events</h2>
+<p>A <strong>Stoppable Event</strong> is a special case of Event that contains additional ways to prevent further Listeners from being called.  It is indicated by implementing the <code>StoppableEventInterface</code>.</p>
+<p>An Event that implements <code>StoppableEventInterface</code> MUST return <code>true</code> from <code>isPropagationStopped()</code> when whatever Event it represents has been completed.  It is up to the implementer of the class to determine when that is.  For example, an Event that is asking for a PSR-7 <code>RequestInterface</code> object to be matched with a corresponding <code>ResponseInterface</code> object could have a <code>setResponse(ResponseInterface $res)</code> method for a Listener to call, which causes <code>isPropagationStopped()</code> to return <code>true</code>.</p>
+<h2 id="listeners">Listeners</h2>
+<p>A Listener may be any PHP callable.  A Listener MUST have one and only one parameter, which is the Event to which it responds.  Listeners SHOULD type hint that parameter as specifically as is relevant for their use case; that is, a Listener MAY type hint against an interface to indicate it is compatible with any Event type that implements that interface, or to a specific implementation of that interface.</p>
+<p>A Listener SHOULD have a <code>void</code> return, and SHOULD type hint that return explicitly.  A Dispatcher MUST ignore return values from Listeners.</p>
+<p>A Listener MAY delegate actions to other code. That includes a Listener being a thin wrapper around an object that runs the actual business logic.</p>
+<p>A Listener MAY enqueue information from the Event for later processing by a secondary process, using cron, a queue server, or similar techniques.  It MAY serialize the Event object itself to do so; however, care should be taken that not all Event objects may be safely serializable. A secondary process MUST assume that any changes it makes to an Event object will NOT propagate to other Listeners.</p>
+<h2 id="dispatcher">Dispatcher</h2>
+<p>A Dispatcher is a service object implementing <code>EventDispatcherInterface</code>.  It is responsible for retrieving Listeners from a Listener Provider for the Event dispatched, and invoking each Listener with that Event.</p>
+<p>A Dispatcher:</p>
+<ul>
+<li>MUST call Listeners synchronously in the order they are returned from a ListenerProvider.</li>
+<li>MUST return the same Event object it was passed after it is done invoking Listeners.</li>
+<li>MUST NOT return to the Emitter until all Listeners have executed.</li>
+</ul>
+<p>If passed a Stoppable Event, a Dispatcher</p>
+<ul>
+<li>MUST call <code>isPropagationStopped()</code> on the Event before each Listener has been called.  If that method returns <code>true</code> it MUST return the Event to the Emitter immediately and MUST NOT call any further Listeners.  This implies that if an Event is passed to the Dispatcher that always returns <code>true</code> from <code>isPropagationStopped()</code>, zero listeners will be called.</li>
+</ul>
+<p>A Dispatcher SHOULD assume that any Listener returned to it from a Listener Provider is type-safe.  That is, the Dispatcher SHOULD assume that calling <code>$listener($event)</code> will not produce a <code>TypeError</code>.</p>
+<h3 id="error-handling">Error handling</h3>
+<p>An Exception or Error thrown by a Listener MUST block the execution of any further Listeners.  An Exception or Error thrown by a Listener MUST be allowed to propagate back up to the Emitter.</p>
+<p>A Dispatcher MAY catch a thrown object to log it, allow additional action to be taken, etc., but then MUST rethrow the original throwable.</p>
+<h2 id="listener-provider">Listener Provider</h2>
+<p>A Listener Provider is a service object responsible for determining what Listeners are relevant to and should be called for a given Event.  It may determine both what Listeners are relevant and the order in which to return them by whatever means it chooses.  That MAY include:</p>
+<ul>
+<li>Allowing for some form of registration mechanism so that implementers may assign a Listener to an Event in a fixed order.</li>
+<li>Deriving a list of applicable Listeners through reflection based on the type and implemented interfaces of the Event.</li>
+<li>Generating a compiled list of Listeners ahead of time that may be consulted at runtime.</li>
+<li>Implementing some form of access control so that certain Listeners will only be called if the current user has a certain permission.</li>
+<li>Extracting some information from an object referenced by the Event, such as an Entity, and calling pre-defined lifecycle methods on that object.</li>
+<li>Delegating its responsibility to one or more other Listener Providers using some arbitrary logic.</li>
+</ul>
+<p>Any combination of the above, or other mechanisms, MAY be used as desired.</p>
+<p>Listener Providers SHOULD use the class name of an Event to differentiate one event from another.  They MAY also consider any other information on the event as appropriate.</p>
+<p>Listener Providers MUST treat parent types identically to the Event's own type when determining listener applicability.  In the following case:</p>
+<pre><code class="language-php">class A {}
+
+class B extends A {}
+
+$b = new B();
+
+function listener(A $event): void {};
+</code></pre>
+<p>A Listener Provider MUST treat <code>listener()</code> as an applicable listener for <code>$b</code>, as it is type compatible, unless some other criteria prevents it from doing so.</p>
+<h2 id="object-composition">Object composition</h2>
+<p>A Dispatcher SHOULD compose a Listener Provider to determine relevant listeners.  It is RECOMMENDED that a Listener Provider be implemented as a distinct object from the Dispatcher but that is NOT REQUIRED.</p>
+<h2 id="interfaces">Interfaces</h2>
+<pre><code class="language-php">namespace Psr\EventDispatcher;
+
+/**
+ * Defines a dispatcher for events.
+ */
+interface EventDispatcherInterface
+{
+    /**
+     * Provide all relevant listeners with an event to process.
+     *
+     * @param object $event
+     *   The object to process.
+     *
+     * @return object
+     *   The Event that was passed, now modified by listeners.
+     */
+    public function dispatch(object $event);
+}
+</code></pre>
+<pre><code class="language-php">namespace Psr\EventDispatcher;
+
+/**
+ * Mapper from an event to the listeners that are applicable to that event.
+ */
+interface ListenerProviderInterface
+{
+    /**
+     * @param object $event
+     *   An event for which to return the relevant listeners.
+     * @return iterable&lt;callable&gt;
+     *   An iterable (array, iterator, or generator) of callables.  Each
+     *   callable MUST be type-compatible with $event.
+     */
+    public function getListenersForEvent(object $event) : iterable;
+}
+</code></pre>
+<pre><code class="language-php">namespace Psr\EventDispatcher;
+
+/**
+ * An Event whose processing may be interrupted when the event has been handled.
+ *
+ * A Dispatcher implementation MUST check to determine if an Event
+ * is marked as stopped after each listener is called.  If it is then it should
+ * return immediately without calling any further Listeners.
+ */
+interface StoppableEventInterface
+{
+    /**
+     * Is propagation stopped?
+     *
+     * This will typically only be used by the Dispatcher to determine if the
+     * previous listener halted propagation.
+     *
+     * @return bool
+     *   True if the Event is complete and no further listeners should be called.
+     *   False to continue calling listeners.
+     */
+    public function isPropagationStopped() : bool;
+}
+</code></pre>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

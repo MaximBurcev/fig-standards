@@ -1,0 +1,528 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR 18 http client - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#http-client" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR 18 http client
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    Goal
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#definitions" class="md-nav__link">
+    Definitions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#client" class="md-nav__link">
+    Client
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error handling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interfaces" class="md-nav__link">
+    Interfaces
+  </a>
+  
+    <nav class="md-nav" aria-label="Interfaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clientinterface" class="md-nav__link">
+    ClientInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clientexceptioninterface" class="md-nav__link">
+    ClientExceptionInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requestexceptioninterface" class="md-nav__link">
+    RequestExceptionInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networkexceptioninterface" class="md-nav__link">
+    NetworkExceptionInterface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="http-client">HTTP Client</h1>
+<p>This document describes a common interface for sending HTTP requests and receiving HTTP responses.</p>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h2 id="goal">Goal</h2>
+<p>The goal of this PSR is to allow developers to create libraries decoupled from HTTP client
+implementations. This will make libraries more reusable as it reduces the number of
+dependencies and lowers the likelihood of version conflicts.</p>
+<p>A second goal is that HTTP clients can be replaced as per the
+<a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a>. This means that all clients MUST behave in the
+same way when sending a request.</p>
+<h2 id="definitions">Definitions</h2>
+<ul>
+<li><strong>Client</strong> - A Client is a library that implements this specification for the purposes of
+sending PSR-7-compatible HTTP Request messages and returning a PSR-7-compatible HTTP Response message to a Calling library.</li>
+<li><strong>Calling Library</strong> - A Calling Library is any code that makes use of a Client.  It does not implement
+this specification's interfaces but consumes an object that implements them (a Client).</li>
+</ul>
+<h2 id="client">Client</h2>
+<p>A Client is an object implementing <code>ClientInterface</code>.</p>
+<p>A Client MAY:</p>
+<ul>
+<li>Choose to send an altered HTTP request from the one it was provided. For example, it could
+compress an outgoing message body.</li>
+<li>Choose to alter a received HTTP response before returning it to the calling library. For example, it could
+decompress an incoming message body.</li>
+</ul>
+<p>If a Client chooses to alter either the HTTP request or HTTP response, it MUST ensure that the
+object remains internally consistent.  For example, if a Client chooses to decompress the message
+body then it MUST also remove the <code>Content-Encoding</code> header and adjust the <code>Content-Length</code> header.</p>
+<p>Note that as a result, since <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message-meta.md#why-value-objects">PSR-7 objects are immutable</a>,
+the Calling Library MUST NOT assume that the object passed to <code>ClientInterface::sendRequest()</code> will be the same PHP object
+that is actually sent. For example, the Request object that is returned by an exception MAY be a different object than
+the one passed to <code>sendRequest()</code>, so comparison by reference (===) is not possible.</p>
+<p>A Client MUST:</p>
+<ul>
+<li>Reassemble a multi-step HTTP 1xx response itself so that what is returned to the Calling Library is a valid HTTP response
+of status code 200 or higher.</li>
+</ul>
+<h2 id="error-handling">Error handling</h2>
+<p>A Client MUST NOT treat a well-formed HTTP request or HTTP response as an error condition. For example, response
+status codes in the 400 and 500 range MUST NOT cause an exception and MUST be returned to the Calling Library as normal.</p>
+<p>A Client MUST throw an instance of <code>Psr\Http\Client\ClientExceptionInterface</code> if and only if it is unable to send
+the HTTP request at all or if the HTTP response could not be parsed into a PSR-7 response object.</p>
+<p>If a request cannot be sent because the request message is not a well-formed HTTP request or is missing some critical
+piece of information (such as a Host or Method), the Client MUST throw an instance of <code>Psr\Http\Client\RequestExceptionInterface</code>.</p>
+<p>If the request cannot be sent due to a network failure of any kind, including a timeout, the Client MUST throw an
+instance of <code>Psr\Http\Client\NetworkExceptionInterface</code>.</p>
+<p>Clients MAY throw more specific exceptions than those defined here (a <code>TimeOutException</code> or <code>HostNotFoundException</code> for
+example), provided they implement the appropriate interface defined above.</p>
+<h2 id="interfaces">Interfaces</h2>
+<h3 id="clientinterface">ClientInterface</h3>
+<pre><code class="language-php">namespace Psr\Http\Client;
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+interface ClientInterface
+{
+    /**
+     * Sends a PSR-7 request and returns a PSR-7 response.
+     *
+     * @param RequestInterface $request
+     *
+     * @return ResponseInterface
+     *
+     * @throws \Psr\Http\Client\ClientExceptionInterface If an error happens while processing the request.
+     */
+    public function sendRequest(RequestInterface $request): ResponseInterface;
+}
+</code></pre>
+<h3 id="clientexceptioninterface">ClientExceptionInterface</h3>
+<pre><code class="language-php">namespace Psr\Http\Client;
+
+/**
+ * Every HTTP client related exception MUST implement this interface.
+ */
+interface ClientExceptionInterface extends \Throwable
+{
+}
+</code></pre>
+<h3 id="requestexceptioninterface">RequestExceptionInterface</h3>
+<pre><code class="language-php">namespace Psr\Http\Client;
+
+use Psr\Http\Message\RequestInterface;
+
+/**
+ * Exception for when a request failed.
+ *
+ * Examples:
+ *      - Request is invalid (e.g. method is missing)
+ *      - Runtime request errors (e.g. the body stream is not seekable)
+ */
+interface RequestExceptionInterface extends ClientExceptionInterface
+{
+    /**
+     * Returns the request.
+     *
+     * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
+     *
+     * @return RequestInterface
+     */
+    public function getRequest(): RequestInterface;
+}
+</code></pre>
+<h3 id="networkexceptioninterface">NetworkExceptionInterface</h3>
+<pre><code class="language-php">namespace Psr\Http\Client;
+
+use Psr\Http\Message\RequestInterface;
+
+/**
+ * Thrown when the request cannot be completed because of network issues.
+ *
+ * There is no response object as this exception is thrown when no response has been received.
+ *
+ * Example: the target host name can not be resolved or the connection failed.
+ */
+interface NetworkExceptionInterface extends ClientExceptionInterface
+{
+    /**
+     * Returns the request.
+     *
+     * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
+     *
+     * @return RequestInterface
+     */
+    public function getRequest(): RequestInterface;
+}
+</code></pre>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

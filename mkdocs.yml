@@ -1,0 +1,13 @@
+site_name: 'PHP Standard Recommendations'
+theme: material
+extra_css:
+    - //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css
+extra_javascript:
+    - https://code.jquery.com/jquery-3.2.1.min.js
+    - //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js
+    - js/init.js
+nav:
+    - PHP Standard Recommendations: index.md
+    - Accepted:
+          - Autoloading Standard: accepted/PSR-0.md
+    - License: LICENSE.md

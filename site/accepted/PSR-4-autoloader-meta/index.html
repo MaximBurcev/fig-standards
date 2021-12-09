@@ -1,0 +1,768 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR-4 Meta Document - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#psr-4-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR-4 Meta Document
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-summary" class="md-nav__link">
+    1. Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-why-bother" class="md-nav__link">
+    2. Why Bother?
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Why Bother?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#history-of-psr-0" class="md-nav__link">
+    History of PSR-0
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#along-comes-composer" class="md-nav__link">
+    Along Comes Composer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-oriented-autoloading" class="md-nav__link">
+    Package-Oriented Autoloading
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scope" class="md-nav__link">
+    3. Scope
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-goals" class="md-nav__link">
+    3.1 Goals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-non-goals" class="md-nav__link">
+    3.2 Non-Goals
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-approaches" class="md-nav__link">
+    4. Approaches
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-chosen-approach" class="md-nav__link">
+    4.1 Chosen Approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-alternative-stay-with-psr-0-only" class="md-nav__link">
+    4.2 Alternative: Stay With PSR-0 Only
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-alternative-split-up-autoloading-and-transformation" class="md-nav__link">
+    4.3 Alternative: Split Up Autoloading And Transformation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-alternative-use-more-imperative-and-narrative-language" class="md-nav__link">
+    4.4 Alternative: Use More Imperative And Narrative Language
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compatibility-note-with-php-532-and-below" class="md-nav__link">
+    Compatibility Note with PHP 5.3.2 and below
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-people" class="md-nav__link">
+    5. People
+  </a>
+  
+    <nav class="md-nav" aria-label="5. People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-editor" class="md-nav__link">
+    5.1 Editor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sponsors" class="md-nav__link">
+    5.2 Sponsors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-contributors" class="md-nav__link">
+    5.3 Contributors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-votes" class="md-nav__link">
+    6. Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-relevant-links" class="md-nav__link">
+    7. Relevant Links
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="psr-4-meta-document">PSR-4 Meta Document</h1>
+<h2 id="1-summary">1. Summary</h2>
+<p>The purpose is to specify the rules for an interoperable PHP autoloader that
+maps namespaces to file system paths, and that can co-exist with any other SPL
+registered autoloader.  This would be an addition to, not a replacement for,
+PSR-0.</p>
+<h2 id="2-why-bother">2. Why Bother?</h2>
+<h3 id="history-of-psr-0">History of PSR-0</h3>
+<p>The PSR-0 class naming and autoloading standard rose out of the broad
+acceptance of the Horde/PEAR convention under the constraints of PHP 5.2 and
+previous. With that convention, the tendency was to put all PHP source classes
+in a single main directory, using underscores in the class name to indicate
+pseudo-namespaces, like so:</p>
+<pre><code>/path/to/src/
+    VendorFoo/
+        Bar/
+            Baz.php     # VendorFoo_Bar_Baz
+    VendorDib/
+        Zim/
+            Gir.php     # Vendor_Dib_Zim_Gir
+</code></pre>
+<p>With the release of PHP 5.3 and the availability of namespaces proper, PSR-0
+was introduced to allow both the old Horde/PEAR underscore mode <em>and</em> the use
+of the new namespace notation. Underscores were still allowed in the class
+name to ease the transition from the older namespace naming to the newer naming,
+and thereby to encourage wider adoption.</p>
+<pre><code>/path/to/src/
+    VendorFoo/
+        Bar/
+            Baz.php     # VendorFoo_Bar_Baz
+    VendorDib/
+        Zim/
+            Gir.php     # VendorDib_Zim_Gir
+    Irk_Operation/
+        Impending_Doom/
+            V1.php
+            V2.php      # Irk_Operation\Impending_Doom\V2
+</code></pre>
+<p>This structure is informed very much by the fact that the PEAR installer moved
+source files from PEAR packages into a single central directory.</p>
+<h3 id="along-comes-composer">Along Comes Composer</h3>
+<p>With Composer, package sources are no longer copied to a single global
+location. They are used from their installed location and are not moved
+around. This means that with Composer there is no "single main directory" for
+PHP sources as with PEAR. Instead, there are multiple directories; each
+package is in a separate directory for each project.</p>
+<p>To meet the requirements of PSR-0, this leads to Composer packages looking
+like this:</p>
+<pre><code>vendor/
+    vendor_name/
+        package_name/
+            src/
+                Vendor_Name/
+                    Package_Name/
+                        ClassName.php       # Vendor_Name\Package_Name\ClassName
+            tests/
+                Vendor_Name/
+                    Package_Name/
+                        ClassNameTest.php   # Vendor_Name\Package_Name\ClassNameTest
+</code></pre>
+<p>The "src" and "tests" directories have to include vendor and package directory
+names. This is an artifact of PSR-0 compliance.</p>
+<p>Many find this structure to be deeper and more repetitive than necessary. This
+proposal suggests that an additional or superseding PSR would be useful so
+that we can have packages that look more like the following:</p>
+<pre><code>vendor/
+    vendor_name/
+        package_name/
+            src/
+                ClassName.php       # Vendor_Name\Package_Name\ClassName
+            tests/
+                ClassNameTest.php   # Vendor_Name\Package_Name\ClassNameTest
+</code></pre>
+<p>This would require an implementation of what was initially called
+"package-oriented autoloading" (as vs the traditional "direct class-to-file
+autoloading").</p>
+<h3 id="package-oriented-autoloading">Package-Oriented Autoloading</h3>
+<p>It's difficult to implement package-oriented autoloading via an extension or
+amendment to PSR-0, because PSR-0 does not allow for an intercessory path
+between any portions of the class name. This means the implementation of a
+package-oriented autoloader would be more complicated than PSR-0. However, it
+would allow for cleaner packages.</p>
+<p>Initially, the following rules were suggested:</p>
+<ol>
+<li>
+<p>Implementors MUST use at least two namespace levels: a vendor name, and
+package name within that vendor. (This top-level two-name combination is
+hereinafter referred to as the vendor-package name or the vendor-package
+namespace.)</p>
+</li>
+<li>
+<p>Implementors MUST allow a path infix between the vendor-package namespace
+and the remainder of the fully qualified class name.</p>
+</li>
+<li>
+<p>The vendor-package namespace MAY map to any directory. The remaining
+portion of the fully-qualified class name MUST map the namespace names to
+identically-named directories, and MUST map the class name to an
+identically-named file ending in .php.</p>
+</li>
+</ol>
+<p>Note that this means the end of underscore-as-directory-separator in the class
+name. One might think underscores should be honored as they are under
+PSR-0, but seeing as their presence in that document is in reference to
+transitioning away from PHP 5.2 and previous pseudo-namespacing, it is
+acceptable to remove them here as well.</p>
+<h2 id="3-scope">3. Scope</h2>
+<h3 id="31-goals">3.1 Goals</h3>
+<ul>
+<li>
+<p>Retain the PSR-0 rule that implementors MUST use at least two namespace
+  levels: a vendor name, and package name within that vendor.</p>
+</li>
+<li>
+<p>Allow a path infix between the vendor-package namespace and the remainder of
+  the fully qualified class name.</p>
+</li>
+<li>
+<p>Allow the vendor-package namespace MAY map to any directory, perhaps
+  multiple directories.</p>
+</li>
+<li>
+<p>End the honoring of underscores in class names as directory separators</p>
+</li>
+</ul>
+<h3 id="32-non-goals">3.2 Non-Goals</h3>
+<ul>
+<li>Provide a general transformation algorithm for non-class resources</li>
+</ul>
+<h2 id="4-approaches">4. Approaches</h2>
+<h3 id="41-chosen-approach">4.1 Chosen Approach</h3>
+<p>This approach retains key characteristics of PSR-0 while eliminating the
+deeper directory structures it requires. In addition, it specifies certain
+additional rules that make implementations explicitly more interoperable.</p>
+<p>Although not related to directory mapping, the final draft also specifies how
+autoloaders should handle errors.  Specifically, it forbids throwing exceptions
+or raising errors.  The reason is two-fold.</p>
+<ol>
+<li>
+<p>Autoloaders in PHP are explicitly designed to be stackable so that if one
+autoloader cannot load a class another has a chance to do so. Having an autoloader
+trigger a breaking error condition violates that compatibility.</p>
+</li>
+<li>
+<p><code>class_exists()</code> and <code>interface_exists()</code> allow "not found, even after trying to
+autoload" as a legitimate, normal use case. An autoloader that throws exceptions
+renders <code>class_exists()</code> unusable, which is entirely unacceptable from an interoperability
+standpoint.  Autoloaders that wish to provide additional debugging information
+in a class-not-found case should do so via logging instead, either to a PSR-3
+compatible logger or otherwise.</p>
+</li>
+</ol>
+<p>Pros:</p>
+<ul>
+<li>
+<p>Shallower directory structures</p>
+</li>
+<li>
+<p>More flexible file locations</p>
+</li>
+<li>
+<p>Stops underscore in class name from being honored as directory separator</p>
+</li>
+<li>
+<p>Makes implementations more explicitly interoperable</p>
+</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>It is no longer possible, as under PSR-0, to merely examine a class name to
+  determine where it is in the file system (the "class-to-file" convention
+  inherited from Horde/PEAR).</li>
+</ul>
+<h3 id="42-alternative-stay-with-psr-0-only">4.2 Alternative: Stay With PSR-0 Only</h3>
+<p>Staying with PSR-0 only, although reasonable, does leave us with relatively
+deeper directory structures.</p>
+<p>Pros:</p>
+<ul>
+<li>No need to change anyone's habits or implementations</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>
+<p>Leaves us with deeper directory structures</p>
+</li>
+<li>
+<p>Leaves us with underscores in the class name being honored as directory
+  separators</p>
+</li>
+</ul>
+<h3 id="43-alternative-split-up-autoloading-and-transformation">4.3 Alternative: Split Up Autoloading And Transformation</h3>
+<p>Beau Simensen and others suggested that the transformation algorithm might be
+split out from the autoloading proposal so that the transformation rules
+could be referenced by other proposals. After doing the work to separate them,
+followed by a poll and some discussion, the combined version (i.e.,
+transformation rules embedded in the autoloader proposal) was revealed as the
+preference.</p>
+<p>Pros:</p>
+<ul>
+<li>Transformation rules could be referenced separately by other proposals</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>Not in line with the wishes of poll respondents and some collaborators</li>
+</ul>
+<h3 id="44-alternative-use-more-imperative-and-narrative-language">4.4 Alternative: Use More Imperative And Narrative Language</h3>
+<p>After the second vote was pulled by a Sponsor after hearing from multiple +1
+voters that they supported the idea but did not agree with (or understand) the
+wording of the proposal, there was a period during which the voted-on proposal
+was expanded with greater narrative and somewhat more imperative language. This
+approach was decried by a vocal minority of participants. After some time, Beau
+Simensen started an experimental revision with an eye to PSR-0; the Editor and
+Sponsors favored this more terse approach and shepherded the version now under
+consideration, written by Paul M. Jones and contributed to by many.</p>
+<h3 id="compatibility-note-with-php-532-and-below">Compatibility Note with PHP 5.3.2 and below</h3>
+<p>PHP versions before 5.3.3 do not strip the leading namespace separator, so
+the responsibility to look out for this falls on the implementation. Failing
+to strip the leading namespace separator could lead to unexpected behavior.</p>
+<h2 id="5-people">5. People</h2>
+<h3 id="51-editor">5.1 Editor</h3>
+<ul>
+<li>Paul M. Jones, Solar/Aura</li>
+</ul>
+<h3 id="52-sponsors">5.2 Sponsors</h3>
+<ul>
+<li>Phil Sturgeon, PyroCMS (Coordinator)</li>
+<li>Larry Garfield, Drupal</li>
+</ul>
+<h3 id="53-contributors">5.3 Contributors</h3>
+<ul>
+<li>Andreas Hennings</li>
+<li>Bernhard Schussek</li>
+<li>Beau Simensen</li>
+<li>Donald Gilbert</li>
+<li>Mike van Riel</li>
+<li>Paul Dragoonis</li>
+<li>Too many others to name and count</li>
+</ul>
+<h2 id="6-votes">6. Votes</h2>
+<ul>
+<li>
+<p><strong>Entrance Vote:</strong> <a href="https://groups.google.com/d/msg/php-fig/_LYBgfcEoFE/ZwFTvVTIl4AJ">https://groups.google.com/d/msg/php-fig/_LYBgfcEoFE/ZwFTvVTIl4AJ</a></p>
+</li>
+<li>
+<p><strong>Acceptance Vote:</strong></p>
+<ul>
+<li>
+<p>1st attempt: <a href="https://groups.google.com/forum/#!topic/php-fig/Ua46E344_Ls">https://groups.google.com/forum/#!topic/php-fig/Ua46E344_Ls</a>,
+  presented prior to new workflow; aborted due to accidental proposal modification</p>
+</li>
+<li>
+<p>2nd attempt: <a href="https://groups.google.com/forum/#!topic/php-fig/NWfyAeF7Psk">https://groups.google.com/forum/#!topic/php-fig/NWfyAeF7Psk</a>,
+  cancelled at the discretion of the sponsor <a href="https://groups.google.com/forum/#!topic/php-fig/t4mW2TQF7iE">https://groups.google.com/forum/#!topic/php-fig/t4mW2TQF7iE</a></p>
+</li>
+<li>
+<p>3rd attempt: TBD</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="7-relevant-links">7. Relevant Links</h2>
+<ul>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/lpmJcmkNYjM">Autoloader, round 4</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/fGwA6XHlYhI">POLL: Autoloader: Split or Combined?</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/kUbzJAbHxmg">PSR-X autoloader spec: Loopholes, ambiguities</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/422dFBGs1Yc">Autoloader: Combine Proposals?</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/Y4xc71Q3YEQ">Package-Oriented Autoloader, Round 2</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/bnoiTxE8L28">Autoloader: looking again at namespace</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/SJTL1ec46II">DISCUSSION: Package-Oriented Autoloader - vote against</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/Ua46E344_Ls">VOTE: Package-Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!topicsearchin/php-fig/autoload/php-fig/qT7mEy0RIuI">Proposal: Package-Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!searchin/php-fig/package$20oriented$20autoloader/php-fig/JdR-g8ZxKa8/jJr80ard-ekJ">Towards a Package Oriented Autoloader</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/php-fig/oXr-2TU1lQY">List of Alternative PSR-4 Proposals</a></li>
+<li><a href="https://groups.google.com/forum/#!searchin/php-fig/psr-4$20summary/php-fig/bSTwUX58NhE/YPcFgBjwvpEJ">Summary of [post-Acceptance Vote pull] PSR-4 discussions</a></li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

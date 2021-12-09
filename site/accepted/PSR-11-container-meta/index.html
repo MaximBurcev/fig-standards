@@ -1,0 +1,882 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Container Meta Document - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#container-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Container Meta Document
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    1. Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-why-bother" class="md-nav__link">
+    2. Why bother?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scope" class="md-nav__link">
+    3. Scope
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-goals" class="md-nav__link">
+    3.1. Goals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-non-goals" class="md-nav__link">
+    3.2. Non-goals
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-recommended-usage-container-psr-and-the-service-locator" class="md-nav__link">
+    4. Recommended usage: Container PSR and the Service Locator
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-history" class="md-nav__link">
+    5. History
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-interface-name" class="md-nav__link">
+    6. Interface name
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-interface-methods" class="md-nav__link">
+    7. Interface methods
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Interface methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-number-of-parameters-in-get-method" class="md-nav__link">
+    7.1. Number of parameters in get() method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-type-of-the-id-parameter" class="md-nav__link">
+    7.2. Type of the $id parameter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-exceptions-thrown" class="md-nav__link">
+    7.3. Exceptions thrown
+  </a>
+  
+    <nav class="md-nav" aria-label="7.3. Exceptions thrown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#731-base-exception" class="md-nav__link">
+    7.3.1 Base exception
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#732-not-found-exception" class="md-nav__link">
+    7.3.2 Not found exception
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-implementations" class="md-nav__link">
+    8. Implementations
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Implementations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#implementors" class="md-nav__link">
+    Implementors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#middleware" class="md-nav__link">
+    Middleware
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumers" class="md-nav__link">
+    Consumers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-people" class="md-nav__link">
+    9. People
+  </a>
+  
+    <nav class="md-nav" aria-label="9. People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-editors" class="md-nav__link">
+    9.1 Editors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-sponsors" class="md-nav__link">
+    9.2 Sponsors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-contributors" class="md-nav__link">
+    9.3 Contributors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-relevant-links" class="md-nav__link">
+    10. Relevant links
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-errata" class="md-nav__link">
+    11. Errata
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-additions" class="md-nav__link">
+    Type additions
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="container-meta-document">Container Meta Document</h1>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>This document describes the process and discussions that led to the Container PSR.
+Its goal is to explain the reasons behind each decision.</p>
+<h2 id="2-why-bother">2. Why bother?</h2>
+<p>There are dozens of dependency injection containers out there, and these
+DI containers have very different ways to store entries.</p>
+<ul>
+<li>Some are based on callbacks (Pimple, Laravel, ...)</li>
+<li>Others are based on configuration (Symfony, ZF, ...), with various formats
+  (PHP arrays, YAML files, XML files...)</li>
+<li>Some can leverage factories...</li>
+<li>Some have a PHP API to build entries (PHP-DI, ZF, Symfony, Mouf...)</li>
+<li>Some can do auto-wiring (Laravel, PHP-DI, ...)</li>
+<li>Others can wire entries based on annotations (PHP-DI, JMS Bundle...)</li>
+<li>Some have a graphical user interface (Mouf...)</li>
+<li>Some can compile configuration files to PHP classes (Symfony, ZF...)</li>
+<li>Some can do aliasing...</li>
+<li>Some can use proxies to provide lazy loading of dependencies...</li>
+</ul>
+<p>So when you look at the big picture, there is a very large number of ways in
+which the DI problem can be tackled, and therefore a big number of different
+implementations. However, all the DI containers out there are answering the
+same need: they offer a way for the application to retrieve a set of
+configured objects (usually services).</p>
+<p>By standardizing the way entries are fetched from a container, frameworks and
+libraries using the Container PSR could work with any compatible container.
+That would allow end users to choose their own container based on their own preferences.</p>
+<h2 id="3-scope">3. Scope</h2>
+<h3 id="31-goals">3.1. Goals</h3>
+<p>The goal set by the Container PSR is to standardize how frameworks and libraries make use of a
+container to obtain objects and parameters.</p>
+<p>It is important to distinguish the two usages of a container:</p>
+<ul>
+<li>configuring entries</li>
+<li>fetching entries</li>
+</ul>
+<p>Most of the time, those two sides are not used by the same party.
+While it is often end users who tend to configure entries, it is generally the framework that fetches
+entries to build the application.</p>
+<p>This is why this interface focuses only on how entries can be fetched from a container.</p>
+<h3 id="32-non-goals">3.2. Non-goals</h3>
+<p>How entries are set in the container and how they are configured is out of the
+scope of this PSR. This is what makes a container implementation unique. Some
+containers have no configuration at all (they rely on autowiring), others rely
+on PHP code defined via callback, others on configuration files... This standard
+only focuses on how entries are fetched.</p>
+<p>Also, naming conventions used for entries are not part of the scope of this
+PSR. Indeed, when you look at naming conventions, there are 2 strategies:</p>
+<ul>
+<li>the identifier is the class name, or an interface name (used mostly
+  by frameworks with an autowiring capability)</li>
+<li>the identifier is a common name (closer to a variable name), which is
+  mostly used by frameworks relying on configuration.</li>
+</ul>
+<p>Both strategies have their strengths and weaknesses. The goal of this PSR
+is not to choose one convention over the other. Instead, the user can simply
+use aliasing to bridge the gap between 2 containers with different naming strategies.</p>
+<h2 id="4-recommended-usage-container-psr-and-the-service-locator">4. Recommended usage: Container PSR and the Service Locator</h2>
+<p>The PSR states that:</p>
+<blockquote>
+<p>"users SHOULD NOT pass a container into an object, so the object
+can retrieve <em>its own dependencies</em>. Users doing so are using the container as a Service Locator.
+Service Locator usage is generally discouraged."</p>
+</blockquote>
+<pre><code class="language-php">// This is not OK, you are using the container as a service locator
+class BadExample
+{
+    public function __construct(ContainerInterface $container)
+    {
+        $this-&gt;db = $container-&gt;get('db');
+    }
+}
+
+// Instead, please consider injecting directly the dependencies
+class GoodExample
+{
+    public function __construct($db)
+    {
+        $this-&gt;db = $db;
+    }
+}
+// You can then use the container to inject the $db object into your $goodExample object.
+</code></pre>
+<p>In the <code>BadExample</code> you should not inject the container because:</p>
+<ul>
+<li>it makes the code <strong>less interoperable</strong>: by injecting the container, you have
+  to use a container compatible with the Container PSR. With the other
+  option, your code can work with ANY container.</li>
+<li>you are forcing the developer into naming its entry "db". This naming could
+  conflict with another package that has the same expectations for another service.</li>
+<li>it is harder to test.</li>
+<li>it is not directly clear from your code that the <code>BadExample</code> class will need
+  the "db" service. Dependencies are hidden.</li>
+</ul>
+<p>Very often, the <code>ContainerInterface</code> will be used by other packages. As a end-user
+PHP developer using a framework, it is unlikely you will ever need to use containers
+or type-hint on the <code>ContainerInterface</code> directly.</p>
+<p>Whether using the Container PSR into your code is considered a good practice or not boils down to
+knowing if the objects you are retrieving are <strong>dependencies</strong> of the object referencing
+the container or not. Here are a few more examples:</p>
+<pre><code class="language-php">class RouterExample
+{
+    // ...
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this-&gt;container = $container;
+    }
+
+    public function getRoute($request)
+    {
+        $controllerName = $this-&gt;getContainerEntry($request-&gt;getUrl());
+        // This is OK, the router is finding the matching controller entry, the controller is
+        // not a dependency of the router
+        $controller = $this-&gt;container-&gt;get($controllerName);
+        // ...
+    }
+}
+</code></pre>
+<p>In this example, the router is transforming the URL into a controller entry name,
+then fetches the controller from the container. A controller is not really a
+dependency of the router. As a rule of thumb, if your object is <em>computing</em>
+the entry name among a list of entries that can vary, your use case is certainly legitimate.</p>
+<p>As an exception, factory objects whose only purpose is to create and return new instances may use
+the service locator pattern. The factory must then implement an interface so that it can itself
+be replaced by another factory using the same interface.</p>
+<pre><code class="language-php">// ok: a factory interface + implementation to create an object
+interface FactoryInterface
+{
+    public function newInstance();
+}
+
+class ExampleFactory implements FactoryInterface
+{
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this-&gt;container = $container;
+    }
+
+    public function newInstance()
+    {
+        return new Example($this-&gt;container-&gt;get('db'));
+    }
+}
+</code></pre>
+<h2 id="5-history">5. History</h2>
+<p>Before submitting the Container PSR to the PHP-FIG, the <code>ContainerInterface</code> was
+first proposed in a project named <a href="https://github.com/container-interop/container-interop/">container-interop</a>.
+The goal of the project was to provide a test-bed for implementing the <code>ContainerInterface</code>,
+and to pave the way for the Container PSR.</p>
+<p>In the rest of this meta document, you will see frequent references to
+<code>container-interop.</code></p>
+<h2 id="6-interface-name">6. Interface name</h2>
+<p>The interface name is the same as the one discussed for <code>container-interop</code>
+(only the namespace is changed to match the other PSRs).
+It has been thoroughly discussed on <code>container-interop</code> <a href="#link_naming_discussion">[4]</a> and was decided by a vote <a href="#link_naming_vote">[5]</a>.</p>
+<p>The list of options considered with their respective votes are:</p>
+<ul>
+<li><code>ContainerInterface</code>: +8</li>
+<li><code>ProviderInterface</code>: +2</li>
+<li><code>LocatorInterface</code>: 0</li>
+<li><code>ReadableContainerInterface</code>: -5</li>
+<li><code>ServiceLocatorInterface</code>: -6</li>
+<li><code>ObjectFactory</code>: -6</li>
+<li><code>ObjectStore</code>: -8</li>
+<li><code>ConsumerInterface</code>: -9</li>
+</ul>
+<h2 id="7-interface-methods">7. Interface methods</h2>
+<p>The choice of which methods the interface would contain was made after a statistical analysis of existing containers. <a href="#link_statistical_analysis">[6]</a>.</p>
+<p>The summary of the analysis showed that:</p>
+<ul>
+<li>all containers offer a method to get an entry by its id</li>
+<li>a large majority name such method <code>get()</code></li>
+<li>for all containers, the <code>get()</code> method has 1 mandatory parameter of type string</li>
+<li>some containers have an optional additional argument for <code>get()</code>, but it doesn't have the same purpose between containers</li>
+<li>a large majority of the containers offer a method to test if it can return an entry by its id</li>
+<li>a majority name such method <code>has()</code></li>
+<li>for all containers offering <code>has()</code>, the method has exactly 1 parameter of type string</li>
+<li>a large majority of the containers throw an exception rather than returning null when an entry is not found in <code>get()</code></li>
+<li>a large majority of the containers don't implement <code>ArrayAccess</code></li>
+</ul>
+<p>The question of whether to include methods to define entries has been discussed at the very start of the container-interop project <a href="#link_naming_discussion">[4]</a>.
+It has been judged that such methods do not belong in the interface described here because it is out of its scope
+(see the "Goal" section).</p>
+<p>As a result, the <code>ContainerInterface</code> contains two methods:</p>
+<ul>
+<li><code>get()</code>, returning anything, with one mandatory string parameter. Should throw an exception if the entry is not found.</li>
+<li><code>has()</code>, returning a boolean, with one mandatory string parameter.</li>
+</ul>
+<h3 id="71-number-of-parameters-in-get-method">7.1. Number of parameters in <code>get()</code> method</h3>
+<p>While <code>ContainerInterface</code> only defines one mandatory parameter in <code>get()</code>, it is not incompatible with
+existing containers that have additional optional parameters. PHP allows an implementation to offer more parameters
+as long as they are optional, because the implementation <em>does</em> satisfy the interface.</p>
+<p>Difference with container-interop: <a href="https://github.com/container-interop/container-interop/blob/master/docs/ContainerInterface.md">The container-interop spec</a> stated that:</p>
+<blockquote>
+<p>While <code>ContainerInterface</code> only defines one mandatory parameter in <code>get()</code>, implementations MAY accept additional optional parameters.</p>
+</blockquote>
+<p>This sentence was removed from PSR-11 because:</p>
+<ul>
+<li>It is something that stems from OO principles in PHP, so this is not directly related to PSR-11</li>
+<li>We do not want to encourage implementors to add additional parameters as we recommend coding against the interface and not the implementation</li>
+</ul>
+<p>However, some implementations have extra optional parameters; that's technically legal. Such implementations are compatible with PSR-11. <a href="#link_get_optional_parameters">[11]</a></p>
+<h3 id="72-type-of-the-id-parameter">7.2. Type of the <code>$id</code> parameter</h3>
+<p>The type of the <code>$id</code> parameter in <code>get()</code> and <code>has()</code> has been discussed in the container-interop project.</p>
+<p>While <code>string</code> is used in all the containers that were analyzed, it was suggested that allowing
+anything (such as objects) could allow containers to offer a more advanced query API.</p>
+<p>An example given was to use the container as an object builder. The <code>$id</code> parameter would then be an
+object that would describe how to create an instance.</p>
+<p>The conclusion of the discussion <a href="#link_method_and_parameters_details">[7]</a> was that this was beyond the scope of getting entries from a container without
+knowing how the container provided them, and it was more fit for a factory.</p>
+<h3 id="73-exceptions-thrown">7.3. Exceptions thrown</h3>
+<p>This PSR provides 2 interfaces meant to be implemented by container exceptions.</p>
+<h4 id="731-base-exception">7.3.1 Base exception</h4>
+<p>The <code>Psr\Container\ContainerExceptionInterface</code> is the base interface. It SHOULD be implemented by custom exceptions thrown directly by the container.</p>
+<p>It is expected that any exception that is part of the domain of the container implements the <code>ContainerExceptionInterface</code>. A few examples:</p>
+<ul>
+<li>if a container relies on a configuration file and if that configuration file is flawed, the container might throw an <code>InvalidFileException</code> implementing the <code>ContainerExceptionInterface</code>.</li>
+<li>if a cyclic dependency is detected between dependencies, the container might throw an <code>CyclicDependencyException</code> implementing the <code>ContainerExceptionInterface</code>.</li>
+</ul>
+<p>However, if the exception is thrown by some code out of the container's scope (for instance an exception thrown while instantiating an entry), the container is not required to wrap this exception in a custom exception implementing the <code>ContainerExceptionInterface</code>.</p>
+<p>The usefulness of the base exception interface was questioned: it is not an exception one would typically catch <a href="#link_base_exception_usefulness">[8]</a>.</p>
+<p>However, most PHP-FIG members considered it to be a best practice. Base exception interface are implemented in previous PSRs and several member projects. The base exception interface was therefore kept.</p>
+<h4 id="732-not-found-exception">7.3.2 Not found exception</h4>
+<p>A call to the <code>get</code> method with a non-existing id must throw an exception implementing the <code>Psr\Container\NotFoundExceptionInterface</code>.</p>
+<p>For a given identifier:</p>
+<ul>
+<li>if the <code>has</code> method returns <code>false</code>, then the <code>get</code> method MUST throw a <code>Psr\Container\NotFoundExceptionInterface</code>.</li>
+<li>if the <code>has</code> method returns <code>true</code>, this does not mean that the <code>get</code> method will succeed and throw no exception. It can even throw a <code>Psr\Container\NotFoundExceptionInterface</code> if one of the dependencies of the requested entry is missing.</li>
+</ul>
+<p>Therefore, when a user catches the <code>Psr\Container\NotFoundExceptionInterface</code>, it has 2 possible meanings <a href="#link_not_found_behaviour">[9]</a>:</p>
+<ul>
+<li>the requested entry does not exist (bad request)</li>
+<li>or a dependency of the requested entry does not exist (i.e. the container is misconfigured)</li>
+</ul>
+<p>The user can however easily make a distinction with a call to <code>has</code>.</p>
+<p>In pseudo-code:</p>
+<pre><code class="language-php">if (!$container-&gt;has($id)) {
+    // The requested instance does not exist
+    return;
+}
+try {
+    $entry = $container-&gt;get($id);
+} catch (NotFoundExceptionInterface $e) {
+    // Since the requested entry DOES exist, a NotFoundExceptionInterface means that the container is misconfigured and a dependency is missing.
+}
+</code></pre>
+<h2 id="8-implementations">8. Implementations</h2>
+<p>At the time of writing, the following projects already implement and/or consume the <code>container-interop</code> version of the interface.</p>
+<h3 id="implementors">Implementors</h3>
+<ul>
+<li><a href="https://github.com/jeremeamia/acclimate-container">Acclimate</a></li>
+<li><a href="https://github.com/auraphp/Aura.Di">Aura.DI</a></li>
+<li><a href="https://github.com/estelsmith/dcp-di">dcp-di</a></li>
+<li><a href="https://github.com/thephpleague/container">League Container</a></li>
+<li><a href="http://mouf-php.com">Mouf</a></li>
+<li><a href="https://github.com/njasm/container">Njasm Container</a></li>
+<li><a href="http://php-di.org">PHP-DI</a></li>
+<li><a href="https://github.com/moufmouf/pimple-interop">PimpleInterop</a></li>
+<li><a href="https://github.com/jeremeamia/xstatic">XStatic</a></li>
+<li><a href="https://github.com/zendframework/zend-servicemanager">Zend ServiceManager</a></li>
+</ul>
+<h3 id="middleware">Middleware</h3>
+<ul>
+<li><a href="https://github.com/thecodingmachine/alias-container">Alias-Container</a></li>
+<li><a href="https://github.com/thecodingmachine/prefixer-container">Prefixer-Container</a></li>
+</ul>
+<h3 id="consumers">Consumers</h3>
+<ul>
+<li><a href="https://github.com/Behat/Behat">Behat</a></li>
+<li><a href="https://github.com/thecodingmachine/interop.silex.di">interop.silex.di</a></li>
+<li><a href="https://github.com/mindplay-dk/middleman">mindplay/middleman</a></li>
+<li><a href="https://github.com/PHP-DI/Invoker">PHP-DI Invoker</a></li>
+<li><a href="https://github.com/fabfuel/prophiler">Prophiler</a></li>
+<li><a href="https://github.com/mnapoli/silly">Silly</a></li>
+<li><a href="https://github.com/slimphp/Slim">Slim</a></li>
+<li><a href="http://mouf-php.com/packages/mouf/mvc.splash-common/version/8.0-dev/README.md">Splash</a></li>
+<li><a href="https://github.com/zendframework/zend-expressive">Zend Expressive</a></li>
+</ul>
+<p>This list is not comprehensive and should be only taken as an example showing that there is considerable interest in the PSR.</p>
+<h2 id="9-people">9. People</h2>
+<h3 id="91-editors">9.1 Editors</h3>
+<ul>
+<li><a href="https://github.com/mnapoli">Matthieu Napoli</a></li>
+<li><a href="https://github.com/moufmouf">David Négrier</a></li>
+</ul>
+<h3 id="92-sponsors">9.2 Sponsors</h3>
+<ul>
+<li><a href="https://github.com/weierophinney">Matthew Weier O'Phinney</a> (Coordinator)</li>
+<li><a href="https://github.com/KorvinSzanto">Korvin Szanto</a></li>
+</ul>
+<h3 id="93-contributors">9.3 Contributors</h3>
+<p>Are listed here all people that contributed in the discussions or votes (on container-interop and during migration to PSR-11), by alphabetical order:</p>
+<ul>
+<li><a href="https://github.com/drealecs">Alexandru Pătrănescu</a></li>
+<li><a href="https://github.com/AmyStephen">Amy Stephen</a></li>
+<li><a href="https://github.com/potherca">Ben Peachey</a></li>
+<li><a href="https://github.com/moufmouf">David Négrier</a></li>
+<li><a href="https://github.com/dongilbert">Don Gilbert</a></li>
+<li><a href="https://github.com/judgej">Jason Judge</a></li>
+<li><a href="https://github.com/jeremeamia">Jeremy Lindblom</a></li>
+<li><a href="https://github.com/crell">Larry Garfield</a></li>
+<li><a href="https://github.com/Ocramius">Marco Pivetta</a></li>
+<li><a href="https://github.com/mnapoli">Matthieu Napoli</a></li>
+<li><a href="https://github.com/njasm">Nelson J Morais</a></li>
+<li><a href="https://github.com/pmjones">Paul M. Jones</a></li>
+<li><a href="https://github.com/philsturgeon">Phil Sturgeon</a></li>
+<li><a href="https://github.com/shochdoerfer">Stephan Hochdörfer</a></li>
+<li><a href="https://github.com/taylorotwell">Taylor Otwell</a></li>
+</ul>
+<h2 id="10-relevant-links">10. Relevant links</h2>
+<ol>
+<li><a href="https://groups.google.com/forum/#!topic/php-fig/pyTXRvLGpsw">Discussion about the container PSR and the service locator</a></li>
+<li><a href="https://github.com/container-interop/container-interop/blob/master/src/Interop/Container/ContainerInterface.php">Container-interop's <code>ContainerInterface.php</code></a></li>
+<li><a href="https://github.com/container-interop/container-interop/issues?labels=ContainerInterface&amp;milestone=&amp;page=1&amp;state=closed">List of all issues</a></li>
+<li><a name="link_naming_discussion"></a><a href="https://github.com/container-interop/container-interop/issues/1">Discussion about the interface name and container-interop scope</a></li>
+<li><a name="link_naming_vote"></a><a href="https://github.com/container-interop/container-interop/wiki/%231-interface-name:-Vote">Vote for the interface name</a></li>
+<li><a name="link_statistical_analysis"></a><a href="https://gist.github.com/mnapoli/6159681">Statistical analysis of existing containers method names</a></li>
+<li><a name="link_method_and_parameters_details"></a><a href="https://github.com/container-interop/container-interop/issues/6">Discussion about the method names and parameters</a></li>
+<li><a name="link_base_exception_usefulness"></a><a href="https://groups.google.com/forum/#!topic/php-fig/_vdn5nLuPBI">Discussion about the usefulness of the base exception</a></li>
+<li><a name="link_not_found_behaviour"></a><a href="https://groups.google.com/forum/#!topic/php-fig/I1a2Xzv9wN8">Discussion about the <code>NotFoundExceptionInterface</code></a></li>
+<li><a name="link_get_optional_parameters"></a>Discussion about get optional parameters <a href="https://github.com/container-interop/container-interop/issues/6">in container-interop</a> and on the <a href="https://groups.google.com/forum/#!topic/php-fig/zY6FAG4-oz8">PHP-FIG mailing list</a></li>
+</ol>
+<h2 id="11-errata">11. Errata</h2>
+<h2 id="type-additions">Type additions</h2>
+<p>The 1.1 release of the <code>psr/container</code> package includes scalar parameter types. The
+2.0 release of the package includes return types. This structure leverages PHP
+7.2 covariance support to allow for a gradual upgrade process.</p>
+<p>Implementers MAY add return types to their own packages at their discretion,
+provided that:</p>
+<ul>
+<li>the return types match those in the 2.0 package.</li>
+<li>the implementation specifies a minimum PHP version of 7.2.0 or later.</li>
+</ul>
+<p>Implementers MAY add parameter types to their own packages in a new major
+release, either at the same time as adding return types or in a subsequent
+release, provided that:</p>
+<ul>
+<li>the parameter types match those in the 1.1 package.</li>
+<li>the implementation specifies a minimum PHP version of 7.2.0.</li>
+<li>the implementation depends on <code>"psr/container": "^1.1 || ^2.0"</code> so as to exclude
+  the untyped 1.0 version.</li>
+</ul>
+<p>Implementers are encouraged but not required to transition their packages toward
+the 2.0 version of the package at their earliest convenience.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

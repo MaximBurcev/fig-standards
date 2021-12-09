@@ -1,0 +1,778 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PSR-Cache Meta Document - PHP Standard Recommendations</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#psr-cache-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            PHP Standard Recommendations
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PSR-Cache Meta Document
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    PHP Standard Recommendations
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        PHP Standard Recommendations
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+      
+      <label class="md-nav__link" for="nav-2">
+        Accepted
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
+        <label class="md-nav__title" for="nav-2">
+          <span class="md-nav__icon md-icon"></span>
+          Accepted
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-0/" class="md-nav__link">
+        Autoloading Standard
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-summary" class="md-nav__link">
+    1. Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-why-bother" class="md-nav__link">
+    2. Why Bother?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scope" class="md-nav__link">
+    3. Scope
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-goals" class="md-nav__link">
+    3.1 Goals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-non-goals" class="md-nav__link">
+    3.2 Non-Goals
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-approaches" class="md-nav__link">
+    4. Approaches
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-chosen-approach" class="md-nav__link">
+    4.1 Chosen Approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-alternative-weak-item-approach" class="md-nav__link">
+    4.2 Alternative: "Weak item" approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-alternative-naked-value-approach" class="md-nav__link">
+    4.3 Alternative: "Naked value" approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-alternative-arrayaccess-pool" class="md-nav__link">
+    4.4 Alternative: ArrayAccess Pool
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-people" class="md-nav__link">
+    5. People
+  </a>
+  
+    <nav class="md-nav" aria-label="5. People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-editor" class="md-nav__link">
+    5.1 Editor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sponsors" class="md-nav__link">
+    5.2 Sponsors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-votes" class="md-nav__link">
+    6. Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-relevant-links" class="md-nav__link">
+    7. Relevant Links
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-errata" class="md-nav__link">
+    8. Errata
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Errata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-handling-of-incorrect-datetime-values-in-expiresat" class="md-nav__link">
+    8.1 Handling of incorrect DateTime values in expiresAt()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-type-additions" class="md-nav__link">
+    8.2 Type additions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="psr-cache-meta-document">PSR-Cache Meta Document</h1>
+<h2 id="1-summary">1. Summary</h2>
+<p>Caching is a common way to improve the performance of any project, making
+caching libraries one of the most common features of many frameworks and
+libraries. This has lead to a situation where many libraries roll their own
+caching libraries, with various levels of functionality. These differences are
+causing developers to have to learn multiple systems which may or may not
+provide the functionality they need. In addition, the developers of caching
+libraries themselves face a choice between only supporting a limited number
+of frameworks or creating a large number of adapter classes.</p>
+<h2 id="2-why-bother">2. Why Bother?</h2>
+<p>A common interface for caching systems will solve these problems. Library and
+framework developers can count on the caching systems working the way they're
+expecting, while the developers of caching systems will only have to implement
+a single set of interfaces rather than a whole assortment of adapters.</p>
+<p>Moreover, the implementation presented here is designed for future extensibility.
+It allows a variety of internally-different but API-compatible implementations
+and offers a clear path for future extension by later PSRs or by specific
+implementers.</p>
+<p>Pros:
+* A standard interface for caching allows free-standing libraries to support
+caching of intermediary data without effort; they may simply (optionally) depend
+on this standard interface and leverage it without being concerned about
+implementation details.
+* Commonly developed caching libraries shared by multiple projects, even if
+they extend this interface, are likely to be more robust than a dozen separately
+developed implementations.</p>
+<p>Cons:
+* Any interface standardization runs the risk of stifling future innovation as
+being "not the Way It's Done(tm)".  However, we believe caching is a sufficiently
+commoditized problem space that the extension capability offered here mitigates
+any potential risk of stagnation.</p>
+<h2 id="3-scope">3. Scope</h2>
+<h3 id="31-goals">3.1 Goals</h3>
+<ul>
+<li>A common interface for basic and intermediate-level caching needs.</li>
+<li>A clear mechanism for extending the specification to support advanced features,
+both by future PSRs or by individual implementations. This mechanism must allow
+for multiple independent extensions without collision.</li>
+</ul>
+<h3 id="32-non-goals">3.2 Non-Goals</h3>
+<ul>
+<li>Architectural compatibility with all existing cache implementations.</li>
+<li>Advanced caching features such as namespacing or tagging that are used by a
+minority of users.</li>
+</ul>
+<h2 id="4-approaches">4. Approaches</h2>
+<h3 id="41-chosen-approach">4.1 Chosen Approach</h3>
+<p>This specification adopts a "repository model" or "data mapper" model for caching
+rather than the more traditional "expire-able key-value" model.  The primary
+reason is flexibility.  A simple key/value model is much more difficult to extend.</p>
+<p>The model here mandates the use of a CacheItem object, which represents a cache
+entry, and a Pool object, which is a given store of cached data.  Items are
+retrieved from the pool, interacted with, and returned to it.  While a bit more
+verbose at times it offers a good, robust, flexible approach to caching,
+especially in cases where caching is more involved than simply saving and
+retrieving a string.</p>
+<p>Most method names were chosen based on common practice and method names in a
+survey of member projects and other popular non-member systems.</p>
+<p>Pros:</p>
+<ul>
+<li>Flexible and extensible</li>
+<li>Allows a great deal of variation in implementation without violating the interface</li>
+<li>Does not implicitly expose object constructors as a pseudo-interface.</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>A bit more verbose than the naive approach</li>
+</ul>
+<p>Examples:</p>
+<p>Some common usage patterns are shown below.  These are non-normative but should
+demonstrate the application of some design decisions.</p>
+<pre><code class="language-php">/**
+ * Gets a list of available widgets.
+ *
+ * In this case, we assume the widget list changes so rarely that we want
+ * the list cached forever until an explicit clear.
+ */
+function get_widget_list()
+{
+    $pool = get_cache_pool('widgets');
+    $item = $pool-&gt;getItem('widget_list');
+    if (!$item-&gt;isHit()) {
+        $value = compute_expensive_widget_list();
+        $item-&gt;set($value);
+        $pool-&gt;save($item);
+    }
+    return $item-&gt;get();
+}
+</code></pre>
+<pre><code class="language-php">/**
+ * Caches a list of available widgets.
+ *
+ * In this case, we assume a list of widgets has been computed and we want
+ * to cache it, regardless of what may already be cached.
+ */
+function save_widget_list($list)
+{
+    $pool = get_cache_pool('widgets');
+    $item = $pool-&gt;getItem('widget_list');
+    $item-&gt;set($list);
+    $pool-&gt;save($item);
+}
+</code></pre>
+<pre><code class="language-php">/**
+ * Clears the list of available widgets.
+ *
+ * In this case, we simply want to remove the widget list from the cache. We
+ * don't care if it was set or not; the post condition is simply &quot;no longer set&quot;.
+ */
+function clear_widget_list()
+{
+    $pool = get_cache_pool('widgets');
+    $pool-&gt;deleteItems(['widget_list']);
+}
+</code></pre>
+<pre><code class="language-php">/**
+ * Clears all widget information.
+ *
+ * In this case, we want to empty the entire widget pool. There may be other
+ * pools in the application that will be unaffected.
+ */
+function clear_widget_cache()
+{
+    $pool = get_cache_pool('widgets');
+    $pool-&gt;clear();
+}
+</code></pre>
+<pre><code class="language-php">/**
+ * Load widgets.
+ *
+ * We want to get back a list of widgets, of which some are cached and some
+ * are not. This of course assumes that loading from the cache is faster than
+ * whatever the non-cached loading mechanism is.
+ *
+ * In this case, we assume widgets may change frequently so we only allow them
+ * to be cached for an hour (3600 seconds). We also cache newly-loaded objects
+ * back to the pool en masse.
+ *
+ * Note that a real implementation would probably also want a multi-load
+ * operation for widgets, but that's irrelevant for this demonstration.
+ */
+function load_widgets(array $ids)
+{
+    $pool = get_cache_pool('widgets');
+    $keys = array_map(function($id) { return 'widget.' . $id; }, $ids);
+    $items = $pool-&gt;getItems($keys);
+
+    $widgets = array();
+    foreach ($items as $key =&gt; $item) {
+        if ($item-&gt;isHit()) {
+            $value = $item-&gt;get();
+        } else {
+            $value = expensive_widget_load($id);
+            $item-&gt;set($value);
+            $item-&gt;expiresAfter(3600);
+            $pool-&gt;saveDeferred($item, true);
+        }
+        $widget[$value-&gt;id()] = $value;
+    }
+    $pool-&gt;commit(); // If no items were deferred this is a no-op.
+
+    return $widgets;
+}
+</code></pre>
+<pre><code class="language-php">/**
+ * This examples reflects functionality that is NOT included in this
+ * specification, but is shown as an example of how such functionality MIGHT
+ * be added by extending implementations.
+ */
+
+interface TaggablePoolInterface extends Psr\Cache\CachePoolInterface
+{
+    /**
+     * Clears only those items from the pool that have the specified tag.
+     */
+    clearByTag($tag);
+}
+
+interface TaggableItemInterface extends Psr\Cache\CacheItemInterface
+{
+    public function setTags(array $tags);
+}
+
+/**
+ * Caches a widget with tags.
+ */
+function set_widget(TaggablePoolInterface $pool, Widget $widget)
+{
+    $key = 'widget.' . $widget-&gt;id();
+    $item = $pool-&gt;getItem($key);
+
+    $item-&gt;setTags($widget-&gt;tags());
+    $item-&gt;set($widget);
+    $pool-&gt;save($item);
+}
+</code></pre>
+<h3 id="42-alternative-weak-item-approach">4.2 Alternative: "Weak item" approach</h3>
+<p>A variety of earlier drafts took a simpler "key value with expiration" approach,
+also known as a "weak item" approach.  In this model, the "Cache Item" object
+was really just a dumb array-with-methods object.  Users would instantiate it
+directly, then pass it to a cache pool.  While more familiar, that approach
+effectively prevented any meaningful extension of the Cache Item.  It effectively
+made the Cache Item's constructor part of the implicit interface, and thus
+severely curtailed extensibility or the ability to have the cache item be where
+the intelligence lives.</p>
+<p>In a poll conducted in June 2013, most participants showed a clear preference for
+the more robust if less conventional "Strong item" / repository approach, which
+was adopted as the way forward.</p>
+<p>Pros:
+* More traditional approach.</p>
+<p>Cons:
+* Less extensible or flexible.</p>
+<h3 id="43-alternative-naked-value-approach">4.3 Alternative: "Naked value" approach</h3>
+<p>Some of the earliest discussions of the Cache spec suggested skipping the Cache
+Item concept all together and just reading/writing raw values to be cached.
+While simpler, it was pointed out that made it impossible to tell the difference
+between a cache miss and whatever raw value was selected to represent a cache
+miss.  That is, if a cache lookup returned NULL it's impossible to tell if there
+was no cached value or if NULL was the value that had been cached.  (NULL is a
+legitimate value to cache in many cases.)</p>
+<p>Most more robust caching implementations we reviewed -- in particular the Stash
+caching library and the home-grown cache system used by Drupal -- use some sort
+of structured object on <code>get</code> at least to avoid confusion between a miss and a
+sentinel value.  Based on that prior experience FIG decided that a naked value
+on <code>get</code> was impossible.</p>
+<h3 id="44-alternative-arrayaccess-pool">4.4 Alternative: ArrayAccess Pool</h3>
+<p>There was a suggestion to make a Pool implement ArrayAccess, which would allow
+for cache get/set operations to use array syntax.  That was rejected due to
+limited interest, limited flexibility of that approach (trivial get and set with
+default control information is all that's possible), and because it's trivial
+for a particular implementation to include as an add-on should it desire to
+do so.</p>
+<h2 id="5-people">5. People</h2>
+<h3 id="51-editor">5.1 Editor</h3>
+<ul>
+<li>Larry Garfield</li>
+</ul>
+<h3 id="52-sponsors">5.2 Sponsors</h3>
+<ul>
+<li>Paul Dragoonis, PPI Framework (Coordinator)</li>
+<li>Robert Hafner, Stash</li>
+</ul>
+<h2 id="6-votes">6. Votes</h2>
+<p><a href="https://groups.google.com/forum/#!msg/php-fig/dSw5IhpKJ1g/O9wpqizWAwAJ">Acceptance vote on the mailing list</a></p>
+<h2 id="7-relevant-links">7. Relevant Links</h2>
+<p><em><strong>Note:</strong> Order descending chronologically.</em></p>
+<ul>
+<li><a href="https://docs.google.com/spreadsheet/ccc?key=0Ak2JdGialLildEM2UjlOdnA4ekg3R1Bfeng5eGlZc1E#gid=0">Survey of existing cache implementations</a>, by @dragoonis</li>
+<li><a href="https://docs.google.com/spreadsheet/ccc?key=0AsMrMKNHL1uGdDdVd2llN1kxczZQejZaa3JHcXA3b0E#gid=0">Strong vs. Weak informal poll</a>, by @Crell</li>
+<li><a href="https://docs.google.com/spreadsheet/ccc?key=0AsMrMKNHL1uGdEE3SU8zclNtdTNobWxpZnFyR0llSXc#gid=1">Implementation details informal poll</a>, by @Crell</li>
+</ul>
+<h2 id="8-errata">8. Errata</h2>
+<h3 id="81-handling-of-incorrect-datetime-values-in-expiresat">8.1 Handling of incorrect DateTime values in expiresAt()</h3>
+<p>The <code>CacheItemInterface::expiresAt()</code> method's <code>$expiration</code> parameter is untyped
+in the interface, but in the docblock is specified as <code>\DateTimeInterface</code>.  The
+intent is that either a <code>\DateTime</code> or <code>\DateTimeImmutable</code> object is allowed.
+However, <code>\DateTimeInterface</code> and <code>\DateTimeImmutable</code> were added in PHP 5.5, and
+the authors chose not to impose a hard syntactic requirement for PHP 5.5 on the
+specification.</p>
+<p>Despite that, implementers MUST accept only <code>\DateTimeInterface</code> or compatible types
+(such as <code>\DateTime</code> and <code>\DateTimeImmutable</code>) as if the method was explicitly typed.
+(Note that the variance rules for a typed parameter may vary between language versions.)</p>
+<p>Simulating a failed type check unfortunately varies between PHP versions and thus is not
+recommended.  Instead, implementors SHOULD throw an instance of <code>\Psr\Cache\InvalidArgumentException</code>.<br />
+The following sample code is recommended in order to enforce the type check on the expiresAt()
+method:</p>
+<pre><code class="language-php">
+class ExpiresAtInvalidParameterException implements Psr\Cache\InvalidArgumentException {}
+
+// ...
+
+if (! (
+        null === $expiration
+        || $expiration instanceof \DateTime
+        || $expiration instanceof \DateTimeInterface
+)) {
+    throw new ExpiresAtInvalidParameterException(sprintf(
+        'Argument 1 passed to %s::expiresAt() must be an instance of DateTime or DateTimeImmutable; %s given',
+        get_class($this),
+        is_object($expiration) ? get_class($expiration) : gettype($expiration)
+    ));
+}
+</code></pre>
+<h3 id="82-type-additions">8.2 Type additions</h3>
+<p>The 2.0 release of the <code>psr/cache</code> package includes scalar parameter types.  The 3.0 release of the package includes return types.  This structure leverages PHP 7.2 covariance support to allow for a gradual upgrade process, but requires PHP 8.0 for type compatibility.</p>
+<p>The 2.0 version also corrects the Errata 8.1 above by providing a correct type hint for the <code>CacheItemInterface::expiresAt()</code> method's <code>$expiration</code> parameter.  That results in a slight change in the error thrown on invalid input; as it is still a fatal disallowed case, FIG has deemed it an acceptably small BC break in order to leverage correct native typing.</p>
+<p>Implementers MAY add return types to their own packages at their discretion, provided that:</p>
+<ul>
+<li>the return types match those in the 3.0 package.</li>
+<li>the implementation specifies a minimum PHP version of 8.0.0 or later.</li>
+</ul>
+<p>Implementers MAY add parameter types to their own packages in a new major release, either at the same time as adding return types or in a subsequent release, provided that:</p>
+<ul>
+<li>the parameter types match those in the 2.0 package.</li>
+<li>the implementation specifies a minimum PHP version of 8.0.0 or later.</li>
+<li>the implementation depends on <code>"psr/link": "^1.1 || ^2.0"</code> so as to exclude the untyped 1.0 version.</li>
+</ul>
+<p>Implementers are encouraged but not required to transition their packages toward the 3.0 version of the package at their earliest convenience.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>
