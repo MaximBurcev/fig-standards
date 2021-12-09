@@ -1,2 +1,2 @@
-PHP Framework Interoperability Group
+PSR
 ====================================
