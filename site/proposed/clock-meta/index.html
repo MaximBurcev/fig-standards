@@ -1,0 +1,664 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Clock Meta Document - Стандартизированные рекомендации PHP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#clock-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Стандартизированные рекомендации PHP
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Clock Meta Document
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Стандартизированные рекомендации PHP
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Стандартизированные рекомендации PHP
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-0/" class="md-nav__link">
+        Стандарт автозагрузки PSR-0 (Устарело)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
+        Руководство по стилю кодирования PSR-2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phpdoc/" class="md-nav__link">
+        PHPDoc PSR-5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        Лицензия
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-summary" class="md-nav__link">
+    1. Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-why-bother" class="md-nav__link">
+    2. Why Bother?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scope" class="md-nav__link">
+    3. Scope
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-goals" class="md-nav__link">
+    3.1 Goals
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-non-goals" class="md-nav__link">
+    3.2 Non-Goals
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-approaches" class="md-nav__link">
+    4. Approaches
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-chosen-approach" class="md-nav__link">
+    4.1 Chosen Approach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-timezones" class="md-nav__link">
+    4.2 Timezones
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-example-implementations" class="md-nav__link">
+    4.2 Example Implementations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-people" class="md-nav__link">
+    5. People
+  </a>
+  
+    <nav class="md-nav" aria-label="5. People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-editor" class="md-nav__link">
+    5.1 Editor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sponsor" class="md-nav__link">
+    5.2 Sponsor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-working-group-members" class="md-nav__link">
+    5.3 Working group members
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-votes" class="md-nav__link">
+    6. Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-relevant-links" class="md-nav__link">
+    7. Relevant Links
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-past-contributors" class="md-nav__link">
+    8. Past contributors
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="clock-meta-document">Clock Meta Document</h1>
+<h2 id="1-summary">1. Summary</h2>
+<p>Getting the current time in applications is typically achieved using the <code>time()</code> or <code>microtime</code> functions, or by using a <code>new \DateTimeImmutable()</code> class.</p>
+<p>Due to the nature of time progression these methods cannot be used when predictable results are needed, such as during testing.</p>
+<p>This <code>ClockInterface</code> aims to provide a standard way to consume time that allows interoperability not only when consuming the "real" time but also when predictable results need to be available. This avoids the need to use PHP extensions for testing or redeclare the <code>time()</code> function in a local namespace. </p>
+<h2 id="2-why-bother">2. Why Bother?</h2>
+<p>There are currently a few libraries that provide this functionality, however there is no interopability between these different libraries, as they ship with their own clock interfaces. </p>
+<p>Symfony provides a package called <code>symfony/phpunit-bridge</code> that has a <code>Symfony\Bridge\PhpUnit\ClockMock</code> class, which allows mocking PHP's built-in time and date functions, however this does not solve mocking calls to <code>new \DateTimeImmutable()</code>. It also does not fully mock time when called from other libraries that rely on the system time.</p>
+<p><code>Carbon\Carbon</code>, and its fork <code>Cake\Chronos\Chronos</code>, do provide mocking via a static <code>setTestNow()</code> method, but this provides no isolation and must be called again to stop mocking.</p>
+<p>Pros:</p>
+<ul>
+<li>Consistent interface to get the current time;</li>
+<li>Easy to mock the wall clock time for repeatablility.</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>Extra overhead and developer effort to get the current time, not as simple as
+calling <code>time()</code> or <code>date()</code>.</li>
+</ul>
+<h2 id="3-scope">3. Scope</h2>
+<h3 id="31-goals">3.1 Goals</h3>
+<ul>
+<li>Provide a simple and mockable way to read the current time;</li>
+<li>Allow interoperability between libraries when reading the clock.</li>
+</ul>
+<h3 id="32-non-goals">3.2 Non-Goals</h3>
+<ul>
+<li>This PSR does not provide a recommendation on how and when to use the concepts
+  described in this document, so it is not a coding standard;</li>
+<li>This PSR does not provide a recommendation on how to handle timezones when 
+  retrieving the current time. This is left up to the implementation.</li>
+<li>This PSR does not handle any scheduling methods like <code>sleep()</code> or <code>wait()</code> because such methods are not related to retrieving the current time.</li>
+</ul>
+<h2 id="4-approaches">4. Approaches</h2>
+<h3 id="41-chosen-approach">4.1 Chosen Approach</h3>
+<p>We have decided to formalize the existing practices used by several other packages. Some popular packages providing this functionality are: </p>
+<ul>
+<li><a href="https://packagist.org/packages/lcobucci/clock"><code>lcobucci/clock</code></a></li>
+<li><a href="https://packagist.org/packages/kreait/clock"><code>kreait/clock</code></a></li>
+<li><a href="https://packagist.org/packages/ergebnis/clock"><code>ergebnis/clock</code></a></li>
+<li><a href="https://packagist.org/packages/mangoweb/clock"><code>mangoweb/clock</code></a></li>
+</ul>
+<p>(This list is not exhaustive!)</p>
+<p>Some of these provide interfaces and some rely on extending a clock class to mock the
+current time.</p>
+<p>These implementations all provide a <code>now()</code> method which returns a <code>DateTimeImmutable</code> object. As the <code>DateTimeImmutable</code> object allows retrieving the Unix timestamp, by calling <code>getTimestamp()</code> or <code>format('u.U')</code>, this interface does not define any special methods to retrieve a Unix timestamp or any other time information that is not available from a <code>DateTimeImmutable</code> object. </p>
+<h3 id="42-timezones">4.2 Timezones</h3>
+<p>Time by now is defined by interaction of electromagnetic radiation with the excited states of certain atoms where the SI defines one second as the duration of 9192631770 cycles of radiation corresponding to the transition between two energy levels of the ground state of the caesium-133 atom at 0K. This means that retrieving the current time will always return the same time, no matter where it is observed. While the timezone defines <em>where</em> the time was observed it does not modify the actual "slice" of time.</p>
+<p>This means that for the sake of this PSR the timezone is considered an implementation detail of the interface. </p>
+<p>It is up to the implementation to make sure that the timezone is handled according to the business logic of the application. That is either by making sure that a call to <code>now()</code> will only return a <code>DateTimeImmutable</code> object with a known timezone (implicit contract) or by explicitly changing the timezone to be correct for the application. This can be done by calling <code>setTimezone()</code> to create a new <code>DateTimeImmutable</code> object with the given timezone. </p>
+<p>These actions are not defined in this interface.</p>
+<h3 id="42-example-implementations">4.2 Example Implementations</h3>
+<pre><code class="language-php">final class SystemClock implements \Psr\Clock\ClockInterface
+{
+    public function now(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable();
+    }
+}
+
+final class FrozenClock implements \Psr\Clock\ClockInterface
+{
+    private \DateTimeImmutable $now;
+
+    public function __construct(\DateTimeImmutable $now)
+    {
+        $this-&gt;now = $now;
+    }
+
+    public function now(): \DateTimeImmutable
+    {
+        return clone $this-&gt;now;
+    }
+}
+
+</code></pre>
+<h2 id="5-people">5. People</h2>
+<h3 id="51-editor">5.1 Editor</h3>
+<ul>
+<li>Chris Seufert</li>
+</ul>
+<h3 id="52-sponsor">5.2 Sponsor</h3>
+<ul>
+<li>Chuck Burgess</li>
+</ul>
+<h3 id="53-working-group-members">5.3 Working group members</h3>
+<ul>
+<li>Luís Cobucci</li>
+<li>Pol Dellaiera</li>
+<li>Ben Edmunds</li>
+<li>Jérôme Gamez</li>
+<li>Andreas Heigl</li>
+<li>Andreas Möller</li>
+</ul>
+<h2 id="6-votes">6. Votes</h2>
+<ul>
+<li><a href="https://groups.google.com/g/php-fig/c/hIKqd0an-GI">Entrance Vote</a></li>
+</ul>
+<h2 id="7-relevant-links">7. Relevant Links</h2>
+<ul>
+<li>https://github.com/ergebnis/clock/blob/main/src/Clock.php</li>
+<li>https://github.com/icecave/chrono/blob/master/src/Clock/ClockInterface.php</li>
+<li>https://github.com/Kdyby/DateTimeProvider/blob/master/src/DateTimeProviderInterface.php</li>
+<li>https://github.com/kreait/clock-php/blob/main/src/Clock.php</li>
+<li>https://github.com/lcobucci/clock/blob/2.1.x/src/Clock.php</li>
+<li>https://github.com/mangoweb-backend/clock/blob/master/src/Clock.php</li>
+<li>https://martinfowler.com/bliki/ClockWrapper.html</li>
+</ul>
+<h2 id="8-past-contributors">8. Past contributors</h2>
+<p>This document stems from the work of many people in previous years, we recognize their effort:</p>
+<ul>
+<li><em><strong>Note:</strong> Order descending chronologically.</em></li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

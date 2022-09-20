@@ -1,97 +1,96 @@
-# PHP Standard Recommendations
+# Стандартизированные рекомендации PHP (PSR)
 
 В соответствии с [регламентом рабочего процесса PSR][workflow] каждый PSR имеет статус в процессе работы. После того, как предложение пройдет вступительное голосование, оно будет указано здесь как «Черновик». Если PSR не отмечен как «Принято», он может быть изменен. Черновик может кардинально измениться, но в Ревью будут внесены лишь незначительные изменения.
 
-As also described in the [PSR Workflow Bylaw][workflow]. The Editor, or editors, of a proposal are the essentially the lead contributors and writers of the PSRs and they are supported by two voting members. Those voting members are the Coordinator who is responsible for managing the review stage and votes; and a second sponsor.
+Как также описано в [Постановлении о рабочем процессе PSR] [workflow]. Редактор или редакторы предложения являются, по сути, ведущими участниками и авторами PSR, и их поддерживают два члена с правом голоса. Члены с правом голоса являются координатором, который отвечает за управление этапом проверки и голосованием; и второй спонсор.
+## Индекс по статусу
 
-## Index by Status
+### Принято
 
-### Accepted
+| Номер | Название                                | Редактор                       | Координатор             | Sponsor                 |
+|:-----:|-----------------------------------------|--------------------------------|-------------------------|-------------------------|
+|   1   | [Основной стандарт кодирования][psr1]   | Paul M. Jones                  | _N/A_                   | _N/A_                   |
+|   3   | [Общий интерфейс для логирования][psr3] | Jordi Boggiano                 | _N/A_                   | _N/A_                   |
+|   4   | [Стандарт автозагрузки][psr4]            | Paul M. Jones                  | Phil Sturgeon           | Larry Garfield          |
+|   6   | [Интерфейс кэширования][psr6]               | Larry Garfield                 | Paul Dragoonis          | Robert Hafner           |
+|   7   | [Интерфейс HTTP-сообщений][psr7]          | Matthew Weier O'Phinney        | Beau Simensen           | Paul M. Jones           |
+|  11   | [Интерфейс контейнера][psr11]            | Matthieu Napoli, David Négrier | Matthew Weier O'Phinney | Korvin Szanto           |
+|  12   | [Расширенное руководство по стилю кодирования][psr12]    | Korvin Szanto                  | Alexander Makarov       |  Chris Tankersley       | 
+|  13   | [Гипермедийные ссылки][psr13]               | Larry Garfield                 | Matthew Weier O'Phinney | Marc Alexander          |
+|  14   | [Диспетчер событий][psr14]               | Larry Garfield                 | _N/A_                   | Cees-Jan Kiewiet        |
+|  15   | [HTTP-обработчики][psr15]                  | Woody Gilk                     | _N/A_                   | Matthew Weier O'Phinney |
+|  16   | [Простой кэш][psr16]                   | Paul Dragoonis                 | Jordi Boggiano          | Fabien Potencier        |
+|  17   | [HTTP-фабрики][psr17]                 | Woody Gilk                     | _N/A_                   | Matthew Weier O'Phinney |
+|  18   | [HTTP-клиент][psr18]                    | Tobias Nyholm                  | _N/A_                   | Sara Golemon            |
 
-| Num | Title                          | Editor                         |  Coordinator            | Sponsor                 |
-|:---:|--------------------------------|--------------------------------|-------------------------|-------------------------|
-| 1   | [Basic Coding Standard][psr1]  | Paul M. Jones                  | _N/A_                   | _N/A_                   |
-| 3   | [Logger Interface][psr3]       | Jordi Boggiano                 | _N/A_                   | _N/A_                   |
-| 4   | [Autoloading Standard][psr4]   | Paul M. Jones                  | Phil Sturgeon           | Larry Garfield          |
-| 6   | [Caching Interface][psr6]      | Larry Garfield                 | Paul Dragoonis          | Robert Hafner           |
-| 7   | [HTTP Message Interface][psr7] | Matthew Weier O'Phinney        | Beau Simensen           | Paul M. Jones           |
-| 11  | [Container Interface][psr11]   | Matthieu Napoli, David Négrier | Matthew Weier O'Phinney | Korvin Szanto           |
-| 12  | [Extended Coding Style Guide][psr12] | Korvin Szanto            | Alexander Makarov       |  Chris Tankersley       | 
-| 13  | [Hypermedia Links][psr13]      | Larry Garfield                 | Matthew Weier O'Phinney | Marc Alexander          |
-| 14  | [Event Dispatcher][psr14]      | Larry Garfield                 | _N/A_                   | Cees-Jan Kiewiet        |
-| 15  | [HTTP Handlers][psr15]         | Woody Gilk                     | _N/A_                   | Matthew Weier O'Phinney |
-| 16  | [Simple Cache][psr16]          | Paul Dragoonis                 | Jordi Boggiano          | Fabien Potencier        |
-| 17  | [HTTP Factories][psr17]        | Woody Gilk                     | _N/A_                   | Matthew Weier O'Phinney |
-| 18  | [HTTP Client][psr18]           | Tobias Nyholm                  | _N/A_                   | Sara Golemon            |
+### Черновик
 
-### Draft
+| Номер | Название                | Редактор      |
+|:-----:|-------------------------|---------------|
+|   5   | [Стандарт PHPDoc][psr5] | Chuck Burgess |
+|  19   | [Теги PHPDoc][psr19]    | Chuck Burgess |
+|  20   | [Часы][psr20]          | Chris Seufert |
 
-| Num | Title                                | Editor(s)                      |
-|:---:|--------------------------------------|--------------------------------|
-| 5   | [PHPDoc Standard][psr5]              | Chuck Burgess                  |
-| 19  | [PHPDoc tags][psr19]                 | Chuck Burgess                  |
-| 20  | [Clock][psr20]                       | Chris Seufert                  |
+### Не поддерживается
 
-### Abandoned
+| Номер | Название                                  | Редактор       |
+|:-----:|-------------------------------------------|----------------|
+|   8   | [Удобный интерфейс][psr8]                 | Larry Garfield |
+|   9   | [Советы по безопасности][psr9]            | Michael Hess   |
+|  10   | [Процесс сообщений о безопасности][psr10] | Michael Hess   |
 
-| Num | Title                                | Editor(s)                      |
-|:---:|--------------------------------------|--------------------------------|
-| 8   | [Huggable Interface][psr8]           | Larry Garfield                 |
-| 9   | [Security Advisories][psr9]          | Michael Hess                   |
-| 10  | [Security Reporting Process][psr10]  | Michael Hess                   |
+### Устарело
 
-### Deprecated
+| Номер | Название                     | Редактор                |
+|:-----:|------------------------------|-------------------------|
+|   0   | [Стандарт автозагрузки][psr0] | Matthew Weier O'Phinney |
+|   2   | [Руководство по стилю кодирования][psr2]   | Paul M. Jones           |
 
-| Num | Title                          | Editor                  |
-|:---:|--------------------------------|-------------------------|
-| 0   | [Autoloading Standard][psr0]   | Matthew Weier O'Phinney |
-| 2   | [Coding Style Guide][psr2]     | Paul M. Jones           |
+## Числовой индекс
 
-## Numerical Index
+| Номер | Название                                | Редакторы                      | Статус            |
+|:-----:|-----------------------------------------|--------------------------------|-------------------|
+|   0   | [Стандарт автозагрузки][psr0]            | Matthew Weier O'Phinney        | Устарело          |
+|   1   | [Основной стандарт кодирования][psr1]   | Paul M. Jones                  | Принято           |
+|   2   | [Руководство по стилю кодирования][psr2]              | Paul M. Jones                  | Устарело          |
+|   3   | [Общий интерфейс для логирования][psr3] | Jordi Boggiano                 | Принято           |
+|   4   | [Стандарт автозагрузки][psr4]            | Paul M. Jones                  | Принято           |
+|   5   | [PHPDoc Standard][psr5]                 | Chuck Burgess                  | Черновик          |
+|   6   | [Интерфейс кэширования][psr6]               | Larry Garfield                 | Принято           |
+|   7   | [Интерфейс HTTP-сообщений][psr7]          | Matthew Weier O'Phinney        | Принято           |
+|   8   | [Huggable Interface][psr8]              | Larry Garfield                 | Не поддерживается |
+|   9   | [Security Advisories][psr9]             | Michael Hess                   | Не поддерживается         |
+|  10   | [Security Reporting Process][psr10]     | Michael Hess                   | Не поддерживается         |
+|  11   | [Интерфейс контейнера][psr11]            | Matthieu Napoli, David Négrier | Принято           |
+|  12   | [Расширенное руководство по стилю кодирования][psr12]    | Korvin Szanto                  | Принято           |
+|  13   | [Гипермедийные ссылки][psr13]               | Larry Garfield                 | Принято           |
+|  14   | [Диспетчер событий][psr14]               | Larry Garfield                 | Принято           |
+|  15   | [HTTP-обработчики][psr15]                  | Woody Gilk                     | Принято           |
+|  16   | [Простой кэш][psr16]                   | Paul Dragoonis                 | Принято           |
+|  17   | [HTTP-фабрики][psr17]                 | Woody Gilk                     | Принято           |
+|  18   | [HTTP-клиент][psr18]                    | Tobias Nyholm                  | Принято           |
+|  19   | [Теги PHPDoc][psr19]                    | Chuck Burgess                  | Черновик          |
+|  20   | [Часы][psr20]                          | Chris Seufert                  | Черновик          |
 
-| Num | Title                                | Editor(s)                      | Status     |
-|:---:|--------------------------------------|--------------------------------|------------|
-| 0   | [Autoloading Standard][psr0]         | Matthew Weier O'Phinney        | Deprecated |
-| 1   | [Basic Coding Standard][psr1]        | Paul M. Jones                  | Accepted   |
-| 2   | [Coding Style Guide][psr2]           | Paul M. Jones                  | Deprecated |
-| 3   | [Logger Interface][psr3]             | Jordi Boggiano                 | Accepted   |
-| 4   | [Autoloading Standard][psr4]         | Paul M. Jones                  | Accepted   |
-| 5   | [PHPDoc Standard][psr5]              | Chuck Burgess                  | Draft      |
-| 6   | [Caching Interface][psr6]            | Larry Garfield                 | Accepted   |
-| 7   | [HTTP Message Interface][psr7]       | Matthew Weier O'Phinney        | Accepted   |
-| 8   | [Huggable Interface][psr8]           | Larry Garfield                 | Abandoned  |
-| 9   | [Security Advisories][psr9]          | Michael Hess                   | Abandoned  |
-| 10  | [Security Reporting Process][psr10]  | Michael Hess                   | Abandoned  |
-| 11  | [Container Interface][psr11]         | Matthieu Napoli, David Négrier | Accepted   |
-| 12  | [Extended Coding Style Guide][psr12] | Korvin Szanto                  | Accepted   |
-| 13  | [Hypermedia Links][psr13]            | Larry Garfield                 | Accepted   |
-| 14  | [Event Dispatcher][psr14]            | Larry Garfield                 | Accepted   |
-| 15  | [HTTP Handlers][psr15]               | Woody Gilk                     | Accepted   |
-| 16  | [Simple Cache][psr16]                | Paul Dragoonis                 | Accepted   |
-| 17  | [HTTP Factories][psr17]              | Woody Gilk                     | Accepted   |
-| 18  | [HTTP Client][psr18]                 | Tobias Nyholm                  | Accepted   |
-| 19  | [PHPDoc tags][psr19]                 | Chuck Burgess                  | Draft      |
-| 20  | [Clock][psr20]                       | Chris Seufert                  | Draft      |
-
-[workflow]: /bylaws/002-psr-workflow.md
-[psr0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
-[psr1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
-[psr2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
-[psr3]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
-[psr4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-meta.md
-[psr5]: https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md
-[psr6]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-6-cache.md
-[psr7]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message.md
-[psr8]: https://github.com/php-fig/fig-standards/blob/master/proposed/psr-8-hug/
-[psr9]: https://github.com/php-fig/fig-standards/blob/master/proposed/security-disclosure-publication.md
-[psr10]: https://github.com/php-fig/fig-standards/blob/master/proposed/security-reporting-process.md
-[psr11]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-11-container.md
-[psr12]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide.md
-[psr13]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-13-links.md
-[psr14]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-14-event-dispatcher.md
-[psr15]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-15-request-handlers.md
-[psr16]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-16-simple-cache.md
-[psr17]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-17-http-factory.md
-[psr18]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-18-http-client.md
-[psr19]: https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md
-[psr20]: https://github.com/php-fig/fig-standards/blob/master/proposed/clock.md
+[workflow]: bylaws/002-psr-workflow.md
+[psr0]: accepted/PSR-0.md
+[psr1]: accepted/PSR-1-basic-coding-standard.md
+[psr2]: accepted/PSR-2-coding-style-guide.md
+[psr3]: accepted/PSR-3-logger-interface.md
+[psr4]: accepted/PSR-4-autoloader-meta.md
+[psr5]: proposed/phpdoc.md
+[psr6]: accepted/PSR-6-cache.md
+[psr7]: accepted/PSR-7-http-message.md
+[psr8]: proposed/psr-8-hug/
+[psr9]: proposed/security-disclosure-publication.md
+[psr10]: proposed/security-reporting-process.md
+[psr11]: accepted/PSR-11-container.md
+[psr12]: accepted/PSR-12-extended-coding-style-guide.md
+[psr13]: accepted/PSR-13-links.md
+[psr14]: accepted/PSR-14-event-dispatcher.md
+[psr15]: accepted/PSR-15-request-handlers.md
+[psr16]: accepted/PSR-16-simple-cache.md
+[psr17]: accepted/PSR-17-http-factory.md
+[psr18]: accepted/PSR-18-http-client.md
+[psr19]: proposed/phpdoc-tags.md
+[psr20]: proposed/clock.md

@@ -1,0 +1,592 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Security reporting process meta - Стандартизированные рекомендации PHP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#security-disclosure-meta-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Стандартизированные рекомендации PHP
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Security reporting process meta
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Стандартизированные рекомендации PHP
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Стандартизированные рекомендации PHP
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-0/" class="md-nav__link">
+        Стандарт автозагрузки PSR-0 (Устарело)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
+        Руководство по стилю кодирования PSR-2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phpdoc/" class="md-nav__link">
+        PHPDoc PSR-5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        Лицензия
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-summary" class="md-nav__link">
+    1. Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-why-bother" class="md-nav__link">
+    2. Why Bother?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scope" class="md-nav__link">
+    3. Scope
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31-goals" class="md-nav__link">
+    3.1 Goals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-non-goals" class="md-nav__link">
+    3.2 Non-Goals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-approaches" class="md-nav__link">
+    4. Approaches
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-people" class="md-nav__link">
+    5. People
+  </a>
+  
+    <nav class="md-nav" aria-label="5. People">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-editor" class="md-nav__link">
+    5.1 Editor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sponsors" class="md-nav__link">
+    5.2 Sponsors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-coordinator" class="md-nav__link">
+    5.3 Coordinator
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-contributors" class="md-nav__link">
+    5.4 Contributors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-votes" class="md-nav__link">
+    6. Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-relevant-links" class="md-nav__link">
+    7. Relevant Links
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="security-disclosure-meta-document">Security Disclosure Meta Document</h1>
+<h2 id="1-summary">1. Summary</h2>
+<p>There are two aspects with dealing with security issues: One is the process
+by which security issues are reported and fixed in projects, the other
+is how the general public is informed about the issues and any remedies
+available. While PSR-10 addresses the later, this PSR, ie. PSR-9, deals with
+the former. So the goal of PSR-9 is to define the process by which security
+researchers and report security vulnerabilities to projects. It is important
+that when security vulnerabilities are found that researchers have an easy
+channel to the projects in question allowing them to disclose the issue to a
+controlled group of people.</p>
+<h2 id="2-why-bother">2. Why Bother?</h2>
+<p>As of right now, there isn't a common standard for most parts of this process.
+That is there isn't a standard where researchers can find out about the
+process for handling security issues for any given project. There is also
+no standard that explains to researchers what they can expect to happen if
+they report a vulnerability. More importantly there is no standard on which
+projects can base the security reporting process that best fits them.</p>
+<h2 id="3-scope">3. Scope</h2>
+<h2 id="31-goals">3.1 Goals</h2>
+<ul>
+<li>A defined process for how vulnerabilities are reported, the process by which
+  these get fixed and finally disclosed to the public</li>
+</ul>
+<h2 id="32-non-goals">3.2 Non-Goals</h2>
+<ul>
+<li>Methods for reducing security vulnerabilities</li>
+<li>Publication of security issues and fixes (see PSR-10)</li>
+</ul>
+<h2 id="4-approaches">4. Approaches</h2>
+<p>Currently the most viable approach seems to be defining a base line workflow
+for how security vulnerabilities go from discovery to fixing to public
+disclosure. Inspiration could be drawn from this list of security disclosure
+processes in various PHP and non-PHP projects:</p>
+<ul>
+<li>https://symfony.com/security</li>
+<li>https://framework.zend.com/security</li>
+<li>https://www.yiiframework.com/security</li>
+<li>https://www.drupal.org/security</li>
+<li>https://codex.wordpress.org/FAQ_Security</li>
+<li>https://www.sugarcrm.com/legal/security-policy</li>
+<li>https://typo3.org/teams/security/</li>
+<li>https://book.cakephp.org/3.0/en/contributing/tickets.html#reporting-security-issues</li>
+<li>https://www.concrete5.org/developers/security/</li>
+<li>https://developer.joomla.org/security.html</li>
+<li>https://wiki.horde.org/SecurityManagement</li>
+<li>https://www.revive-adserver.com/support/bugs/</li>
+<li>https://magento.com/security</li>
+<li>https://www.apache.org/security/committers.html</li>
+<li>https://www.mozilla.org/en-US/about/governance/policies/security-group/bugs/</li>
+<li>https://www.openbsd.org/security.html</li>
+</ul>
+<p>A summary of the differences and similarities can be found here:
+https://groups.google.com/d/msg/php-fig-psr-9-discussion/puGV_X0bj_M/Jr_IAS40StsJ</p>
+<h2 id="5-people">5. People</h2>
+<h3 id="51-editor">5.1 Editor</h3>
+<ul>
+<li>Michael Hess</li>
+</ul>
+<h3 id="52-sponsors">5.2 Sponsors</h3>
+<ul>
+<li>Larry Garfield (Drupal)</li>
+<li>Korvin Szanto (concrete5)</li>
+</ul>
+<h3 id="53-coordinator">5.3 Coordinator</h3>
+<ul>
+<li>Larry Garfield (Drupal)</li>
+</ul>
+<h3 id="54-contributors">5.4 Contributors</h3>
+<ul>
+<li>Lukas Kahwe Smith</li>
+</ul>
+<h2 id="6-votes">6. Votes</h2>
+<h2 id="7-relevant-links">7. Relevant Links</h2>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

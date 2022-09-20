@@ -1,0 +1,2018 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Phpdoc tags - Стандартизированные рекомендации PHP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#table-of-contents" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Стандартизированные рекомендации PHP
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Phpdoc tags
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Стандартизированные рекомендации PHP
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Стандартизированные рекомендации PHP
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-0/" class="md-nav__link">
+        Стандарт автозагрузки PSR-0 (Устарело)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
+        Руководство по стилю кодирования PSR-2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phpdoc/" class="md-nav__link">
+        PHPDoc PSR-5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        Лицензия
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table Of Contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    1. Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-conventions-used-in-this-document" class="md-nav__link">
+    2. Conventions Used In This Document
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-definitions" class="md-nav__link">
+    3. Definitions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-regarding-inheritance" class="md-nav__link">
+    4. Regarding Inheritance
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#41-making-inheritance-explicit-using-the-inheritdoc-tag" class="md-nav__link">
+    4.1. Making inheritance explicit using the @inheritDoc tag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42-using-the-inheritdoc-inline-tag-to-augment-a-description" class="md-nav__link">
+    4.2. Using the {@inheritDoc} inline tag to augment a Description
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43-element-specific-inherited-parts" class="md-nav__link">
+    4.3. Element-specific inherited parts
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3. Element-specific inherited parts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#431-class-or-interface" class="md-nav__link">
+    4.3.1. Class Or Interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#432-function-or-method" class="md-nav__link">
+    4.3.2. Function Or Method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#433-constant-or-property" class="md-nav__link">
+    4.3.3. Constant Or Property
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tags" class="md-nav__link">
+    5. Tags
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-api" class="md-nav__link">
+    5.1. @api
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1. @api">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-author" class="md-nav__link">
+    5.2. @author
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2. @author">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_1" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_1" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-copyright" class="md-nav__link">
+    5.3. @copyright
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3. @copyright">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_2" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_2" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-deprecated" class="md-nav__link">
+    5.4. @deprecated
+  </a>
+  
+    <nav class="md-nav" aria-label="5.4. @deprecated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_3" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_3" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_3" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-generated" class="md-nav__link">
+    5.5. @generated
+  </a>
+  
+    <nav class="md-nav" aria-label="5.5. @generated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_4" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_4" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_4" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-internal" class="md-nav__link">
+    5.6. @internal
+  </a>
+  
+    <nav class="md-nav" aria-label="5.6. @internal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_5" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_5" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_5" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#57-link" class="md-nav__link">
+    5.7. @link
+  </a>
+  
+    <nav class="md-nav" aria-label="5.7. @link">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_6" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_6" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_6" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#58-method" class="md-nav__link">
+    5.8. @method
+  </a>
+  
+    <nav class="md-nav" aria-label="5.8. @method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_7" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_7" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_7" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#59-package" class="md-nav__link">
+    5.9. @package
+  </a>
+  
+    <nav class="md-nav" aria-label="5.9. @package">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_8" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_8" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_8" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#510-param" class="md-nav__link">
+    5.10. @param
+  </a>
+  
+    <nav class="md-nav" aria-label="5.10. @param">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_9" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_9" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_9" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#511-property" class="md-nav__link">
+    5.11. @property
+  </a>
+  
+    <nav class="md-nav" aria-label="5.11. @property">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_10" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_10" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#512-return" class="md-nav__link">
+    5.12. @return
+  </a>
+  
+    <nav class="md-nav" aria-label="5.12. @return">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_11" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_11" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_10" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#513-see" class="md-nav__link">
+    5.13. @see
+  </a>
+  
+    <nav class="md-nav" aria-label="5.13. @see">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_12" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_12" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_11" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#514-since" class="md-nav__link">
+    5.14. @since
+  </a>
+  
+    <nav class="md-nav" aria-label="5.14. @since">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_13" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_13" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_12" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#515-throws" class="md-nav__link">
+    5.15. @throws
+  </a>
+  
+    <nav class="md-nav" aria-label="5.15. @throws">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_14" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_14" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_13" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#516-todo" class="md-nav__link">
+    5.16. @todo
+  </a>
+  
+    <nav class="md-nav" aria-label="5.16. @todo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_15" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_15" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_14" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#517-uses" class="md-nav__link">
+    5.17. @uses
+  </a>
+  
+    <nav class="md-nav" aria-label="5.17. @uses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_16" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_16" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_15" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#518-var" class="md-nav__link">
+    5.18. @var
+  </a>
+  
+    <nav class="md-nav" aria-label="5.18. @var">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_17" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_17" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_16" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#519-version" class="md-nav__link">
+    5.19. @version
+  </a>
+  
+    <nav class="md-nav" aria-label="5.19. @version">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_18" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_18" class="md-nav__link">
+    Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_17" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>Phpdoc tags</h1>
+                
+                <p>=============</p>
+<h2 id="table-of-contents">Table Of Contents</h2>
+<ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-conventions-used-in-this-document">2. Conventions Used In This Document</a></li>
+<li><a href="#3-definitions">3. Definitions</a></li>
+<li><a href="#4-inheritance">4. Inheritance</a></li>
+<li><a href="#41-making-inheritance-explicit-using-the-inheritdoc-tag">4.1. Making inheritance explicit using the @inheritDoc tag</a></li>
+<li><a href="#42-using-the-inheritdoc-inline-tag-to-augment-a-description">4.2. Using the {@inheritDoc} inline tag to augment a Description</a></li>
+<li><a href="#43-element-specific-inherited-parts">4.3. Element-specific inherited parts</a><ul>
+<li><a href="#431-class-or-interface">4.3.1. Class Or Interface</a></li>
+<li><a href="#432-function-or-method">4.3.2. Function Or Method</a></li>
+<li><a href="#433-constant-or-property">4.3.3. Constant Or Property</a></li>
+</ul>
+</li>
+<li><a href="#5-tags">5. Tags</a></li>
+<li><a href="#51-api">5.1.  @api</a></li>
+<li><a href="#52-author">5.2.  @author</a></li>
+<li><a href="#53-copyright">5.3.  @copyright</a></li>
+<li><a href="#54-deprecated">5.4.  @deprecated</a></li>
+<li><a href="#55-generated">5.5.  @generated</a></li>
+<li><a href="#56-internal">5.6.  @internal</a></li>
+<li><a href="#57-link">5.7.  @link</a></li>
+<li><a href="#58-method">5.8.  @method</a></li>
+<li><a href="#59-package">5.9.  @package</a></li>
+<li><a href="#510-param">5.10. @param</a></li>
+<li><a href="#511-property">5.11. @property</a></li>
+<li><a href="#512-return">5.12. @return</a></li>
+<li><a href="#513-see">5.13. @see</a></li>
+<li><a href="#514-since">5.14. @since</a></li>
+<li><a href="#515-throws">5.15. @throws</a></li>
+<li><a href="#516-todo">5.16. @todo</a></li>
+<li><a href="#517-uses">5.17. @uses</a></li>
+<li><a href="#518-var">5.18. @var</a></li>
+<li><a href="#519-version">5.19. @version</a></li>
+</ul>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>The main purpose of this PSR is to provide a complete catalog of Tags in
+the <a href="https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md">PHPDoc standard</a>.</p>
+<p>This document SHALL NOT:</p>
+<ul>
+<li>Describe a catalog of Annotations.</li>
+<li>Describe best practices or recommendations for Coding Standards on the
+  application of the PHPDoc standard. This document is limited to a formal
+  specification of syntax and intention.</li>
+</ul>
+<h2 id="2-conventions-used-in-this-document">2. Conventions Used In This Document</h2>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h2 id="3-definitions">3. Definitions</h2>
+<p>See the Definitions section of the <a href="https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md">PHPDoc PSR</a>, as those definitions
+apply here as well.</p>
+<h2 id="4-regarding-inheritance">4. Regarding Inheritance</h2>
+<p>A PHPDoc that is associated with a "Structural Element" that implements, extends
+or overrides a "Structural Element" has the ability to inherit parts of
+information from the PHPDoc associated with the "Structural Element" that is
+implemented, extended or overridden.</p>
+<p>The PHPDoc for every type of "Structural Element" MUST inherit the following
+parts if that part is absent:</p>
+<ul>
+<li><a href="[PHPDOC_PSR]#51-summary">Summary</a></li>
+<li><a href="[PHPDOC_PSR]#52-description">Description</a> and</li>
+<li>A specific subset of <a href="[PHPDOC_PSR]#53-tags">Tags</a>:</li>
+<li><a href="#52-author">@author</a></li>
+<li><a href="#53-copyright">@copyright</a></li>
+<li><a href="#519-version">@version</a></li>
+</ul>
+<p>The PHPDoc for each type of "Structural Element" MUST also inherit a
+specialized subset of tags depending on which "Structural Element" is
+associated.</p>
+<p>If a PHPDoc does not feature a part, such as Summary or Description, that is
+present in the PHPDoc of a super-element, then that part is always implicitly
+inherited.
+The following is a list of all elements whose DocBlocks are able to inherit
+information from a super-element's DocBlock:</p>
+<ol>
+<li>a Class' or Interface's DocBlock can inherit information from a Class or
+   Interface which it extends.</li>
+<li>a Property's DocBlock can inherit information from a Property with the same
+   name that is declared in a superclass.</li>
+<li>a Method's DocBlock can inherit information from a Method with the same
+   name that is declared in a superclass.</li>
+<li>a Method's DocBlock can inherit information from a Method with the same
+   name that is declared in an implemented interface in the current Class
+   or that is implemented in a superclass.</li>
+</ol>
+<blockquote>
+<p>For example:</p>
+<p>Let's assume you have a method <code>\SubClass::myMethod()</code> and its class
+<code>\SubClass</code> extends the class <code>\SuperClass</code>. And in the class <code>\SuperClass</code>
+there is a method with the same name (e.g. <code>\SuperClass::myMethod</code>).</p>
+<p>If the above applies then the DocBlock of <code>\SubClass::myMethod()</code> will
+inherit any of the parts mentioned above from the PHPDoc of
+<code>\SuperClass::myMethod</code>. So if the <code>@version</code> tag was not redefined then it
+is assumed that <code>\SubClass::myMethod()</code> will have the same <code>@version</code>
+tag.</p>
+</blockquote>
+<p>Inheritance takes place from the root of a class hierarchy graph to its leafs.
+This means that anything inherited in the bottom of the tree MUST 'bubble' up
+to the top unless overridden.</p>
+<h2 id="41-making-inheritance-explicit-using-the-inheritdoc-tag">4.1. Making inheritance explicit using the @inheritDoc tag</h2>
+<p>Because inheritance is implicit it may happen that it is not necessary to
+include a PHPDoc with a "Structural Element". This can cause confusion as it
+is now ambiguous whether the PHPDoc was omitted on purpose or whether the
+author of the code had forgotten to add documentation.</p>
+<p>In order to resolve this ambiguity the <code>@inheritDoc</code> tag can be used to
+indicate that this element will inherit its information from a super-element.</p>
+<p>Example:</p>
+<pre><code>/**
+ * This is a summary.
+ */
+class SuperClass
+{
+}
+
+/**
+ * @inheritDoc
+ */
+class SubClass extends SuperClass
+{
+}
+</code></pre>
+<p>In the example above the SubClass' Summary can be considered equal to that of
+the SuperClass element, which is thus "This is a summary.".</p>
+<h2 id="42-using-the-inheritdoc-inline-tag-to-augment-a-description">4.2. Using the {@inheritDoc} inline tag to augment a Description</h2>
+<p>Sometimes you want to inherit the Description of a super-element and add your
+own text with it to provide information specific to your "Structural Element".
+This MUST be done using the <code>{@inheritDoc}</code> inline tag.</p>
+<p>The <code>{@inheritDoc}</code> inline tag will indicate that at that location the
+super-element's description MUST be injected or inferred.</p>
+<p>Example:</p>
+<pre><code>/**
+ * This is the Summary for this element.
+ *
+ * {@inheritDoc}
+ *
+ * In addition this description will contain more information that
+ * will provide a detailed piece of information specific to this
+ * element.
+ */
+</code></pre>
+<p>In the example above it is indicated that the Description of this PHPDoc is a
+combination of the Description of the super-element, indicated by the
+<code>{@inheritDoc}</code> inline tag, and the subsequent body text.</p>
+<h2 id="43-element-specific-inherited-parts">4.3. Element-specific inherited parts</h2>
+<h3 id="431-class-or-interface">4.3.1. Class Or Interface</h3>
+<p>In addition to the inherited descriptions and tags as defined in this chapter's
+root, a class or interface MUST inherit the following tags:</p>
+<ul>
+<li><a href="#59-package">@package</a></li>
+</ul>
+<h3 id="432-function-or-method">4.3.2. Function Or Method</h3>
+<p>In addition to the inherited descriptions and tags as defined in this chapter's
+root, a function or method in a class or interface MUST inherit the following tags:</p>
+<ul>
+<li><a href="#510-param">@param</a></li>
+<li><a href="#512-return">@return</a></li>
+<li><a href="#515-throws">@throws</a></li>
+</ul>
+<h3 id="433-constant-or-property">4.3.3. Constant Or Property</h3>
+<p>In addition to the inherited descriptions and tags as defined in this chapter's
+root, a constant or property in a class MUST inherit the following tags:</p>
+<ul>
+<li><a href="#518-type">@var</a></li>
+</ul>
+<h2 id="5-tags">5. Tags</h2>
+<p>Unless specifically mentioned in the description each tag MAY occur zero or more
+times in each "DocBlock".</p>
+<h3 id="51-api">5.1. @api</h3>
+<p>The @api tag is used to highlight "Structural Elements" as being part of the
+primary public API of a package.</p>
+<h4 id="syntax">Syntax</h4>
+<pre><code>@api
+</code></pre>
+<h4 id="description">Description</h4>
+<p>The <code>@api</code> tag MAY be applied to public "Structural Elements" to highlight
+them in generated documentation, pointing the consumer to the primary public
+API components of a library or framework.</p>
+<p>Other "Structural Elements" with a public visibility MAY be listed less
+prominently in generated documentation.</p>
+<p>See also the <a href="#56-internal"><code>@internal</code></a>, which MAY be used to hide internal
+"Structural Elements" from generated documentation.</p>
+<h4 id="examples">Examples</h4>
+<pre><code class="language-php">class UserService
+{
+    /**
+     * This method is public-API. 
+     *
+     * @api
+     */
+    public function getUser()
+    {
+        &lt;...&gt;
+    }
+
+    /**
+     * This method is &quot;package scope&quot;, not public-API
+     */
+    public function callMefromAnotherClass()
+    {
+        &lt;...&gt;
+    }
+}
+</code></pre>
+<h3 id="52-author">5.2. @author</h3>
+<p>The @author tag is used to document the author of any "Structural Element".</p>
+<h4 id="syntax_1">Syntax</h4>
+<pre><code>@author [name] [&lt;email address&gt;]
+</code></pre>
+<h4 id="description_1">Description</h4>
+<p>The @author tag can be used to indicate who has created a "Structural Element"
+or has made significant modifications to it. This tag MAY also contain an
+e-mail address. If an e-mail address is provided it MUST follow
+the author's name and be contained in chevrons, or angle brackets, and MUST
+adhere to the syntax defined in RFC 2822.</p>
+<h4 id="examples_1">Examples</h4>
+<pre><code class="language-php">/**
+ * @author My Name
+ * @author My Name &lt;my.name@example.com&gt;
+ */
+</code></pre>
+<h3 id="53-copyright">5.3. @copyright</h3>
+<p>The @copyright tag is used to document the copyright information of any
+"Structural element".</p>
+<h4 id="syntax_2">Syntax</h4>
+<pre><code>@copyright &lt;description&gt;
+</code></pre>
+<h4 id="description_2">Description</h4>
+<p>The @copyright tag defines who holds the copyright over the "Structural Element".
+The copyright indicated with this tag applies to the "Structural Element" to
+which it applies and all child elements unless otherwise noted.</p>
+<p>The format of the description is governed by the coding standard of each
+individual project. It is RECOMMENDED to mention the year or years which are
+covered by this copyright and the organization involved.</p>
+<h4 id="examples_2">Examples</h4>
+<pre><code class="language-php">/**
+ * @copyright 1997-2005 The PHP Group
+ */
+</code></pre>
+<h3 id="54-deprecated">5.4. @deprecated</h3>
+<p>The @deprecated tag is used to indicate which 'Structural elements' are
+deprecated and are to be removed in a future version.</p>
+<h4 id="syntax_3">Syntax</h4>
+<pre><code>@deprecated [&lt;"Semantic Version"&gt;] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_3">Description</h4>
+<p>The @deprecated tag declares that the associated 'Structural elements' will
+be removed in a future version as it has become obsolete or its usage is
+otherwise not recommended, effective from the "Semantic Version" if provided.</p>
+<p>This tag MAY provide an additional description stating why the associated
+element is deprecated.</p>
+<p>If the associated element is superseded by another it is RECOMMENDED to add a
+@see tag in the same 'PHPDoc' pointing to the new element.</p>
+<h4 id="examples_3">Examples</h4>
+<pre><code class="language-php">/**
+ * @deprecated
+ *
+ * @deprecated 1.0.0
+ *
+ * @deprecated No longer used by internal code and not recommended.
+ *
+ * @deprecated 1.0.0 No longer used by internal code and not recommended.
+ */
+</code></pre>
+<h3 id="55-generated">5.5. @generated</h3>
+<p>The @generated tag indicates that the code has been generated using an
+automation script.</p>
+<h4 id="syntax_4">Syntax</h4>
+<pre><code>@generated [description]
+</code></pre>
+<h4 id="description_4">Description</h4>
+<p>The <code>@generated</code> is used to denote a class or a function that has been
+generated using an automation script. This tag should be used to warn
+to not change the code, since the change will be overwritten by the
+automation script.</p>
+<h4 id="examples_4">Examples</h4>
+<p>Mark a class that has been generated using a PHP script.</p>
+<pre><code class="language-php">/**
+ * Index a document in Elasticsearch
+ * 
+ * @generated class generated using bin/script.php, please DO NOT EDIT!
+ * 
+ * @version 7.14.0 Elasticsearch
+ */
+class Index
+{
+    &lt;...&gt;
+}
+</code></pre>
+<p>Mark a function that has been generated using a PHP script.</p>
+<pre><code class="language-php">
+/**
+ * @generated function generated using bin/script.php, please DO NOT EDIT!
+ * 
+ * @params array $params parameters for the index API endpoint
+ * 
+ * @return array response from Elasticsearch
+ */
+function index(array $params): array
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="56-internal">5.6. @internal</h3>
+<p>The @internal tag is used to denote that the associated "Structural Element" is
+a structure internal to this application or library. It may also be used inside
+a description to insert a piece of text that is only applicable for
+the developers of this software.</p>
+<h4 id="syntax_5">Syntax</h4>
+<pre><code>@internal [description]
+</code></pre>
+<p>or inline:</p>
+<pre><code>{@internal [description]}
+</code></pre>
+<p>Contrary to other inline tags, the inline version of this tag may also contain
+other inline tags (see second example below).</p>
+<h4 id="description_5">Description</h4>
+<p>The <code>@internal</code> tag indicates that the associated "Structural Element" is intended
+only for use within the application, library or package to which it belongs.</p>
+<p>Authors MAY use this tag to indicate that an element with public visibility should
+be regarded as exempt from the API - for example:
+  * Library authors MAY regard breaking changes to internal elements as being exempt
+    from semantic versioning.
+  * Static analysis tools MAY indicate the use of internal elements from another
+    library/package with a warning or notice.</p>
+<p>When generating documentation from PHPDoc comments it is RECOMMENDED to hide the
+associated element unless the user has explicitly indicated that internal elements
+should be included.</p>
+<p>An additional use of @internal is to add internal comments or additional
+description text inline to the Description. This may be done, for example,
+to withhold certain business-critical or confusing information when generating
+documentation from the source code of this piece of software.</p>
+<h4 id="examples_5">Examples</h4>
+<p>Mark the count function as being internal to this project:</p>
+<pre><code class="language-php">/**
+ * @internal
+ *
+ * @return int Indicates the number of items.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<p>Include a note in the Description that only Developer Docs would show.</p>
+<pre><code class="language-php">/**
+ * Counts the number of Foo.
+ *
+ * This method gets a count of the Foo.
+ * {@internal Developers should note that it silently 
+ *            adds one extra Foo (see {@link http://example.com}).}
+ *
+ * @return int Indicates the number of items.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="57-link">5.7. @link</h3>
+<p>The @link tag indicates a custom relation between the associated
+"Structural Element" and a website, which is identified by an absolute URI.</p>
+<h4 id="syntax_6">Syntax</h4>
+<pre><code>@link [URI] [description]
+</code></pre>
+<p>or inline</p>
+<pre><code>{@link [URI] [description]}
+</code></pre>
+<h4 id="description_6">Description</h4>
+<p>The @link tag can be used to define a relation, or link, between the
+"Structural Element", or part of the description when used inline, to an URI.</p>
+<p>The URI MUST be complete and well-formed as specified in <a href="https://tools.ietf.org/html/rfc2396">RFC 2396</a>.</p>
+<p>The @link tag MAY have a description appended to indicate the type of relation
+defined by this occurrence.</p>
+<h4 id="examples_6">Examples</h4>
+<pre><code class="language-php">/**
+ * @link http://example.com/my/bar Documentation of Foo.
+ *
+ * @return int Indicates the number of items.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+
+/**
+ * This method counts the occurrences of Foo.
+ *
+ * When no more Foo ({@link http://example.com/my/bar}) are given this
+ * function will add one as there must always be one Foo.
+ *
+ * @return int Indicates the number of items.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="58-method">5.8. @method</h3>
+<p>The @method allows a class to know which 'magic' methods are callable.</p>
+<h4 id="syntax_7">Syntax</h4>
+<pre><code>@method [return type] [name]([type] [parameter], [...]) [description]
+</code></pre>
+<h4 id="description_7">Description</h4>
+<p>The @method tag is used in situation where a class contains the <code>__call()</code> magic
+method and defines some definite uses.</p>
+<p>An example of this is a child class whose parent has a <code>__call()</code> to have dynamic
+getters or setters for predefined properties. The child knows which getters and
+setters need to be present but relies on the parent class to use the <code>__call()</code>
+method to provide it. In this situation, the child class would have a @method
+tag for each magic setter or getter method.</p>
+<p>The @method tag allows the author to communicate the type of the arguments and
+return value by including those types in the signature.</p>
+<p>When the intended method does not have a return value then the return type MAY
+be omitted; in which case 'void' is implied.</p>
+<p>@method tags can ONLY be used in a PHPDoc that is associated with a
+<em>class</em> or <em>interface</em>.</p>
+<h4 id="examples_7">Examples</h4>
+<pre><code class="language-php">class Parent
+{
+    public function __call()
+    {
+        &lt;...&gt;
+    }
+}
+
+/**
+ * @method setInteger(int $integer)
+ * @method string getString()
+ * @method void setString(int $integer)
+ */
+class Child extends Parent
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="59-package">5.9. @package</h3>
+<p>The @package tag is used to categorize "Structural Elements" into logical
+subdivisions.</p>
+<h4 id="syntax_8">Syntax</h4>
+<pre><code>@package [level 1]\[level 2]\[etc.]
+</code></pre>
+<h4 id="description_8">Description</h4>
+<p>The @package tag can be used as a counterpart or supplement to Namespaces.
+Namespaces provide a functional subdivision of "Structural Elements" where the
+@package tag can provide a <em>logical</em> subdivision in which way the elements can
+be grouped with a different hierarchy.</p>
+<p>If, across the board, both logical and functional subdivisions are equal it
+is NOT RECOMMENDED to use the @package tag, to prevent maintenance overhead.</p>
+<p>Each level in the logical hierarchy MUST separated with a backslash (<code>\</code>) to
+be familiar to Namespaces. A hierarchy MAY be of endless depth but it is
+RECOMMENDED to keep the depth at less or equal than six levels.</p>
+<p>The package applies to that namespace, class or interface and their contained
+elements. This means that a function which is contained in a namespace with the
+@package tag assumes that package.</p>
+<p>This tag MUST NOT occur more than once in a "DocBlock".</p>
+<h4 id="examples_8">Examples</h4>
+<pre><code class="language-php">/**
+ * @package PSR\Documentation\API
+ */
+</code></pre>
+<h3 id="510-param">5.10. @param</h3>
+<p>The @param tag is used to document a single parameter of a function or method.</p>
+<h4 id="syntax_9">Syntax</h4>
+<pre><code>@param ["Type"] [name] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_9">Description</h4>
+<p>With the @param tag it is possible to document the type and function of a
+single parameter of a function or method. When provided it MUST contain a
+"Type" to indicate what is expected. The "name" is required only when some
+@param tags are omitted due to all useful info already being visible in the
+code signature itself. The description is OPTIONAL yet RECOMMENDED.</p>
+<p>The @param tag MAY have a multi-line description and does not need explicit
+delimiting.</p>
+<p>It is RECOMMENDED when documenting to use this tag with every function and
+method.</p>
+<p>This tag MUST NOT occur more than once per parameter in a "PHPDoc" and is
+limited to "Structural Elements" of type method or function.</p>
+<h4 id="examples_9">Examples</h4>
+<pre><code class="language-php">/**
+ * Counts the number of items in the provided array.
+ *
+ * @param mixed[] $items Array structure to count the elements of.
+ *
+ * @return int Returns the number of elements.
+ */
+function count(array $items)
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="511-property">5.11. @property</h3>
+<p>The <code>@property</code> tag is used to declare which "magic" properties are supported.</p>
+<h4 id="syntax_10">Syntax</h4>
+<pre><code>@property[&lt;-read|-write&gt;] ["Type"] [name] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_10">Description</h4>
+<p>The <code>@property</code> tag is used when a <code>class</code> (or <code>trait</code>) implements the <code>__get()</code>
+and/or <code>__set()</code> "magic" methods to resolve non-literal properties at run-time.</p>
+<p>The <code>@property-read</code> and <code>@property-write</code> variants MAY be used to indicate "magic"
+properties that can only be read or written.</p>
+<p>The <code>@property</code> tags can ONLY be used in a PHPDoc that is associated with a
+<em>class</em> or <em>trait</em>.</p>
+<h4 id="example">Example</h4>
+<p>In the following example, a class <code>User</code> implements the magic <code>__get()</code> method, in
+order to implement a "magic", read-only <code>$full_name</code> property:</p>
+<pre><code class="language-php">/**
+ * @property-read string $full_name
+ */
+class User
+{
+    /**
+     * @var string
+     */
+    public $first_name;
+
+    /**
+     * @var string
+     */
+    public $last_name;
+
+    public function __get($name)
+    {
+        if ($name === &quot;full_name&quot;) {
+            return &quot;{$this-&gt;first_name} {$this-&gt;last_name}&quot;;
+        }
+    }
+}
+</code></pre>
+<h3 id="512-return">5.12. @return</h3>
+<p>The @return tag is used to document the return value of functions or methods.</p>
+<h4 id="syntax_11">Syntax</h4>
+<pre><code>@return &lt;"Type"&gt; [description]
+</code></pre>
+<h4 id="description_11">Description</h4>
+<p>With the @return tag it is possible to document the return type of a
+function or method. When provided, it MUST contain a "Type"
+to indicate what is returned; the description on the other hand is OPTIONAL yet
+RECOMMENDED in case of complicated return structures, such as associative arrays.</p>
+<p>The @return tag MAY have a multi-line description and does not need explicit
+delimiting.</p>
+<p>It is RECOMMENDED to use this tag with every function and method. An exception to
+this recommendation, as defined by the Coding Standard of any individual project,
+MAY be:</p>
+<p><strong>functions and methods without a <code>return</code> value</strong>: the @return tag MAY be
+   omitted here, in which case an interpreter MUST interpret this as if
+   <code>@return void</code> is provided.</p>
+<p>This tag MUST NOT occur more than once in a "DocBlock" and is limited to the
+"DocBlock" of a "Structural Element" of a method or function.</p>
+<h4 id="examples_10">Examples</h4>
+<pre><code class="language-php">/**
+ * @return int Indicates the number of items.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+
+/**
+ * @return string|null The label's text or null if none provided.
+ */
+function getLabel()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="513-see">5.13. @see</h3>
+<p>The @see tag indicates a reference from the associated "Structural Elements" to
+a website or other "Structural Elements".</p>
+<h4 id="syntax_12">Syntax</h4>
+<pre><code>@see [URI | "FQSEN"] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_12">Description</h4>
+<p>The @see tag can be used to define a reference to other "Structural Elements"
+or to a URI.</p>
+<p>When defining a reference to another "Structural Elements" you can refer to a
+specific element by appending a double colon and providing the name of that
+element (also called the "FQSEN").</p>
+<p>A URI MUST be complete and well-formed as specified in <a href="https://tools.ietf.org/html/rfc2396">RFC 2396</a>.</p>
+<p>The @see tag SHOULD have a description to provide additional information
+regarding the relationship between the element and its target. Additionally, the
+@see tag MAY have a tag specialization to add further definition to this
+relationship.</p>
+<h4 id="examples_11">Examples</h4>
+<pre><code class="language-php">/**
+ * @see number_of() :alias:
+ * @see MyClass::$items           For the property whose items are counted.
+ * @see MyClass::setItems()       To set the items for this collection.
+ * @see http://example.com/my/bar Documentation of Foo.
+ *
+ * @return int Indicates the number of items.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="514-since">5.14. @since</h3>
+<p>The @since tag is used to denote <em>when</em> an element was introduced or modified,
+using some description of "versioning" to that element.</p>
+<h4 id="syntax_13">Syntax</h4>
+<pre><code>@since [&lt;"Semantic Version"&gt;] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_13">Description</h4>
+<p>Documents the "version" of the introduction or modification of any element.</p>
+<p>It is RECOMMENDED that the version matches a semantic version number (x.x.x)
+and MAY have a description to provide additional information.</p>
+<p>This information can be used to generate a set of API Documentation where the
+consumer is informed which application version is necessary for a specific
+element.</p>
+<p>The @since tag SHOULD NOT be used to show the current version of an element, the
+@version tag MAY be used for that purpose.</p>
+<h4 id="examples_12">Examples</h4>
+<pre><code class="language-php">/**
+ * This is Foo
+ * @version 2.1.7 MyApp
+ * @since 2.0.0 introduced
+ */
+class Foo
+{
+    /**
+     * Make a bar.
+     *
+     * @since 2.1.5 bar($arg1 = '', $arg2 = null)
+     *        introduced the optional $arg2
+     * @since 2.1.0 bar($arg1 = '')
+     *        introduced the optional $arg1
+     * @since 2.0.0 bar()
+     *        introduced new method bar()
+     */
+    public function bar($arg1 = '', $arg2 = null)
+    {
+        &lt;...&gt;
+    }
+}
+</code></pre>
+<h3 id="515-throws">5.15. @throws</h3>
+<p>The @throws tag is used to indicate whether "Structural Elements" throw a
+specific type of Throwable (exception or error).</p>
+<h4 id="syntax_14">Syntax</h4>
+<pre><code>@throws ["Type"] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_14">Description</h4>
+<p>The @throws tag MAY be used to indicate that "Structural Elements" throw a
+specific type of error.</p>
+<p>The type provided with this tag MUST represent an object that is a subtype of Throwable.</p>
+<p>This tag is used to present in your documentation which error COULD occur and
+under which circumstances. It is RECOMMENDED to provide a description that
+describes the reason an exception is thrown.</p>
+<p>It is also RECOMMENDED that this tag occurs for every occurrence of an
+exception, even if it has the same type. By documenting every occurrence a
+detailed view is created and the consumer knows for which errors to check.</p>
+<h4 id="examples_13">Examples</h4>
+<pre><code class="language-php">/**
+ * Counts the number of items in the provided array.
+ *
+ * @param mixed[] $array Array structure to count the elements of.
+ *
+ * @throws InvalidArgumentException if the provided argument is not of type
+ *     'array'.
+ *
+ * @return int Returns the number of elements.
+ */
+function count($items)
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="516-todo">5.16. @todo</h3>
+<p>The @todo tag is used to indicate whether any development activities should
+still be executed on associated "Structural Elements".</p>
+<h4 id="syntax_15">Syntax</h4>
+<pre><code>@todo [description]
+</code></pre>
+<h4 id="description_15">Description</h4>
+<p>The @todo tag is used to indicate that an activity surrounding the associated
+"Structural Elements" must still occur. Each tag MUST be accompanied by
+a description that communicates the intent of the original author; this could
+however be as short as providing an issue number.</p>
+<h4 id="examples_14">Examples</h4>
+<pre><code class="language-php">/**
+ * Counts the number of items in the provided array.
+ *
+ * @todo add an array parameter to count
+ *
+ * @return int Returns the number of elements.
+ */
+function count()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="517-uses">5.17. @uses</h3>
+<p>Indicates whether the current "Structural Element" consumes the
+"Structural Element", or project file, that is provided as target.</p>
+<h4 id="syntax_16">Syntax</h4>
+<pre><code>@uses [file | "FQSEN"] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_16">Description</h4>
+<p>The <code>@uses</code> tag describes whether any part of the associated "Structural Element"
+uses, or consumes, another "Structural Element" or a file that is situated in
+the current project.</p>
+<p>When defining a reference to another "Structural Element" you can refer to a
+specific element by appending a double colon and providing the name of that
+element (also called the "FQSEN").</p>
+<p>Files that are contained in this project can be referred to by this tag. This
+can be used, for example, to indicate a relationship between a Controller and
+a template file (as View).</p>
+<p>This tag MUST NOT be used to indicate relations to elements outside of the
+system, so URLs are not usable. To indicate relations with outside elements the
+@see tag can be used.</p>
+<p>Applications consuming this tag, such as generators, are RECOMMENDED to provide
+a <code>@used-by</code> tag on the destination element. This can be used to provide a
+bi-directional experience and allow for static analysis.</p>
+<h4 id="examples_15">Examples</h4>
+<pre><code class="language-php">/**
+ * @uses \SimpleXMLElement::__construct()
+ */
+function initializeXml()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<pre><code class="language-php">/**
+ * @uses MyView.php
+ */
+function executeMyView()
+{
+    &lt;...&gt;
+}
+</code></pre>
+<h3 id="518-var">5.18. @var</h3>
+<p>You may use the @var tag to document the "Type" of the following
+"Structural Elements":</p>
+<ul>
+<li>Constants, both class and global scope</li>
+<li>Properties</li>
+<li>Variables, both global and local scope</li>
+</ul>
+<h4 id="syntax_17">Syntax</h4>
+<pre><code>@var ["Type"] [element_name] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_17">Description</h4>
+<p>The @var tag defines which type of data is represented by a value of a
+Constant, Property or Variable.</p>
+<p>Each Constant or Property definition or Variable where the type is ambiguous
+or unknown SHOULD be preceded by a DocBlock containing the @var tag. Any
+other variable MAY be preceded with a DocBlock containing the @var tag.</p>
+<p>The @var tag MUST contain the name of the element it documents. An exception
+to this is when property declarations only refer to a single property. In this
+case the name of the property MAY be omitted.</p>
+<p><code>element_name</code> is used when compound statements are used to define a series of Constants
+or Properties. Such a compound statement can only have one DocBlock while several
+items are represented.</p>
+<h4 id="examples_16">Examples</h4>
+<pre><code class="language-php">/** @var int $int This is a counter. */
+$int = 0;
+
+// there should be no docblock here
+$int++;
+</code></pre>
+<p>Or:</p>
+<pre><code class="language-php">class Foo
+{
+  /** @var string|null Should contain a description */
+  protected $description = null;
+
+  public function setDescription($description)
+  {
+      // there should be no docblock here
+      $this-&gt;description = $description;
+  }
+}
+</code></pre>
+<p>Another example is to document the variable in a foreach explicitly; many IDEs
+use this information to help you with auto-completion:</p>
+<pre><code class="language-php">/** @var \Sqlite3 $sqlite */
+foreach ($connections as $sqlite) {
+    // there should be no docblock here
+    $sqlite-&gt;open('/my/database/path');
+    &lt;...&gt;
+}
+</code></pre>
+<p>Even compound statements may be documented:</p>
+<pre><code class="language-php">class Foo
+{
+  protected
+      /**
+       * @var string Should contain a description
+       */
+      $name,
+      /**
+       * @var string Should contain a description
+       */
+      $description;
+
+}
+</code></pre>
+<p>Or constants:</p>
+<pre><code class="language-php">class Foo
+{
+  const
+      /**
+       * @var string Should contain a description
+       */
+      MY_CONST1 = &quot;1&quot;,
+      /**
+       * @var string Should contain a description
+       */
+      MY_CONST2 = &quot;2&quot;;
+
+}
+</code></pre>
+<h3 id="519-version">5.19. @version</h3>
+<p>The @version tag is used to denote some description of "versioning" to an
+element.</p>
+<h4 id="syntax_18">Syntax</h4>
+<pre><code>@version ["Semantic Version"] [&lt;description&gt;]
+</code></pre>
+<h4 id="description_18">Description</h4>
+<p>Documents the current "version" of any element.</p>
+<p>This information can be used to generate a set of API Documentation where the
+consumer is informed about elements at a particular version.</p>
+<p>It is RECOMMENDED that the version number matches a semantic version number as
+described in the <a href="http://www.semver.org">Semantic Versioning Standard version 2.0</a>.</p>
+<p>Version vectors from Version Control Systems are also supported, though they
+MUST follow the form:</p>
+<pre><code>name-of-vcs: $vector$
+</code></pre>
+<p>A description MAY be provided, for the purpose of communicating any additional
+version-specific information.</p>
+<p>The @version tag MAY NOT be used to show the last modified or introduction
+version of an element, the @since tag SHOULD be used for that purpose.</p>
+<h4 id="examples_17">Examples</h4>
+<pre><code class="language-php">/**
+ * File for class Foo
+ * @version 2.1.7 MyApp
+ *          (this string denotes the application's overall version number)
+ * @version @package_version@
+ *          (this PEAR replacement keyword expands upon package installation)
+ * @version $Id$
+ *          (this CVS keyword expands to show the CVS file revision number)
+ */
+
+/**
+ * This is Foo
+ */
+class Foo
+{
+  &lt;...&gt;
+}
+</code></pre>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

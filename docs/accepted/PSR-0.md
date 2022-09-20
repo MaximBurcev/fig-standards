@@ -1,32 +1,31 @@
-Autoloading Standard
+Стандарт автозагрузки
 ====================
 
-> **Deprecated** - As of 2014-10-21 PSR-0 has been marked as deprecated. [PSR-4] is now recommended
-as an alternative.
+> **Устарело** — по состоянию на 21 октября 2014 г. PSR-0 помечен как устаревший. [PSR-4] теперь рекомендуется
+как альтернатива.
 
-[PSR-4]: https://www.php-fig.org/psr/psr-4/
+[PSR-4]: ../accepted/PSR-4-autoloader-meta.md
 
-The following describes the mandatory requirements that must be adhered
-to for autoloader interoperability.
+Ниже описаны обязательные требования, которые необходимо соблюдать  для совместимости с автозагрузчиком.
 
-Mandatory
+Обязательно
 ---------
 
-* A fully-qualified namespace and class must have the following
-  structure `\<Vendor Name>\(<Namespace>\)*<Class Name>`
-* Each namespace must have a top-level namespace ("Vendor Name").
-* Each namespace can have as many sub-namespaces as it wishes.
-* Each namespace separator is converted to a `DIRECTORY_SEPARATOR` when
-  loading from the file system.
-* Each `_` character in the CLASS NAME is converted to a
-  `DIRECTORY_SEPARATOR`. The `_` character has no special meaning in the
-  namespace.
-* The fully-qualified namespace and class are suffixed with `.php` when
-  loading from the file system.
-* Alphabetic characters in vendor names, namespaces, and class names may
-  be of any combination of lower case and upper case.
+* Полное пространство имен и класс должны иметь следующую
+  структуру `\<Имя поставщика>\(<Пространство имен>\)*<Имя класса>`
+* Каждое пространство имен должно иметь пространство имен верхнего уровня («Имя поставщика»).
+* Каждое пространство имен может иметь столько подпространств имен, сколько необходимо.
+* Каждый разделитель пространства имен преобразуется в `DIRECTORY_SEPARATOR`, при
+  загрузки из файловой системы.
+* Каждый символ `_` в имени класса преобразуется в
+  `DIRECTORY_SEPARATOR`. Символ `_` не имеет специального значения в
+  пространстве имен.
+* Полное пространство имен и класс имеют суффикс `.php`, при
+  загрузки из файловой системы.
+* Алфавитные символы в именах поставщиков, пространствах имен и именах классов могут
+  иметь любую комбинацию строчных и прописных букв.
 
-Examples
+Примеры
 --------
 
 * `\Doctrine\Common\IsolatedClassLoader` => `/path/to/project/lib/vendor/Doctrine/Common/IsolatedClassLoader.php`
@@ -34,22 +33,22 @@ Examples
 * `\Zend\Acl` => `/path/to/project/lib/vendor/Zend/Acl.php`
 * `\Zend\Mail\Message` => `/path/to/project/lib/vendor/Zend/Mail/Message.php`
 
-Underscores in Namespaces and Class Names
+Знаки подчеркивания в пространствах имен и именах классов
 -----------------------------------------
 
 * `\namespace\package\Class_Name` => `/path/to/project/lib/vendor/namespace/package/Class/Name.php`
 * `\namespace\package_name\Class_Name` => `/path/to/project/lib/vendor/namespace/package_name/Class/Name.php`
 
-The standards we set here should be the lowest common denominator for
-painless autoloader interoperability. You can test that you are
-following these standards by utilizing this sample SplClassLoader
-implementation which is able to load PHP 5.3 classes.
+Стандарты, которые мы устанавливаем здесь, должны быть наименьшими доработками для
+безболезненной совместимости автозагрузчика. Вы можете проверить, что 
+следуя этим стандартам и используя этот образец реализации SplClassLoader
+для загрузки классов в PHP 5.3.
 
-Example Implementation
+Пример реализации
 ----------------------
 
-Below is an example function to simply demonstrate how the above
-proposed standards are autoloaded.
+Ниже приведен пример функции, чтобы просто продемонстрировать, как
+предлагаемые стандарты загружаются автоматически.
 
 ~~~php
 <?php
@@ -71,13 +70,13 @@ function autoload($className)
 spl_autoload_register('autoload');
 ~~~
 
-SplClassLoader Implementation
+Реализация SplClassLoader
 -----------------------------
 
-The following gist is a sample SplClassLoader implementation that can
-load your classes if you follow the autoloader interoperability
-standards proposed above. It is the current recommended way to load PHP
-5.3 classes that follow these standards.
+Ниже приведена примерная реализация SplClassLoader, которая может
+загрузить свои классы, если вы следуете рекомендациям автозагрузчика
+стандартов, предложенных выше. 
+Это текущий рекомендуемый способ загрузки в PHP 5.3 классов, соответствующие этим стандартам.
 
 * [http://gist.github.com/221634](http://gist.github.com/221634)
 

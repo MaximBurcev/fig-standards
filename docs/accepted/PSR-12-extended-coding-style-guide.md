@@ -1,40 +1,38 @@
-# Extended Coding Style Guide
+# Расширенное руководство по стилю кодирования
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][].
+Слова «НЕОБХОДИМО» / «ДОЛЖНО» ("MUST"), «НЕДОПУСТИМО» ("MUST NOT"),
+«ТРЕБУЕТСЯ» ("REQUIRED"), «НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"),
+«СЛЕДУЕТ» ("SHOULD"), «НЕ СЛЕДУЕТ» ("SHOULD NOT"),
+«РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
+«НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC-2119] (и его [переводе]).
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-## Overview
+## Обзор
 
-This specification extends, expands and replaces [PSR-2][], the coding style guide and
-requires adherence to [PSR-1][], the basic coding standard.
+Это руководство дополняет, расширяет и заменяет [PSR-2][] (руководство по стилю кодирования) и
+требует соблюдения [PSR-1][] (основного стандарта кодирования).
 
-Like [PSR-2][], the intent of this specification is to reduce cognitive friction when
-scanning code from different authors. It does so by enumerating a shared set of rules
-and expectations about how to format PHP code. This PSR seeks to provide a set way that
-coding style tools can implement, projects can declare adherence to and developers
-can easily relate to between different projects. When various authors collaborate
-across multiple projects, it helps to have one set of guidelines to be used among
-all those projects. Thus, the benefit of this guide is not in the rules themselves
-but the sharing of those rules.
+Как и [PSR-2][], цель этой спецификации состоит в том, чтобы снизить сложности восприятия кода, 
+написанного разными авторами; 
+она достигается путём рассмотрения серии правил и ожиданий относительно форматирования PHP-кода.
+Стилистические правила, представленные здесь, получены путём обобщения опыта различных проектов.
+Сотрудничество многих авторов из многих проектов позволяет выработать единый набор принципов и использовать его в этих проектах. 
+Таким образом, польза представленных рекомендаций – не столько в самих рекомендациях, сколько в их распространении.
 
-[PSR-2][] was accepted in 2012 and since then a number of changes have been made to PHP
-which has implications for coding style guidelines. Whilst [PSR-2] is very comprehensive
-of PHP functionality that existed at the time of writing, new functionality is very
-open to interpretation. This PSR, therefore, seeks to clarify the content of PSR-2 in
-a more modern context with new functionality available, and make the errata to PSR-2
-binding.
+[PSR-2][] был принят в 2012 году, и с тех пор в PHP был внесен ряд изменений,
+что накладывает подолнительные рекомендации на стиль кодирования. 
+Данный PSR направлен на уточнение содержания [PSR-2][] в
+более современном контексте с новыми доступными функциями и возможностями. 
 
-### Previous language versions
+### Предыдущие языковые версии
 
-Throughout this document, any instructions MAY be ignored if they do not exist in versions
-of PHP supported by your project.
+В этом документе любые инструкции МОГУТ быть проигнорированы, если они отсутсвуют в вашем проекте.
 
-### Example
+### Пример
 
-This example encompasses some of the rules below as a quick overview:
+Этот пример включает в себя некоторые из приведенных ниже правил в качестве краткого обзора:
 
 ~~~php
 <?php
@@ -65,93 +63,93 @@ class Foo extends Bar implements FooInterface
 
     final public static function bar()
     {
-        // method body
+        // тело метода
     }
 }
 ~~~
 
-## 2. General
+## 2. Общие рекомендации
 
-### 2.1 Basic Coding Standard
+### 2.1 Базовый стандарт кодирования
 
-Code MUST follow all rules outlined in [PSR-1].
+Код ДОЛЖЕН соответствовать всем правилам, изложенным в [PSR-1].
 
-The term 'StudlyCaps' in PSR-1 MUST be interpreted as PascalCase where the first letter of
-each word is capitalized including the very first letter.
+Термин «StudlyCaps» в PSR-1 ДОЛЖЕН интерпретироваться как PascalCase, где первая буква
+каждое слово пишется с заглавной буквы, включая самую первую букву.
 
-### 2.2 Files
+### 2.2 Файлы
 
-All PHP files MUST use the Unix LF (linefeed) line ending only.
+Во всех файлах с PHP-кодом ДОЛЖЕН быть использован Unix-вариант переноса строк (Unix linefeed, т.е. `\n`).
 
-All PHP files MUST end with a non-blank line, terminated with a single LF.
+В конце каждого файла с PHP-кодом ДОЛЖНА быть одна пустая строка.
 
-The closing `?>` tag MUST be omitted from files containing only PHP.
+Закрывающий тег `?>` ДОЛЖЕН отсутствовать в файлах, содержащих только PHP-код.
 
-### 2.3 Lines
+### 2.3 Строки
 
-There MUST NOT be a hard limit on line length.
+НЕ ДОЛЖНО быть жестких ограничений на длину строки.
 
-The soft limit on line length MUST be 120 characters.
+Мягкое ограничение длины строки ДОЛЖНО составлять 120 символов; автоматические проверки стиля
+ДОЛЖЕН предупреждать, но НЕ ДОЛЖЕН выдавать ошибку при мягком пределе.
 
-Lines SHOULD NOT be longer than 80 characters; lines longer than that SHOULD
-be split into multiple subsequent lines of no more than 80 characters each.
+Строки НЕ ДОЛЖНЫ быть длиннее 80 символов; строки длиннее этого ДОЛЖНЫ
+быть разбит на несколько последовательных строк не более 80 символов каждая.
 
-There MUST NOT be trailing whitespace at the end of lines.
+НЕ ДОЛЖНЫ быть пробелы в конце непустых строк.
 
-Blank lines MAY be added to improve readability and to indicate related
-blocks of code except where explicitly forbidden.
+Пустые строки МОГУТ быть добавлены для улучшения удобочитаемости и для обозначения связанных
+блоки кода.
 
-There MUST NOT be more than one statement per line.
+НЕ ДОЛЖНО быть более одного оператора в строке.
 
-### 2.4 Indenting
+### 2.4 Отступы
 
-Code MUST use an indent of 4 spaces for each indent level, and MUST NOT use
-tabs for indenting.
+Код ДОЛЖЕН использовать отступ в 4 пробела и НЕ ДОЛЖЕН использовать табуляцию для отступа.
 
-### 2.5 Keywords and Types
 
-All PHP reserved keywords and types [[1]][keywords][[2]][types] MUST be in lower case.
+### 2.5 Ключевые слова и типы
 
-Any new types and keywords added to future PHP versions MUST be in lower case.
+Все зарезервированные ключевые слова и типы PHP [[1]][keywords][[2]][types] ДОЛЖНЫ быть в нижнем регистре.
 
-Short form of type keywords MUST be used i.e. `bool` instead of `boolean`,
-`int` instead of `integer` etc.
+Любые новые типы и ключевые слова, добавленные в будущие версии PHP, ДОЛЖНЫ быть в нижнем регистре.
 
-## 3. Declare Statements, Namespace, and Import Statements
+ДОЛЖНА использоваться краткая форма ключевых слов типа, т. е. `bool` вместо `boolean`,
+`int` вместо `integer` и т. д.
 
-The header of a PHP file may consist of a number of different blocks. If present,
-each of the blocks below MUST be separated by a single blank line, and MUST NOT contain
-a blank line. Each block MUST be in the order listed below, although blocks that are
-not relevant may be omitted.
+## 3. Операторы объявления, пространство имен и операторы импорта
 
-* Opening `<?php` tag.
-* File-level docblock.
-* One or more declare statements.
-* The namespace declaration of the file.
-* One or more class-based `use` import statements.
-* One or more function-based `use` import statements.
-* One or more constant-based `use` import statements.
-* The remainder of the code in the file.
+Заголовок файла PHP может состоять из нескольких разных блоков.
+Каждый из блоков ДОЛЖЕН быть разделен одной пустой строкой и НЕ ДОЛЖЕН содержать
+пустую строку. Каждый блок ДОЛЖЕН располагаться в порядке, указанном на на примере ниже.
+Неактуальные могут быть опущены.
 
-When a file contains a mix of HTML and PHP, any of the above sections may still
-be used. If so, they MUST be present at the top of the file, even if the
-remainder of the code consists of a closing PHP tag and then a mixture of HTML and
+* Открывающий тег `<?php`.
+* Докблок на уровне файла.
+* Один или несколько операторов объявления.
+* Объявление пространства имен файла.
+* Один или несколько операторов импорта `use` на основе класса.
+* Один или несколько операторов импорта `use` на основе функций.
+* Один или несколько операторов импорта `use` на основе констант.
+* Остальной код в файле.
+
+Когда файл содержит смесь HTML и PHP, любой из вышеперечисленных разделов может по-прежнему
+использоваться. Если это так, они ДОЛЖНЫ присутствовать в начале файла, даже если
+оставшаяся часть кода состоит из закрывающего тега PHP, а затем опять идет код в виде HTML и
 PHP.
 
-When the opening `<?php` tag is on the first line of the file, it MUST be on its
-own line with no other statements unless it is a file containing markup outside of PHP
-opening and closing tags.
+Когда открывающий тег `<?php` находится в первой строке файла, он ДОЛЖЕН быть на строке без других операторов, 
+если только это не файл, содержащий разметку вне PHP открывающие и закрывающие теги.
 
-Import statements MUST never begin with a leading backslash as they
-must always be fully qualified.
+Операторы импорта НЕ ДОЛЖНЫ начинаться с обратной косой черты, поскольку они
+всегда должны быть полностью квалифицированы.
 
-The following example illustrates a complete list of all blocks:
+Следующий пример иллюстрирует полный список всех блоков:
 
 ~~~php
 <?php
 
 /**
- * This file contains an example of coding styles.
+ * Этот файл содержит пример стилей кодирования.
  */
 
 declare(strict_types=1);
@@ -169,17 +167,18 @@ use const Vendor\Package\{CONSTANT_A, CONSTANT_B, CONSTANT_C};
 use const Another\Vendor\CONSTANT_D;
 
 /**
- * FooBar is an example class.
+ * FooBar класс как пример.
  */
 class FooBar
 {
-    // ... additional PHP code ...
+    // ... остальной PHP код ...
 }
 
 ~~~
 
-Compound namespaces with a depth of more than two MUST NOT be used. Therefore the
-following is the maximum compounding depth allowed:
+НЕ ДОЛЖНЫ использоваться составные пространства имен с глубиной более двух.
+Ниже приведена максимально допустимая глубина вложенности:
+
 ~~~php
 <?php
 
@@ -191,7 +190,7 @@ use Vendor\Package\SomeNamespace\{
 };
 ~~~
 
-And the following would not be allowed:
+Такое недопустимо:
 
 ~~~php
 <?php
@@ -203,60 +202,56 @@ use Vendor\Package\SomeNamespace\{
 };
 ~~~
 
-When wishing to declare strict types in files containing markup outside PHP
-opening and closing tags, the declaration MUST be on the first line of the file
-and include an opening PHP tag, the strict types declaration and closing tag.
-
-For example:
+При желании объявить строгие типы в файлах, содержащих разметку не только PHP, 
+открывающий и закрывающий теги ДОЛЖНЫ быть в первой строке файла. Например:
 ~~~php
 <?php declare(strict_types=1) ?>
 <html>
 <body>
     <?php
-        // ... additional PHP code ...
+        // ... дополнительный PHP код ...
     ?>
 </body>
 </html>
 ~~~
 
-Declare statements MUST contain no spaces and MUST be exactly `declare(strict_types=1)`
-(with an optional semi-colon terminator).
+Операторы объявления ДОЛЖНЫ быть точно `declare (strict_types=1)`
+(с необязательной точкой и запятой).
 
-Block declare statements are allowed and MUST be formatted as below. Note position of
-braces and spacing:
+Операторы объявления блока разрешены и ДОЛЖНЫ быть отформатированы, как показано ниже. 
+Обратите внимание на положение фигурных скобок и интервал:
 ~~~php
 declare(ticks=1) {
-    // some code
+    // некоторый код
 }
 ~~~
 
-## 4. Classes, Properties, and Methods
+## 4. Классы, свойства и методы
 
-The term "class" refers to all classes, interfaces, and traits.
+Здесь под «классом» следует понимать также интерфейсы (`interface`) и примеси (`trait`).
 
-Any closing brace MUST NOT be followed by any comment or statement on the
-same line.
+За любой закрывающей фигурной скобкой НЕ ДОЛЖНО быть никакого комментария или выражения. 
 
-When instantiating a new class, parentheses MUST always be present even when
-there are no arguments passed to the constructor.
+При создании экземпляра нового класса круглые скобки ДОЛЖНЫ присутствовать всегда, даже если
+в конструктор не передаются аргументы.
 
+Например:
 ~~~php
 new Foo();
 ~~~
 
-### 4.1 Extends and Implements
+### 4.1 Наследование и реализация
 
-The `extends` and `implements` keywords MUST be declared on the same line as
-the class name.
+Ключевые слова `extends` и `implements` ДОЛЖНЫ быть объявлены в той же строке, что и
+имя класса.
 
-The opening brace for the class MUST go on its own line; the closing brace
-for the class MUST go on the next line after the body.
+Открывающая фигурная скобка для класса ДОЛЖНА располагаться на отдельной строке; 
+закрывающая скобка класса ДОЛЖНА идти на следующей строке после тела класса.
 
-Opening braces MUST be on their own line and MUST NOT be preceded or followed
-by a blank line.
+Открывающие фигурные скобки ДОЛЖНЫ быть на отдельной строке и НЕ ДОЛЖНЫ стоять перед или после
+по пустой строке.
 
-Closing braces MUST be on their own line and MUST NOT be preceded by a blank
-line.
+Закрывающие фигурные скобки ДОЛЖНЫ быть на отдельной строке, и им НЕ ДОЛЖЕН предшествовать пробел.
 
 ~~~php
 <?php
@@ -269,14 +264,14 @@ use OtherVendor\OtherPackage\BazClass;
 
 class ClassName extends ParentClass implements \ArrayAccess, \Countable
 {
-    // constants, properties, methods
+    // константы, свойства, методы
 }
 ~~~
 
-Lists of `implements` and, in the case of interfaces, `extends` MAY be split
-across multiple lines, where each subsequent line is indented once. When doing
-so, the first item in the list MUST be on the next line, and there MUST be only
-one interface per line.
+Список реализуемых интерфейсов МОЖЕТ быть разделён на несколько строк, 
+каждая из которых дополнена слева одним отступом (четырьмя пробелами). 
+В таком случае первый элемент списка интерфейсов ДОЛЖЕН начинаться с новой строки, 
+и в каждой строке ДОЛЖЕН быть указан только один интерфейс.
 
 ~~~php
 <?php
@@ -292,14 +287,14 @@ class ClassName extends ParentClass implements
     \Countable,
     \Serializable
 {
-    // constants, properties, methods
+    // константы, свойства, методы
 }
 ~~~
 
-### 4.2 Using traits
+### 4.2 Использование трейдов
 
-The `use` keyword used inside the classes to implement traits MUST be
-declared on the next line after the opening brace.
+Ключевое слово `use`, используемое внутри классов для реализации трейтов, ДОЛЖНО быть
+объявляется на следующей строке после открывающей скобки.
 
 ~~~php
 <?php
@@ -314,8 +309,8 @@ class ClassName
 }
 ~~~
 
-Each individual trait that is imported into a class MUST be included
-one-per-line and each inclusion MUST have its own `use` import statement.
+Каждый отдельный трейт, который импортируется в класс, ДОЛЖЕН быть включен
+по одному на строку, и каждое включение ДОЛЖНО иметь свой собственный оператор импорта `use`.
 
 ~~~php
 <?php
@@ -334,8 +329,8 @@ class ClassName
 }
 ~~~
 
-When the class has nothing after the `use` import statement, the class
-closing brace MUST be on the next line after the `use` import statement.
+Когда в классе нет ничего после оператора импорта `use`,
+закрывающая фигурная скобка ДОЛЖНА быть на следующей строке после оператора импорта `use`.
 
 ~~~php
 <?php
@@ -350,7 +345,7 @@ class ClassName
 }
 ~~~
 
-Otherwise, it MUST have a blank line after the `use` import statement.
+В противном случае он ДОЛЖЕН иметь пустую строку после оператора импорта `use`.
 
 ~~~php
 <?php
@@ -367,8 +362,8 @@ class ClassName
 }
 ~~~
 
-When using the `insteadof` and `as` operators they must be used as follows taking
-note of indentation, spacing, and new lines.
+При использовании операторов `insteadof` и `as` они должны быть как на примере ниже. 
+Обратите внимание на отступы, пробелы, переносы строк. 
 
 ~~~php
 <?php
@@ -386,24 +381,22 @@ class Talker
 }
 ~~~
 
-### 4.3 Properties and Constants
+### 4.3 Свойства и константы
 
-Visibility MUST be declared on all properties.
+Видимость ДОЛЖНА быть объявлена для всех свойств.
 
-Visibility MUST be declared on all constants if your project PHP minimum
-version supports constant visibilities (PHP 7.1 or later).
+Видимость ДОЛЖНА быть объявлена для всех констант, если ваш проект на PHP 7.1 или новее.
 
-The `var` keyword MUST NOT be used to declare a property.
+Ключевое слово `var` НЕ ДОЛЖНО использоваться для объявления свойства.
 
-There MUST NOT be more than one property declared per statement.
+В инструкции НЕ ДОЛЖНО быть объявлено более одного свойства.
 
-Property names MUST NOT be prefixed with a single underscore to indicate
-protected or private visibility. That is, an underscore prefix explicitly has
-no meaning.
+Имена свойств НЕ ДОЛЖНЫ иметь префикс с одним подчеркиванием, чтобы указать
+защищенная или частная видимость. 
 
-There MUST be a space between type declaration and property name.
+ДОЛЖЕН быть пробел между объявлением типа и именем свойства.
 
-A property declaration looks like the following:
+Объявление свойства выглядит следующим образом:
 
 ~~~php
 <?php
@@ -417,21 +410,20 @@ class ClassName
 }
 ~~~
 
-### 4.4 Methods and Functions
+### 4.4 Методы и функции
 
-Visibility MUST be declared on all methods.
+Видимость ДОЛЖНА быть объявлена для всех методов.
 
-Method names MUST NOT be prefixed with a single underscore to indicate
-protected or private visibility. That is, an underscore prefix explicitly has
-no meaning.
+Имена методов НЕ ДОЛЖНЫ иметь префикс с одним подчеркиванием, чтобы указать
+защищенная или частная видимость. 
 
-Method and function names MUST NOT be declared with space after the method name. The
-opening brace MUST go on its own line, and the closing brace MUST go on the
-next line following the body. There MUST NOT be a space after the opening
-parenthesis, and there MUST NOT be a space before the closing parenthesis.
+Имена методов и функций НЕ ДОЛЖНЫ объявляться с пробелом после имени метода.
+Открывающая фигурная скобка ДОЛЖНА располагаться на отдельной строке, а закрывающая скобка ДОЛЖНА располагаться на
+следующей строке после тела метода. НЕ ДОЛЖНО быть пробела после открывающей
+скобки и НЕ ДОЛЖНО быть пробела перед закрывающей скобкой.
 
-A method declaration looks like the following. Note the placement of
-parentheses, commas, spaces, and braces:
+Объявление метода выглядит следующим образом. Обратите внимание на расположение
+круглых скобок, запятых, пробелов и фигурных скобок:
 
 ~~~php
 <?php
@@ -442,30 +434,28 @@ class ClassName
 {
     public function fooBarBaz($arg1, &$arg2, $arg3 = [])
     {
-        // method body
+        // тело метода
     }
 }
 ~~~
 
-A function declaration looks like the following. Note the placement of
-parentheses, commas, spaces, and braces:
+Объявление функции выглядит следующим образом. Обратите внимание на расположение
+круглых скобок, запятых, пробелов и фигурных скобок:
 
 ~~~php
 <?php
 
 function fooBarBaz($arg1, &$arg2, $arg3 = [])
 {
-    // function body
+    // тело метода
 }
 ~~~
 
-### 4.5 Method and Function Arguments
+### 4.5 Аргументы методов и функций
 
-In the argument list, there MUST NOT be a space before each comma, and there
-MUST be one space after each comma.
+В списке аргументов НЕ ДОЛЖНО быть пробела перед запятыми, но ДОЛЖЕН быть пробел после каждой запятой.
 
-Method and function arguments with default values MUST go at the end of the argument
-list.
+Аргументы со значениями по умолчанию ДОЛЖНЫ располагаться в конце списка (после аргументов без значений по умолчанию). {Примечание: и тут дело не в красоте, нарушение этого правила может привести ко вполне явным ошибкам выполнения программы, когда аргументу без значения по умолчанию «не хватит» значения при вызове метода.}
 
 ~~~php
 <?php
@@ -476,18 +466,15 @@ class ClassName
 {
     public function foo(int $arg1, &$arg2, $arg3 = [])
     {
-        // method body
+        // тело метода
     }
 }
 ~~~
 
-Argument lists MAY be split across multiple lines, where each subsequent line
-is indented once. When doing so, the first item in the list MUST be on the
-next line, and there MUST be only one argument per line.
+Список аргументов МОЖЕТ быть разделён на несколько строк, каждая из которых дополнена слева одним отступом (четырьмя пробелами). 
+В таком случае первый элемент списка аргументов ДОЛЖЕН начинаться с новой строки, и в каждой строке ДОЛЖЕН быть указан только один аргумент.
 
-When the argument list is split across multiple lines, the closing parenthesis
-and opening brace MUST be placed together on their own line with one space
-between them.
+В случае, если список аргументов разделён на несколько строк, закрывающая круглая скобка и открывающая фигурная скобка ДОЛЖНЫ располагаться вместе на своей отдельной строке, а между ними должен быть один пробел.
 
 ~~~php
 <?php
@@ -501,15 +488,13 @@ class ClassName
         &$arg2,
         array $arg3 = []
     ) {
-        // method body
+        // тело метода
     }
 }
 ~~~
 
-When you have a return type declaration present, there MUST be one space after
-the colon followed by the type declaration. The colon and declaration MUST be
-on the same line as the argument list closing parenthesis with no spaces between
-the two characters.
+Если у вас есть объявление возвращаемого типа, ДОЛЖЕН быть один пробел после двоеточия, за которым следует объявление типа. 
+Двоеточие и объявление ДОЛЖНЫ находиться в той же строке, что и закрывающая скобка списка аргументов, без пробелов между двумя символами.
 
 ~~~php
 <?php
@@ -535,8 +520,7 @@ class ReturnTypeVariations
 }
 ~~~
 
-In nullable type declarations, there MUST NOT be a space between the question mark
-and the type.
+В объявлениях типов, допускающих значение null, НЕ ДОЛЖНО быть пробела между знаком вопроса и типом.
 
 ~~~php
 <?php
@@ -554,21 +538,18 @@ class ReturnTypeVariations
 }
 ~~~
 
-When using the reference operator `&` before an argument, there MUST NOT be
-a space after it, like in the previous example.
+При использовании оператора ссылки `&` перед аргументом НЕ ДОЛЖНО быть пробела, как в предыдущем примере.
 
-There MUST NOT be a space between the variadic three dot operator and the argument
-name:
+НЕ ДОЛЖНО быть пробела между вариативным оператором с тремя точками и именем аргумента:
 
 ```php
 public function process(string $algorithm, ...$parts)
 {
-    // processing
+    // обработка
 }
 ```
 
-When combining both the reference operator and the variadic three dot operator,
-there MUST NOT be any space between the two of them:
+При объединении ссылочного оператора и вариативного оператора с тремя точками между ними НЕ ДОЛЖНО быть пробела:
 
 ```php
 public function process(string $algorithm, &...$parts)
@@ -577,13 +558,11 @@ public function process(string $algorithm, &...$parts)
 }
 ```
 
-### 4.6 `abstract`, `final`, and `static`
+### 4.6 Ключевые слова `abstract`, `final`, и `static`
 
-When present, the `abstract` and `final` declarations MUST precede the
-visibility declaration.
+Ключевые слова `abstract` и `final`, в случае их наличия, ДОЛЖНЫ располагаться перед указанием области видимости.
 
-When present, the `static` declaration MUST come after the visibility
-declaration.
+Ключевое слово `static`, в случае его наличия, ДОЛЖНО располагаться после указания области видимости.
 
 ~~~php
 <?php
@@ -598,18 +577,14 @@ abstract class ClassName
 
     final public static function bar()
     {
-        // method body
+        // тело метода
     }
 }
 ~~~
 
-### 4.7 Method and Function Calls
+### 4.7 Вызовы методов и функций
 
-When making a method or function call, there MUST NOT be a space between the
-method or function name and the opening parenthesis, there MUST NOT be a space
-after the opening parenthesis, and there MUST NOT be a space before the
-closing parenthesis. In the argument list, there MUST NOT be a space before
-each comma, and there MUST be one space after each comma.
+В коде вызова функций и методов НЕ ДОЛЖНО быть пробела между именем функции или метода и открывающей круглой скобкой, НЕ ДОЛЖНО быть пробела после открывающей круглой скобки, НЕ ДОЛЖНО быть пробела перед закрывающей круглой скобкой. В списке аргументов НЕ ДОЛЖНО быть пробелов перед запятыми, но ДОЛЖЕН быть пробел после каждой запятой.
 
 ~~~php
 <?php
@@ -619,11 +594,7 @@ $foo->bar($arg1);
 Foo::bar($arg2, $arg3);
 ~~~
 
-Argument lists MAY be split across multiple lines, where each subsequent line
-is indented once. When doing so, the first item in the list MUST be on the
-next line, and there MUST be only one argument per line. A single argument being
-split across multiple lines (as might be the case with an anonymous function or
-array) does not constitute splitting the argument list itself.
+Список аргументов МОЖЕТ быть разделён на несколько строк, каждая из которых дополнена слева одним отступом (четырьмя пробелами). В таком случае первый элемент списка аргументов ДОЛЖЕН начинаться с новой строки, и в каждой строке ДОЛЖЕН быть указан только один аргумент.
 
 ~~~php
 <?php
@@ -647,50 +618,48 @@ $app->get('/hello/{name}', function ($name) use ($app) {
 });
 ~~~
 
-## 5. Control Structures
+## 5. Управляющие конструкции
 
-The general style rules for control structures are as follows:
+Общие правила оформления управляющих конструкций:
 
-- There MUST be one space after the control structure keyword
-- There MUST NOT be a space after the opening parenthesis
-- There MUST NOT be a space before the closing parenthesis
-- There MUST be one space between the closing parenthesis and the opening
-  brace
-- The structure body MUST be indented once
-- The body MUST be on the next line after the opening brace
-- The closing brace MUST be on the next line after the body
+- После ключевого слова, определяющего управляющую конструкцию, ДОЛЖЕН быть один пробел.
+ - После открывающих круглых скобок НЕ ДОЛЖНО быть пробелов.
+ - Перед закрывающими круглыми скобками НЕ ДОЛЖНО быть пробелов.
+ - Между закрывающей круглой скобкой и открывающей фигурной скобкой ДОЛЖЕН быть один пробел.
+ - Тело конструкции ДОЛЖНО быть дополнено одним отступом (четырьмя пробелами).
+ - Закрывающая фигурная скобка ДОЛЖНА располагаться на следующей строке после тела конструкции.
 
 The body of each structure MUST be enclosed by braces. This standardizes how
 the structures look and reduces the likelihood of introducing errors as new
 lines get added to the body.
 
-### 5.1 `if`, `elseif`, `else`
+### 5.1 Конструкции `if`, `elseif`, `else`
 
-An `if` structure looks like the following. Note the placement of parentheses,
-spaces, and braces; and that `else` and `elseif` are on the same line as the
-closing brace from the earlier body.
+Конструкция `if` выглядит следующим образом. 
+Обратите внимание на круглые скобки, пробелы и фигурные скобки, а также на тот факт, 
+что слова `else` и `elseif` располагаются в той же строке, 
+что и закрывающая фигурная скобка предшествующего тела конструкции.
 
 ~~~php
 <?php
 
 if ($expr1) {
-    // if body
+    // if блок
 } elseif ($expr2) {
-    // elseif body
+    // elseif блок
 } else {
-    // else body;
+    // else блок
 }
 ~~~
 
-The keyword `elseif` SHOULD be used instead of `else if` so that all control
-keywords look like single words.
+Ключевое слово `elseif` СЛЕДУЕТ использовать вместо отдельного сочетания `else` и `if`. 
+Так конструкция будет представлять собой одно слово.
 
-Expressions in parentheses MAY be split across multiple lines, where each
-subsequent line is indented at least once. When doing so, the first condition
-MUST be on the next line. The closing parenthesis and opening brace MUST be
-placed together on their own line with one space between them. Boolean
-operators between conditions MUST always be at the beginning or at the end of
-the line, not a mix of both.
+Выражения в круглых скобках МОГУТ быть разделены на несколько строк, 
+где каждая последующая строка имеет отступ хотя бы один раз. 
+При этом первое условие ДОЛЖНО быть на следующей строке. 
+Закрывающая скобка и открывающая фигурная скобка ДОЛЖНЫ быть помещены вместе на отдельной строке с одним пробелом между ними. 
+Булевы операторы между условиями ДОЛЖНЫ всегда находиться в начале или в конце строки, а не в сочетании того и другого.
 
 ~~~php
 <?php
@@ -699,22 +668,23 @@ if (
     $expr1
     && $expr2
 ) {
-    // if body
+    // if блок
 } elseif (
     $expr3
     && $expr4
 ) {
-    // elseif body
+    // elseif блок
 }
 ~~~
 
-### 5.2 `switch`, `case`
+### 5.2 Конструкции `switch`, `case`
 
-A `switch` structure looks like the following. Note the placement of
-parentheses, spaces, and braces. The `case` statement MUST be indented once
-from `switch`, and the `break` keyword (or other terminating keywords) MUST be
-indented at the same level as the `case` body. There MUST be a comment such as
-`// no break` when fall-through is intentional in a non-empty `case` body.
+Конструкция `switch` выглядит следующим образом. Обратите внимание на круглые скобки, 
+пробелы и фигурные скобки. Выражение `case` ДОЛЖНО быть смещено на один отступ (четыре пробела) от
+`switch`, а ключевое слово `break` (или иное слово, обозначающее выход из конструкции) 
+ДОЛЖНО располагаться на том же уровне отступов, что и тело `case`. 
+В том случае, когда в непустом теле `case` умышленно не используется `break`, ДОЛЖЕН быть 
+комментарий в стиле `// no break`.
 
 ~~~php
 <?php
@@ -737,12 +707,10 @@ switch ($expr) {
 }
 ~~~
 
-Expressions in parentheses MAY be split across multiple lines, where each
-subsequent line is indented at least once. When doing so, the first condition
-MUST be on the next line. The closing parenthesis and opening brace MUST be
-placed together on their own line with one space between them. Boolean
-operators between conditions MUST always be at the beginning or at the end of
-the line, not a mix of both.
+Выражения в круглых скобках МОГУТ быть разделены на несколько строк, где каждая последующая строка имеет отступ хотя бы один раз. 
+При этом первое условие ДОЛЖНО быть на следующей строке. 
+Закрывающая скобка и открывающая фигурная скобка ДОЛЖНЫ быть помещены вместе на отдельной строке с одним пробелом между ними. 
+Булевы операторы между условиями ДОЛЖНЫ всегда находиться в начале или в конце строки, а не в сочетании того и другого.
 
 ~~~php
 <?php
@@ -751,29 +719,24 @@ switch (
     $expr1
     && $expr2
 ) {
-    // structure body
+    // тело цикла
 }
 ~~~
 
-### 5.3 `while`, `do while`
+### 5.3 Конструкции `while`, `do while`
 
-A `while` statement looks like the following. Note the placement of
-parentheses, spaces, and braces.
+Конструкция `while` выглядит следующим образом. 
+Обратите внимание на круглые скобки, пробелы и фигурные скобки.
 
 ~~~php
 <?php
 
 while ($expr) {
-    // structure body
+    // тело цикла
 }
 ~~~
 
-Expressions in parentheses MAY be split across multiple lines, where each
-subsequent line is indented at least once. When doing so, the first condition
-MUST be on the next line. The closing parenthesis and opening brace MUST be
-placed together on their own line with one space between them. Boolean
-operators between conditions MUST always be at the beginning or at the end of
-the line, not a mix of both.
+Выражения в круглых скобках МОГУТ быть разделены на несколько строк, где каждая последующая строка имеет отступ хотя бы один раз. При этом первое условие ДОЛЖНО быть на следующей строке. Закрывающая скобка и открывающая фигурная скобка ДОЛЖНЫ быть помещены вместе на отдельной строке с одним пробелом между ними. Булевы операторы между условиями ДОЛЖНЫ всегда находиться в начале или в конце строки, а не в сочетании того и другого.
 
 ~~~php
 <?php
@@ -782,54 +745,52 @@ while (
     $expr1
     && $expr2
 ) {
-    // structure body
+    // тело цикла
 }
 ~~~
 
-Similarly, a `do while` statement looks like the following. Note the placement
-of parentheses, spaces, and braces.
+Соответственно, конструкция `do while` выглядит следующим образом. 
+Обратите внимание на круглые скобки, пробелы и фигурные скобки.
 
 ~~~php
 <?php
 
 do {
-    // structure body;
+    // тело цикла
 } while ($expr);
 ~~~
 
-Expressions in parentheses MAY be split across multiple lines, where each
-subsequent line is indented at least once. When doing so, the first condition
-MUST be on the next line. Boolean operators between conditions MUST
-always be at the beginning or at the end of the line, not a mix of both.
+Выражения в круглых скобках МОГУТ быть разделены на несколько строк, где каждая последующая строка имеет отступ хотя бы один раз. При этом первое условие ДОЛЖНО быть на следующей строке. Булевы операторы между условиями ДОЛЖНЫ всегда находиться в начале или в конце строки, а не в сочетании того и другого.
 
 ~~~php
 <?php
 
 do {
-    // structure body;
+    // тело метода
 } while (
     $expr1
     && $expr2
 );
 ~~~
 
-### 5.4 `for`
+### 5.4  Конструкция `for`
 
-A `for` statement looks like the following. Note the placement of parentheses,
-spaces, and braces.
+Конструкция `for` выглядит следующим образом. 
+Обратите внимание на круглые скобки, пробелы и фигурные скобки.
 
 ~~~php
 <?php
 
 for ($i = 0; $i < 10; $i++) {
-    // for body
+    // тело цикла
 }
 ~~~
 
-Expressions in parentheses MAY be split across multiple lines, where each
-subsequent line is indented at least once. When doing so, the first expression
-MUST be on the next line. The closing parenthesis and opening brace MUST be
-placed together on their own line with one space between them.
+Выражения в круглых скобках МОГУТ быть разделены на несколько строк, 
+где каждая последующая строка имеет отступ хотя бы один раз. 
+При этом первое условие ДОЛЖНО быть на следующей строке. 
+Булевы операторы между условиями ДОЛЖНЫ всегда находиться в начале или в конце строки, 
+а не в сочетании того и другого.
 
 ~~~php
 <?php
@@ -839,70 +800,69 @@ for (
     $i < 10;
     $i++
 ) {
-    // for body
+    // тело цикла
 }
 ~~~
 
-### 5.5 `foreach`
+### 5.5 Конструкция `foreach`
 
-A `foreach` statement looks like the following. Note the placement of
-parentheses, spaces, and braces.
+Конструкция `foreach` выглядит следующим образом. 
+Обратите внимание на круглые скобки, пробелы и фигурные скобки.
 
 ~~~php
 <?php
 
 foreach ($iterable as $key => $value) {
-    // foreach body
+    // тело цикла
 }
 ~~~
 
-### 5.6 `try`, `catch`, `finally`
+### 5.6 Конструкции `try`, `catch`, `finally`
 
-A `try-catch-finally` block looks like the following. Note the placement of
-parentheses, spaces, and braces.
+Блок `try-catch-finally` выглядит следующим образом. Обратите внимание на расположение
+круглых скобок, пробелов и фигурных скобок.
 
 ~~~php
 <?php
 
 try {
-    // try body
+    // try блок
 } catch (FirstThrowableType $e) {
-    // catch body
+    // catch блок
 } catch (OtherThrowableType | AnotherThrowableType $e) {
-    // catch body
+    // catch блок
 } finally {
-    // finally body
+    // finally блок
 }
 ~~~
 
-## 6. Operators
+## 6. Операторы
 
-Style rules for operators are grouped by arity (the number of operands they take).
+Правила стиля для операторов сгруппированы по количеству операндов, которые они принимают.
 
-When space is permitted around an operator, multiple spaces MAY be
-used for readability purposes.
+Когда вокруг оператора разрешено пространство, МОЖЕТ быть несколько пробелов.
+Используется для удобства чтения.
 
-All operators not described here are left undefined.
+Все операторы, не описанные здесь, остаются неопределенными.
 
-### 6.1. Unary operators
+### 6.1. Унарные операторы
 
-The increment/decrement operators MUST NOT have any space between
-the operator and operand.
+Операторы инкремента/декремента НЕ ДОЛЖНЫ иметь пробела между оператором и операндом.
+
 ~~~php
 $i++;
 ++$j;
 ~~~
 
-Type casting operators MUST NOT have any space within the parentheses:
+Операторы приведения типов НЕ ДОЛЖНЫ иметь пробелов в круглых скобках:
 ~~~php
 $intValue = (int) $input;
 ~~~
 
-### 6.2. Binary operators
+### 6.2. Бинарные операторы
 
-All binary [arithmetic][], [comparison][], [assignment][], [bitwise][],
-[logical][], [string][], and [type][] operators MUST be preceded and
-followed by at least one space:
+Все бинарные [arithmetic][], [comparison][], [assignment][], [bitwise][],
+[logical][], [string][], [type][] операторы ДОЛЖНЫ предшествоваться и сопровождаться по крайней мере одним пробелом:
 ~~~php
 if ($a === $b) {
     $foo = $bar ?? $a ?? $b;
@@ -911,73 +871,58 @@ if ($a === $b) {
 }
 ~~~
 
-### 6.3. Ternary operators
+### 6.3. Тернарные операторы
 
-The conditional operator, also known simply as the ternary operator, MUST be
-preceded and followed by at least one space around both the `?`
-and `:` characters:
+Перед условным оператором, также известным как тернарный оператор, 
+ДОЛЖЕН стоять хотя бы один пробел вокруг символов `?` и `:`:
 ~~~php
 $variable = $foo ? 'foo' : 'bar';
 ~~~
 
-When the middle operand of the conditional operator is omitted, the operator
-MUST follow the same style rules as other binary [comparison][] operators:
+Когда средний операнд условного оператора опущен, 
+оператор ДОЛЖЕН следовать тем же правилам стиля, 
+что и другие бинарные [comparison] операторы:
 ~~~php
 $variable = $foo ?: 'bar';
 ~~~
 
-## 7. Closures
+## 7. Замыкания
 
-Closures MUST be declared with a space after the `function` keyword, and a
-space before and after the `use` keyword.
+- Замыкания ДОЛЖНЫ описываться с использованием пробела после ключевого слова `function` и пробелами до и после ключевого слова `use`.
+ - Открывающая фигурная скобка ДОЛЖНА располагаться на одной строке с именем замыкания строке, а закрывающая фигурная скобка ДОЛЖНА располагаться на следующей строке после тела замыкания.
+ - После открывающей круглой скобки и перед закрывающей круглой скобкой в списке аргументов или переменных НЕ ДОЛЖНО быть пробела.
+ - В списке аргументов или переменных НЕ ДОЛЖНО быть пробелов перед запятыми, но ДОЛЖЕН быть один пробел после каждой запятой.
+ - Аргументы замыкания со значениями по умолчанию ДОЛЖНЫ располагаться в конце списка (после аргументов без значений по умолчанию).
 
-The opening brace MUST go on the same line, and the closing brace MUST go on
-the next line following the body.
-
-There MUST NOT be a space after the opening parenthesis of the argument list
-or variable list, and there MUST NOT be a space before the closing parenthesis
-of the argument list or variable list.
-
-In the argument list and variable list, there MUST NOT be a space before each
-comma, and there MUST be one space after each comma.
-
-Closure arguments with default values MUST go at the end of the argument
-list.
-
-If a return type is present, it MUST follow the same rules as with normal
-functions and methods; if the `use` keyword is present, the colon MUST follow
-the `use` list closing parentheses with no spaces between the two characters.
-
-A closure declaration looks like the following. Note the placement of
-parentheses, commas, spaces, and braces:
+Описание замыкания выглядит следующим образом. 
+Обратите внимание на круглые скобки, запятые, пробелы и фигурные скобки.:
 
 ~~~php
 <?php
 
 $closureWithArgs = function ($arg1, $arg2) {
-    // body
+    // тело замыкания
 };
 
 $closureWithArgsAndVars = function ($arg1, $arg2) use ($var1, $var2) {
-    // body
+    // тело замыкания
 };
 
 $closureWithArgsVarsAndReturn = function ($arg1, $arg2) use ($var1, $var2): bool {
-    // body
+    // тело замыкания
 };
 ~~~
 
-Argument lists and variable lists MAY be split across multiple lines, where
-each subsequent line is indented once. When doing so, the first item in the
-list MUST be on the next line, and there MUST be only one argument or variable
-per line.
+Список аргументов и переменных МОЖЕТ быть разделён на несколько строк, 
+каждая из которых дополнена слева одним отступом (четырьмя пробелами). 
+В таком случае первый элемент списка ДОЛЖЕН начинаться с новой строки, 
+и в каждой строке ДОЛЖЕН быть указан только один элемент.
 
-When the ending list (whether of arguments or variables) is split across
-multiple lines, the closing parenthesis and opening brace MUST be placed
-together on their own line with one space between them.
+Когда последний список (аргументов или переменных) разделён на несколько строк, 
+закрывающая круглая скобка и открывающая фигурная скобка ДОЛЖНЫ располагаться на одной строке и быть разделены одним пробелом.
 
-The following are examples of closures with and without argument lists and
-variable lists split across multiple lines.
+Ниже представлены примеры замыканий со списком аргументов и без него, 
+а также со списком переменных, располагающимся на нескольких строках.
 
 ~~~php
 <?php
@@ -987,7 +932,7 @@ $longArgs_noVars = function (
     $longerArgument,
     $muchLongerArgument
 ) {
-   // body
+   // тело замыкания
 };
 
 $noArgs_longVars = function () use (
@@ -995,7 +940,7 @@ $noArgs_longVars = function () use (
     $longerVar2,
     $muchLongerVar3
 ) {
-   // body
+   // тело замыкания
 };
 
 $longArgs_longVars = function (
@@ -1007,7 +952,7 @@ $longArgs_longVars = function (
     $longerVar2,
     $muchLongerVar3
 ) {
-   // body
+   // тело замыкания
 };
 
 $longArgs_shortVars = function (
@@ -1015,7 +960,7 @@ $longArgs_shortVars = function (
     $longerArgument,
     $muchLongerArgument
 ) use ($var1) {
-   // body
+   // тело замыкания
 };
 
 $shortArgs_longVars = function ($arg) use (
@@ -1023,12 +968,11 @@ $shortArgs_longVars = function ($arg) use (
     $longerVar2,
     $muchLongerVar3
 ) {
-   // body
+   // тело замыкания
 };
 ~~~
 
-Note that the formatting rules also apply when the closure is used directly
-in a function or method call as an argument.
+Обратите внимание, что правила оформления замыканий также распространяются на случай, когда замыкание используется в качестве аргумента прямо в вызове функции или метода.
 
 ~~~php
 <?php
@@ -1036,16 +980,15 @@ in a function or method call as an argument.
 $foo->bar(
     $arg1,
     function ($arg2) use ($var1) {
-        // body
+        // тело замыкания
     },
     $arg3
 );
 ~~~
 
-## 8. Anonymous Classes
+## 8. Анонимные классы
 
-Anonymous Classes MUST follow the same guidelines and principles as closures
-in the above section.
+Анонимные классы ДОЛЖНЫ следовать тем же правилам и принципам, что и замыкания в предыдущем разделе.
 
 ~~~php
 <?php
@@ -1053,26 +996,25 @@ in the above section.
 $instance = new class {};
 ~~~
 
-The opening brace MAY be on the same line as the `class` keyword so long as
-the list of `implements` interfaces does not wrap. If the list of interfaces
-wraps, the brace MUST be placed on the line immediately following the last
-interface.
+Открывающая фигурная скобка МОЖЕТ находиться в той же строке, что и ключевое слово `class`, 
+если список интерфейсов `implements` не переносится. 
+Если список интерфейсов переносится, фигурная скобка ДОЛЖНА быть помещена в строку сразу после последнего интерфейса.
 
 ~~~php
 <?php
 
-// Brace on the same line
+// Скобки на той же линии
 $instance = new class extends \Foo implements \HandleableInterface {
-    // Class content
+    // Содержание класса
 };
 
-// Brace on the next line
+// Скобки на следующей линии
 $instance = new class extends \Foo implements
     \ArrayAccess,
     \Countable,
     \Serializable
 {
-    // Class content
+    // Содержание класса
 };
 ~~~
 
@@ -1087,3 +1029,5 @@ $instance = new class extends \Foo implements
 [logical]: http://php.net/manual/en/language.operators.logical.php
 [string]: http://php.net/manual/en/language.operators.string.php
 [type]: http://php.net/manual/en/language.operators.type.php
+[RFC-2119]:  http://www.ietf.org/rfc/rfc2119.txt
+[переводе]: http://rfc.com.ru/rfc2119.htm

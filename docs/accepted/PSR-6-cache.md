@@ -1,168 +1,157 @@
-# Caching Interface
+# Общий интерфейс кэширования
 
-Caching is a common way to improve the performance of any project, making
-caching libraries one of the most common features of many frameworks and
-libraries. This has lead to a situation where many libraries roll their own
-caching libraries, with various levels of functionality. These differences are
-causing developers to have to learn multiple systems which may or may not
-provide the functionality they need. In addition, the developers of caching
-libraries themselves face a choice between only supporting a limited number
-of frameworks or creating a large number of adapter classes.
+Кэширование — это распространенный способ повысить производительность любого проекта,
+что делает библиотеки кэширования одной из наиболее распространенных функций многих фреймворков и
+библиотек. Это привело к ситуации, когда многие библиотеки используют свои собственные
+библиотеки кэширования с различными уровнями функциональности.
+Эти различия заставляют разработчиков изучать несколько систем,
+которые могут обеспечивать или не обеспечивать необходимую им функциональность.
+Кроме того, сами разработчики кэширующих библиотек сталкиваются с выбором между поддержкой
+ограниченного числа фреймворков или созданием большого количества классов адаптеров.
 
-A common interface for caching systems will solve these problems. Library and
-framework developers can count on the caching systems working the way they're
-expecting, while the developers of caching systems will only have to implement
-a single set of interfaces rather than a whole assortment of adapters.
+Общий интерфейс для систем кэширования решит эти проблемы. Разработчики библиотек и фреймворков могут рассчитывать на
+то, что системы кэширования работают так, как они
+ожидают и разработчикам останется только реализовать
+единый набор интерфейсов, а не целый набор адаптеров.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][].
+Слова «НЕОБХОДИМО» / «ДОЛЖНО» ("MUST"), «НЕДОПУСТИМО» ("MUST NOT"),
+«ТРЕБУЕТСЯ» ("REQUIRED"), «НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"),
+«СЛЕДУЕТ» ("SHOULD"), «НЕ СЛЕДУЕТ» ("SHOULD NOT"),
+«РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
+«НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC-2119] (и его [переводе]).
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-## Goal
+## Цель
 
-The goal of this PSR is to allow developers to create cache-aware libraries that
-can be integrated into existing frameworks and systems without the need for
-custom development.
+Цель этого PSR — позволить разработчикам создавать библиотеки с поддержкой кэширования, которые
+могут быть интегрированы в существующие структуры и системы без необходимости
+кастомной разработки.
 
-## Definitions
+## Определения
 
-*    **Calling Library** - The library or code that actually needs the cache
-services. This library will utilize caching services that implement this
-standard's interfaces, but will otherwise have no knowledge of the
-implementation of those caching services.
+* **Вызов библиотеки** — библиотека или код, которым действительно нужны службы кэширования.
+  Эта библиотека будет использовать службы кэширования, реализующие
+  стандартные интерфейсы.
 
-*    **Implementing Library** - This library is responsible for implementing
-this standard in order to provide caching services to any Calling Library. The
-Implementing Library MUST provide classes which implement the
-Cache\CacheItemPoolInterface and Cache\CacheItemInterface interfaces.
-Implementing Libraries MUST support at minimum TTL functionality as described
-below with whole-second granularity.
+* **Реализующая библиотека**. Эта библиотека отвечает за реализацию этого стандарта для предоставления кэширования любой
+  вызывающей библиотеке.
+  Реализующая библиотека ДОЛЖНА предоставлять классы, реализующие интерфейсы Cache\CacheItemPoolInterface и
+  Cache\CacheItemInterface.
+  Реализующие библиотеки ДОЛЖНЫ поддерживать минимальную функциональность TTL, как описано ниже, с точностью до целой
+  секунды.
 
-*    **TTL** - The Time To Live (TTL) of an item is the amount of time between
-when that item is stored and it is considered stale. The TTL is normally defined
-by an integer representing time in seconds, or a DateInterval object.
+* **TTL** — время жизни (TTL (Time To Life)) элемента — это время между хранением этого элемента и моментом, когда он
+  считается устаревшим. TTL обычно определяется целым числом, представляющим время в секундах, или объектом
+  DateInterval.
 
-*    **Expiration** - The actual time when an item is set to go stale. This is
-typically calculated by adding the TTL to the time when an object is stored, but
-may also be explicitly set with DateTime object. An item with a 300 second TTL
-stored at 1:30:00 will have an expiration of 1:35:00. Implementing Libraries MAY
-expire an item before its requested Expiration Time, but MUST treat an item as
-expired once its Expiration Time is reached. If a calling library asks for an
-item to be saved but does not specify an expiration time, or specifies a null
-expiration time or TTL, an Implementing Library MAY use a configured default
-duration. If no default duration has been set, the Implementing Library MUST
-interpret that as a request to cache the item forever, or for as long as the
-underlying implementation supports.
+* **Срок действия**— фактическое время, когда элемент устареет. Это время
+  обычно рассчитывается путем добавления TTL ко времени хранения объекта, но также может быть явно задано с помощью
+  объекта DateTime.
+  Элемент с 300-секундным сроком жизни, сохраненный в 1:30:00, будет иметь срок действия 1:35:00. Реализующие библиотеки
+  МОГУТ сократить срок действия элемента до запрошенного Срока действия, но ДОЛЖНЫ рассматривать элемент как
+  просроченный после достижения его Срока действия. Если вызывающая библиотека запрашивает сохранение элемента, но не
+  указывает время истечения срока действия или указывает нулевое время истечения срока действия или TTL, реализующая
+  библиотека МОЖЕТ использовать настроенную продолжительность по умолчанию. Если продолжительность по умолчанию не
+  установлена, реализующая библиотека ДОЛЖНА интерпретировать это как запрос на кэширование элемента навсегда или до тех
+  пор, пока поддерживает базовая реализация.
 
-*    **Key** - A string of at least one character that uniquely identifies a
-cached item. Implementing libraries MUST support keys consisting of the
-characters `A-Z`, `a-z`, `0-9`, `_`, and `.` in any order in UTF-8 encoding and a
-length of up to 64 characters. Implementing libraries MAY support additional
-characters and encodings or longer lengths, but must support at least that
-minimum.  Libraries are responsible for their own escaping of key strings
-as appropriate, but MUST be able to return the original unmodified key string.
-The following characters are reserved for future extensions and MUST NOT be
-supported by implementing libraries: `{}()/\@:`
+* **Ключ** — строка, состоящая как минимум из одного символа, которая однозначно идентифицирует
+  кешированный элемент. Реализующие библиотеки ДОЛЖНЫ поддерживать ключи, состоящие из
+  символов `A-Z`, `a-z`, `0-9`, `_` и `.` в любом порядке в кодировке UTF-8 и
+  длиной до 64 символов. Реализующие библиотеки МОГУТ поддерживать дополнительные
+  символы и кодировки или более длинные, но должны поддерживать по крайней мере этот
+  минимум. Библиотеки несут ответственность за собственное экранирование строк ключей.
+  В зависимости от ситуации ДОЛЖНА быть возможность возвращать исходную неизмененную строку ключа.
+  Следующие символы зарезервированы для будущих расширений и НЕ ДОЛЖНЫ
+  поддерживаться реализацией библиотек: `{}()/\@:`
 
-*    **Hit** - A cache hit occurs when a Calling Library requests an Item by key
-and a matching value is found for that key, and that value has not expired, and
-the value is not invalid for some other reason. Calling Libraries SHOULD make
-sure to verify isHit() on all get() calls.
+* **Попадание** — попадание в кеш происходит, когда вызывающая библиотека запрашивает элемент по ключу, и для этого
+  ключа найдено соответствующее значение, срок действия этого значения не истек, и это значение не является
+  недействительным по какой-либо другой причине. Вызывающие библиотеки ДОЛЖНЫ проверять isHit() при всех вызовах get().
 
-*    **Miss** - A cache miss is the opposite of a cache hit. A cache miss occurs
-when a Calling Library requests an item by key and that value not found for that
-key, or the value was found but has expired, or the value is invalid for some
-other reason. An expired value MUST always be considered a cache miss.
+* **Промах** — Промах кэша противоположен попаданию в кэш. Промах кэша происходит, когда вызывающая библиотека
+  запрашивает элемент по ключу, а это значение не найдено для этого ключа, или значение было найдено, но срок его
+  действия истек, или значение недопустимо по какой-либо другой причине. Значение с истекшим сроком действия ДОЛЖНО
+  всегда считаться промахом кэша.
 
-*    **Deferred** - A deferred cache save indicates that a cache item may not be
-persisted immediately by the pool. A Pool object MAY delay persisting a deferred
-cache item in order to take advantage of bulk-set operations supported by some
-storage engines. A Pool MUST ensure that any deferred cache items are eventually
-persisted and data is not lost, and MAY persist them before a Calling Library
-requests that they be persisted. When a Calling Library invokes the commit()
-method all outstanding deferred items MUST be persisted. An Implementing Library
-MAY use whatever logic is appropriate to determine when to persist deferred
-items, such as an object destructor, persisting all on save(), a timeout or
-max-items check or any other appropriate logic. Requests for a cache item that
-has been deferred MUST return the deferred but not-yet-persisted item.
+* **Отложенное** — отложенное сохранение кэша указывает на то, что элемент кэша не может быть немедленно сохранен пулом.
+  Объект пула МОЖЕТ задержать сохранение элемента отложенного кэша, чтобы воспользоваться преимуществами операций
+  массового набора, поддерживаемых некоторыми механизмами хранения.
+  Пул ДОЛЖЕН гарантировать, что любые элементы отложенного кэша в конечном итоге будут сохранены, а данные не будут
+  потеряны, и МОЖЕТ сохранить их до вызывающей библиотеки.
+  Когда вызывающая библиотека вызывает метод `commit()`, все незавершенные отложенные элементы ДОЛЖНЫ быть сохранены.
+  Реализующая библиотека МОЖЕТ использовать любую подходящую логику для определения того, когда следует сохранять
+  отложенные элементы, например, деструктор объекта, сохранение всех при вызове `save()`, проверку тайм-аута или
+  максимального количества элементов или любую другую подходящую логику.
+  Запросы на отложенный элемент кэша ДОЛЖНЫ возвращать отложенный, но еще не сохраненный элемент.
 
-## Data
+## Данные
 
-Implementing libraries MUST support all serializable PHP data types, including:
+Реализующие библиотеки ДОЛЖНЫ поддерживать все сериализуемые типы данных PHP, включая:
 
-*    **Strings** - Character strings of arbitrary size in any PHP-compatible encoding.
-*    **Integers** - All integers of any size supported by PHP, up to 64-bit signed.
-*    **Floats** - All signed floating point values.
-*    **Boolean** - True and False.
-*    **Null** - The actual null value.
-*    **Arrays** - Indexed, associative and multidimensional arrays of arbitrary depth.
-*    **Object** - Any object that supports lossless serialization and
-deserialization such that `$o == unserialize(serialize($o))`. Objects MAY
-leverage PHP's Serializable interface, `__sleep()` or `__wakeup()` magic methods,
-or similar language functionality if appropriate.
+* **Strings** - Строки символов произвольного размера в любой PHP-совместимой кодировке.
+* **Integers** - Все целые числа любого размера, поддерживаемые PHP, вплоть до 64-битного со знаком.
+* **Floats** - Все значения с плавающей запятой со знаком.
+* **Boolean** - `True` или `False`.
+* **Null** - Фактическое значение `null`.
+* **Arrays** - Индексированные, ассоциативные и многомерные массивы произвольной глубины.
+* **Object** - Любой объект, поддерживающий сериализацию и десериализацию без потерь,
+  например `$o == unserialize(serialize($o))`. Объекты МОГУТ использовать интерфейс PHP Serializable, магические
+  методы `__sleep()` или `__wakeup()` или аналогичные функции языка, если это необходимо.
 
-All data passed into the Implementing Library MUST be returned exactly as
-passed. That includes the variable type. That is, it is an error to return
-(string) 5 if (int) 5 was the value saved.  Implementing Libraries MAY use PHP's
-`serialize()`/`unserialize()` functions internally but are not required to do so.
-Compatibility with them is simply used as a baseline for acceptable object values.
+Все данные, переданные в реализующую библиотеку, ДОЛЖНЫ быть возвращены точно в том виде, в каком они были переданы.
+Учитывается тип переменной. То есть возврат (string) 5 является ошибкой, если (int) 5 было переданным значением.
+Реализующие библиотеки МОГУТ использовать PHP-функции `serialize()`/`unserialize()` внутри, но не обязаны это делать.
+Совместимость с ними просто используется в качестве основы для допустимых значений объекта.
 
-If it is not possible to return the exact saved value for any reason, implementing
-libraries MUST respond with a cache miss rather than corrupted data.
+Если по какой-либо причине невозможно вернуть точное сохраненное значение, реализующие библиотеки ДОЛЖНЫ ответить
+промахом кэша, а не поврежденными данными.
 
-## Key Concepts
+## Ключевые понятия
 
-### Pool
+### Пул
 
-The Pool represents a collection of items in a caching system. The pool is
-a logical Repository of all items it contains.  All cacheable items are retrieved
-from the Pool as an Item object, and all interaction with the whole universe of
-cached objects happens through the Pool.
+Пул представляет собой набор элементов в системе кэширования. Пул — это логический репозиторий всех содержащихся в нем
+элементов.
+Все кэшируемые элементы извлекаются из пула как объект Элемент, и все взаимодействие кэшированных объектов происходит
+через пул.
 
-### Items
+### Элементы
 
-An Item represents a single key/value pair within a Pool. The key is the primary
-unique identifier for an Item and MUST be immutable. The Value MAY be changed
-at any time.
+Элемент представляет одну пару ключ/значение в пуле. Ключ является первичным уникальным идентификатором Элемента и
+ДОЛЖЕН быть неизменным. Значение МОЖЕТ быть изменено в любое время.
 
-## Error handling
+## Обработка ошибок
 
-While caching is often an important part of application performance, it should never
-be a critical part of application functionality. Thus, an error in a cache system SHOULD NOT
-result in application failure.  For that reason, Implementing Libraries MUST NOT
-throw exceptions other than those defined by the interface, and SHOULD trap any errors
-or exceptions triggered by an underlying data store and not allow them to bubble.
+Хотя кэширование часто является важной частью производительности приложения, оно никогда не должно быть критической
+частью функциональности приложения. Таким образом, ошибка в системе кэширования НЕ ДОЛЖНА приводить к сбою приложения.
+По этой причине реализующие библиотеки НЕ ДОЛЖНЫ генерировать исключения, кроме тех, которые определены интерфейсом, и
+ДОЛЖНЫ перехватывать любые ошибки или исключения, вызванные базовым хранилищем данных, и не допускать их появления.
 
-An Implementing Library SHOULD log such errors or otherwise report them to an
-administrator as appropriate.
+Реализующая библиотека ДОЛЖНА регистрировать такие ошибки или иным образом сообщать о них администратору.
 
-If a Calling Library requests that one or more Items be deleted, or that a pool be cleared,
-it MUST NOT be considered an error condition if the specified key does not exist. The
-post-condition is the same (the key does not exist, or the pool is empty), thus there is
-no error condition.
+Если вызывающая библиотека запрашивает удаление одного или нескольких элементов или очистку пула, это НЕ ДОЛЖНО
+считаться ошибкой, если указанный ключ не существует. Пост-условие такое же (ключ не существует или пул пуст), поэтому
+нет ошибки.
 
-## Interfaces
+## Интерфейсы
 
-### CacheItemInterface
+### Интерфейс CacheItemInterface
 
-CacheItemInterface defines an item inside a cache system.  Each Item object
-MUST be associated with a specific key, which can be set according to the
-implementing system and is typically passed by the `Cache\CacheItemPoolInterface`
-object.
+CacheItemInterface определяет Элемент внутри системы кэширования. Каждый Элемент ДОЛЖЕН быть связан с определенным
+ключом, который может быть установлен в соответствии с системой реализации и обычно передается
+объектом `Cache\CacheItemPoolInterface`.
 
-The `Cache\CacheItemInterface` object encapsulates the storage and retrieval of
-cache items. Each `Cache\CacheItemInterface` is generated by a
-`Cache\CacheItemPoolInterface` object, which is responsible for any required
-setup as well as associating the object with a unique Key.
-`Cache\CacheItemInterface` objects MUST be able to store and retrieve any type of
-PHP value defined in the Data section of this document.
+Объект `Cache\CacheItemInterface` инкапсулирует хранение и извлечение элементов кэша. Каждый `Cache\CacheItemInterface`
+создается объектом `Cache\CacheItemPoolInterface`, который отвечает за любую требуемую настройку, а также связывает
+объект с уникальным ключом. Объекты `Cache\CacheItemInterface` ДОЛЖНЫ иметь возможность хранить и извлекать любой тип
+значения PHP, определенный в разделе данных этого документа.
 
-Calling Libraries MUST NOT instantiate Item objects themselves. They may only
-be requested from a Pool object via the `getItem()` method.  Calling Libraries
-SHOULD NOT assume that an Item created by one Implementing Library is
-compatible with a Pool from another Implementing Library.
+Вызов библиотек НЕ ДОЛЖЕН создавать экземпляры самих Элементов. Они могут быть запрошены только из Пула с помощью
+метода `getItem()`. Вызывающие библиотеки НЕ ДОЛЖНЫ предполагать, что элемент, созданный одной реализующей библиотекой,
+совместим с пулом из другой реализующей библиотеки.
 
 ~~~php
 <?php
@@ -170,100 +159,96 @@ compatible with a Pool from another Implementing Library.
 namespace Psr\Cache;
 
 /**
- * CacheItemInterface defines an interface for interacting with objects inside a cache.
+ * CacheItemInterface определяет интерфейс для взаимодействия с объектами внутри кеша.
  */
 interface CacheItemInterface
 {
     /**
-     * Returns the key for the current cache item.
+     * Возвращает ключ для текущего элемента кэша.
      *
-     * The key is loaded by the Implementing Library, but should be available to
-     * the higher level callers when needed.
+     * Ключ загружается реализующей библиотекой, но при необходимости он должен 
+     * быть доступен вызывающим объектам более высокого уровня.
      *
      * @return string
-     *   The key string for this cache item.
+     *   Ключ для этого элемента кэша.
      */
     public function getKey();
 
     /**
-     * Retrieves the value of the item from the cache associated with this object's key.
+     * Извлекает значение элемента из кэша, связанного с ключом этого объекта.
      *
-     * The value returned must be identical to the value originally stored by set().
+     * Возвращаемое значение должно быть идентично значению, изначально сохраненному функцией set().
      *
-     * If isHit() returns false, this method MUST return null. Note that null
-     * is a legitimate cached value, so the isHit() method SHOULD be used to
-     * differentiate between "null value was found" and "no value was found."
+     * Если isHit() возвращает false, этот метод ДОЛЖЕН возвращать null. 
+     * Обратите внимание, что значение null является корректным кэшированным значением, 
+     * поэтому метод isHit() СЛЕДУЕТ использовать, чтобы различать 
+     * «значение null было найдено» и «значение не найдено».
      *
      * @return mixed
-     *   The value corresponding to this cache item's key, or null if not found.
+     *   Значение, соответствующее ключу этого элемента кэша, или null, если не найдено.
      */
     public function get();
 
     /**
-     * Confirms if the cache item lookup resulted in a cache hit.
+     * Подтверждает, что поиск элемента кэша привел к попаданию в кэш.
      *
-     * Note: This method MUST NOT have a race condition between calling isHit()
-     * and calling get().
+     * Примечание. Этот метод НЕ ДОЛЖЕН иметь "состояние гонки" между вызовом isHit() и вызовом get().
      *
      * @return bool
-     *   True if the request resulted in a cache hit. False otherwise.
+     *   Истинно, если запрос привел к попаданию в кэш. Ложь в противном случае.
      */
     public function isHit();
 
     /**
-     * Sets the value represented by this cache item.
+     * Задает значение, представленное этим элементом кэша.
      *
-     * The $value argument may be any item that can be serialized by PHP,
-     * although the method of serialization is left up to the Implementing
-     * Library.
+     * Аргумент $value может быть любым элементом, который может быть сериализован PHP, 
+     * хотя метод сериализации оставлен на усмотрение библиотеки реализации.
      *
      * @param mixed $value
-     *   The serializable value to be stored.
+     *   Сохраняемое сериализуемое значение.
      *
      * @return static
-     *   The invoked object.
+     *   Вызванный объект.
      */
     public function set($value);
 
     /**
-     * Sets the expiration time for this cache item.
+     * Устанавливает время истечения срока действия для этого элемента кэша.
      *
      * @param \DateTimeInterface|null $expiration
-     *   The point in time after which the item MUST be considered expired.
-     *   If null is passed explicitly, a default value MAY be used. If none is set,
-     *   the value should be stored permanently or for as long as the
-     *   implementation allows.
+     * Момент времени, после которого элемент ДОЛЖЕН считаться просроченным. 
+     * Если null передается явно, МОЖЕТ быть использовано значение по умолчанию. 
+     * Если ничего не установлено, значение должно храниться постоянно или до тех пор, 
+     * пока позволяет реализация.
      *
      * @return static
-     *   The called object.
+     *   Вызываемый объект.
      */
     public function expiresAt($expiration);
 
     /**
-     * Sets the expiration time for this cache item.
+     * Устанавливает время истечения срока действия для этого элемента кэша.
      *
      * @param int|\DateInterval|null $time
-     *   The period of time from the present after which the item MUST be considered
-     *   expired. An integer parameter is understood to be the time in seconds until
-     *   expiration. If null is passed explicitly, a default value MAY be used.
-     *   If none is set, the value should be stored permanently or for as long as the
-     *   implementation allows.
+     *   Период времени от настоящего, после которого элемент ДОЛЖЕН считаться просроченным. 
+     * Под целочисленным параметром понимается время в секундах до истечения срока действия. 
+     * Если null передается явно, МОЖЕТ быть использовано значение по умолчанию. 
+     * Если ничего не установлено, значение должно храниться постоянно или до тех пор, 
+     * пока позволяет реализация.
      *
      * @return static
-     *   The called object.
+     *   Вызываемый объект.
      */
     public function expiresAfter($time);
 
 }
 ~~~
 
-### CacheItemPoolInterface
+### Интерфейс CacheItemPoolInterface
 
-The primary purpose of Cache\CacheItemPoolInterface is to accept a key from the
-Calling Library and return the associated Cache\CacheItemInterface object.
-It is also the primary point of interaction with the entire cache collection.
-All configuration and initialization of the Pool is left up to an Implementing
-Library.
+Основная цель Cache\CacheItemPoolInterface — принять ключ из библиотеки вызовов и вернуть связанный объект Cache\CacheItemInterface. Это также основная точка взаимодействия со всем Пулом кеша. 
+Вся настройка и инициализация пула возложена на реализующую библиотеку.
 
 ~~~php
 <?php
@@ -271,142 +256,140 @@ Library.
 namespace Psr\Cache;
 
 /**
- * CacheItemPoolInterface generates CacheItemInterface objects.
+ * CacheItemPoolInterface создает объекты CacheItemInterface.
  */
 interface CacheItemPoolInterface
 {
     /**
-     * Returns a Cache Item representing the specified key.
+     * Возвращает элемент кэша, представляющий указанный ключ.
      *
-     * This method must always return a CacheItemInterface object, even in case of
-     * a cache miss. It MUST NOT return null.
+     * Этот метод всегда должен возвращать объект CacheItemInterface, даже в случае промаха кеша. 
+     * Он НЕ ДОЛЖЕН возвращать значение null.
      *
      * @param string $key
-     *   The key for which to return the corresponding Cache Item.
+     *   Ключ, для которого необходимо вернуть соответствующий элемент кэша.
      *
      * @throws InvalidArgumentException
-     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
+     *   Если строка $key не является допустимым значением, 
+     *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return CacheItemInterface
-     *   The corresponding Cache Item.
+     *   Соответствующий элемент кэша.
      */
     public function getItem($key);
 
     /**
-     * Returns a traversable set of cache items.
+     * Возвращает набор элементов кэша.
      *
      * @param string[] $keys
-     *   An indexed array of keys of items to retrieve.
+     *   Индексированный массив ключей элементов для извлечения.
      *
      * @throws InvalidArgumentException
-     *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
+     *   Если какой-либо из ключей в $keys не является допустимым значением, 
+     *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return array|\Traversable
-     *   A traversable collection of Cache Items keyed by the cache keys of
-     *   each item. A Cache item will be returned for each key, even if that
-     *   key is not found. However, if no keys are specified then an empty
-     *   traversable MUST be returned instead.
+     *   Проходимая коллекция элементов кэша с ключами кэша каждого элемента. 
+     *   Элемент кэша будет возвращен для каждого ключа, даже если этот ключ не найден. 
+     *   Однако, если ключи не указаны, вместо этого ДОЛЖЕН быть возвращен пустой обходной объект.
      */
     public function getItems(array $keys = array());
 
     /**
-     * Confirms if the cache contains specified cache item.
+     * Подтверждает, содержит ли кэш указанный элемент кэша.
      *
-     * Note: This method MAY avoid retrieving the cached value for performance reasons.
-     * This could result in a race condition with CacheItemInterface::get(). To avoid
-     * such situation use CacheItemInterface::isHit() instead.
+     * Примечание. Этот метод МОЖЕТ не извлекать кэшированное значение из соображений 
+     * производительности. Это может привести к "состоянию гонки" с CacheItemInterface::get(). 
+     * Чтобы избежать такой ситуации, используйте вместо этого CacheItemInterface::isHit().
      *
      * @param string $key
-     *   The key for which to check existence.
+     *   Ключ, существование которого необходимо проверить.
      *
      * @throws InvalidArgumentException
-     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
+     *   Если строка $key не является допустимым значением, 
+     *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return bool
-     *   True if item exists in the cache, false otherwise.
+     *   True, если элемент существует в кеше, иначе False.
      */
     public function hasItem($key);
 
     /**
-     * Deletes all items in the pool.
+     * Удаляет все элементы в пуле.
      *
      * @return bool
-     *   True if the pool was successfully cleared. False if there was an error.
+     *   True, если пул был успешно очищен. False, если произошла ошибка.
      */
     public function clear();
 
     /**
-     * Removes the item from the pool.
+     * Удаляет элемент из пула.
      *
      * @param string $key
-     *   The key to delete.
+     *   Ключ для удаления.
      *
      * @throws InvalidArgumentException
-     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
+     *   Если строка $key не является допустимым значением, 
+     *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return bool
-     *   True if the item was successfully removed. False if there was an error.
+     *   True, если элемент был успешно удален. False, если произошла ошибка.
      */
     public function deleteItem($key);
 
     /**
-     * Removes multiple items from the pool.
+     * Удаляет несколько элементов из пула.
      *
      * @param string[] $keys
-     *   An array of keys that should be removed from the pool.
+     *   Массив ключей, которые следует удалить из пула.
      *
      * @throws InvalidArgumentException
-     *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
+     *   Если какой-либо из ключей в $keys не является допустимым значением, 
+     *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return bool
-     *   True if the items were successfully removed. False if there was an error.
+     *   True, если элементы были успешно удалены. False, если произошла ошибка.
      */
     public function deleteItems(array $keys);
 
     /**
-     * Persists a cache item immediately.
+     * Немедленно сохраняет элемент кэша.
      *
      * @param CacheItemInterface $item
-     *   The cache item to save.
+     *   Элемент кэша для сохранения.
      *
      * @return bool
-     *   True if the item was successfully persisted. False if there was an error.
+     *   True, если элемент был успешно сохранен. False, если произошла ошибка.
      */
     public function save(CacheItemInterface $item);
 
     /**
-     * Sets a cache item to be persisted later.
+     * Устанавливает элемент кэша для сохранения позже.
      *
      * @param CacheItemInterface $item
-     *   The cache item to save.
+     *    Элемент кэша для сохранения.
      *
      * @return bool
-     *   False if the item could not be queued or if a commit was attempted and failed. True otherwise.
+     *   False, если элемент не может быть поставлен в очередь или попытка сохранения не удалась. True в противном случае.
      */
     public function saveDeferred(CacheItemInterface $item);
 
     /**
-     * Persists any deferred cache items.
+     * Сохраняет любые элементы отложенного кэша.
      *
      * @return bool
-     *   True if all not-yet-saved items were successfully saved or there were none. False otherwise.
+     *   False, если элемент не может быть поставлен в очередь или попытка сохранения не удалась. True в противном случае.
      */
     public function commit();
 }
 ~~~
 
-### CacheException
+### Интерфейс CacheException
 
-This exception interface is intended for use when critical errors occur,
-including but not limited to *cache setup* such as connecting to a cache server
-or invalid credentials supplied.
+Этот интерфейс предназначен для использования при возникновении критических ошибок,
+включая, помимо прочего, *настройку кеша*, например подключение к серверу кеша или предоставление неверных учетных данных.
 
-Any exception thrown by an Implementing Library MUST implement this interface.
+Любое исключение, создаваемое реализующей библиотекой, ДОЛЖНО реализовывать этот интерфейс.
 
 ~~~php
 <?php
@@ -414,14 +397,14 @@ Any exception thrown by an Implementing Library MUST implement this interface.
 namespace Psr\Cache;
 
 /**
- * Exception interface for all exceptions thrown by an Implementing Library.
+ * Интерфейс для всех исключений, создаваемых реализующей библиотекой.
  */
 interface CacheException
 {
 }
 ~~~
 
-### InvalidArgumentException
+### Интерфейс InvalidArgumentException
 
 ~~~php
 <?php
@@ -429,15 +412,15 @@ interface CacheException
 namespace Psr\Cache;
 
 /**
- * Exception interface for invalid cache arguments.
+ * Интерфейс исключения для недопустимых аргументов кеша.
  *
- * Any time an invalid argument is passed into a method it must throw an
- * exception class which implements Psr\Cache\InvalidArgumentException.
+ * Каждый раз, когда в метод передается недопустимый аргумент, 
+ * он должен генерировать класс исключения, который реализует Psr\Cache\InvalidArgumentException.
  */
 interface InvalidArgumentException extends CacheException
 {
 }
 ~~~
 
-Since [psr/cache version 2.0](https://packagist.org/packages/psr/cache#2.0.0), the above interfaces have been updated to add argument type hints.
-Since [psr/cache version 3.0](https://packagist.org/packages/psr/cache#3.0.0), the above interfaces have been updated to add return type hints.  References to `array|\Traversable` have been replaced with `iterable`.
+Начиная с версии [psr/cache 2.0](https://packagist.org/packages/psr/cache#2.0.0), вышеуказанные интерфейсы были обновлены для добавления подсказки типа аргумента.
+Начиная с версии [psr/cache 3.0](https://packagist.org/packages/psr/cache#3.0.0), вышеуказанные интерфейсы были обновлены для добавления подсказки возвращаемого типа. Ссылки на `array|\Traversable` были заменены на `iterable`.

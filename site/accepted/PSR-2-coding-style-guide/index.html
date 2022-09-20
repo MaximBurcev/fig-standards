@@ -14,7 +14,7 @@
     
     
       
-        <title>Coding Style Guide - PHP Standard Recommendations</title>
+        <title>Руководство по стилю кодирования PSR-2 - Стандартизированные рекомендации PHP</title>
       
     
     
@@ -60,7 +60,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#coding-style-guide" class="md-skip">
+        <a href="#_1" class="md-skip">
           Skip to content
         </a>
       
@@ -73,7 +73,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href="../.." title="PHP Standard Recommendations" class="md-header-nav__button md-logo" aria-label="PHP Standard Recommendations">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -86,13 +86,13 @@
       <div class="md-header-nav__ellipsis">
         <div class="md-header-nav__topic">
           <span class="md-ellipsis">
-            PHP Standard Recommendations
+            Стандартизированные рекомендации PHP
           </span>
         </div>
         <div class="md-header-nav__topic">
           <span class="md-ellipsis">
             
-              Coding Style Guide
+              Руководство по стилю кодирования PSR-2
             
           </span>
         </div>
@@ -153,13 +153,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="PHP Standard Recommendations" class="md-nav__button md-logo" aria-label="PHP Standard Recommendations">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
 
     </a>
-    PHP Standard Recommendations
+    Стандартизированные рекомендации PHP
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -173,7 +173,7 @@
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        PHP Standard Recommendations
+        Стандартизированные рекомендации PHP
       </a>
     </li>
   
@@ -183,41 +183,363 @@
       
       
 
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
-      
-      <label class="md-nav__link" for="nav-2">
-        Accepted
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Accepted" data-md-level="1">
-        <label class="md-nav__title" for="nav-2">
-          <span class="md-nav__icon md-icon"></span>
-          Accepted
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-          
-            
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Autoloading Standard
+        Стандарт автозагрузки PSR-0 (Устарело)
       </a>
     </li>
   
 
-          
-        </ul>
-      </nav>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Руководство по стилю кодирования PSR-2
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Руководство по стилю кодирования PSR-2
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1. Обзор
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Обзор">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    1.1. Пример
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2. Общие рекомендации
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Общие рекомендации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1. Базовый стандарт кодирования
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2. Файлы
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    2.3. Строки
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    2.4. Отступы
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-truefalsenull" class="md-nav__link">
+    2.5. Ключевые слова и True/False/Null
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3. Пространства имен и блоки импорта
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    4. Классы, свойства и методы
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Классы, свойства и методы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    4.1. Наследование и реализация
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    4.2. Свойства
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    4.3. Методы
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44" class="md-nav__link">
+    4.4. Аргументы методов
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-abstract-final-static" class="md-nav__link">
+    4.5. Ключевые слова abstract, final, и static
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46" class="md-nav__link">
+    4.6. Вызовы методов и функций
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    5. Управляющие конструкции
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Управляющие конструкции">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-if-elseif-else" class="md-nav__link">
+    5.1. Управляющие конструкции if, elseif, else
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-switch-case" class="md-nav__link">
+    5.2. Управляющие конструкции switch, case
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-while-do-while" class="md-nav__link">
+    5.3. Управляющие конструкции while, do while
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-for" class="md-nav__link">
+    5.4. Управляющая конструкция for
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-foreach" class="md-nav__link">
+    5.5. Управляющая конструкция foreach
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-try-catch" class="md-nav__link">
+    5.6. Блоки try, catch
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    6. Замыкания
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    7. Заключение
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proposed/phpdoc/" class="md-nav__link">
+        PHPDoc PSR-5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
     </li>
   
 
@@ -231,7 +553,7 @@
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        License
+        Лицензия
       </a>
     </li>
   
@@ -262,16 +584,16 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-overview" class="md-nav__link">
-    1. Overview
+  <a href="#1" class="md-nav__link">
+    1. Обзор
   </a>
   
-    <nav class="md-nav" aria-label="1. Overview">
+    <nav class="md-nav" aria-label="1. Обзор">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#11-example" class="md-nav__link">
-    1.1. Example
+  <a href="#11" class="md-nav__link">
+    1.1. Пример
   </a>
   
 </li>
@@ -282,44 +604,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-general" class="md-nav__link">
-    2. General
+  <a href="#2" class="md-nav__link">
+    2. Общие рекомендации
   </a>
   
-    <nav class="md-nav" aria-label="2. General">
+    <nav class="md-nav" aria-label="2. Общие рекомендации">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-basic-coding-standard" class="md-nav__link">
-    2.1. Basic Coding Standard
+  <a href="#21" class="md-nav__link">
+    2.1. Базовый стандарт кодирования
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-files" class="md-nav__link">
-    2.2. Files
+  <a href="#22" class="md-nav__link">
+    2.2. Файлы
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-lines" class="md-nav__link">
-    2.3. Lines
+  <a href="#23" class="md-nav__link">
+    2.3. Строки
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#24-indenting" class="md-nav__link">
-    2.4. Indenting
+  <a href="#24" class="md-nav__link">
+    2.4. Отступы
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#25-keywords-and-truefalsenull" class="md-nav__link">
-    2.5. Keywords and True/False/Null
+  <a href="#25-truefalsenull" class="md-nav__link">
+    2.5. Ключевые слова и True/False/Null
   </a>
   
 </li>
@@ -330,58 +652,58 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-namespace-and-use-declarations" class="md-nav__link">
-    3. Namespace and Use Declarations
+  <a href="#3" class="md-nav__link">
+    3. Пространства имен и блоки импорта
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-classes-properties-and-methods" class="md-nav__link">
-    4. Classes, Properties, and Methods
+  <a href="#4" class="md-nav__link">
+    4. Классы, свойства и методы
   </a>
   
-    <nav class="md-nav" aria-label="4. Classes, Properties, and Methods">
+    <nav class="md-nav" aria-label="4. Классы, свойства и методы">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#41-extends-and-implements" class="md-nav__link">
-    4.1. Extends and Implements
+  <a href="#41" class="md-nav__link">
+    4.1. Наследование и реализация
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#42-properties" class="md-nav__link">
-    4.2. Properties
+  <a href="#42" class="md-nav__link">
+    4.2. Свойства
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#43-methods" class="md-nav__link">
-    4.3. Methods
+  <a href="#43" class="md-nav__link">
+    4.3. Методы
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#44-method-arguments" class="md-nav__link">
-    4.4. Method Arguments
+  <a href="#44" class="md-nav__link">
+    4.4. Аргументы методов
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#45-abstract-final-and-static" class="md-nav__link">
-    4.5. abstract, final, and static
+  <a href="#45-abstract-final-static" class="md-nav__link">
+    4.5. Ключевые слова abstract, final, и static
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#46-method-and-function-calls" class="md-nav__link">
-    4.6. Method and Function Calls
+  <a href="#46" class="md-nav__link">
+    4.6. Вызовы методов и функций
   </a>
   
 </li>
@@ -392,51 +714,51 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-control-structures" class="md-nav__link">
-    5. Control Structures
+  <a href="#5" class="md-nav__link">
+    5. Управляющие конструкции
   </a>
   
-    <nav class="md-nav" aria-label="5. Control Structures">
+    <nav class="md-nav" aria-label="5. Управляющие конструкции">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#51-if-elseif-else" class="md-nav__link">
-    5.1. if, elseif, else
+    5.1. Управляющие конструкции if, elseif, else
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#52-switch-case" class="md-nav__link">
-    5.2. switch, case
+    5.2. Управляющие конструкции switch, case
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#53-while-do-while" class="md-nav__link">
-    5.3. while, do while
+    5.3. Управляющие конструкции while, do while
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#54-for" class="md-nav__link">
-    5.4. for
+    5.4. Управляющая конструкция for
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#55-foreach" class="md-nav__link">
-    5.5. foreach
+    5.5. Управляющая конструкция foreach
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#56-try-catch" class="md-nav__link">
-    5.6. try, catch
+    5.6. Блоки try, catch
   </a>
   
 </li>
@@ -447,50 +769,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-closures" class="md-nav__link">
-    6. Closures
+  <a href="#6" class="md-nav__link">
+    6. Замыкания
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-conclusion" class="md-nav__link">
-    7. Conclusion
+  <a href="#7" class="md-nav__link">
+    7. Заключение
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#appendix-a-survey" class="md-nav__link">
-    Appendix A. Survey
-  </a>
-  
-    <nav class="md-nav" aria-label="Appendix A. Survey">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#a1-survey-data" class="md-nav__link">
-    A.1. Survey Data
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#a2-survey-legend" class="md-nav__link">
-    A.2. Survey Legend
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#a3-survey-results" class="md-nav__link">
-    A.3. Survey Results
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -507,67 +795,66 @@
               
                 
                 
-                <h1 id="coding-style-guide">Coding Style Guide</h1>
+                <h1 id="_1">Руководство по стилю кодирования</h1>
 <blockquote>
-<p><strong>Deprecated</strong> - As of 2019-08-10 PSR-2 has been marked as deprecated. <a href="https://www.php-fig.org/psr/psr-12/">PSR-12</a> is now recommended
-as an alternative.</p>
+<p><strong>Устарело</strong> — по состоянию на 10 августа 2019 г. PSR-2 помечен как устаревший. <a href="https://www.php-fig.org/psr/psr-12/">PSR-12</a> теперь рекомендуется
+как альтернатива.</p>
 </blockquote>
-<p>This guide extends and expands on <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>, the basic coding standard.</p>
-<p>The intent of this guide is to reduce cognitive friction when scanning code
-from different authors. It does so by enumerating a shared set of rules and
-expectations about how to format PHP code.</p>
-<p>The style rules herein are derived from commonalities among the various member
-projects. When various authors collaborate across multiple projects, it helps
-to have one set of guidelines to be used among all those projects. Thus, the
-benefit of this guide is not in the rules themselves, but in the sharing of
-those rules.</p>
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
-<h2 id="1-overview">1. Overview</h2>
+<p>Это руководство расширяет и дополняет <a href="/accepted/PSR-1-basic-coding-standard/">PSR-1</a>, базовый стандарт кодирования.</p>
+<p>Цель этого руководства — уменьшить трения при разборе кода от разных авторов. 
+Это достигается путем перечисления общего набора правил и
+ожидания относительно того, как форматировать PHP-код.</p>
+<p>Приведенные здесь правила стиля основаны на общих чертах различных участников.
+Когда разные авторы сотрудничают в нескольких проектах, это помогает
+иметь один набор руководящих принципов, которые будут использоваться во всех этих проектах. Таким образом
+польза от этого руководства не в самих правилах, а в обмене
+этими правила.</p>
+<p>Ключевые слова «ДОЛЖЕН», «НЕ ДОЛЖЕН», «ТРЕБУЕТСЯ», «СЛЕДУЕТ»,
+"РЕКОМЕНДУЕТСЯ", "МОЖЕТ" и "ДОПОЛНИТЕЛЬНО" в этом документе должны быть
+интерпретированы как описано в <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<h2 id="1">1. Обзор</h2>
 <ul>
 <li>
-<p>Code MUST follow a "coding style guide" PSR [[PSR-1]].</p>
+<p>Код ДОЛЖЕН следовать «руководству по стилю кодирования» <a href="/accepted/PSR-1-basic-coding-standard/">PSR-1</a>.</p>
 </li>
 <li>
-<p>Code MUST use 4 spaces for indenting, not tabs.</p>
+<p>Код ДОЛЖЕН использовать 4 пробела для отступа, а не табуляции.</p>
 </li>
 <li>
-<p>There MUST NOT be a hard limit on line length; the soft limit MUST be 120
-  characters; lines SHOULD be 80 characters or less.</p>
+<p>НЕ ДОЛЖНО быть жестких ограничений на длину строки; мягкое ограничение ДОЛЖНО быть 120
+  символов; строки ДОЛЖНЫ быть 80 символов или меньше.</p>
 </li>
 <li>
-<p>There MUST be one blank line after the <code>namespace</code> declaration, and there
-  MUST be one blank line after the block of <code>use</code> declarations.</p>
+<p>ДОЛЖНА быть одна пустая строка после объявления пространства имен (<code>namespace</code>), 
+  ДОЛЖНА быть одна пустая строка после блока объявлений <code>use</code>.</p>
 </li>
 <li>
-<p>Opening braces for classes MUST go on the next line, and closing braces MUST
-  go on the next line after the body.</p>
+<p>Открывающие скобки для классов ДОЛЖНЫ идти на следующей строке, а закрывающие скобки ДОЛЖНЫ
+  перейти на следующую строку после тела класса.</p>
 </li>
 <li>
-<p>Opening braces for methods MUST go on the next line, and closing braces MUST
-  go on the next line after the body.</p>
+<p>Открывающие скобки для методов ДОЛЖНЫ идти на следующей строке, а закрывающие скобки ДОЛЖНЫ
+  перейти на следующую строку после тела метода.</p>
 </li>
 <li>
-<p>Visibility MUST be declared on all properties and methods; <code>abstract</code> and
-  <code>final</code> MUST be declared before the visibility; <code>static</code> MUST be declared
-  after the visibility.</p>
+<p>Область видимости ДОЛЖНА быть объявлена для всех свойств и методов; ключевые слова <code>abstract</code> и
+  <code>final</code> ДОЛЖНЫ быть объявлены до модификаторов области видимости; ключевое слово <code>static</code> ДОЛЖНО быть объявлено
+  после модификатора области видимости.</p>
 </li>
 <li>
-<p>Control structure keywords MUST have one space after them; method and
-  function calls MUST NOT.</p>
+<p>После ключевых слов в управляющих конструкциях ДОЛЖЕН располагаться один пробел, а после вызовов функций и методов – НЕ ДОЛЖЕН.</p>
 </li>
 <li>
-<p>Opening braces for control structures MUST go on the same line, and closing
-  braces MUST go on the next line after the body.</p>
+<p>Открывающие скобки для управляющих конструкций ДОЛЖНЫ идти на одной строке, а закрывающие
+  фигурные скобки ДОЛЖНЫ идти на следующей строке после тела.</p>
 </li>
 <li>
-<p>Opening parentheses for control structures MUST NOT have a space after them,
-  and closing parentheses for control structures MUST NOT have a space before.</p>
+<p>Открывающие круглые скобки для управляющих структур НЕ ДОЛЖНЫ иметь после них пробел,
+  и закрывающие круглые скобки для управляющих структур НЕ ДОЛЖНЫ иметь перед собой пробел.</p>
 </li>
 </ul>
-<h3 id="11-example">1.1. Example</h3>
-<p>This example encompasses some of the rules below as a quick overview:</p>
+<h3 id="11">1.1. Пример</h3>
+<p>Этот пример включает в себя некоторые из приведенных выше правил в качестве краткого обзора:</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -590,45 +877,44 @@ class Foo extends Bar implements FooInterface
 
     final public static function bar()
     {
-        // method body
+        // тело метода
     }
 }
 </code></pre>
-<h2 id="2-general">2. General</h2>
-<h3 id="21-basic-coding-standard">2.1. Basic Coding Standard</h3>
-<p>Code MUST follow all rules outlined in <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a>.</p>
-<h3 id="22-files">2.2. Files</h3>
-<p>All PHP files MUST use the Unix LF (linefeed) line ending.</p>
-<p>All PHP files MUST end with a single blank line.</p>
-<p>The closing <code>?&gt;</code> tag MUST be omitted from files containing only PHP.</p>
-<h3 id="23-lines">2.3. Lines</h3>
-<p>There MUST NOT be a hard limit on line length.</p>
-<p>The soft limit on line length MUST be 120 characters; automated style checkers
-MUST warn but MUST NOT error at the soft limit.</p>
-<p>Lines SHOULD NOT be longer than 80 characters; lines longer than that SHOULD
-be split into multiple subsequent lines of no more than 80 characters each.</p>
-<p>There MUST NOT be trailing whitespace at the end of non-blank lines.</p>
-<p>Blank lines MAY be added to improve readability and to indicate related
-blocks of code.</p>
-<p>There MUST NOT be more than one statement per line.</p>
-<h3 id="24-indenting">2.4. Indenting</h3>
-<p>Code MUST use an indent of 4 spaces, and MUST NOT use tabs for indenting.</p>
+<h2 id="2">2. Общие рекомендации</h2>
+<h3 id="21">2.1. Базовый стандарт кодирования</h3>
+<p>Код ДОЛЖЕН соответствовать всем правилам, изложенным в <a href="/accepted/PSR-1-basic-coding-standard/">PSR-1</a>.</p>
+<h3 id="22">2.2. Файлы</h3>
+<p>Все файлы PHP ДОЛЖНЫ использовать окончание строки Unix LF (перевод строки).</p>
+<p>Все файлы PHP ДОЛЖНЫ заканчиваться одной пустой строкой.</p>
+<p>Закрывающий тег <code>?&gt;</code> ДОЛЖЕН быть опущен в файлах, содержащих только PHP.</p>
+<h3 id="23">2.3. Строки</h3>
+<p>НЕ ДОЛЖНО быть жестких ограничений на длину строки.</p>
+<p>Мягкое ограничение длины строки ДОЛЖНО составлять 120 символов; автоматические проверки стиля
+ДОЛЖЕН предупреждать, но НЕ ДОЛЖЕН выдавать ошибку при мягком пределе.</p>
+<p>Строки НЕ ДОЛЖНЫ быть длиннее 80 символов; строки длиннее этого ДОЛЖНЫ
+быть разбит на несколько последовательных строк не более 80 символов каждая.</p>
+<p>НЕ ДОЛЖНЫ быть пробелы в конце непустых строк.</p>
+<p>Пустые строки МОГУТ быть добавлены для улучшения удобочитаемости и для обозначения связанных
+блоки кода.</p>
+<p>НЕ ДОЛЖНО быть более одного оператора в строке.</p>
+<h3 id="24">2.4. Отступы</h3>
+<p>Код ДОЛЖЕН использовать отступ в 4 пробела и НЕ ДОЛЖЕН использовать табуляцию для отступа.</p>
 <blockquote>
-<p>N.b.: Using only spaces, and not mixing spaces with tabs, helps to avoid
-problems with diffs, patches, history, and annotations. The use of spaces
-also makes it easy to insert fine-grained sub-indentation for inter-line
-alignment.</p>
+<p>N.b.: использование только пробелов и отказ от смешивания пробелов с табуляциями помогает избежать
+Проблемы с дифами, патчами, историей и аннотациями. Использование пробелов
+также позволяет легко вставлять мелкие отступы для межстрочного
+выравнивание.</p>
 </blockquote>
-<h3 id="25-keywords-and-truefalsenull">2.5. Keywords and True/False/Null</h3>
-<p>PHP <a href="http://php.net/manual/en/reserved.keywords.php">keywords</a> MUST be in lower case.</p>
-<p>The PHP constants <code>true</code>, <code>false</code>, and <code>null</code> MUST be in lower case.</p>
-<h2 id="3-namespace-and-use-declarations">3. Namespace and Use Declarations</h2>
-<p>When present, there MUST be one blank line after the <code>namespace</code> declaration.</p>
-<p>When present, all <code>use</code> declarations MUST go after the <code>namespace</code>
-declaration.</p>
-<p>There MUST be one <code>use</code> keyword per declaration.</p>
-<p>There MUST be one blank line after the <code>use</code> block.</p>
-<p>For example:</p>
+<h3 id="25-truefalsenull">2.5. Ключевые слова и True/False/Null</h3>
+<p>Ключевые слова (<a href="http://php.net/manual/ru/reserved.keywords.php">keywords</a>) ДОЛЖНЫ быть в нижнем регистре.</p>
+<p>PHP константы <code>true</code>, <code>false</code>, и <code>null</code> ДОЛЖНЫ быть в нижнем регистре.</p>
+<h2 id="3">3. Пространства имен и блоки импорта</h2>
+<p>Если присутствует пространство имен, ДОЛЖНА быть одна пустая строка после объявления <code>namespace</code>.</p>
+<p>При наличии все объявления <code>use</code> ДОЛЖНЫ идти после объявления <code>namespace</code></p>
+<p>В каждом объявлении ДОЛЖНО быть одно ключевое слово <code>use</code>.</p>
+<p>ДОЛЖНА быть одна пустая строка после блока <code>use</code>.</p>
+<p>Например:</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -636,16 +922,16 @@ use FooClass;
 use BarClass as Bar;
 use OtherVendor\OtherPackage\BazClass;
 
-// ... additional PHP code ...
+// ... другой код ...
 
 </code></pre>
-<h2 id="4-classes-properties-and-methods">4. Classes, Properties, and Methods</h2>
-<p>The term "class" refers to all classes, interfaces, and traits.</p>
-<h3 id="41-extends-and-implements">4.1. Extends and Implements</h3>
-<p>The <code>extends</code> and <code>implements</code> keywords MUST be declared on the same line as
-the class name.</p>
-<p>The opening brace for the class MUST go on its own line; the closing brace
-for the class MUST go on the next line after the body.</p>
+<h2 id="4">4. Классы, свойства и методы</h2>
+<p>Здесь под «классом» следует понимать также интерфейсы (interface) и примеси (trait).</p>
+<h3 id="41">4.1. Наследование и реализация</h3>
+<p>Ключевые слова <code>extends</code> и <code>implements</code> ДОЛЖНЫ быть объявлены в той же строке, что и
+имя класса.</p>
+<p>Открывающая фигурная скобка для класса ДОЛЖНА располагаться на отдельной строке; 
+закрывающая скобка класса ДОЛЖНА идти на следующей строке после тела класса.</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -655,12 +941,12 @@ use OtherVendor\OtherPackage\BazClass;
 
 class ClassName extends ParentClass implements \ArrayAccess, \Countable
 {
-    // constants, properties, methods
+    // константы, свойства, методы
 }
 </code></pre>
-<p>Lists of <code>implements</code> MAY be split across multiple lines, where each
-subsequent line is indented once. When doing so, the first item in the list
-MUST be on the next line, and there MUST be only one interface per line.</p>
+<p>Список реализуемых интерфейсов после <code>implements</code> МОГУТ быть разделены на несколько строк, где каждый
+последующая строка имеет один отступ. При этом первый элемент в списке
+ДОЛЖЕН быть на следующей строке, и в каждой строке ДОЛЖЕН быть только один интерфейс.</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -673,16 +959,16 @@ class ClassName extends ParentClass implements
     \Countable,
     \Serializable
 {
-    // constants, properties, methods
+    // константы, свойства, методы
 }
 </code></pre>
-<h3 id="42-properties">4.2. Properties</h3>
-<p>Visibility MUST be declared on all properties.</p>
-<p>The <code>var</code> keyword MUST NOT be used to declare a property.</p>
-<p>There MUST NOT be more than one property declared per statement.</p>
-<p>Property names SHOULD NOT be prefixed with a single underscore to indicate
-protected or private visibility.</p>
-<p>A property declaration looks like the following.</p>
+<h3 id="42">4.2. Свойства</h3>
+<p>Область видимости ДОЛЖНА быть объявлена для всех свойств.</p>
+<p>Ключевое слово <code>var</code> НЕ ДОЛЖНО использоваться для объявления свойства.</p>
+<p>В инструкции НЕ ДОЛЖНО быть объявлено более одного свойства.</p>
+<p>Имена свойств НЕ ДОЛЖНЫ иметь префикс с одним подчеркиванием, чтобы указать
+защищенная или частная видимость.</p>
+<p>Объявление свойства выглядит следующим образом.</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -691,16 +977,17 @@ class ClassName
     public $foo = null;
 }
 </code></pre>
-<h3 id="43-methods">4.3. Methods</h3>
-<p>Visibility MUST be declared on all methods.</p>
-<p>Method names SHOULD NOT be prefixed with a single underscore to indicate
-protected or private visibility.</p>
-<p>Method names MUST NOT be declared with a space after the method name. The
-opening brace MUST go on its own line, and the closing brace MUST go on the
-next line following the body. There MUST NOT be a space after the opening
-parenthesis, and there MUST NOT be a space before the closing parenthesis.</p>
-<p>A method declaration looks like the following. Note the placement of
-parentheses, commas, spaces, and braces:</p>
+<h3 id="43">4.3. Методы</h3>
+<p>Область видимости ДОЛЖНА быть объявлена для всех методов.</p>
+<p>Имена методов НЕ ДОЛЖНЫ иметь префикс с одним подчеркиванием, чтобы указать
+защищенная или частная видимость.</p>
+<p>Имена методов НЕ ДОЛЖНЫ объявляться с пробелом после имени метода.
+Открывающая фигурная скобка ДОЛЖНА располагаться на отдельной строке, 
+а закрывающая скобка ДОЛЖНА располагаться на
+следующей строке после тела метода. НЕ ДОЛЖНО быть пробела после открытия
+скобки, и НЕ ДОЛЖНО быть пробела перед закрывающей скобкой.</p>
+<p>Объявление метода выглядит следующим образом. Обратите внимание на размещение
+круглых скобок, запятых, пробелов и фигурных скобок:</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -708,15 +995,14 @@ class ClassName
 {
     public function fooBarBaz($arg1, &amp;$arg2, $arg3 = [])
     {
-        // method body
+        // тело метода
     }
 }
 </code></pre>
-<h3 id="44-method-arguments">4.4. Method Arguments</h3>
-<p>In the argument list, there MUST NOT be a space before each comma, and there
-MUST be one space after each comma.</p>
-<p>Method arguments with default values MUST go at the end of the argument
-list.</p>
+<h3 id="44">4.4. Аргументы методов</h3>
+<p>В списке аргументов НЕ ДОЛЖНО быть пробела перед каждой запятой, и
+ДОЛЖЕН быть один пробел после каждой запятой.</p>
+<p>Аргументы метода со значениями по умолчанию ДОЛЖНЫ идти в конце списка аргументов.</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -724,16 +1010,16 @@ class ClassName
 {
     public function foo($arg1, &amp;$arg2, $arg3 = [])
     {
-        // method body
+        // тело метода
     }
 }
 </code></pre>
-<p>Argument lists MAY be split across multiple lines, where each subsequent line
-is indented once. When doing so, the first item in the list MUST be on the
-next line, and there MUST be only one argument per line.</p>
-<p>When the argument list is split across multiple lines, the closing parenthesis
-and opening brace MUST be placed together on their own line with one space
-between them.</p>
+<p>Списки аргументов МОГУТ быть разделены на несколько строк, где каждая последующая строка
+имеет отступ один раз. При этом первый элемент в списке ДОЛЖЕН находиться на 
+следующей строке, и на каждой строке ДОЛЖЕН быть только один аргумент.</p>
+<p>Когда список аргументов разбит на несколько строк, закрывающая скобка
+и открывающая скобка ДОЛЖНЫ быть помещены вместе на отдельной строке с одним пробелом
+между ними.</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -744,15 +1030,13 @@ class ClassName
         &amp;$arg2,
         array $arg3 = []
     ) {
-        // method body
+        // тело метода
     }
 }
 </code></pre>
-<h3 id="45-abstract-final-and-static">4.5. <code>abstract</code>, <code>final</code>, and <code>static</code></h3>
-<p>When present, the <code>abstract</code> and <code>final</code> declarations MUST precede the
-visibility declaration.</p>
-<p>When present, the <code>static</code> declaration MUST come after the visibility
-declaration.</p>
+<h3 id="45-abstract-final-static">4.5. Ключевые слова <code>abstract</code>, <code>final</code>, и <code>static</code></h3>
+<p>Ключевые слова <code>abstract</code> и <code>final</code>, в случае их наличия, ДОЛЖНЫ располагаться перед указанием области видимости.
+Ключевое слово <code>static</code>, в случае его наличия, ДОЛЖНО располагаться после указания области видимости.</p>
 <pre><code class="language-php">&lt;?php
 namespace Vendor\Package;
 
@@ -764,24 +1048,20 @@ abstract class ClassName
 
     final public static function bar()
     {
-        // method body
+        // тело метода
     }
 }
 </code></pre>
-<h3 id="46-method-and-function-calls">4.6. Method and Function Calls</h3>
-<p>When making a method or function call, there MUST NOT be a space between the
-method or function name and the opening parenthesis, there MUST NOT be a space
-after the opening parenthesis, and there MUST NOT be a space before the
-closing parenthesis. In the argument list, there MUST NOT be a space before
-each comma, and there MUST be one space after each comma.</p>
+<h3 id="46">4.6. Вызовы методов и функций</h3>
+<p>В коде вызова функций и методов НЕ ДОЛЖНО быть пробела между именем функции или метода и открывающей круглой скобкой, НЕ ДОЛЖНО быть пробела после открывающей круглой скобки, НЕ ДОЛЖНО быть пробела перед закрывающей круглой скобкой. В списке аргументов НЕ ДОЛЖНО быть пробелов перед запятыми, но ДОЛЖЕН быть пробел после каждой запятой.</p>
 <pre><code class="language-php">&lt;?php
 bar();
 $foo-&gt;bar($arg1);
 Foo::bar($arg2, $arg3);
 </code></pre>
-<p>Argument lists MAY be split across multiple lines, where each subsequent line
-is indented once. When doing so, the first item in the list MUST be on the
-next line, and there MUST be only one argument per line.</p>
+<p>Списки аргументов МОГУТ быть разделены на несколько строк, где каждая последующая строка
+имеет только один отступ. При этом первый элемент в списке ДОЛЖЕН находиться на
+следующей строке, и на каждой строке ДОЛЖЕН быть только один аргумент.</p>
 <pre><code class="language-php">&lt;?php
 $foo-&gt;bar(
     $longArgument,
@@ -789,41 +1069,40 @@ $foo-&gt;bar(
     $muchLongerArgument
 );
 </code></pre>
-<h2 id="5-control-structures">5. Control Structures</h2>
-<p>The general style rules for control structures are as follows:</p>
+<h2 id="5">5. Управляющие конструкции</h2>
+<p>Общие правила стиля для управляющих структур следующие:</p>
 <ul>
-<li>There MUST be one space after the control structure keyword</li>
-<li>There MUST NOT be a space after the opening parenthesis</li>
-<li>There MUST NOT be a space before the closing parenthesis</li>
-<li>There MUST be one space between the closing parenthesis and the opening
-  brace</li>
-<li>The structure body MUST be indented once</li>
-<li>The closing brace MUST be on the next line after the body</li>
+<li>ДОЛЖЕН быть один пробел после ключевого слова структуры управления</li>
+<li>НЕ ДОЛЖНО быть пробела после открывающей скобки</li>
+<li>НЕ ДОЛЖНО быть пробела перед закрывающей скобкой</li>
+<li>ДОЛЖЕН быть один пробел между закрывающей скобкой и открывающей
+  скобкой</li>
+<li>Тело структуры ДОЛЖНО иметь один отступ</li>
+<li>Закрывающая фигурная скобка ДОЛЖНА быть на следующей строке после тела</li>
 </ul>
-<p>The body of each structure MUST be enclosed by braces. This standardizes how
-the structures look, and reduces the likelihood of introducing errors as new
-lines get added to the body.</p>
-<h3 id="51-if-elseif-else">5.1. <code>if</code>, <code>elseif</code>, <code>else</code></h3>
-<p>An <code>if</code> structure looks like the following. Note the placement of parentheses,
-spaces, and braces; and that <code>else</code> and <code>elseif</code> are on the same line as the
-closing brace from the earlier body.</p>
+<p>Тело каждой структуры ДОЛЖНО быть заключено в фигурные скобки. Это стандартизирует то, как
+структуры выглядят и снижает вероятность внесения ошибок при новых добавлениях строк к телу структуры.</p>
+<h3 id="51-if-elseif-else">5.1. Управляющие конструкции <code>if</code>, <code>elseif</code>, <code>else</code></h3>
+<p>Конструкция <code>if</code> представлена ниже. Обратите внимание на расстановку скобок,
+пробелов и фигурных скобок и что <code>else</code> и <code>elseif</code> находятся на той же строке, что и
+закрывающая фигурная скобка из предыдущего тела конструкции.</p>
 <pre><code class="language-php">&lt;?php
 if ($expr1) {
-    // if body
+    // if блок
 } elseif ($expr2) {
-    // elseif body
+    // elseif блок
 } else {
-    // else body;
+    // else блок;
 }
 </code></pre>
-<p>The keyword <code>elseif</code> SHOULD be used instead of <code>else if</code> so that all control
-keywords look like single words.</p>
-<h3 id="52-switch-case">5.2. <code>switch</code>, <code>case</code></h3>
-<p>A <code>switch</code> structure looks like the following. Note the placement of
-parentheses, spaces, and braces. The <code>case</code> statement MUST be indented once
-from <code>switch</code>, and the <code>break</code> keyword (or other terminating keyword) MUST be
-indented at the same level as the <code>case</code> body. There MUST be a comment such as
-<code>// no break</code> when fall-through is intentional in a non-empty <code>case</code> body.</p>
+<p>Ключевое слово <code>elseif</code> СЛЕДУЕТ использовать вместо <code>else if</code>, чтобы все элементы управления
+ключевые слова выглядят как отдельные слова.</p>
+<h3 id="52-switch-case">5.2. Управляющие конструкции <code>switch</code>, <code>case</code></h3>
+<p>Конструкция <code>switch</code> представлена ниже. Обратите внимание на размещение
+круглых скобок, пробелов и фигурных скобок. Оператор <code>case</code> ДОЛЖЕН иметь один отступ
+от <code>switch</code>, а ключевое слово <code>break</code> (или другое завершающее ключевое слово) ДОЛЖНО быть
+с отступом на том же уровне, что и тело <code>case</code>. ДОЛЖЕН быть комментарий типа
+<code>// no break</code>, когда это сделано намеренно в непустом теле <code>case</code>.</p>
 <pre><code class="language-php">&lt;?php
 switch ($expr) {
     case 0:
@@ -842,88 +1121,87 @@ switch ($expr) {
         break;
 }
 </code></pre>
-<h3 id="53-while-do-while">5.3. <code>while</code>, <code>do while</code></h3>
-<p>A <code>while</code> statement looks like the following. Note the placement of
-parentheses, spaces, and braces.</p>
+<h3 id="53-while-do-while">5.3. Управляющие конструкции <code>while</code>, <code>do while</code></h3>
+<p>Управляющая конструкция <code>while</code> представлена ниже. Обратите внимание на размещение
+круглых скобок, пробелов и фигурных скобок.</p>
 <pre><code class="language-php">&lt;?php
 while ($expr) {
-    // structure body
+    // тело цикла
 }
 </code></pre>
-<p>Similarly, a <code>do while</code> statement looks like the following. Note the placement
-of parentheses, spaces, and braces.</p>
+<p>Аналогично, оператор <code>do while</code> представлен ниже. Обратите внимание на размещение
+скобок и пробелов.</p>
 <pre><code class="language-php">&lt;?php
 do {
-    // structure body;
+    // тело цикла;
 } while ($expr);
 </code></pre>
-<h3 id="54-for">5.4. <code>for</code></h3>
-<p>A <code>for</code> statement looks like the following. Note the placement of parentheses,
-spaces, and braces.</p>
+<h3 id="54-for">5.4. Управляющая конструкция <code>for</code></h3>
+<p>Оператор <code>for</code> представлен ниже. Обратите внимание на расстановку скобок,
+пробелов и фигурных скобок.</p>
 <pre><code class="language-php">&lt;?php
 for ($i = 0; $i &lt; 10; $i++) {
-    // for body
+    // тело цикла
 }
 </code></pre>
-<h3 id="55-foreach">5.5. <code>foreach</code></h3>
-<p>A <code>foreach</code> statement looks like the following. Note the placement of
-parentheses, spaces, and braces.</p>
+<h3 id="55-foreach">5.5. Управляющая конструкция <code>foreach</code></h3>
+<p>Оператор <code>foreach</code> выглядит следующим образом. Обратите внимание на размещение
+круглые скобок, пробелов и фигурных скобок.</p>
 <pre><code class="language-php">&lt;?php
 foreach ($iterable as $key =&gt; $value) {
-    // foreach body
+    // тело цикла
 }
 </code></pre>
-<h3 id="56-try-catch">5.6. <code>try</code>, <code>catch</code></h3>
-<p>A <code>try catch</code> block looks like the following. Note the placement of
-parentheses, spaces, and braces.</p>
+<h3 id="56-try-catch">5.6. Блоки <code>try</code>, <code>catch</code></h3>
+<p>Блок <code>try catch</code> выглядит следующим образом. Обратите внимание на размещение
+круглых скобок, пробелов и фигурных скобок.</p>
 <pre><code class="language-php">&lt;?php
 try {
-    // try body
+    // блок try
 } catch (FirstExceptionType $e) {
-    // catch body
+    // блок catch
 } catch (OtherExceptionType $e) {
-    // catch body
+    // блок catch
 }
 </code></pre>
-<h2 id="6-closures">6. Closures</h2>
-<p>Closures MUST be declared with a space after the <code>function</code> keyword, and a
-space before and after the <code>use</code> keyword.</p>
-<p>The opening brace MUST go on the same line, and the closing brace MUST go on
-the next line following the body.</p>
-<p>There MUST NOT be a space after the opening parenthesis of the argument list
-or variable list, and there MUST NOT be a space before the closing parenthesis
-of the argument list or variable list.</p>
-<p>In the argument list and variable list, there MUST NOT be a space before each
-comma, and there MUST be one space after each comma.</p>
-<p>Closure arguments with default values MUST go at the end of the argument
-list.</p>
-<p>A closure declaration looks like the following. Note the placement of
-parentheses, commas, spaces, and braces:</p>
+<h2 id="6">6. Замыкания</h2>
+<p>Замыкания ДОЛЖНЫ быть объявлены с пробелом после ключевого слова <code>function</code> и иметь
+пробел до и после ключевого слова <code>use</code>.</p>
+<p>Открывающая фигурная скобка ДОЛЖНА находиться на той же строке, а закрывающая скобка ДОЛЖНА быть на
+следующей строка после тела функции.</p>
+<p>НЕ ДОЛЖНО быть пробела после открывающей скобки в списке аргументов
+или список переменных. НЕ ДОЛЖНО быть пробела перед закрывающей скобкой
+списка аргументов или списка переменных.</p>
+<p>В списке аргументов и списке переменных НЕ ДОЛЖНО быть пробела перед каждой
+запятой. После каждой запятой ДОЛЖЕН стоять один пробел.</p>
+<p>Аргументы закрытия со значениями по умолчанию ДОЛЖНЫ идти в конце списка аргументов.</p>
+<p>Объявление замыкания выглядит следующим образом. Обратите внимание на размещение
+круглых скобок, запятых, пробелов и фигурных скобок:</p>
 <pre><code class="language-php">&lt;?php
 $closureWithArgs = function ($arg1, $arg2) {
-    // body
+    // тело замыкания
 };
 
 $closureWithArgsAndVars = function ($arg1, $arg2) use ($var1, $var2) {
-    // body
+    // тело замыкания
 };
 </code></pre>
-<p>Argument lists and variable lists MAY be split across multiple lines, where
-each subsequent line is indented once. When doing so, the first item in the
-list MUST be on the next line, and there MUST be only one argument or variable
-per line.</p>
-<p>When the ending list (whether of arguments or variables) is split across
-multiple lines, the closing parenthesis and opening brace MUST be placed
-together on their own line with one space between them.</p>
-<p>The following are examples of closures with and without argument lists and
-variable lists split across multiple lines.</p>
+<p>Списки аргументов и списки переменных МОГУТ быть разделены на несколько строк, где
+каждая последующая строка имеет один отступ. При этом первый элемент в
+списке ДОЛЖЕН быть на следующей строке, и ДОЛЖЕН быть только один аргумент или переменная
+в строке.</p>
+<p>Когда конечный список (будь то аргументы или переменные) разбит на
+несколько строк, закрывающая скобка и открывающая фигурная скобка ДОЛЖНЫ быть помещены
+вместе на своей линии с одним пробелом между ними.</p>
+<p>Ниже приведены примеры замыканий со списками аргументов и без них.
+Списки переменных разбиты на несколько строк.</p>
 <pre><code class="language-php">&lt;?php
 $longArgs_noVars = function (
     $longArgument,
     $longerArgument,
     $muchLongerArgument
 ) {
-    // body
+    // тело замыкания
 };
 
 $noArgs_longVars = function () use (
@@ -931,7 +1209,7 @@ $noArgs_longVars = function () use (
     $longerVar2,
     $muchLongerVar3
 ) {
-    // body
+    // тело замыкания
 };
 
 $longArgs_longVars = function (
@@ -943,7 +1221,7 @@ $longArgs_longVars = function (
     $longerVar2,
     $muchLongerVar3
 ) {
-    // body
+    // тело замыкания
 };
 
 $longArgs_shortVars = function (
@@ -951,7 +1229,7 @@ $longArgs_shortVars = function (
     $longerArgument,
     $muchLongerArgument
 ) use ($var1) {
-    // body
+    // тело замыкания
 };
 
 $shortArgs_longVars = function ($arg) use (
@@ -959,201 +1237,47 @@ $shortArgs_longVars = function ($arg) use (
     $longerVar2,
     $muchLongerVar3
 ) {
-    // body
+    // тело замыкания
 };
 </code></pre>
-<p>Note that the formatting rules also apply when the closure is used directly
-in a function or method call as an argument.</p>
+<p>Обратите внимание, что правила форматирования также применяются, когда замыкание используется напрямую
+в вызове функции или метода в качестве аргумента.</p>
 <pre><code class="language-php">&lt;?php
 $foo-&gt;bar(
     $arg1,
     function ($arg2) use ($var1) {
-        // body
+        // тело замыкания
     },
     $arg3
 );
 </code></pre>
-<h2 id="7-conclusion">7. Conclusion</h2>
-<p>There are many elements of style and practice intentionally omitted by this
-guide. These include but are not limited to:</p>
+<h2 id="7">7. Заключение</h2>
+<p>Здесь намеренно опущены многие элементы стиля и практики руководства. 
+К ним относятся, но не ограничиваются:</p>
 <ul>
 <li>
-<p>Declaration of global variables and global constants</p>
+<p>Объявление глобальных переменных и глобальных констант</p>
 </li>
 <li>
-<p>Declaration of functions</p>
+<p>Объявление функций</p>
 </li>
 <li>
-<p>Operators and assignment</p>
+<p>Операторы и присваивание</p>
 </li>
 <li>
-<p>Inter-line alignment</p>
+<p>Межстрочное выравнивание</p>
 </li>
 <li>
-<p>Comments and documentation blocks</p>
+<p>Блоки комментариев и документации</p>
 </li>
 <li>
-<p>Class name prefixes and suffixes</p>
+<p>Префиксы и суффиксы имени класса</p>
 </li>
 <li>
-<p>Best practices</p>
+<p>Лучшие практики</p>
 </li>
 </ul>
-<p>Future recommendations MAY revise and extend this guide to address those or
-other elements of style and practice.</p>
-<h2 id="appendix-a-survey">Appendix A. Survey</h2>
-<p>In writing this style guide, the group took a survey of member projects to
-determine common practices.  The survey is retained herein for posterity.</p>
-<h3 id="a1-survey-data">A.1. Survey Data</h3>
-<pre><code>url,http://www.horde.org/apps/horde/docs/CODING_STANDARDS,http://pear.php.net/manual/en/standards.php,http://solarphp.com/manual/appendix-standards.style,http://framework.zend.com/manual/en/coding-standard.html,https://symfony.com/doc/2.0/contributing/code/standards.html,http://www.ppi.io/docs/coding-standards.html,https://github.com/ezsystems/ezp-next/wiki/codingstandards,http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html,https://github.com/UnionOfRAD/lithium/wiki/Spec%3A-Coding,http://drupal.org/coding-standards,http://code.google.com/p/sabredav/,http://area51.phpbb.com/docs/31x/coding-guidelines.html,https://docs.google.com/a/zikula.org/document/edit?authkey=CPCU0Us&amp;hgd=1&amp;id=1fcqb93Sn-hR9c0mkN6m_tyWnmEvoswKBtSc0tKkZmJA,http://www.chisimba.com,n/a,https://github.com/Respect/project-info/blob/master/coding-standards-sample.php,n/a,Object Calisthenics for PHP,http://doc.nette.org/en/coding-standard,http://flow3.typo3.org,https://github.com/propelorm/Propel2/wiki/Coding-Standards,http://developer.joomla.org/coding-standards.html
-voting,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,no,no,no,?,yes,no,yes
-indent_type,4,4,4,4,4,tab,4,tab,tab,2,4,tab,4,4,4,4,4,4,tab,tab,4,tab
-line_length_limit_soft,75,75,75,75,no,85,120,120,80,80,80,no,100,80,80,?,?,120,80,120,no,150
-line_length_limit_hard,85,85,85,85,no,no,no,no,100,?,no,no,no,100,100,?,120,120,no,no,no,no
-class_names,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,studly,lower_under,studly,lower,studly,studly,studly,studly,?,studly,studly,studly
-class_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,next,next,next,next,next,next,same,next,next
-constant_names,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper,upper
-true_false_null,lower,lower,lower,lower,lower,lower,lower,lower,lower,upper,lower,lower,lower,upper,lower,lower,lower,lower,lower,upper,lower,lower
-method_names,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel,lower_under,camel,camel,camel,camel,camel,camel,camel,camel,camel,camel
-method_brace_line,next,next,next,next,next,same,next,same,same,same,same,next,next,same,next,next,next,next,next,same,next,next
-control_brace_line,same,same,same,same,same,same,next,same,same,same,same,next,same,same,next,same,same,same,same,same,same,next
-control_space_after,yes,yes,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
-always_use_control_braces,yes,yes,yes,yes,yes,yes,no,yes,yes,yes,no,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,yes
-else_elseif_line,same,same,same,same,same,same,next,same,same,next,same,next,same,next,next,same,same,same,same,same,same,next
-case_break_indent_from_switch,0/1,0/1,0/1,1/2,1/2,1/2,1/2,1/1,1/1,1/2,1/2,1/1,1/2,1/2,1/2,1/2,1/2,1/2,0/1,1/1,1/2,1/2
-function_space_after,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no,no
-closing_php_tag_required,no,no,no,no,no,no,no,no,yes,no,no,no,no,yes,no,no,no,no,no,yes,no,no
-line_endings,LF,LF,LF,LF,LF,LF,LF,LF,?,LF,?,LF,LF,LF,LF,?,,LF,?,LF,LF,LF
-static_or_visibility_first,static,?,static,either,either,either,visibility,visibility,visibility,either,static,either,?,visibility,?,?,either,either,visibility,visibility,static,?
-control_space_parens,no,no,no,no,no,no,yes,no,no,no,no,no,no,yes,?,no,no,no,no,no,no,no
-blank_line_after_php,no,no,no,no,yes,no,no,no,no,yes,yes,no,no,yes,?,yes,yes,no,yes,no,yes,no
-class_method_control_brace,next/next/same,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/next,same/same/same,same/same/same,same/same/same,same/same/same,next/next/next,next/next/same,next/same/same,next/next/next,next/next/same,next/next/same,next/next/same,next/next/same,same/same/same,next/next/same,next/next/next
-</code></pre>
-<h3 id="a2-survey-legend">A.2. Survey Legend</h3>
-<p><code>indent_type</code>:
-The type of indenting. <code>tab</code> = "Use a tab", <code>2</code> or <code>4</code> = "number of spaces"</p>
-<p><code>line_length_limit_soft</code>:
-The "soft" line length limit, in characters. <code>?</code> = not discernible or no response, <code>no</code> means no limit.</p>
-<p><code>line_length_limit_hard</code>:
-The "hard" line length limit, in characters. <code>?</code> = not discernible or no response, <code>no</code> means no limit.</p>
-<p><code>class_names</code>:
-How classes are named. <code>lower</code> = lowercase only, <code>lower_under</code> = lowercase with underscore separators, <code>studly</code> = StudlyCase.</p>
-<p><code>class_brace_line</code>:
-Does the opening brace for a class go on the <code>same</code> line as the class keyword, or on the <code>next</code> line after it?</p>
-<p><code>constant_names</code>:
-How are class constants named? <code>upper</code> = Uppercase with underscore separators.</p>
-<p><code>true_false_null</code>:
-Are the <code>true</code>, <code>false</code>, and <code>null</code> keywords spelled as all <code>lower</code> case, or all <code>upper</code> case?</p>
-<p><code>method_names</code>:
-How are methods named? <code>camel</code> = <code>camelCase</code>, <code>lower_under</code> = lowercase with underscore separators.</p>
-<p><code>method_brace_line</code>:
-Does the opening brace for a method go on the <code>same</code> line as the method name, or on the <code>next</code> line?</p>
-<p><code>control_brace_line</code>:
-Does the opening brace for a control structure go on the <code>same</code> line, or on the <code>next</code> line?</p>
-<p><code>control_space_after</code>:
-Is there a space after the control structure keyword?</p>
-<p><code>always_use_control_braces</code>:
-Do control structures always use braces?</p>
-<p><code>else_elseif_line</code>:
-When using <code>else</code> or <code>elseif</code>, does it go on the <code>same</code> line as the previous closing brace, or does it go on the <code>next</code> line?</p>
-<p><code>case_break_indent_from_switch</code>:
-How many times are <code>case</code> and <code>break</code> indented from an opening <code>switch</code> statement?</p>
-<p><code>function_space_after</code>:
-Do function calls have a space after the function name and before the opening parenthesis?</p>
-<p><code>closing_php_tag_required</code>:
-In files containing only PHP, is the closing <code>?&gt;</code> tag required?</p>
-<p><code>line_endings</code>:
-What type of line ending is used?</p>
-<p><code>static_or_visibility_first</code>:
-When declaring a method, does <code>static</code> come first, or does the visibility come first?</p>
-<p><code>control_space_parens</code>:
-In a control structure expression, is there a space after the opening parenthesis and a space before the closing parenthesis? <code>yes</code> = <code>if ( $expr )</code>, <code>no</code> = <code>if ($expr)</code>.</p>
-<p><code>blank_line_after_php</code>:
-Is there a blank line after the opening PHP tag?</p>
-<p><code>class_method_control_brace</code>:
-A summary of what line the opening braces go on for classes, methods, and control structures.</p>
-<h3 id="a3-survey-results">A.3. Survey Results</h3>
-<pre><code>indent_type:
-    tab: 7
-    2: 1
-    4: 14
-line_length_limit_soft:
-    ?: 2
-    no: 3
-    75: 4
-    80: 6
-    85: 1
-    100: 1
-    120: 4
-    150: 1
-line_length_limit_hard:
-    ?: 2
-    no: 11
-    85: 4
-    100: 3
-    120: 2
-class_names:
-    ?: 1
-    lower: 1
-    lower_under: 1
-    studly: 19
-class_brace_line:
-    next: 16
-    same: 6
-constant_names:
-    upper: 22
-true_false_null:
-    lower: 19
-    upper: 3
-method_names:
-    camel: 21
-    lower_under: 1
-method_brace_line:
-    next: 15
-    same: 7
-control_brace_line:
-    next: 4
-    same: 18
-control_space_after:
-    no: 2
-    yes: 20
-always_use_control_braces:
-    no: 3
-    yes: 19
-else_elseif_line:
-    next: 6
-    same: 16
-case_break_indent_from_switch:
-    0/1: 4
-    1/1: 4
-    1/2: 14
-function_space_after:
-    no: 22
-closing_php_tag_required:
-    no: 19
-    yes: 3
-line_endings:
-    ?: 5
-    LF: 17
-static_or_visibility_first:
-    ?: 5
-    either: 7
-    static: 4
-    visibility: 6
-control_space_parens:
-    ?: 1
-    no: 19
-    yes: 2
-blank_line_after_php:
-    ?: 1
-    no: 13
-    yes: 8
-class_method_control_brace:
-    next/next/next: 4
-    next/next/same: 11
-    next/same/same: 1
-    same/same/same: 6
-</code></pre>
+<p>Будущие рекомендации МОГУТ пересматривать и расширять это руководство для решения тех или иных проблем.</p>
                 
               
               
@@ -1168,6 +1292,41 @@ class_method_control_brace:
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../PSR-1-basic-coding-standard/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Основной стандарт кодирования PSR-1
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../PSR-3-logger-interface/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Общий интерфейс логирования PSR-3
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

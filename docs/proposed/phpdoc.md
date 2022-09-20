@@ -1,7 +1,7 @@
 PSR-5: PHPDoc
 =============
 
-## Table Of Contents
+## Оглавление
 
 - [1. Introduction](#1-introduction)
 - [2. Conventions Used In This Document](#2-conventions-used-in-this-document)

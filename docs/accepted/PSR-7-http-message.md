@@ -1,4 +1,4 @@
-# HTTP message interfaces
+# Интерфейсы HTTP-сообщений
 
 This document describes common interfaces for representing HTTP messages as
 described in [RFC 7230](http://tools.ietf.org/html/rfc7230) and

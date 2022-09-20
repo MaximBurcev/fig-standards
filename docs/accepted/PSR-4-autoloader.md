@@ -1,75 +1,82 @@
-# Autoloader
+# Автозагрузчик
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+Слова «НЕОБХОДИМО» / «ДОЛЖНО» ("MUST"), «НЕДОПУСТИМО» ("MUST NOT"),
+«ТРЕБУЕТСЯ» ("REQUIRED"), «НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"),
+«СЛЕДУЕТ» ("SHOULD"), «НЕ СЛЕДУЕТ» ("SHOULD NOT"),
+«РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
+«НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC-2119] (и его [переводе]).
 
-## 1. Overview
+## 1. Обзор
 
-This PSR describes a specification for [autoloading][] classes from file
-paths. It is fully interoperable, and can be used in addition to any other
-autoloading specification, including [PSR-0][]. This PSR also describes where
-to place files that will be autoloaded according to the specification.
+Этот PSR описывает спецификацию для [автозагрузки][] классов из файла.
+Он полностью совместим и может использоваться в дополнение к любой другой
+спецификации автозагрузки, включая [PSR-0][]. В этом PSR также описывается размещения файлов,
+которые будут автоматически загружаться в соответствии со спецификацией.
 
-## 2. Specification
+## 2. Спецификация
 
-1. The term "class" refers to classes, interfaces, traits, and other similar
-   structures.
+1. Термин «класс» относится к классам, интерфейсам, трейтам и другим подобным
+   структуры.
 
-2. A fully qualified class name has the following form:
+2. Полное имя класса имеет следующий вид:
 
         \<NamespaceName>(\<SubNamespaceNames>)*\<ClassName>
 
-    1. The fully qualified class name MUST have a top-level namespace name,
-       also known as a "vendor namespace".
+    1. Полное имя класса ДОЛЖНО иметь имя пространства имен верхнего уровня,
+       также известный как «пространство имен поставщика».
 
-    2. The fully qualified class name MAY have one or more sub-namespace
-       names.
+    2. Полное имя класса МОЖЕТ иметь одно или несколько подпространств имен.
 
-    3. The fully qualified class name MUST have a terminating class name.
+    3. Полное имя класса ДОЛЖНО иметь конечное имя класса.
 
-    4. Underscores have no special meaning in any portion of the fully
-       qualified class name.
+    4. Подчеркивания не имеют особого значения ни в одной части полностью
+       квалифицированного имени класса.
 
-    5. Alphabetic characters in the fully qualified class name MAY be any
-       combination of lower case and upper case.
+    5. Алфавитные символы в полном имени класса МОГУТ быть любыми
+       сочетаниями нижнего и верхнего регистра.
 
-    6. All class names MUST be referenced in a case-sensitive fashion.
+    6. Все имена классов ДОЛЖНЫ указываться с учетом регистра.
 
-3. When loading a file that corresponds to a fully qualified class name ...
+3. При загрузке файла, соответствующего полностью определённому имени класса, используются следующие правила:
 
-    1. A contiguous series of one or more leading namespace and sub-namespace
-       names, not including the leading namespace separator, in the fully
-       qualified class name (a "namespace prefix") corresponds to at least one
-       "base directory".
+    1. Последовательность из одного и более пространств и подпространств имён (не включая ведущий разделитель
+       пространств имён) в полностью определённом имени класса (т.н. «префикс пространств имён») должна соответствовать
+       хотя бы одному «базовому каталогу».
 
-    2. The contiguous sub-namespace names after the "namespace prefix"
-       correspond to a subdirectory within a "base directory", in which the
-       namespace separators represent directory separators. The subdirectory
-       name MUST match the case of the sub-namespace names.
+    2. Последовательность подпространств имён после «префикса пространства имён» соответствует подкаталогу в «базовом
+       каталоге»,
+       при этом разделители пространств имён \ соответствуют разделителям каталогов /. Имя подкаталога и имя
+       подпространства имён ДОЛЖНЫ совпадать вплоть до регистра символов.
 
-    3. The terminating class name corresponds to a file name ending in `.php`.
-       The file name MUST match the case of the terminating class name.
+    3. Имя класса, завершающее собой полностью определённое имя, соответствует имени файла с расширением `.php`.
+       Имя файла и имя класса ДОЛЖНЫ совпадать вплоть до регистра символов.
 
-4. Autoloader implementations MUST NOT throw exceptions, MUST NOT raise errors
-   of any level, and SHOULD NOT return a value.
+4. Реализации автозагрузчика НЕ ДОЛЖНЫ генерировать исключения, НЕ ДОЛЖНЫ вызывать ошибки
+   любого уровня и НЕ ДОЛЖНЫ возвращать значения.
 
-## 3. Examples
+## 3. Примеры
 
-The table below shows the corresponding file path for a given fully qualified
-class name, namespace prefix, and base directory.
+В таблице ниже показан соответствующий путь к файлу для данного полного
+имя класса, префикс пространства имен и базовый каталог.
 
-| Fully Qualified Class Name    | Namespace Prefix   | Base Directory           | Resulting File Path
+| Полностью определённое имя класса    | Префикс пространства имён   | Базовый каталог           | Итоговый путь к файлу
 | ----------------------------- |--------------------|--------------------------|-------------------------------------------
 | \Acme\Log\Writer\File_Writer  | Acme\Log\Writer    | ./acme-log-writer/lib/   | ./acme-log-writer/lib/File_Writer.php
 | \Aura\Web\Response\Status     | Aura\Web           | /path/to/aura-web/src/   | /path/to/aura-web/src/Response/Status.php
 | \Symfony\Core\Request         | Symfony\Core       | ./vendor/Symfony/Core/   | ./vendor/Symfony/Core/Request.php
 | \Zend\Acl                     | Zend               | /usr/includes/Zend/      | /usr/includes/Zend/Acl.php
 
-For example implementations of autoloaders conforming to the specification,
-please see the [examples file][]. Example implementations MUST NOT be regarded
-as part of the specification and MAY change at any time.
+Примеры реализации автозагрузчиков, соответствующих данной спецификации, 
+представлены в [примерах]. 
+Примеры реализации НЕДОПУСТИМО рассматривать как часть спецификации, т.к. они МОГУТ измениться в любое время.
 
-[autoloading]: http://php.net/autoload
-[PSR-0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
-[examples file]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
+[RFC-2119]:  http://www.ietf.org/rfc/rfc2119.txt
+
+[автозагрузки]: http://php.net/autoload
+
+[PSR-0]: /accepted/PSR-0.md
+
+[примерах]: /accepted/PSR-4-autoloader-examples/
+
+[переводе]: http://rfc.com.ru/rfc2119.htm

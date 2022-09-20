@@ -1,0 +1,592 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Votes - Стандартизированные рекомендации PHP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#votes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Стандартизированные рекомендации PHP
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Votes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Стандартизированные рекомендации PHP
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Стандартизированные рекомендации PHP
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-0/" class="md-nav__link">
+        Стандарт автозагрузки PSR-0 (Устарело)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
+        Руководство по стилю кодирования PSR-2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proposed/phpdoc/" class="md-nav__link">
+        PHPDoc PSR-5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        Лицензия
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vote-types" class="md-nav__link">
+    Vote Types
+  </a>
+  
+    <nav class="md-nav" aria-label="Vote Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#approval-vote" class="md-nav__link">
+    Approval Vote
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-vote" class="md-nav__link">
+    Decision Vote
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrance-vote" class="md-nav__link">
+    Entrance Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readiness-vote" class="md-nav__link">
+    Readiness Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-vote" class="md-nav__link">
+    Acceptance Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errata-vote" class="md-nav__link">
+    Errata Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deprecation-vote" class="md-nav__link">
+    Deprecation Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#abandonment-vote" class="md-nav__link">
+    Abandonment Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implicit-approval" class="md-nav__link">
+    Implicit Approval
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#membership-vote" class="md-nav__link">
+    Membership Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expulsion-vote" class="md-nav__link">
+    Expulsion vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recall-vote" class="md-nav__link">
+    Recall Vote
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bylaw-votes" class="md-nav__link">
+    Bylaw Votes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-votes" class="md-nav__link">
+    Other Votes
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="votes">Votes</h1>
+<p>There are a number of different types of vote, each of which has its own rule set and expected threshold. Unless otherwise specified, all votes take place over a period of two weeks, or until all eligible voters have voted, whichever comes first, and votes are public. Explicit abstentions (+0) will count toward quorum, if applicable, but do not count toward majority.</p>
+<p>Non-trivial votes should be preceded by at least two weeks of discussion, although no formal discussion mechanism is required.</p>
+<p>The mechanics of voting (email, forum, any conventional subject lines, etc.) may be established and publicized by the Secretaries.</p>
+<p>Votes may be changed at will until the end of the voting period.</p>
+<p>In some cases, votes may overlap such that an individual would become eligible to cast a vote only as a result of another overlapping vote, such as a membership vote. In all cases, eligibility to vote will be defined based on membership at the moment a given vote starts. For nominations for Secretary or Core Committee member, eligibility to vote will be defined based on membership at the moment the nominating period begins.</p>
+<p>A secretary may trigger any type of vote if appropriate and necessary.</p>
+<p>Rounding of quorums and majorities would occur such that:</p>
+<ul>
+<li>A vote requiring a quorum of 1/3 of an electorate of 20, 21 or 22 members would require 7 votes to be cast</li>
+<li>A vote requiring a quorum of 1/3 of an electorate of 23, 24 or 25 members would require 8 votes to be cast</li>
+<li>A vote requiring a 50% majority with 10 or 11 votes cast would require 6 or more to be in favour to pass</li>
+<li>A vote requiring a 50% majority with 12 or 13 votes cast would require 7 or more to be in favour to pass</li>
+</ul>
+<h2 id="vote-types">Vote Types</h2>
+<p>Most votes are held by the Core Committee, and fall into one of two categories: Approval or Decision.  Unless otherwise specified, any member of the Core Committee or a Secretary may call an Approval or Decision Vote.</p>
+<h3 id="approval-vote">Approval Vote</h3>
+<p>An Approval Vote is a yes-or-no question, in which case the status quo (voting "no") produces a stable outcome. Only Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.</p>
+<h3 id="decision-vote">Decision Vote</h3>
+<p>A Decision Vote is used to select between two or more mutually-exclusive courses of action, in which case the status quo is not stable (e.g., a vacancy is being filled).  Only Core Committee members may vote.  A Decision Vote will be conducted using Single Transferable Vote with a single-winner.  Quorum is 50%.</p>
+<h2 id="entrance-vote">Entrance Vote</h2>
+<p>An Entrance Vote is called by the Sponsor of a proposed PSR.  It follows Approval Vote procedures.</p>
+<h2 id="readiness-vote">Readiness Vote</h2>
+<p>A Readiness Vote is called by the Editor of a proposed PSR in Draft Phase. Only members of the PSR's Working Group (including the Editor and Sponsor) may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.</p>
+<h2 id="acceptance-vote">Acceptance Vote</h2>
+<p>An Acceptance Vote is called by the Sponsor of a proposed PSR in the Review Phase. It follows Approval Vote procedures.</p>
+<h2 id="errata-vote">Errata Vote</h2>
+<p>An Errata Vote is called by the Editor of an approved PSR, or a Secretary if the Editor is no longer available. It follows Approval Vote procedures.</p>
+<h2 id="deprecation-vote">Deprecation Vote</h2>
+<p>A Deprecation Vote is called by any Core Committee Member. It follows Approval Vote procedures.</p>
+<h2 id="abandonment-vote">Abandonment Vote</h2>
+<p>An Abandonment Vote is called by any Secretary or Core Committee Member. It follows Approval Vote procedures.</p>
+<h2 id="implicit-approval">Implicit Approval</h2>
+<p>At times, routine Working Group activity is subject to the approval of the Core Committee but in most cases is not sufficiently controversial to warrant a full vote.  In such cases, an individual may declare an Intent to take an action.  If no member of the Core Committee objects within seven days, the action is implicitly approved.</p>
+<p>Any member of the Core Committee may request during that seven-day period that the change be put to a vote.  If any member does so, the action is put to an Approval Vote or Decision Vote (as appropriate to the situation) to determine if it is accepted or not.</p>
+<h2 id="membership-vote">Membership Vote</h2>
+<p>A Membership Vote is called by any Project Representative and consists of a separate concurrent vote by the Core Committee and Project Representatives.</p>
+<p>For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 50% majority is required for passage.</p>
+<p>For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 50% majority is required for passage.</p>
+<p>Both the Core Committee and Project Representative votes must pass for the Membership Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote. If an individual is on the Core Committee and they are to be the Project Represenative for the project in question, they are not eligible to vote.</p>
+<h2 id="expulsion-vote">Expulsion vote</h2>
+<p>An Expulsion Vote is called by any Secretary or Core Committee member and consists of a separate concurrent vote by the Core Committee and Project Representatives.</p>
+<p>For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 50% majority is required for passage.</p>
+<p>For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 50% majority is required for passage.</p>
+<p>Both the Core Committee and Project Representative votes must pass for the Expulsion Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote. The Project Representative that is the subject, or whose project is the subject, of the Expulsion Vote is not eligible to vote.</p>
+<h2 id="recall-vote">Recall Vote</h2>
+<p>A Recall Vote is called by any two of a Secretary, Core Committee member, and Project Representative, and consists of a separate concurrent vote by the Core Committee and Project Representatives.</p>
+<p>For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.</p>
+<p>For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 2/3 majority is required for passage.</p>
+<p>Both the Core Committee and Project Representative votes must pass for the Recall Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote. If a Core Committee member is the subject of the Recall Vote, they are not eligible to vote.</p>
+<h2 id="bylaw-votes">Bylaw Votes</h2>
+<p>A vote to amend any FIG bylaw is called by a Secretary, and consists of a separate concurrent vote by the Core Committee and Project Representatives.</p>
+<p>For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.</p>
+<p>For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 2/3 majority is required for passage.</p>
+<p>Both the Core Committee and Project Representative votes must pass for the Bylaw Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote.</p>
+<h2 id="other-votes">Other Votes</h2>
+<p>Should a need arise to call a formal vote for any situation not described here, the vote will be called by a Secretary. It consists of a separate vote by the Core Committee and Project Representatives.</p>
+<p>For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.</p>
+<p>For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 50% majority is required for passage.</p>
+<p>Both the Core Committee and Project Representative votes must pass for the Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

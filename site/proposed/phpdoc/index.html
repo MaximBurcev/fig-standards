@@ -1,0 +1,1412 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>PHPDoc PSR-5 - Стандартизированные рекомендации PHP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Стандартизированные рекомендации PHP
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              PHPDoc PSR-5
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Стандартизированные рекомендации PHP
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Стандартизированные рекомендации PHP
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-0/" class="md-nav__link">
+        Стандарт автозагрузки PSR-0 (Устарело)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
+        Руководство по стилю кодирования PSR-2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          PHPDoc PSR-5
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        PHPDoc PSR-5
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    Оглавление
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    1. Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-conventions-used-in-this-document" class="md-nav__link">
+    2. Conventions Used In This Document
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-definitions" class="md-nav__link">
+    3. Definitions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-basic-principles" class="md-nav__link">
+    4. Basic Principles
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-phpdoc-format" class="md-nav__link">
+    5. The PHPDoc Format
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The PHPDoc Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-summary" class="md-nav__link">
+    5.1. Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-description" class="md-nav__link">
+    5.2. Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-tags" class="md-nav__link">
+    5.3. Tags
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3. Tags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#531-tag-name" class="md-nav__link">
+    5.3.1. Tag Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#532-tag-specialization" class="md-nav__link">
+    5.3.2. Tag Specialization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#533-tag-signature" class="md-nav__link">
+    5.3.3. Tag Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-examples" class="md-nav__link">
+    5.4. Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-a-types" class="md-nav__link">
+    Appendix A. Types
+  </a>
+  
+    <nav class="md-nav" aria-label="Appendix A. Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abnf" class="md-nav__link">
+    ABNF
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#details" class="md-nav__link">
+    Details
+  </a>
+  
+    <nav class="md-nav" aria-label="Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arrays" class="md-nav__link">
+    Arrays
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#valid-class-name" class="md-nav__link">
+    Valid Class Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyword" class="md-nav__link">
+    Keyword
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        Лицензия
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    Оглавление
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    1. Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-conventions-used-in-this-document" class="md-nav__link">
+    2. Conventions Used In This Document
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-definitions" class="md-nav__link">
+    3. Definitions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-basic-principles" class="md-nav__link">
+    4. Basic Principles
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-phpdoc-format" class="md-nav__link">
+    5. The PHPDoc Format
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The PHPDoc Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-summary" class="md-nav__link">
+    5.1. Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-description" class="md-nav__link">
+    5.2. Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-tags" class="md-nav__link">
+    5.3. Tags
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3. Tags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#531-tag-name" class="md-nav__link">
+    5.3.1. Tag Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#532-tag-specialization" class="md-nav__link">
+    5.3.2. Tag Specialization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#533-tag-signature" class="md-nav__link">
+    5.3.3. Tag Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-examples" class="md-nav__link">
+    5.4. Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-a-types" class="md-nav__link">
+    Appendix A. Types
+  </a>
+  
+    <nav class="md-nav" aria-label="Appendix A. Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abnf" class="md-nav__link">
+    ABNF
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#details" class="md-nav__link">
+    Details
+  </a>
+  
+    <nav class="md-nav" aria-label="Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arrays" class="md-nav__link">
+    Arrays
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#valid-class-name" class="md-nav__link">
+    Valid Class Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyword" class="md-nav__link">
+    Keyword
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>PHPDoc PSR-5</h1>
+                
+                <p>=============</p>
+<h2 id="_1">Оглавление</h2>
+<ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-conventions-used-in-this-document">2. Conventions Used In This Document</a></li>
+<li><a href="#3-definitions">3. Definitions</a></li>
+<li><a href="#4-basic-principles">4. Basic Principles</a></li>
+<li><a href="#5-the-phpdoc-format">5. The PHPDoc Format</a></li>
+<li><a href="#51-summary">5.1. Summary</a></li>
+<li><a href="#52-description">5.2. Description</a></li>
+<li><a href="#53-tags">5.3. Tags</a><ul>
+<li><a href="#531-tag-name">5.3.1. Tag Name</a></li>
+<li><a href="#532-tag-specialization">5.3.2. Tag Specialization</a></li>
+<li><a href="#533-tag-signature">5.3.3. Tag Signature</a></li>
+</ul>
+</li>
+<li><a href="#54-examples">5.4. Examples</a></li>
+<li><a href="#appendix-a-types">Appendix A. Types</a></li>
+<li><a href="#abnf">ABNF</a></li>
+<li><a href="#details">Details</a></li>
+<li><a href="#valid-class-name">Valid Class Name</a></li>
+<li><a href="#keyword">Keyword</a></li>
+</ul>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>The main purpose of this PSR is to provide a complete and formal definition of
+the PHPDoc standard. This PSR deviates from its predecessor, the de-facto PHPDoc
+Standard associated with <a href="http://www.phpdoc.org/">phpDocumentor 1.x</a>, to provide
+support for newer features in the PHP language and to address some of the
+shortcomings of its predecessor.</p>
+<p>This document SHALL NOT:</p>
+<ul>
+<li>Describe a standard for implementing annotations via PHPDoc. Although it does
+  offer versatility which makes it possible to create a subsequent PSR based on
+  current practices. See <a href="#53-tags">chapter 5.3</a> for more information on this
+  topic.</li>
+<li>Describe best practices or recommendations for Coding Standards on the
+  application of the PHPDoc standard. This document is limited to a formal
+  specification of syntax and intention.</li>
+</ul>
+<h2 id="2-conventions-used-in-this-document">2. Conventions Used In This Document</h2>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h2 id="3-definitions">3. Definitions</h2>
+<ul>
+<li>"PHPDoc" is a section of documentation which provides information on aspects
+  of a "Structural Element".</li>
+</ul>
+<blockquote>
+<p>It is important to note that a PHPDoc and a DocBlock are two separate
+entities. The DocBlock is the combination of a DocComment, which is a type
+of comment, and a PHPDoc entity. It is the PHPDoc entity that contains the
+syntax as described in this specification (such as the description and tags).</p>
+</blockquote>
+<ul>
+<li>
+<p>"Structural Element" is a collection of Programming Constructs which MAY be
+  preceded by a DocBlock. The collection contains the following constructs:</p>
+</li>
+<li>
+<p>require(_once)</p>
+</li>
+<li>include(_once)</li>
+<li>class</li>
+<li>interface</li>
+<li>trait</li>
+<li>function (including methods)</li>
+<li>property</li>
+<li>constant</li>
+<li>variables, both local and global scope.</li>
+</ul>
+<p>It is RECOMMENDED to precede a "Structural Element" with a DocBlock where it is
+  defined and not with each usage. It is common practice to have the DocBlock
+  precede a Structural Element but it MAY also be separated by an undetermined
+  number of empty lines.</p>
+<p>Example:</p>
+<p>```php
+  /*<em> @var int $int This is a counter. </em>/
+  $int = 0;</p>
+<p>// there should be no docblock here
+  $int++;
+  ```</p>
+<p>or</p>
+<p>```php
+  /<strong>
+   * This class acts as an example on where to position a DocBlock.
+   */
+  class Foo
+  {
+      /</strong> @var string|null $title contains a title for the Foo */
+      protected $title = null;</p>
+<pre><code>  /**
+   * Sets a single-line title.
+   *
+   * @param string $title A text for the title.
+   *
+   * @return void
+   */
+  public function setTitle($title)
+  {
+      // there should be no docblock here
+      $this-&gt;title = $title;
+  }
+</code></pre>
+<p>}
+  ```</p>
+<p>It is NOT RECOMMENDED to use compound definitions for Constants or Properties, since the
+  handling of DocBlocks in these situations can lead to unexpected results. If compound statement is
+  used each element SHOULD have a preceding DocBlock.</p>
+<p>Example:</p>
+<p><code>php
+    class Foo
+    {
+      protected
+        /**
+         * @var string Should contain a description
+         */
+        $name,
+        /**
+         * @var string Should contain a description
+         */
+        $description;
+    }</code></p>
+<p>An example of use that falls beyond the scope of this Standard is to document
+  the variable in a foreach explicitly; several IDEs use this information to
+  assist their auto-completion functionality.</p>
+<p>This Standard does not cover this specific instance, as a <code>foreach</code> statement
+  is considered to be a "Control Flow" statement rather than a "Structural Element".</p>
+<p><code>php
+  /** @var \Sqlite3 $sqlite */
+  foreach ($connections as $sqlite) {
+      // there should be no docblock here
+      $sqlite-&gt;open('/my/database/path');
+      &lt;...&gt;
+  }</code></p>
+<ul>
+<li>
+<p>"DocComment" is a special type of comment which MUST</p>
+</li>
+<li>
+<p>start with the character sequence <code>/**</code> followed by a whitespace character</p>
+</li>
+<li>end with <code>*/</code> and</li>
+<li>have zero or more lines in between.</li>
+</ul>
+<p>In the case where a DocComment spans multiple lines, every line MUST start with
+  an asterisk (<code>*</code>) that SHOULD be aligned with the first asterisk of the
+  opening clause.</p>
+<p>Single line example:</p>
+<p><code>php
+  /** &lt;...&gt; */</code></p>
+<p>Multiline example:</p>
+<p><code>php
+    /**
+     * &lt;...&gt;
+     */</code></p>
+<ul>
+<li>
+<p>"DocBlock" is a "DocComment" containing a single "PHPDoc" structure and
+  represents the basic in-source representation.</p>
+</li>
+<li>
+<p>"Tag" is a single piece of meta information regarding a "Structural Element"
+  or a component thereof.</p>
+</li>
+<li>
+<p>"Type" is the determination of what type of data is associated with an element.
+  This is commonly used when determining the exact values of arguments, constants,
+  properties and more.</p>
+</li>
+</ul>
+<p>See Appendix A for more detailed information about types.</p>
+<ul>
+<li>"FQSEN" is an abbreviation for Fully Qualified Structural Element Name. This
+  notation expands on the Fully Qualified Class Name and adds a notation to
+  identify class/interface/trait members and re-apply the principles of the FQCN
+  to Interfaces, Traits, Functions and global Constants.</li>
+</ul>
+<p>The following notations can be used per type of "Structural Element":</p>
+<ul>
+<li><em>Namespace</em>:      <code>\My\Space</code></li>
+<li><em>Function</em>:       <code>\My\Space\myFunction()</code></li>
+<li><em>Constant</em>:       <code>\My\Space\MY_CONSTANT</code></li>
+<li><em>Class</em>:          <code>\My\Space\MyClass</code></li>
+<li><em>Interface</em>:      <code>\My\Space\MyInterface</code></li>
+<li><em>Trait</em>:          <code>\My\Space\MyTrait</code></li>
+<li><em>Method</em>:         <code>\My\Space\MyClass::myMethod()</code></li>
+<li><em>Property</em>:       <code>\My\Space\MyClass::$my_property</code></li>
+<li><em>Class Constant</em>: <code>\My\Space\MyClass::MY_CONSTANT</code></li>
+</ul>
+<p>A FQSEN has the following <a href="https://tools.ietf.org/html/rfc5234">ABNF</a>
+  definition:</p>
+<pre><code>  FQSEN    = fqnn / fqcn / constant / method / property  / function
+  fqnn     = "\" [name] *("\" [name])
+  fqcn     = fqnn "\" name
+  constant = (fqnn "\" / fqcn "::") name
+  method   = fqcn "::" name "()"
+  property = fqcn "::$" name
+  function = fqnn "\" name "()"
+  name     = (ALPHA / "_") *(ALPHA / DIGIT / "_")
+</code></pre>
+<h2 id="4-basic-principles">4. Basic Principles</h2>
+<ul>
+<li>
+<p>A PHPDoc MUST always be contained in a "DocComment"; the combination of these
+  two is called a "DocBlock".</p>
+</li>
+<li>
+<p>A DocBlock MUST directly precede a "Structural Element"</p>
+</li>
+</ul>
+<h2 id="5-the-phpdoc-format">5. The PHPDoc Format</h2>
+<p>The PHPDoc format has the following <a href="https://tools.ietf.org/html/rfc5234">ABNF</a>
+definition:</p>
+<pre><code>PHPDoc             = [summary] [description] [tags]
+summary            = *CHAR (2*CRLF)
+description        = 1*(CHAR / inline-tag) 1*CRLF ; any amount of characters
+                                                 ; with inline tags inside
+tags               = *(tag 1*CRLF)
+inline-tag         = "{" tag "}"
+tag                = "@" tag-name [":" tag-specialization] [tag-details]
+tag-name           = (ALPHA / "\") *(ALPHA / DIGIT / "\" / "-" / "_")
+tag-specialization = 1*(ALPHA / DIGIT / "-")
+tag-details        = *SP (SP tag-description / tag-signature )
+tag-description    = 1*(CHAR / CRLF)
+tag-signature      = "(" *tag-argument ")"
+tag-argument       = *SP 1*CHAR [","] *SP
+</code></pre>
+<p>Examples of use are included in chapter 5.4.</p>
+<h3 id="51-summary">5.1. Summary</h3>
+<p>A Summary MUST contain an abstract of the "Structural Element" defining the
+purpose. It is RECOMMENDED for Summaries to span a single line or at most two,
+but not more than that.</p>
+<p>A Summary MUST end with two sequential line breaks, unless it is the only content
+in the PHPDoc.</p>
+<p>If a Description is provided, then it MUST be preceded by a Summary. Otherwise
+the Description will be considered the Summary, until the end of the Summary
+is reached.</p>
+<p>Because a Summary is comparable to a chapter title, it is beneficial to use as
+little formatting as possible. As such, contrary to the Description (see next
+chapter), no recommendation is done to support a mark-up language. It is
+explicitly left up to the implementing application whether it wants to support
+this or not.</p>
+<h3 id="52-description">5.2. Description</h3>
+<p>The Description is OPTIONAL but SHOULD be included when the
+"Structural Element", which this DocBlock precedes, contains more operations, or
+more complex operations, than can be described in the Summary alone.</p>
+<p>Any application parsing the Description is RECOMMENDED to support the
+Markdown mark-up language for this field so that it is possible for the author
+to provide formatting and a clear way of representing code examples.</p>
+<p>Common uses for the Description are (amongst others):</p>
+<ul>
+<li>To provide more detail than the Summary on what this method does.</li>
+<li>To specify of what child elements an input or output array, or object, is
+  composed.</li>
+<li>To provide a set of common use cases or scenarios in which the
+  "Structural Element" may be applied.</li>
+</ul>
+<h3 id="53-tags">5.3. Tags</h3>
+<p>Tags provide a way for authors to supply concise meta-data regarding the
+succeeding "Structural Element". Each tag starts on a new line, followed
+by an at-sign (@) and a tag-name, followed by white-space and meta-data
+(including a description).</p>
+<p>If meta-data is provided, it MAY span multiple lines and COULD follow a
+strict format, and as such provide parameters, as dictated by the type of tag.
+The type of the tag can be derived from its name.</p>
+<p>For example:</p>
+<blockquote>
+<p><code>@param string $argument1 This is a parameter.</code></p>
+<p>The above tag consists of a name ('param') and meta-data
+('string $argument1 This is a parameter.') where the meta-data is split into a
+"Type" ('string'), variable name ('$argument') and description
+('This is a parameter.').</p>
+</blockquote>
+<p>The description of a tag MUST support Markdown as a formatting language. Due to
+the nature of Markdown, it is legal to start the description of the tag on the
+same or the subsequent line and interpret it in the same way.</p>
+<p>Thus, the following tags are semantically identical:</p>
+<pre><code>/**
+ * @var string This is a description.
+ * @var string This is a
+ *    description.
+ * @var string
+ *    This is a description.
+ */
+</code></pre>
+<p>A variation of this is where, instead of a description, a tag signature is used;
+in most cases the tag will in fact be an "Annotation". The tag signature is
+able to provide the annotation with parameters regarding its operation.</p>
+<p>If a tag signature is present, then there MUST NOT be a description present in
+the same tag.</p>
+<p>The meta-data supplied by tags could result in a change of actual runtime
+behavior of the succeeding "Structural Element", in which case the term
+"Annotation" is commonly used instead of "Tag".</p>
+<h4 id="531-tag-name">5.3.1. Tag Name</h4>
+<p>Tag names indicate what type of information is represented by this tag, or in
+case of annotations, which behaviour must be injected into the succeeding
+"Structural Element".</p>
+<p>In support of annotations, it is allowable to introduce a set of tags designed
+specifically for an individual application or subset of applications (and thus
+not covered by this specification).</p>
+<p>These tags, or annotations, MUST provide a namespace by either</p>
+<ul>
+<li>prefixing the tag name with a PHP-style namespace, or by</li>
+<li>prefixing the tag name with a single vendor-name followed by a hyphen.</li>
+</ul>
+<p>Example of a tag name prefixed with a php-style namespace (the prefixing slash
+is OPTIONAL):</p>
+<pre><code class="language-php">@\Doctrine\Orm\Mapping\Entity()
+</code></pre>
+<blockquote>
+<p><em>Note</em>: The PHPDoc Standard DOES NOT make assumptions on the meaning of a tag
+unless specified in this document or subsequent additions or extensions.</p>
+<p>This means that you CAN use namespace aliases as long as a prefixing namespace
+element is provided. Thus the following is legal as well:</p>
+<pre><code>@Mapping\Entity()
+</code></pre>
+<p>Your own library or application may check for namespace aliases and make a
+FQCN from this; this has no impact on this standard.</p>
+<p><em>Important</em>: Tools using the PHPDoc Standard MAY interpret namespaces that are
+registered with that application and apply custom behaviour.</p>
+</blockquote>
+<p>Example of a tag name prefixed with a vendor name and hyphen:</p>
+<pre><code class="language-php">@phpdoc-event transformer.transform.pre
+</code></pre>
+<p>Tag names that are not prefixed with a vendor or namespace MUST be described in
+the <a href="TBD">Tag Catalog PSR</a> and/or any official addendum.</p>
+<h4 id="532-tag-specialization">5.3.2. Tag Specialization</h4>
+<p>In order to provide a method by which to provide nuance to the tags defined in
+this standard, but without expanding the base set, a tag specialization MAY be
+provided after the tag name by adding a colon followed by a string that provides
+a more nuanced description of the tag. The list of supported tag specializations
+is not maintained in the <a href="TBD">Tag Catalog PSR</a>, as it may change over time.
+The <a href="TBD">Tag Catalog PSR</a> meta document may contain a series of recommendations
+on a per-tag name basis, but projects are free to choose their own tag specializations if applicable.</p>
+<p><em>Important</em>: Tools using the PHPDoc Standard MAY interpret tag specializations
+that are registered with/understood by that application and apply custom
+behaviour, but are only expected to implement the preceding tag name as defined
+in the <a href="TBD">Tag Catalog PSR</a>.</p>
+<p>For example:</p>
+<blockquote>
+<p><code>@see:unit-test \Mapping\EntityTest::testGetId</code></p>
+<p>The above tag consists of a name ('see') and tag specialization ('unit-test'),
+and thus defines a relation to the unit test for the proceeding method.</p>
+</blockquote>
+<h4 id="533-tag-signature">5.3.3. Tag Signature</h4>
+<p>Tag signatures are commonly used for annotations to supply additional meta-data
+specific to the current tag.</p>
+<p>The supplied meta-data can influence the behavior of the owning annotation and
+as such influence the behavior of the succeeding "Structural Element".</p>
+<p>The contents of a signature are to be determined by the tag type (as described
+in the tag-name) and fall beyond the scope of this specification. However, a
+tag-signature MUST NOT be followed by a description or other form of meta-data.</p>
+<h3 id="54-examples">5.4. Examples</h3>
+<p>The following examples serve to illustrate the basic use of DocBlocks; it is
+advised to read through the list of tags in the <a href="TBD">Tag Catalog PSR</a>.</p>
+<p>A complete example could look like this:</p>
+<pre><code class="language-php">/**
+ * This is a Summary.
+ *
+ * This is a Description. It may span multiple lines
+ * or contain 'code' examples using the _Markdown_ markup
+ * language.
+ *
+ * @see Markdown
+ *
+ * @param int        $parameter1 A parameter description.
+ * @param \Exception $e          Another parameter description.
+ *
+ * @\Doctrine\Orm\Mapper\Entity()
+ *
+ * @return string
+ */
+function test($parameter1, $e)
+{
+    ...
+}
+</code></pre>
+<p>It is also allowed to omit the Description:</p>
+<pre><code class="language-php">/**
+ * This is a Summary.
+ *
+ * @see Markdown
+ *
+ * @param int        $parameter1 A parameter description.
+ * @param \Exception $parameter2 Another parameter description.
+ *
+ * @\Doctrine\Orm\Mapper\Entity()
+ *
+ * @return string
+ */
+function test($parameter1, $parameter2)
+{
+}
+</code></pre>
+<p>Or even omit the tags section as well (though it is not encouraged,
+as you are missing information on the parameters and return value):</p>
+<pre><code class="language-php">/**
+ * This is a Summary.
+ */
+function test($parameter1, $parameter2)
+{
+}
+</code></pre>
+<p>A DocBlock may also span a single line:</p>
+<pre><code class="language-php">/** @var \ArrayObject $array */
+public $array = null;
+</code></pre>
+<h2 id="appendix-a-types">Appendix A. Types</h2>
+<h3 id="abnf">ABNF</h3>
+<p>A Type has the following <a href="https://tools.ietf.org/html/rfc5234">ABNF</a> definition:</p>
+<pre><code>type-expression  = type *("|" type) *("&amp;" type)
+type             = class-name / keyword / array
+array            = (type / array-expression) "[]"
+array-expression = "(" type-expression ")"
+class-name       = ["\"] label *("\" label)
+label            = (ALPHA / %x7F-FF) *(ALPHA / DIGIT / %x7F-FF)
+keyword          = "array" / "bool" / "callable" / "false" / "float" / "int" / "iterable" / "mixed" / "null" / "object" /
+keyword          = "resource" / "self" / "static" / "string" / "true" / "void" / "$this"
+</code></pre>
+<h3 id="details">Details</h3>
+<p>When a "Type" is used, the user will expect a value, or set of values, as detailed below.</p>
+<p>When the "Type" consists of multiple types, then these MUST be separated with either
+the vertical bar sign (|) for union type or the ampersand (&amp;) for intersection type.
+Any interpreter supporting this specification MUST recognize this and split the "Type" before evaluating.</p>
+<p>Union type example:</p>
+<blockquote>
+<p><code>@return int|null</code></p>
+</blockquote>
+<p>Intersection type example:</p>
+<blockquote>
+<p><code>@var \MyClass&amp;\PHPUnit\Framework\MockObject\MockObject $myMockObject</code></p>
+</blockquote>
+<h4 id="arrays">Arrays</h4>
+<p>The value represented by "Type" can be an array. The type MUST be defined following the format of one of the
+following options:</p>
+<ol>
+<li>
+<p>unspecified: no definition of the contents of the represented array is given.
+   Example: <code>@return array</code></p>
+</li>
+<li>
+<p>specified containing a single type: the Type definition informs the reader of the type of each array value. Only one
+   type is then expected for each value in a given array.</p>
+</li>
+</ol>
+<p>Example: <code>@return int[]</code></p>
+<p>Please note that <em>mixed</em> is also a single type and with this keyword it is possible to indicate that each array
+   value contains any possible type.</p>
+<ol>
+<li>specified as containing multiple types: the Type definition informs the reader of the type of each array value.
+   Each value can be of any of the given types.
+   Example: <code>@return (int|string)[]</code></li>
+</ol>
+<h3 id="valid-class-name">Valid Class Name</h3>
+<p>A valid class name is seen based on the context where this type is mentioned. Thus
+this may be either a Fully Qualified Class Name (FQCN) or a local name if present in a
+namespace.</p>
+<p>The element to which this type applies is either an instance of this class
+or an instance of a class that is a (sub-)child to the given class.</p>
+<blockquote>
+<p>Due to the above nature, it is RECOMMENDED for applications that
+collect and shape this information to show a list of child classes
+with each representation of the class. This would make it obvious
+for the user which classes are acceptable as type.</p>
+</blockquote>
+<h3 id="keyword">Keyword</h3>
+<p>A keyword defines the purpose of this type. Not every element is determined by a class but still worthy of
+classification to assist the developer in understanding the code covered by the DocBlock.</p>
+<p><strong>Note:</strong></p>
+<blockquote>
+<p>Most of these keywords are allowed as class names in PHP and can be hard to distinguish from real classes. As
+such, the keywords MUST be lowercase, as most class names start with an uppercase first character, and you SHOULD NOT
+use classes with these names in your code.</p>
+<p>There are more reasons to not name classes with the names of these keywords, but that falls beyond the scope of this
+specification.</p>
+</blockquote>
+<p>The following keywords are recognized by this PSR:</p>
+<ol>
+<li>
+<p><code>bool</code>: the element to which this type applies only has state <code>TRUE</code> or <code>FALSE</code>.</p>
+</li>
+<li>
+<p><code>int</code>: the element to which this type applies is a whole number or integer.</p>
+</li>
+<li>
+<p><code>float</code>: the element to which this type applies is a continuous, or real, number.</p>
+</li>
+<li>
+<p><code>string</code>: the element to which this type applies is a string of binary characters.</p>
+</li>
+<li>
+<p><code>object</code>: the element to which this type applies is the instance of an undetermined class.</p>
+</li>
+<li>
+<p><code>array</code>: the element to which this type applies is an array of values.</p>
+</li>
+<li>
+<p><code>iterable</code>: the element to which this type applies is an array or Traversable object per the <a href="https://php.net/manual/language.types.iterable.php">definition of PHP</a>.</p>
+</li>
+<li>
+<p><code>resource</code>: the element to which this type applies is a resource per the <a href="https://php.net/manual/language.types.resource.php">definition of PHP</a>.</p>
+</li>
+<li>
+<p><code>mixed</code>: the element to which this type applies can be of any type as specified here. It is not known at compile
+    time which type will be used.</p>
+</li>
+<li>
+<p><code>void</code>: this type is commonly only used when defining the return type of a method or function, indicating
+    "nothing is returned", and thus the user should not rely on any returned value.</p>
+<p><strong>Example 1:</strong>
+<code>php
+/**
+ * @return void
+ */
+function outputHello()
+{
+    echo 'Hello world';
+}</code></p>
+<p>In the example above, no return statement is specified and thus the return value is not determined.</p>
+<p><strong>Example 2:</strong>
+<code>php
+/**
+ * @param bool $quiet when true 'Hello world' is echo-ed.
+ *
+ * @return void
+ */
+function outputHello($quiet)
+{
+    if ($quiet) {
+        return;
+    }
+    echo 'Hello world';
+}</code></p>
+<p>In this example, the function contains a return statement without a given value. Because there is no actual value
+specified, this also qualifies as type <code>void</code>.</p>
+</li>
+<li>
+<p><code>null</code>: the element to which this type applies is a <code>NULL</code> value or, in technical terms, does not exist.</p>
+<p>A big difference compared to <code>void</code> is that this type is used in any situation where the described element may at
+any given time contain an explicit <code>NULL</code> value.</p>
+<p><strong>Example 1:</strong>
+<code>php
+/**
+ * @return null
+ */
+function foo()
+{
+    echo 'Hello world';
+    return null;
+}</code></p>
+<p>This type is commonly used in conjunction with another type to indicate that it is possible that nothing is
+returned.</p>
+<p><strong>Example 2:</strong>
+<code>php
+/**
+ * @param bool $create_new When true returns a new stdClass.
+ *
+ * @return stdClass|null
+ */
+function foo($create_new)
+{
+    if ($create_new) {
+        return new stdClass();
+    }
+    return null;
+}</code></p>
+</li>
+<li>
+<p><code>callable</code>: the element to which this type applies is a pointer to a function call. This may be any type of callable
+    as per the <a href="https://php.net/manual/language.types.callable.php">definition of PHP</a>.</p>
+</li>
+<li>
+<p><code>false</code> or <code>true</code>: the element to which this type applies will have the value <code>TRUE</code> or <code>FALSE</code>. No other value will
+    be returned from this element.</p>
+</li>
+<li>
+<p><code>self</code>: the element to which this type applies is of the same class in which the documented element is originally
+    contained.</p>
+<p><strong>Example:</strong></p>
+<blockquote>
+<p>Method <em>c</em> is contained in class <em>A</em>. The DocBlock states that its return value is of type <code>self</code>. As such, method
+<em>c</em> returns an instance of class <em>A</em>.</p>
+</blockquote>
+<p>This may lead to confusing situations when inheritance is involved.</p>
+<p><strong>Example (previous example situation still applies):</strong></p>
+<blockquote>
+<p>Class <em>B</em> extends class <em>A</em> and does not redefine method <em>c</em>. As such, it is possible to invoke method <em>c</em> from
+class <em>B</em>.</p>
+</blockquote>
+<p>In this situation, ambiguity may arise as <code>self</code> could be interpreted as either class <em>A</em> or <em>B</em>. In these cases,
+<code>self</code> MUST be interpreted as being an instance of the class where the DocBlock containing the <code>self</code> type is
+written.</p>
+<p>In the examples above, <code>self</code> MUST always refer to class <em>A</em>, since it is defined with method <em>c</em> in class <em>A</em>.</p>
+<blockquote>
+<p>Due to the above nature, it is RECOMMENDED for applications that collect and shape this information to show a list
+of child classes with each representation of the class. This would make it obvious for the user which classes are
+acceptable as type.</p>
+</blockquote>
+</li>
+<li>
+<p><code>static</code>: the element to which this type applies is of the same class in which the documented element is contained,
+    or, when encountered in a subclass, is of type of that subclass instead of the original class.</p>
+<p>This keyword behaves the same way as the <a href="https://php.net/manual/language.oop5.late-static-bindings.php">keyword for late static binding</a> (not the static method,
+property, nor variable modifier) as defined by PHP.</p>
+</li>
+<li>
+<p><code>$this</code>: the element to which this type applies is the same exact instance as the current class in the given
+    context. As such, this type is a stricter version of <code>static</code>, because the returned instance must not only be
+    of the same class but also the same instance.</p>
+<p>This type is often used as return value for methods implementing the <a href="https://en.wikipedia.org/wiki/Fluent_interface">Fluent Interface</a> design pattern.</p>
+</li>
+</ol>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../accepted/PSR-4-autoloader-examples/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Примеры реализации PSR-4
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../../accepted/PSR-6-cache/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Общий интерфейс кэширования PSR-6
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

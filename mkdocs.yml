@@ -1,4 +1,4 @@
-site_name: 'PHP Standard Recommendations'
+site_name: 'Стандартизированные рекомендации PHP'
 theme: material
 extra_css:
     - //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css
@@ -7,7 +7,16 @@ extra_javascript:
     - //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js
     - js/init.js
 nav:
-    - PHP Standard Recommendations: index.md
-    - Accepted:
-          - Autoloading Standard: accepted/PSR-0.md
-    - License: LICENSE.md
+    - Стандартизированные рекомендации PHP: index.md
+    - Стандарт автозагрузки PSR-0 (Устарело): accepted/PSR-0.md
+    - Основной стандарт кодирования PSR-1 : accepted/PSR-1-basic-coding-standard.md
+    - Руководство по стилю кодирования PSR-2: accepted/PSR-2-coding-style-guide.md
+    - Общий интерфейс логирования PSR-3: accepted/PSR-3-logger-interface.md
+    - Стандарт автозагрузки PSR-4 : accepted/PSR-4-autoloader.md
+    - Примеры реализации PSR-4: accepted/PSR-4-autoloader-examples.md
+    - PHPDoc PSR-5: proposed/phpdoc.md
+    - Общий интерфейс кэширования PSR-6: accepted/PSR-6-cache.md
+    - Интерфейсы HTTP-сообщений
+    - Расширенное руководство по стилю кодирования PSR-12: accepted/PSR-12-extended-coding-style-guide.md
+
+    - Лицензия: LICENSE.md

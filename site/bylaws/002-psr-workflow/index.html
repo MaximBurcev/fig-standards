@@ -1,0 +1,510 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Рабочий процесс стандартных рекомендаций PHP (PSR) - Стандартизированные рекомендации PHP</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#php-psr" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-header-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Стандартизированные рекомендации PHP
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Рабочий процесс стандартных рекомендаций PHP (PSR)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Стандартизированные рекомендации PHP" class="md-nav__button md-logo" aria-label="Стандартизированные рекомендации PHP">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Стандартизированные рекомендации PHP
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Стандартизированные рекомендации PHP
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-0/" class="md-nav__link">
+        Стандарт автозагрузки PSR-0 (Устарело)
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
+        Основной стандарт кодирования PSR-1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
+        Руководство по стилю кодирования PSR-2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
+        Общий интерфейс логирования PSR-3
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
+        Стандарт автозагрузки PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-4-autoloader-examples/" class="md-nav__link">
+        Примеры реализации PSR-4
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proposed/phpdoc/" class="md-nav__link">
+        PHPDoc PSR-5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
+        Общий интерфейс кэширования PSR-6
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
+        Расширенное руководство по стилю кодирования PSR-12
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LICENSE/" class="md-nav__link">
+        Лицензия
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    Предварительный проект
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    Черновик
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    Обзор
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    Принятый
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    Исправления
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    Устарело
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    Заброшенный
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    Референдум по проекту
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="php-psr">Рабочий процесс стандартных рекомендаций PHP (PSR)</h1>
+<h2 id="_1">Предварительный проект</h2>
+<p>Цель этапа предварительного проекта - определить, заинтересовано ли большинство PHP FIG в публикации PSR для предлагаемой концепции.</p>
+<p>Заинтересованные стороны могут обсудить возможное предложение, включая возможные реализации, любыми способами, которые они сочтут подходящими. Это включает в себя неформальное обсуждение на официальных средствах обсуждения FIG о том, имеет ли идея достоинства и находится ли она в рамках целей PHP FIG.</p>
+<p>Как только эти стороны решат двигаться вперед, они должны сформировать полную рабочую группу.</p>
+<p>На данном этапе не требуется, чтобы предложение было полностью доработано, хотя это разрешено. Как минимум, он должен включать изложение проблемы, которую необходимо решить, и основную информацию об общем подходе, который необходимо использовать. Дальнейший пересмотр и расширение ожидается на этапе разработки.</p>
+<p>Спонсор может затем объявить вступительное голосование в Основной комитет, чтобы узнать, заинтересован ли Основной комитет в публикации PSR по предлагаемой теме, даже если они не согласны с деталями предложения.</p>
+<p>Если голосование проходит, предложение официально переходит на стадию проекта. Предложение получает номер PSR, увеличивающийся с самого высокого номера PSR, прошедшего голосование при входе, независимо от статуса этого PSR.</p>
+<p>Рабочая группа может продолжить работу над предложением в течение всего периода голосования.</p>
+<h2 id="_2">Черновик</h2>
+<p>Целью этапа проекта является обсуждение и доработка предложения PSR до момента, когда оно может быть рассмотрено на рассмотрение Основным комитетом FIG.</p>
+<p>На стадии черновика члены рабочей группы могут вносить любые изменения, которые они считают нужными, с помощью запросов на вытягивание, комментариев на GitHub, цепочек рассылки, чата и аналогичных инструментов. Изменения здесь не ограничиваются какими-либо строгими правилами, и возможны фундаментальные переписывания, если они поддерживаются редактором. Альтернативные подходы могут быть предложены и обсуждены в любое время. Если редактор и спонсор убеждены, что альтернативное предложение превосходит первоначальное предложение, то альтернативное предложение может заменить оригинал. Ожидается, что члены рабочей группы будут продолжать работу на этапе разработки проекта. Обсуждения являются публичными, и любой, независимо от принадлежности к FIG, может внести конструктивный вклад. На этом этапе редактор имеет окончательную власть над изменениями, внесенными в предлагаемую спецификацию.</p>
+<p>Все знания, полученные на стадии черновика, такие как возможные альтернативные подходы, их последствия, плюсы и минусы и т. Д., А также причины выбора предлагаемого подхода должны быть кратко изложены в метадокументе. Цель этого правила - предотвратить повторное обсуждение циркулярных обсуждений или альтернативных предложений после того, как по ним будет принято решение.</p>
+<p>Когда редактор и спонсор соглашаются, что предложение готово и что метадокумент является объективным и полным, редактор может запросить голосование о готовности рабочей группы, чтобы определить, является ли спецификация по существу полной и готовой к пробной реализации.</p>
+<p>Если голосование проходит, предложение официально переходит на этап рассмотрения. В противном случае он остается в фазе черновика.</p>
+<h2 id="_3">Обзор</h2>
+<p>Этап обзора - это возможность для сообщества поэкспериментировать с разумно фиксированной целью, чтобы оценить практичность предложения. На этом этапе спонсор является окончательной властью в отношении изменений в спецификации, а также любых решений по продвижению предложения вперед или назад, однако редактор может наложить вето на предложенные изменения, которые, по его мнению, вредны для дизайна спецификации.</p>
+<p>На этом этапе ожидается и будет поощряться пробная реализация спецификации. Изменения в спецификации ограничиваются теми, которые были напрямую проинформированы пробными реализациями, формулировками, опечатками, пояснениями и т. Д. На этом этапе не допускаются серьезные изменения. Если разработка пробных реализаций демонстрирует необходимость серьезных изменений, тогда спецификацию необходимо перенести обратно на этап чернового варианта. Любое несовместимое изменение, которое потребует значительных усилий для корректировки пробных внедрений, квалифицируется как серьезное изменение. Несовместимые изменения от небольших до умеренных не обязательно требуют возврата к фазе черновика.</p>
+<p>Если предложение снова не будет переведено на стадию черновика, оно должно оставаться на стадии рассмотрения как минимум четыре недели, пока не будут продемонстрированы две независимые жизнеспособные пробные реализации. Ответственность за поиск таких пробных реализаций и представление их Основному комитету лежит на Рабочей группе, особенно на редакторе и спонсоре. Поскольку не все спецификации являются интерфейсами PHP, для которых определение «реализация» самоочевидно, спонсор должен добросовестно оценить, когда это так. Любой член Основного комитета может возразить против проведения данного испытания как не относящегося к делу или недостаточного по уважительной причине.</p>
+<p>По прошествии четырех недель и демонстрации двух жизнеспособных пробных реализаций спонсор может объявить одобрительное голосование. Если голосование о принятии не состоялось, спецификация может оставаться на рассмотрении.</p>
+<h2 id="_4">Принятый</h2>
+<p>Если голосование о принятии проходит, то предложение официально становится принятым PSR. В это время Рабочая группа автоматически распускается. Редактор PSR автоматически становится Сопровождающим спецификацию в случае появления опечаток, изменений или исправлений в спецификации. Редактор также автоматически является Сопровождающим любых артефактов, созданных Рабочей группой, таких как служебные библиотеки.</p>
+<h2 id="_5">Исправления</h2>
+<p>Если после принятия PSR возникнет несоответствие или возникнет необходимость в разъяснениях, в документ все еще можно внести исправления. Сопровождающий PSR имеет право справиться с такими ситуациями, но любое значимое изменение должно пройти через голосование по исправлению ошибок перед слиянием. Опечатки и любые другие правки, не меняющие смысла текста, не попадают в эту категорию и могут быть объединены секретарями по желанию.</p>
+<p>Разъяснения по исправлениям могут быть добавлены только в метадокумент, но не в саму спецификацию, как элементы в отдельном разделе. Сама спецификация может быть отредактирована только минимально, чтобы указать читателям на соответствующие исправления, если это необходимо.</p>
+<h2 id="_6">Устарело</h2>
+<p>Устаревший PSR - это документ, который был утвержден, но больше не считается актуальным или рекомендованным. Обычно это происходит из-за того, что PSR заменяется новой версией, но это не обязательно.</p>
+<p>PSR может быть аннулирован явным образом в рамках голосования за принятие другого PSR. В качестве альтернативы он может быть помечен как устаревший в результате голосования за устаревание.</p>
+<h2 id="_7">Заброшенный</h2>
+<p>Заброшенный PSR - это тот, над которым активно не работают. Если рабочая группа по PSR будет распущена, PSR автоматически помечается как прекращенная.</p>
+<p>Как только PSR находится в стадии «Заброшенный», он может быть снова перемещен в проект только после нового голосования по вступлению, проводимого Основным комитетом в соответствии с той же процедурой, что и предварительный проект, за исключением того, что он может сохранить свой ранее присвоенный номер. Если цели PSR отличаются от первоначального вступительного голосования, на усмотрение Основного комитета следует ли рассматривать его как новое PSR или возобновление деятельности в отношении Заброшенного PSR.</p>
+<h2 id="_8">Референдум по проекту</h2>
+<p>В любое время редактор PSR на этапе разработки или проверки может потребовать проведения необязательного референдума представителей проекта по текущему состоянию PSR. Такой референдум может быть созван несколько раз, если необходимо, по мере развития ПРБ или никогда, по усмотрению редактора. Основной комитет может также потребовать проведения такого референдума в качестве условия принятия голосования, если это необходимо. Результаты референдума не являются обязательными, но ожидается, что Рабочая группа и Основной комитет должным образом рассмотрят их.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+      
+        <script src="../../js/init.js"></script>
+      
+    
+  </body>
+</html>

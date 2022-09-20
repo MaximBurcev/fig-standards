@@ -1,6 +1,6 @@
-# License
+# Лицензия
 
-Unless stated otherwise, all content is licensed under the Creative Commons
-Attribution License and code licensed under the MIT License.
+Если не указано иное, весь контент находится под лицензией Creative Commons.
+Лицензия с указанием авторства и код под лицензией MIT License.
 
-Copies of all licenses are included in this project's root directory.
+Копии всех лицензий находятся в корневом каталоге этого проекта.
