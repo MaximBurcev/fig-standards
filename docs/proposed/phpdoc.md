@@ -3,60 +3,52 @@ PSR-5: PHPDoc
 
 ## Оглавление
 
-- [1. Introduction](#1-introduction)
-- [2. Conventions Used In This Document](#2-conventions-used-in-this-document)
-- [3. Definitions](#3-definitions)
-- [4. Basic Principles](#4-basic-principles)
-- [5. The PHPDoc Format](#5-the-phpdoc-format)
-  - [5.1. Summary](#51-summary)
-  - [5.2. Description](#52-description)
-  - [5.3. Tags](#53-tags)
-    - [5.3.1. Tag Name](#531-tag-name)
-    - [5.3.2. Tag Specialization](#532-tag-specialization)
-    - [5.3.3. Tag Signature](#533-tag-signature)
-  - [5.4. Examples](#54-examples)
-- [Appendix A. Types](#appendix-a-types)
+- [1. Введение](#1)
+- [2. Условные обозначения, используемые в этом документе](#2-conventions-used-in-this-document)
+- [3. Определения](#3-definitions)
+- [4. Основные принципы](#4-basic-principles)
+- [5. Формат PHPDoc](#5-the-phpdoc-format)
+  - [5.1. Резюме](#51-summary)
+  - [5.2. Описание](#52-description)
+  - [5.3. Теги](#53-tags)
+    - [5.3.1. Название тэга](#531-tag-name)
+    - [5.3.2. Специализация тегов](#532-tag-specialization)
+    - [5.3.3. Подпись тега](#533-tag-signature)
+  - [5.4. Примеры](#54-examples)
+- [Приложение А. Типы](#appendix-a-types)
   - [ABNF](#abnf)
-  - [Details](#details)
-  - [Valid Class Name](#valid-class-name)
-  - [Keyword](#keyword)
+  - [Подробности](#details)
+  - [Допустимое имя класса](#valid-class-name)
+  - [Ключевое слово](#keyword)
 
-## 1. Introduction
+## 1. Введение
 
-The main purpose of this PSR is to provide a complete and formal definition of
-the PHPDoc standard. This PSR deviates from its predecessor, the de-facto PHPDoc
-Standard associated with [phpDocumentor 1.x][PHPDOC.ORG], to provide
-support for newer features in the PHP language and to address some of the
-shortcomings of its predecessor.
+Основная цель этого PSR — предоставить полное и формальное определение стандарта PHPDoc. 
+Этот PSR отличается от своего предшественника, де-факто стандарта PHPDoc, связанного с [phpDocumentor 1.x][PHPDOC.ORG], чтобы обеспечить поддержку новых функций языка PHP и устранить некоторые недостатки своего предшественника.
 
-This document SHALL NOT:
+Этот документ НЕ ДОЛЖЕН:
 
-* Describe a standard for implementing annotations via PHPDoc. Although it does
-  offer versatility which makes it possible to create a subsequent PSR based on
-  current practices. See [chapter 5.3](#53-tags) for more information on this
-  topic.
-* Describe best practices or recommendations for Coding Standards on the
-  application of the PHPDoc standard. This document is limited to a formal
-  specification of syntax and intention.
+* Описывать стандарт реализации аннотаций через PHPDoc. 
+Хотя он предлагает универсальность, которая позволяет создать последующий PSR на основе текущих практик. Дополнительную информацию по этой теме см. в [главе 5.3](#53).
+* Описывать лучшие практики или рекомендации для стандартов кодирования по применению стандарта PHPDoc. Этот документ ограничен формальной спецификацией синтаксиса и намерений.
 
-## 2. Conventions Used In This Document
+## 2. Условные обозначения, используемые в этом документе
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][RFC2119].
+Слова «НЕОБХОДИМО» / «ДОЛЖНО» ("MUST"), «НЕДОПУСТИМО» ("MUST NOT"),
+«ТРЕБУЕТСЯ» ("REQUIRED"), «НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"),
+«СЛЕДУЕТ» ("SHOULD"), «НЕ СЛЕДУЕТ» ("SHOULD NOT"),
+«РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
+«НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC-2119] (и его [переводе]).
 
-## 3. Definitions
 
-* "PHPDoc" is a section of documentation which provides information on aspects
-  of a "Structural Element".
+## 3. Определения
 
-  > It is important to note that a PHPDoc and a DocBlock are two separate
-  > entities. The DocBlock is the combination of a DocComment, which is a type
-  > of comment, and a PHPDoc entity. It is the PHPDoc entity that contains the
-  > syntax as described in this specification (such as the description and tags).
+* «PHPDoc» — это раздел документации, в котором содержится информация об аспектах «Структурного элемента».
 
-* "Structural Element" is a collection of Programming Constructs which MAY be
-  preceded by a DocBlock. The collection contains the following constructs:
+> Важно отметить, что PHPDoc и DocBlock — это два отдельных объекта. DocBlock представляет собой комбинацию DocComment, который является типом комментария, и объекта PHPDoc. Это объект PHPDoc, который содержит синтаксис, описанный в этой спецификации (например, описание и теги).
+
+* «Структурный элемент» — это набор программных конструкций, которым МОЖЕТ предшествовать DocBlock. Коллекция содержит следующие конструкции:
 
   * require(_once)
   * include(_once)
@@ -68,126 +60,110 @@ interpreted as described in [RFC 2119][RFC2119].
   * constant
   * variables, both local and global scope.
 
-  It is RECOMMENDED to precede a "Structural Element" with a DocBlock where it is
-  defined and not with each usage. It is common practice to have the DocBlock
-  precede a Structural Element but it MAY also be separated by an undetermined
-  number of empty lines.
 
-  Example:
+  РЕКОМЕНДУЕТСЯ ставить перед «Структурным элементом» DocBlock там, где он определен, а не при каждом использовании. Общепринятой практикой является размещение DocBlock перед структурным элементом, но он также МОЖЕТ быть разделен неопределенным количеством пустых строк.
 
-  ```php
-  /** @var int $int This is a counter. */
+  Пример:
+
+```php
+  /** @var int $int Это счетчик. */
   $int = 0;
 
-  // there should be no docblock here
+  // здесь не должно быть DocBlock
   $int++;
-  ```
+```
 
-  or
+  или
 
-  ```php
+```php
   /**
-   * This class acts as an example on where to position a DocBlock.
+   * Этот класс выступает в качестве примера того, где разместить DocBlock.
    */
   class Foo
   {
-      /** @var string|null $title contains a title for the Foo */
+      /** @var string|null $title содержит заголовок для Foo */
       protected $title = null;
 
       /**
-       * Sets a single-line title.
+       * Задает однострочный заголовок.
        *
-       * @param string $title A text for the title.
+       * @param string $title Текст для заголовка.
        *
        * @return void
        */
       public function setTitle($title)
       {
-          // there should be no docblock here
+          // здесь не должно быть DocBlock
           $this->title = $title;
       }
   }
-  ```
+```
 
-  It is NOT RECOMMENDED to use compound definitions for Constants or Properties, since the
-  handling of DocBlocks in these situations can lead to unexpected results. If compound statement is
-  used each element SHOULD have a preceding DocBlock.
+НЕ РЕКОМЕНДУЕТСЯ использовать составные определения для Констант или Свойства, так как обработка DocBlocks в этих ситуациях может привести к неожиданным результатам. Если используется составной оператор, каждый элемент ДОЛЖЕН иметь предшествующий DocBlock.
 
-  Example:
+  Например:
 
-  ```php
+```php
     class Foo
     {
       protected
         /**
-         * @var string Should contain a description
+         * @var string Должен содержать название
          */
         $name,
         /**
-         * @var string Should contain a description
+         * @var string Должен содержать описание
          */
         $description;
     }
-  ```
+```
 
-  An example of use that falls beyond the scope of this Standard is to document
-  the variable in a foreach explicitly; several IDEs use this information to
-  assist their auto-completion functionality.
+Примером использования, выходящим за рамки настоящего стандарта, является явное документирование переменной в foreach; некоторые IDE используют эту информацию, чтобы помочь своим функциям автозаполнения.
 
-  This Standard does not cover this specific instance, as a `foreach` statement
-  is considered to be a "Control Flow" statement rather than a "Structural Element".
+Этот стандарт не распространяется на этот конкретный случай, поскольку оператор foreach считается оператором «потока управления», а не «структурным элементом».
 
-  ```php
+```php
   /** @var \Sqlite3 $sqlite */
   foreach ($connections as $sqlite) {
-      // there should be no docblock here
+      // здесь не должно быть докблока
       $sqlite->open('/my/database/path');
       <...>
   }
-  ```
+```
 
-* "DocComment" is a special type of comment which MUST
+* «DocComment» — это особый тип комментария, который ДОЛЖЕН
 
-  - start with the character sequence `/**` followed by a whitespace character
-  - end with `*/` and
-  - have zero or more lines in between.
+  - начинаться с последовательности символов `/**`, за которой следует пробел
+  - заканчиваться на `*/` и
+  - иметь ноль или более строк между ними.
 
-  In the case where a DocComment spans multiple lines, every line MUST start with
-  an asterisk (`*`) that SHOULD be aligned with the first asterisk of the
-  opening clause.
+  В случае, когда DocComment занимает несколько строк, каждая строка ДОЛЖНА начинаться со звездочки (`*`), которая ДОЛЖНА быть выровнена с первой звездочкой открывающего предложения.
 
-  Single line example:
+  Пример одной строки:
 
-  ```php
+```php
   /** <...> */
-  ```
+```
 
-  Multiline example:
+Многострочный пример:
 
-  ```php
+```php
     /**
      * <...>
      */
-  ```
+```
 
-* "DocBlock" is a "DocComment" containing a single "PHPDoc" structure and
-  represents the basic in-source representation.
+* «DocBlock» — это «DocComment», содержащий единую структуру «PHPDoc» и представляющий базовое представление в исходном коде.
 
-* "Tag" is a single piece of meta information regarding a "Structural Element"
-  or a component thereof.
+* «Тег» — это отдельная часть метаинформации, касающаяся «Структурного элемента» или его компонента.
 
-* "Type" is the determination of what type of data is associated with an element.
-  This is commonly used when determining the exact values of arguments, constants,
-  properties and more.
+* «Тип» — это определение того, какой тип данных связан с элементом. Это обычно используется при определении точных значений аргументов, констант, свойств и многого другого.
 
-  See Appendix A for more detailed information about types.
+  См. Приложение A для более подробной информации о типах.
 
-* "FQSEN" is an abbreviation for Fully Qualified Structural Element Name. This
-  notation expands on the Fully Qualified Class Name and adds a notation to
-  identify class/interface/trait members and re-apply the principles of the FQCN
-  to Interfaces, Traits, Functions and global Constants.
+* «FQSEN» — это аббревиатура от Fully Qualified Structural Element Name. Эта нотация расширяет полное имя класса и добавляет нотацию для идентификации членов класса/интерфейса/признака и повторного применения принципов FQCN к интерфейсам, признакам, функциям и глобальным константам.
 
-  The following notations can be used per type of "Structural Element":
+  Для каждого типа «Структурного элемента» могут использоваться следующие обозначения:
 
   - *Namespace*:      `\My\Space`
   - *Function*:       `\My\Space\myFunction()`
@@ -199,8 +175,7 @@ interpreted as described in [RFC 2119][RFC2119].
   - *Property*:       `\My\Space\MyClass::$my_property`
   - *Class Constant*: `\My\Space\MyClass::MY_CONSTANT`
 
-  A FQSEN has the following [ABNF][RFC5234]
-  definition:
+  FQSEN имеет следующее определение [ABNF][RFC5234]:
 
       FQSEN    = fqnn / fqcn / constant / method / property  / function
       fqnn     = "\" [name] *("\" [name])
@@ -211,17 +186,24 @@ interpreted as described in [RFC 2119][RFC2119].
       function = fqnn "\" name "()"
       name     = (ALPHA / "_") *(ALPHA / DIGIT / "_")
 
-## 4. Basic Principles
+> Примечание от переводчика. Технические спецификации Интернета часто должны определять формальный синтаксис. С годами появилась модифицированная версия формы Бэкуса-Наура.
+(BNF), называемый расширенным BNF (ABNF), поскольку эта спецификация была популярна среди многих спецификаций Интернета. Текущая спецификация документирует ABNF.
+Она сочетает в себе компактность и простоту с разумными ограничениями. Различия между стандартным BNF и
+ABNF включают в себя правила именования, повторения, альтернативы, порядок-
+независимость и диапазон значений. Эта спецификация также предоставляет
+дополнительные определения правил и кодировок для основного лексического анализатора
+типа, общего для нескольких интернет-спецификаций.
 
-* A PHPDoc MUST always be contained in a "DocComment"; the combination of these
-  two is called a "DocBlock".
+## 4. Основные принципы
 
-* A DocBlock MUST directly precede a "Structural Element"
+* PHPDoc всегда ДОЛЖЕН содержаться в "DocComment"; комбинация этих двух элементов называется «DocBlock».
 
-## 5. The PHPDoc Format
+* DocBlock ДОЛЖЕН непосредственно предшествовать «Структурному элементу».
 
-The PHPDoc format has the following [ABNF][RFC5234]
-definition:
+## 5. Формат PHPDoc
+
+Формат PHPDoc имеет следующий [ABNF][RFC5234]
+определение:
 
     PHPDoc             = [summary] [description] [tags]
     summary            = *CHAR (2*CRLF)
@@ -237,188 +219,136 @@ definition:
     tag-signature      = "(" *tag-argument ")"
     tag-argument       = *SP 1*CHAR [","] *SP
 
-Examples of use are included in chapter 5.4.
+Примеры использования включены в главу 5.4.
 
-### 5.1. Summary
+### 5.1. Резюме
 
-A Summary MUST contain an abstract of the "Structural Element" defining the
-purpose. It is RECOMMENDED for Summaries to span a single line or at most two,
-but not more than that.
+Резюме ДОЛЖНО содержать краткое описание «Структурного элемента», определяющего цель. РЕКОМЕНДУЕТСЯ, чтобы Резюме занимало одну или максимум две строки, но не более того.
 
-A Summary MUST end with two sequential line breaks, unless it is the only content
-in the PHPDoc.
+Резюме ДОЛЖНО заканчиваться двумя последовательными разрывами строк, если только оно не является единственным содержимым в PHPDoc.
 
-If a Description is provided, then it MUST be preceded by a Summary. Otherwise
-the Description will be considered the Summary, until the end of the Summary
-is reached.
+Если предоставлено описание, то ему ДОЛЖНО предшествовать резюме. В противном случае Описание будет считаться Сводкой до тех пор, пока не будет достигнут конец Сводки.
 
-Because a Summary is comparable to a chapter title, it is beneficial to use as
-little formatting as possible. As such, contrary to the Description (see next
-chapter), no recommendation is done to support a mark-up language. It is
-explicitly left up to the implementing application whether it wants to support
-this or not.
+Поскольку Резюме можно сравнить с названием главы, полезно использовать как можно меньше форматирования. Таким образом, вопреки описанию (см. следующую главу), не делается никаких рекомендаций по поддержке языка разметки. Это явно оставлено на усмотрение реализующего приложения, хочет ли оно поддерживать это или нет.
 
-### 5.2. Description
+### 5.2. Описание
 
-The Description is OPTIONAL but SHOULD be included when the
-"Structural Element", which this DocBlock precedes, contains more operations, or
-more complex operations, than can be described in the Summary alone.
+Описание является НЕОБЯЗАТЕЛЬНЫМ, но ДОЛЖНО быть включено, когда
+«Структурный элемент», которому предшествует этот DocBlock, содержит больше операций или более сложных операций, чем может быть описано в одном резюме.
 
-Any application parsing the Description is RECOMMENDED to support the
-Markdown mark-up language for this field so that it is possible for the author
-to provide formatting and a clear way of representing code examples.
+Любому приложению, анализирующему описание, РЕКОМЕНДУЕТСЯ поддерживать язык разметки Markdown для этого поля, чтобы автор мог обеспечить форматирование и четкий способ представления примеров кода.
 
-Common uses for the Description are (amongst others):
+Обычно описание используется (среди прочего):
 
-* To provide more detail than the Summary on what this method does.
-* To specify of what child elements an input or output array, or object, is
-  composed.
-* To provide a set of common use cases or scenarios in which the
-  "Structural Element" may be applied.
+* Чтобы предоставить более подробную информацию, чем сводка, о том, что делает этот метод.
+* Чтобы указать, из каких дочерних элементов состоит входной или выходной массив или объект.
+* Предоставить набор общих вариантов использования или сценариев, в которых может применяться «Структурный элемент».
 
-### 5.3. Tags
+### 5.3. Теги
 
-Tags provide a way for authors to supply concise meta-data regarding the
-succeeding "Structural Element". Each tag starts on a new line, followed
-by an at-sign (@) and a tag-name, followed by white-space and meta-data
-(including a description).
+Теги позволяют авторам предоставлять краткие метаданные о последующем «Структурном элементе». Каждый тег начинается с новой строки, за ним следует знак @ и имя тега, за которым следует пробел и метаданные (включая описание).
 
-If meta-data is provided, it MAY span multiple lines and COULD follow a
-strict format, and as such provide parameters, as dictated by the type of tag.
-The type of the tag can be derived from its name.
+Если предоставлены метаданные, они МОГУТ охватывать несколько строк и МОГЛИ следовать строгому формату и, таким образом, предоставлять параметры в соответствии с типом тега. Тип тега может быть получен из его имени.
 
-For example:
+Например:
 
-> `@param string $argument1 This is a parameter.`
+> `@param string $argument1 Это параметр.`
 >
-> The above tag consists of a name ('param') and meta-data
-> ('string $argument1 This is a parameter.') where the meta-data is split into a
-> "Type" ('string'), variable name ('$argument') and description
-> ('This is a parameter.').
+> Вышеупомянутый тег состоит из имени («param») и метаданных («строка $argument1. Это параметр».), 
+> где метаданные разделены на «Тип» («string»), имя переменной (' $argument') и 
+> описание ("Это параметр").
 
-The description of a tag MUST support Markdown as a formatting language. Due to
-the nature of Markdown, it is legal to start the description of the tag on the
-same or the subsequent line and interpret it in the same way.
+Описание тега ДОЛЖНО поддерживать Markdown в качестве языка форматирования. Из-за характера уценки допустимо начинать описание тега с той же или последующей строки и интерпретировать его таким же образом.
 
-Thus, the following tags are semantically identical:
+Таким образом, следующие теги семантически идентичны:
 
     /**
-     * @var string This is a description.
-     * @var string This is a
-     *    description.
+     * @var string Это описание.
+     * @var string Это 
+     *  описание.
      * @var string
-     *    This is a description.
+     *    Это описание.
      */
 
-A variation of this is where, instead of a description, a tag signature is used;
-in most cases the tag will in fact be an "Annotation". The tag signature is
-able to provide the annotation with parameters regarding its operation.
+Вариантом этого является то, что вместо описания используется подпись тега; в большинстве случаев тег фактически будет «Аннотацией». Сигнатура тега может предоставить аннотации параметры, касающиеся ее работы.
 
-If a tag signature is present, then there MUST NOT be a description present in
-the same tag.
+Если присутствует подпись тега, то НЕ ДОЛЖНО присутствовать описание в том же теге.
 
-The meta-data supplied by tags could result in a change of actual runtime
-behavior of the succeeding "Structural Element", in which case the term
-"Annotation" is commonly used instead of "Tag".
+Метаданные, предоставляемые тегами, могут привести к изменению фактического поведения следующего «структурного элемента» во время выполнения, и в этом случае вместо «тега» обычно используется термин «аннотация».
 
-#### 5.3.1. Tag Name
+#### 5.3.1. Название тэга
 
-Tag names indicate what type of information is represented by this tag, or in
-case of annotations, which behaviour must be injected into the succeeding
-"Structural Element".
+Имена тегов указывают, какой тип информации представлен этим тегом, или, в случае аннотаций, какое поведение должно быть введено в последующий «Структурный элемент».
 
-In support of annotations, it is allowable to introduce a set of tags designed
-specifically for an individual application or subset of applications (and thus
-not covered by this specification).
+В поддержку аннотаций допускается введение набора тегов, разработанных специально для отдельного приложения или подмножества приложений (и, следовательно, не охватываемых данной спецификацией).
 
-These tags, or annotations, MUST provide a namespace by either
+Эти теги или аннотации ДОЛЖНЫ предоставлять пространство имен либо
 
-* prefixing the tag name with a PHP-style namespace, or by
-* prefixing the tag name with a single vendor-name followed by a hyphen.
+* префикс имени тега с пространством имен в стиле PHP или
+* префикс имени тега с одним именем поставщика, за которым следует дефис.
 
-Example of a tag name prefixed with a php-style namespace (the prefixing slash
-is OPTIONAL):
+Пример имени тега с префиксом пространства имен в стиле php (косая черта перед префиксом НЕОБЯЗАТЕЛЬНА):
 
 ```php
 @\Doctrine\Orm\Mapping\Entity()
 ```
 
-> *Note*: The PHPDoc Standard DOES NOT make assumptions on the meaning of a tag
-> unless specified in this document or subsequent additions or extensions.
+> *Примечание*: Стандарт PHPDoc НЕ делает предположений о значении тега, если это не указано в этом документе или последующих дополнениях или расширениях.
 >
-> This means that you CAN use namespace aliases as long as a prefixing namespace
-> element is provided. Thus the following is legal as well:
+> Это означает, что вы МОЖЕТЕ использовать псевдонимы пространства имен, если предоставляется префиксный элемент пространства имен. Таким образом, следующее также является законным:
 >
 >     @Mapping\Entity()
 >
-> Your own library or application may check for namespace aliases and make a
-> FQCN from this; this has no impact on this standard.
+> Ваша собственная библиотека или приложение могут проверять псевдонимы пространств имен и создавать из них FQCN; это не влияет на настоящий стандарт.
 
-> *Important*: Tools using the PHPDoc Standard MAY interpret namespaces that are
-> registered with that application and apply custom behaviour.
+> *Важно*: Инструменты, использующие стандарт PHPDoc, МОГУТ интерпретировать пространства имен, которые зарегистрированы в этом приложении, и применять настраиваемое поведение.
 
-Example of a tag name prefixed with a vendor name and hyphen:
+Пример имени тега с префиксом имени поставщика и дефисом:
 
 ```php
 @phpdoc-event transformer.transform.pre
 ```
 
-Tag names that are not prefixed with a vendor or namespace MUST be described in
-the [Tag Catalog PSR][TAG_PSR] and/or any official addendum.
+Имена тегов без префикса поставщика или пространства имен ДОЛЖНЫ быть описаны в [Каталоге тегов PSR][TAG_PSR] и/или любом официальном приложении.
 
-#### 5.3.2. Tag Specialization
+#### 5.3.2. Специализация тегов
 
-In order to provide a method by which to provide nuance to the tags defined in
-this standard, but without expanding the base set, a tag specialization MAY be
-provided after the tag name by adding a colon followed by a string that provides
-a more nuanced description of the tag. The list of supported tag specializations
-is not maintained in the [Tag Catalog PSR][TAG_PSR], as it may change over time.
-The [Tag Catalog PSR][TAG_PSR] meta document may contain a series of recommendations
-on a per-tag name basis, but projects are free to choose their own tag specializations if applicable.
+Чтобы предоставить метод, с помощью которого можно придать нюансы тегам, определенным в этом стандарте, но без расширения базового набора, после имени тега МОЖЕТ быть предоставлена специализация тега путем добавления двоеточия, за которым следует строка, обеспечивающая более подробное описание. тега. Список поддерживаемых специализаций тегов не сохраняется в [Каталог тегов PSR][TAG_PSR], так как он может меняться со временем.
+Метадокумент [Tag Catalog PSR][TAG_PSR] может содержать ряд рекомендаций для каждого имени тега, но проекты могут свободно выбирать свою собственную специализацию тегов, если это применимо.
 
-*Important*: Tools using the PHPDoc Standard MAY interpret tag specializations
-that are registered with/understood by that application and apply custom
-behaviour, but are only expected to implement the preceding tag name as defined
-in the [Tag Catalog PSR][TAG_PSR].
+*Важно*: Инструменты, использующие стандарт PHPDoc, МОГУТ интерпретировать специализации тегов, которые зарегистрированы/поняты этим приложением, и применять настраиваемое поведение, но ожидается, что они реализуют только предшествующее имя тега, как определено в [Каталоге тегов PSR][TAG_PSR].
 
-For example:
+Например:
 
 > `@see:unit-test \Mapping\EntityTest::testGetId`
 >
-> The above tag consists of a name ('see') and tag specialization ('unit-test'),
-> and thus defines a relation to the unit test for the proceeding method.
+> Вышеприведенный тег состоит из имени («see») и специализации тега («unit-test») и, таким образом, определяет отношение к модульному тесту для текущего метода.
 
-#### 5.3.3. Tag Signature
+#### 5.3.3. Подпись тега
 
-Tag signatures are commonly used for annotations to supply additional meta-data
-specific to the current tag.
+Подписи тегов обычно используются для аннотаций для предоставления дополнительных метаданных, характерных для текущего тега.
 
-The supplied meta-data can influence the behavior of the owning annotation and
-as such influence the behavior of the succeeding "Structural Element".
+Предоставленные метаданные могут влиять на поведение аннотации-владельца и, таким образом, влиять на поведение последующего «Структурного элемента».
 
-The contents of a signature are to be determined by the tag type (as described
-in the tag-name) and fall beyond the scope of this specification. However, a
-tag-signature MUST NOT be followed by a description or other form of meta-data.
+Содержимое подписи должно определяться типом тега (как описано в имени тега) и выходит за рамки данной спецификации. Однако за подписью тега НЕ ДОЛЖНО следовать описание или другая форма метаданных.
 
-### 5.4. Examples
+### 5.4. Примеры
 
-The following examples serve to illustrate the basic use of DocBlocks; it is
-advised to read through the list of tags in the [Tag Catalog PSR][TAG_PSR].
+Следующие примеры служат для иллюстрации основного использования DocBlocks; рекомендуется прочитать список тегов в [Каталог тегов PSR][TAG_PSR].
 
-A complete example could look like this:
+Полный пример может выглядеть так:
 
 ```php
 /**
- * This is a Summary.
+ * Это резюме.
  *
- * This is a Description. It may span multiple lines
- * or contain 'code' examples using the _Markdown_ markup
- * language.
+ * Это Описание. Оно может занимать несколько строк или 
+ * содержать примеры «кода» с использованием языка разметки _Markdown_.
  *
  * @see Markdown
  *
- * @param int        $parameter1 A parameter description.
- * @param \Exception $e          Another parameter description.
+ * @param int        $parameter1 Описание параметра.
+ * @param \Exception $e          Описание другого параметра.
  *
  * @\Doctrine\Orm\Mapper\Entity()
  *
@@ -430,16 +360,16 @@ function test($parameter1, $e)
 }
 ```
 
-It is also allowed to omit the Description:
+Также допускается опускать Описание:
 
 ```php
 /**
- * This is a Summary.
+ * Это резюме.
  *
  * @see Markdown
  *
- * @param int        $parameter1 A parameter description.
- * @param \Exception $parameter2 Another parameter description.
+ * @param int        $parameter1 Описание параметра.
+ * @param \Exception $parameter2 Описание другого параметра.
  *
  * @\Doctrine\Orm\Mapper\Entity()
  *
@@ -450,30 +380,30 @@ function test($parameter1, $parameter2)
 }
 ```
 
-Or even omit the tags section as well (though it is not encouraged,
-as you are missing information on the parameters and return value):
+Или даже опустить раздел тегов (хотя это не рекомендуется,
+так как вам не хватает информации о параметрах и возвращаемом значении):
 
 ```php
 /**
- * This is a Summary.
+ * Это резюме.
  */
 function test($parameter1, $parameter2)
 {
 }
 ```
 
-A DocBlock may also span a single line:
+DocBlock также может занимать одну строку:
 
 ```php
 /** @var \ArrayObject $array */
 public $array = null;
 ```
 
-## Appendix A. Types
+## Приложение А. Типы
 
 ### ABNF
 
-A Type has the following [ABNF][RFC5234] definition:
+Тип имеет следующее определение [ABNF][RFC5234]:
 
     type-expression  = type *("|" type) *("&" type)
     type             = class-name / keyword / array
@@ -484,93 +414,76 @@ A Type has the following [ABNF][RFC5234] definition:
     keyword          = "array" / "bool" / "callable" / "false" / "float" / "int" / "iterable" / "mixed" / "null" / "object" /
     keyword          = "resource" / "self" / "static" / "string" / "true" / "void" / "$this"
 
-### Details
+### Подробности
 
-When a "Type" is used, the user will expect a value, or set of values, as detailed below.
+Когда используется «Тип», пользователь будет ожидать значение или набор значений, как подробно описано ниже.
 
-When the "Type" consists of multiple types, then these MUST be separated with either
-the vertical bar sign (|) for union type or the ampersand (&) for intersection type.
-Any interpreter supporting this specification MUST recognize this and split the "Type" before evaluating.
+Когда «Тип» состоит из нескольких типов, они ДОЛЖНЫ быть разделены либо знаком вертикальной черты (|) для типа объединения, либо амперсандом (&) для типа пересечения.
+Любой интерпретатор, поддерживающий эту спецификацию, ДОЛЖЕН распознать это и разделить «Тип» перед оценкой.
 
-Union type example:
+Пример типа союза:
 >`@return int|null`
 
-Intersection type example:
+Пример типа пересечения:
 >`@var \MyClass&\PHPUnit\Framework\MockObject\MockObject $myMockObject`
 
-#### Arrays
+#### Массивы
 
-The value represented by "Type" can be an array. The type MUST be defined following the format of one of the
-following options:
+Значение, представленное «Типом», может быть массивом. Тип ДОЛЖЕН быть определен в соответствии с форматом одной из следующих опций:
 
-1. unspecified: no definition of the contents of the represented array is given.
-   Example: `@return array`
+1. неопределен: определение содержимого представляемого массива не дается.
+   Пример: `@return array`
 
-2. specified containing a single type: the Type definition informs the reader of the type of each array value. Only one
-   type is then expected for each value in a given array.
+2. указанный, содержащий один тип: определение типа информирует читателя о типе каждого значения массива. В этом случае для каждого значения в данном массиве ожидается только один тип.
 
-   Example: `@return int[]`
+   Пример: `@return int[]`
 
-   Please note that _mixed_ is also a single type and with this keyword it is possible to indicate that each array
-   value contains any possible type.
+   Обратите внимание, что _mixed_ также является одним типом, и с помощью этого ключевого слова можно указать, что каждое значение массива содержит любой возможный тип.
 
-3. specified as containing multiple types: the Type definition informs the reader of the type of each array value.
-   Each value can be of any of the given types.
-   Example: `@return (int|string)[]`
+3. указано как содержащее несколько типов: определение типа информирует читателя о типе каждого значения массива. Каждое значение может быть любого из заданных типов.
+   Пример: `@return (int|string)[]`
 
-### Valid Class Name
+### Допустимое имя класса
 
-A valid class name is seen based on the context where this type is mentioned. Thus
-this may be either a Fully Qualified Class Name (FQCN) or a local name if present in a
-namespace.
+Допустимое имя класса отображается в зависимости от контекста, в котором упоминается этот тип. Таким образом, это может быть либо полное имя класса (FQCN), либо локальное имя, если оно присутствует в пространстве имен.
 
-The element to which this type applies is either an instance of this class
-or an instance of a class that is a (sub-)child to the given class.
+Элемент, к которому применяется этот тип, является либо экземпляром этого класса, либо экземпляром класса, который является (под) дочерним по отношению к данному классу.
 
-> Due to the above nature, it is RECOMMENDED for applications that
-> collect and shape this information to show a list of child classes
-> with each representation of the class. This would make it obvious
-> for the user which classes are acceptable as type.
+> Из-за вышеуказанного для приложений, которые собирают и формируют эту информацию, РЕКОМЕНДУЕТСЯ отображать список дочерних классов с каждым представлением класса. Это сделало бы очевидным для пользователя, какие классы приемлемы в качестве типа.
 
-### Keyword
+### Ключевое слово
 
-A keyword defines the purpose of this type. Not every element is determined by a class but still worthy of
-classification to assist the developer in understanding the code covered by the DocBlock.
+Ключевое слово определяет назначение этого типа. Не каждый элемент определяется классом, но все же заслуживает классификации, чтобы помочь разработчику понять код, охватываемый DocBlock.
 
-**Note:**
-> Most of these keywords are allowed as class names in PHP and can be hard to distinguish from real classes. As
-> such, the keywords MUST be lowercase, as most class names start with an uppercase first character, and you SHOULD NOT
-> use classes with these names in your code.
+**Примечание:**
+> Большинство из этих ключевых слов разрешены в качестве имен классов в PHP, и их трудно отличить от реальных классов. Таким образом, ключевые слова ДОЛЖНЫ быть строчными, так как большинство имен классов начинаются с первого символа в верхнем регистре, и вы НЕ ДОЛЖНЫ использовать классы с такими именами в своем коде.
 
-> There are more reasons to not name classes with the names of these keywords, but that falls beyond the scope of this
-> specification.
+> Есть и другие причины не называть классы именами этих ключевых слов, но это выходит за рамки данной спецификации.
 
-The following keywords are recognized by this PSR:
+В этом PSR распознаются следующие ключевые слова:
 
-1.  `bool`: the element to which this type applies only has state `TRUE` or `FALSE`.
+1.  `bool`: элемент, к которому применяется этот тип, имеет только состояние `TRUE` или `FALSE`.
 
-2.  `int`: the element to which this type applies is a whole number or integer.
+2.  `int`: элемент, к которому применяется этот тип, является целым числом.
 
-3.  `float`: the element to which this type applies is a continuous, or real, number.
+3.  `float`: элемент, к которому применяется этот тип, является непрерывным или действительным числом.
 
-4.  `string`: the element to which this type applies is a string of binary characters.
+4.  `string`: элемент, к которому применяется этот тип, представляет собой строку двоичных символов.
 
-5.  `object`: the element to which this type applies is the instance of an undetermined class.
+5.  `object`: элемент, к которому применяется этот тип, является экземпляром неопределенного класса.
 
-6.  `array`: the element to which this type applies is an array of values.
+6.  `array`: элемент, к которому применяется этот тип, представляет собой массив значений.
 
-7.  `iterable`: the element to which this type applies is an array or Traversable object per the [definition of PHP][PHP_ITERABLE].
+7.  `iterable`: элемент, к которому применяется этот тип, является массивом или объектом Traversable согласно [Итерирумым типам][PHP_ITERABLE].
 
-8.  `resource`: the element to which this type applies is a resource per the [definition of PHP][PHP_RESOURCE].
+8.  `resource`: элемент, к которому применяется этот тип, является ресурсом согласно [Ресурсному типу][PHP_RESOURCE].
 
-9.  `mixed`: the element to which this type applies can be of any type as specified here. It is not known at compile
-    time which type will be used.
+9.  `mixed`: элемент, к которому применяется этот тип, может быть любого типа, указанного здесь. Во время компиляции неизвестно, какой тип будет использоваться.
 
-10. `void`: this type is commonly only used when defining the return type of a method or function, indicating
-    "nothing is returned", and thus the user should not rely on any returned value.
+10. `void`: этот тип обычно используется только при определении возвращаемого типа метода или функции, указывая, что «ничего не возвращается», и поэтому пользователь не должен полагаться на какое-либо возвращаемое значение.
 
-    **Example 1:**
-    ```php
+    **Пример 1:**
+```php
     /**
      * @return void
      */
@@ -578,14 +491,14 @@ The following keywords are recognized by this PSR:
     {
         echo 'Hello world';
     }
-    ```
+```
 
-    In the example above, no return statement is specified and thus the return value is not determined.
+В приведенном выше примере оператор возврата не указан, и поэтому возвращаемое значение не определено.
 
-    **Example 2:**
-    ```php
+**Пример 2:**
+```php
     /**
-     * @param bool $quiet when true 'Hello world' is echo-ed.
+     * @param bool $quiet когда истинное «Hello world» выводится.
      *
      * @return void
      */
@@ -596,18 +509,16 @@ The following keywords are recognized by this PSR:
         }
         echo 'Hello world';
     }
-    ```
+```
 
-    In this example, the function contains a return statement without a given value. Because there is no actual value
-    specified, this also qualifies as type `void`.
+В этом примере функция содержит оператор return без заданного значения. Поскольку фактическое значение не указано, это также квалифицируется как тип `void`.
 
-11. `null`: the element to which this type applies is a `NULL` value or, in technical terms, does not exist.
+11. `null`: элемент, к которому применяется этот тип, имеет значение `NULL` или, с технической точки зрения, не существует.
 
-    A big difference compared to `void` is that this type is used in any situation where the described element may at
-    any given time contain an explicit `NULL` value.
+    Большая разница по сравнению с `void` заключается в том, что этот тип используется в любой ситуации, когда описываемый элемент может в любой момент времени содержать явное значение `NULL`.
 
-    **Example 1:**
-    ```php
+**Пример 1:**
+```php
     /**
      * @return null
      */
@@ -616,15 +527,14 @@ The following keywords are recognized by this PSR:
         echo 'Hello world';
         return null;
     }
-    ```
+```
 
-    This type is commonly used in conjunction with another type to indicate that it is possible that nothing is
-    returned.
+Этот тип обычно используется в сочетании с другим типом, чтобы указать, что, возможно, ничего не возвращается.
 
-    **Example 2:**
-    ```php
+**Пример 2:**
+```php
     /**
-     * @param bool $create_new When true returns a new stdClass.
+     * @param bool $create_new Когда true возвращает новый stdClass.
      *
      * @return stdClass|null
      */
@@ -635,50 +545,37 @@ The following keywords are recognized by this PSR:
         }
         return null;
     }
-    ```
+```
 
-12. `callable`: the element to which this type applies is a pointer to a function call. This may be any type of callable
-    as per the [definition of PHP][PHP_CALLABLE].
+12. `callable`: элемент, к которому применяется этот тип, является указателем на вызов функции. Это может быть любой тип callable в соответствии с [Функциями обратного вызова (callback-функции)][PHP_CALLABLE].
 
-13. `false` or `true`: the element to which this type applies will have the value `TRUE` or `FALSE`. No other value will
-    be returned from this element.
+13. `false` или `true`: элемент, к которому применяется этот тип, будет иметь значение TRUE или FALSE. Никакое другое значение не будет возвращено из этого элемента.
 
-14. `self`: the element to which this type applies is of the same class in which the documented element is originally
-    contained.
+14. `self`: элемент, к которому применяется этот тип, относится к тому же классу, в котором изначально содержится задокументированный элемент.
 
-    **Example:**
+**Пример:**
 
-    > Method *c* is contained in class *A*. The DocBlock states that its return value is of type `self`. As such, method
-    > *c* returns an instance of class *A*.
+> Метод *c* содержится в классе *A*. DocBlock заявляет, что его возвращаемое значение имеет тип `self`. Таким образом, метод *c* возвращает экземпляр класса *A*.
 
-    This may lead to confusing situations when inheritance is involved.
+Это может привести к запутанным ситуациям, когда речь идет о наследовании.
 
-    **Example (previous example situation still applies):**
+**Пример (предыдущая примерная ситуация остается в силе):**
 
-    > Class *B* extends class *A* and does not redefine method *c*. As such, it is possible to invoke method *c* from
-    > class *B*.
+> Класс *B* расширяет класс *A* и не переопределяет метод *c*. Таким образом, можно вызвать метод *c* из класса *B*.
 
-    In this situation, ambiguity may arise as `self` could be interpreted as either class *A* or *B*. In these cases,
-    `self` MUST be interpreted as being an instance of the class where the DocBlock containing the `self` type is
-    written.
+В этой ситуации может возникнуть двусмысленность, поскольку `self` может быть интерпретирован как класс *A* или *B*. В этих случаях `self` ДОЛЖЕН интерпретироваться как экземпляр класса, в котором записан DocBlock, содержащий тип `self`.
 
-    In the examples above, `self` MUST always refer to class *A*, since it is defined with method *c* in class *A*.
+В приведенных выше примерах `self` всегда ДОЛЖЕН относиться к классу *A*, так как он определен с помощью метода *c* в классе *A*.
 
-    > Due to the above nature, it is RECOMMENDED for applications that collect and shape this information to show a list
-    > of child classes with each representation of the class. This would make it obvious for the user which classes are
-    > acceptable as type.
+> Из-за вышеуказанного характера РЕКОМЕНДУЕТСЯ для приложений, которые собирают и формируют эту информацию, отображать список дочерних классов с каждым представлением класса. Это сделало бы очевидным для пользователя, какие классы приемлемы в качестве типа.
 
-15. `static`: the element to which this type applies is of the same class in which the documented element is contained,
-    or, when encountered in a subclass, is of type of that subclass instead of the original class.
+15. `static`: элемент, к которому применяется этот тип, относится к тому же классу, в котором содержится задокументированный элемент, или, если встречается в подклассе, относится к типу этого подкласса, а не к исходному классу.
 
-    This keyword behaves the same way as the [keyword for late static binding][PHP_OOP5LSB] (not the static method,
-    property, nor variable modifier) as defined by PHP.
+    Это ключевое слово ведет себя так же, как [Позднее статическое связывание][PHP_OOP5LSB] (не статический метод, свойство или модификатор переменной), как определено в PHP.
 
-16. `$this`: the element to which this type applies is the same exact instance as the current class in the given
-    context. As such, this type is a stricter version of `static`, because the returned instance must not only be
-    of the same class but also the same instance.
+16. `$this`: элемент, к которому применяется этот тип, является точно таким же экземпляром, как текущий класс в данном контексте. Таким образом, этот тип является более строгой версией `static`, потому что возвращаемый экземпляр должен быть не только того же класса, но и того же экземпляра.
 
-    This type is often used as return value for methods implementing the [Fluent Interface][FLUENT] design pattern.
+    Этот тип часто используется в качестве возвращаемого значения для методов, реализующих шаблон проектирования [Fluent Interface][FLUENT].
 
 [RFC2119]:      https://tools.ietf.org/html/rfc2119
 [RFC5234]:      https://tools.ietf.org/html/rfc5234
@@ -691,3 +588,5 @@ The following keywords are recognized by this PSR:
 [PHPDOC.ORG]:   http://www.phpdoc.org/
 [FLUENT]:       https://en.wikipedia.org/wiki/Fluent_interface
 [TAG_PSR]:      TBD
+[RFC-2119]:  http://www.ietf.org/rfc/rfc2119.txt
+[переводе]: http://rfc.com.ru/rfc2119.htm

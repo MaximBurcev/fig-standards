@@ -1,21 +1,19 @@
 # Интерфейсы HTTP-сообщений
 
-This document describes common interfaces for representing HTTP messages as
-described in [RFC 7230](http://tools.ietf.org/html/rfc7230) and
-[RFC 7231](http://tools.ietf.org/html/rfc7231), and URIs for use with HTTP
-messages as described in [RFC 3986](http://tools.ietf.org/html/rfc3986).
+Этот документ описывает общие интерфейсы для представления сообщений HTTP, как описано
+в [RFC 7230](http://tools.ietf.org/html/rfc7230) и
+[RFC 7231](http://tools.ietf.org/html/rfc7231) и URI для использования с сообщениями HTTP, как описано
+в [RFC 3986](http://tools.ietf.org/html/rfc3986).
 
-HTTP messages are the foundation of web development. Web browsers and HTTP
-clients such as cURL create HTTP request messages that are sent to a web server,
-which provides an HTTP response message. Server-side code receives an HTTP
-request message, and returns an HTTP response message.
+Сообщения HTTP являются основой веб-разработки. Веб-браузеры и клиенты HTTP, такие как cURL, создают сообщения запроса
+HTTP, которые отправляются на веб-сервер, который предоставляет ответное сообщение HTTP. Серверный код получает
+сообщение запроса HTTP и возвращает сообщение ответа HTTP.
 
-HTTP messages are typically abstracted from the end-user consumer, but as
-developers, we typically need to know how they are structured and how to
-access or manipulate them in order to perform our tasks, whether that might be
-making a request to an HTTP API, or handling an incoming request.
+HTTP-сообщения, как правило, абстрагируются от конечного пользователя, но нам, как разработчикам, обычно необходимо
+знать, как они структурированы и как получить к ним доступ или манипулировать ими для выполнения наших задач, будь то
+запрос к HTTP API или обработка входящего запроса.
 
-Every HTTP request message has a specific form:
+Каждое сообщение HTTP-запроса имеет определенную форму:
 
 ~~~http
 POST /path HTTP/1.1
@@ -24,12 +22,11 @@ Host: example.com
 foo=bar&baz=bat
 ~~~
 
-The first line of a request is the "request line", and contains, in order, the
-HTTP request method, the request target (usually either an absolute URI or a
-path on the web server), and the HTTP protocol version. This is followed by one
-or more HTTP headers, an empty line, and the message body.
+Первая строка запроса называется «строка запроса» и содержит метод HTTP-запроса, цель запроса (обычно либо абсолютный
+URI, либо путь на веб-сервере) и версию протокола HTTP. Далее следует один или несколько заголовков HTTP, пустая строка
+и тело сообщения.
 
-HTTP response messages have a similar structure:
+Сообщения HTTP-ответа имеют аналогичную структуру:
 
 ~~~http
 HTTP/1.1 200 OK
@@ -38,82 +35,81 @@ Content-Type: text/plain
 This is the response body
 ~~~
 
-The first line is the "status line", and contains, in order, the HTTP protocol
-version, the HTTP status code, and a "reason phrase," a human-readable
-description of the status code. Like the request message, this is then
-followed by one or more HTTP headers, an empty line, and the message body.
+Первая строка является «строкой состояния» и содержит версию протокола HTTP, код состояния HTTP и удобочитаемое описание
+кода состояния. Далее за "строкой состояния" следует один или несколько заголовков HTTP, пустая строка и тело сообщения.
 
-The interfaces described in this document are abstractions around HTTP messages
-and the elements composing them.
+Интерфейсы, описанные в этом документе, являются абстракциями HTTP-сообщений и составляющих их элементов.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+Слова «НЕОБХОДИМО» / «ДОЛЖНО» ("MUST"), «НЕДОПУСТИМО» ("MUST NOT"),
+«ТРЕБУЕТСЯ» ("REQUIRED"), «НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"),
+«СЛЕДУЕТ» ("SHOULD"), «НЕ СЛЕДУЕТ» ("SHOULD NOT"),
+«РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
+«НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC-2119] (и его [переводе]).
 
-### References
+[RFC-2119]:  http://www.ietf.org/rfc/rfc2119.txt
+
+[переводе]: http://rfc.com.ru/rfc2119.htm
+
+### Ссылки
 
 - [RFC 2119](http://tools.ietf.org/html/rfc2119)
 - [RFC 3986](http://tools.ietf.org/html/rfc3986)
 - [RFC 7230](http://tools.ietf.org/html/rfc7230)
 - [RFC 7231](http://tools.ietf.org/html/rfc7231)
 
-## 1. Specification
+## 1. Спецификация
 
-### 1.1 Messages
+### 1.1 Сообщения
 
-An HTTP message is either a request from a client to a server or a response from
-a server to a client. This specification defines interfaces for the HTTP messages
-`Psr\Http\Message\RequestInterface` and `Psr\Http\Message\ResponseInterface` respectively.
+HTTP-сообщение — это либо запрос от клиента к серверу, либо ответ от сервера к клиенту.
+Эта спецификация определяет интерфейсы для HTTP-сообщений: `Psr\Http\Message\RequestInterface`
+и `Psr\Http\Message\ResponseInterface`.
 
-Both `Psr\Http\Message\RequestInterface` and `Psr\Http\Message\ResponseInterface` extend
-`Psr\Http\Message\MessageInterface`. While `Psr\Http\Message\MessageInterface` MAY be
-implemented directly, implementors SHOULD implement
-`Psr\Http\Message\RequestInterface` and `Psr\Http\Message\ResponseInterface`.
+И `Psr\Http\Message\RequestInterface` и `Psr\Http\Message\ResponseInterface` расширяют
+`Psr\Http\Message\MessageInterface`. В то время как `Psr\Http\Message\MessageInterface` МОЖЕТ быть
+реализованы напрямую, разработчики ДОЛЖНЫ реализовывать
+`Psr\Http\Message\RequestInterface` и `Psr\Http\Message\ResponseInterface`.
 
-From here forward, the namespace `Psr\Http\Message` will be omitted when
-referring to these interfaces.
+С этого момента пространство имен `Psr\Http\Message` будет опущено при ссылке на эти интерфейсы.
 
-### 1.2 HTTP Headers
+### 1.2 HTTP-заголовки
 
-#### Case-insensitive header field names
+#### Имена полей заголовков без учета регистра
 
-HTTP messages include case-insensitive header field names. Headers are retrieved
-by name from classes implementing the `MessageInterface` in a case-insensitive
-manner. For example, retrieving the `foo` header will return the same result as
-retrieving the `FoO` header. Similarly, setting the `Foo` header will overwrite
-any previously set `foo` header value.
+Сообщения HTTP включают имена полей заголовков без учета регистра. Заголовки извлекаются по имени из классов,
+реализующих `MessageInterface` без учета регистра. Например, получение заголовка `foo` вернет тот же результат, что и
+получение заголовка `FoO`. Точно так же установка заголовка `Foo` перезапишет любое ранее установленное значение
+заголовка `foo`.
 
 ~~~php
 $message = $message->withHeader('foo', 'bar');
 
 echo $message->getHeaderLine('foo');
-// Outputs: bar
+// Выведет: bar
 
 echo $message->getHeaderLine('FOO');
-// Outputs: bar
+// Выведет: bar
 
 $message = $message->withHeader('fOO', 'baz');
 echo $message->getHeaderLine('foo');
-// Outputs: baz
+// Выведет: baz
 ~~~
 
-Despite that headers may be retrieved case-insensitively, the original case
-MUST be preserved by the implementation, in particular when retrieved with
-`getHeaders()`.
+Несмотря на то, что заголовки могут быть получены без учета регистра, исходный регистр ДОЛЖЕН быть сохранен реализацией,
+в частности, при извлечении с помощью `getHeaders()`.
 
-Non-conforming HTTP applications may depend on a certain case, so it is useful
-for a user to be able to dictate the case of the HTTP headers when creating a
-request or response.
+HTTP-приложения, которые не соответсвуют стандартам, могут понимать заголовки по разному.
+Поэтому полезно, чтобы разработчик мог указать регистр заголовков HTTP при создании запроса или ответа.
 
-#### Headers with multiple values
+#### Заголовки с несколькими значениями
 
-In order to accommodate headers with multiple values yet still provide the
-convenience of working with headers as strings, headers can be retrieved from
-an instance of a `MessageInterface` as an array or a string. Use the
-`getHeaderLine()` method to retrieve a header value as a string containing all
-header values of a case-insensitive header by name concatenated with a comma.
-Use `getHeader()` to retrieve an array of all the header values for a
-particular case-insensitive header by name.
+Чтобы разместить заголовки с несколькими значениями, но при этом обеспечить удобство работы с заголовками в виде строк,
+заголовки можно извлекать из экземпляра `MessageInterface` в виде массива или строки. Используйте
+метод `getHeaderLine()`, чтобы получить значение заголовка в виде строки, содержащей все значения заголовка без учета
+регистра по имени, объединенному запятой.
+Используйте `getHeader()`, чтобы получить массив всех значений заголовков для конкретного заголовка без учета регистра
+по имени.
 
 ~~~php
 $message = $message
@@ -121,135 +117,123 @@ $message = $message
     ->withAddedHeader('foo', 'baz');
 
 $header = $message->getHeaderLine('foo');
-// $header contains: 'bar,baz'
+// $header содержит: 'bar,baz'
 
 $header = $message->getHeader('foo');
 // ['bar', 'baz']
 ~~~
 
-Note: Not all header values can be concatenated using a comma (e.g.,
-`Set-Cookie`). When working with such headers, consumers of
-`MessageInterface`-based classes SHOULD rely on the `getHeader()` method
-for retrieving such multi-valued headers.
+Примечание. Не все значения заголовков можно объединить с помощью запятой (например,
+`Set-Cookie`). При работе с такими заголовками
+При работе с такими заголовками классы на основе `MessageInterface` ДОЛЖНЫ
+полагаться на метод getHeader() для извлечения таких многозначных заголовков.
 
-#### Host header
+#### Заголовок Host
 
-In requests, the `Host` header typically mirrors the host component of the URI, as
-well as the host used when establishing the TCP connection. However, the HTTP
-specification allows the `Host` header to differ from each of the two.
+В запросах заголовок `Host` обычно отражает хост URI, а также хост, используемый при установлении TCP-соединения.
+Однако спецификация HTTP позволяет заголовку `Host` отличаться от каждого из этих двух значений.
 
-During construction, implementations MUST attempt to set the `Host` header from
-a provided URI if no `Host` header is provided.
+Реализации интерфейса ДОЛЖНЫ пытаться установить заголовок `Host` из предоставленного URI, если заголовок `Host` не
+передан в заголовках.
 
-`RequestInterface::withUri()` will, by default, replace the returned request's
-`Host` header with a `Host` header matching the host component of the passed
-`UriInterface`.
+`RequestInterface::withUri()` по умолчанию заменяет заголовок `Host` возвращаемого запроса на заголовок `Host`,
+соответствующий хост-компоненту переданного `UriInterface`.
 
-You can opt-in to preserving the original state of the `Host` header by passing
-`true` for the second (`$preserveHost`) argument. When this argument is set to
-`true`, the returned request will not update the `Host` header of the returned
-message -- unless the message contains no `Host` header.
+Вы можете согласиться на сохранение исходного состояния заголовка `Host`,
+передав значение `true` для второго аргумента (`$preserveHost`).
+Если для этого аргумента установлено значение `true`, возвращаемый запрос не будет обновлять заголовок `Host`
+возвращаемого сообщения, если сообщение не содержит заголовка `Host`.
 
-This table illustrates what `getHeaderLine('Host')` will return for a request
-returned by `withUri()` with the `$preserveHost` argument set to `true` for
-various initial requests and URIs.
+В этой таблице показано, что `getHeaderLine('Host')` вернет для запроса, возвращенного `withUri()` с
+аргументом `$preserveHost`, установленным на `true`, для различных исходных запросов и URI.
 
-Request Host header<sup>[1](#rhh)</sup> | Request host component<sup>[2](#rhc)</sup> | URI host component<sup>[3](#uhc)</sup> | Result
-----------------------------------------|--------------------------------------------|----------------------------------------|--------
-''                                      | ''                                         | ''                                     | ''
-''                                      | foo.com                                    | ''                                     | foo.com
-''                                      | foo.com                                    | bar.com                                | foo.com
-foo.com                                 | ''                                         | bar.com                                | foo.com
-foo.com                                 | bar.com                                    | baz.com                                | foo.com
+Заголовок `Host` запроса<sup>[1](#rhh)</sup> | Компонент `host` запроса <sup>[2](#rhc)</sup> | URI `host` компонента<sup>[3](#uhc)</sup> | Результат
+----------------------------------------|-----------------------------------------------|-------------------------------------------|--------
+''                                      | ''                                            | ''                                        | ''
+''                                      | foo.com                                       | ''                                        | foo.com
+''                                      | foo.com                                       | bar.com                                   | foo.com
+foo.com                                 | ''                                            | bar.com                                   | foo.com
+foo.com                                 | bar.com                                       | baz.com                                   | foo.com
 
-- <sup id="rhh">1</sup> `Host` header value prior to operation.
-- <sup id="rhc">2</sup> Host component of the URI composed in the request prior
-  to the operation.
-- <sup id="uhc">3</sup> Host component of the URI being injected via
+- <sup id="rhh">1</sup> Значение заголовка `Host` перед операцией.
+- <sup id="rhc">2</sup> Хост-компонент URI, составленный в запросе до операции.
+- <sup id="uhc">3</sup> Хост-компонент URI, внедряемый через
   `withUri()`.
 
-### 1.3 Streams
+### 1.3 Потоки
 
-HTTP messages consist of a start-line, headers, and a body. The body of an HTTP
-message can be very small or extremely large. Attempting to represent the body
-of a message as a string can easily consume more memory than intended because
-the body must be stored completely in memory. Attempting to store the body of a
-request or response in memory would preclude the use of that implementation from
-being able to work with large message bodies. `StreamInterface` is used in
-order to hide the implementation details when a stream of data is read from
-or written to. For situations where a string would be an appropriate message
-implementation, built-in streams such as `php://memory` and `php://temp` may be
-used.
+Сообщения HTTP состоят из начальной строки, заголовков и тела.
+Тело сообщения HTTP может быть очень маленьким или очень большим.
+Попытка представить тело сообщения в виде строки может легко потребовать больше памяти,
+чем предполагалось, поскольку тело должно полностью храниться в памяти.
+Попытка сохранить тело запроса или ответа в памяти помешает использованию этой реализации
+для работы с большими телами сообщений. `StreamInterface` используется для того,
+чтобы скрыть детали реализации, когда поток данных читается или записывается.
+В ситуациях, когда строка является подходящей реализацией сообщения,
+могут использоваться встроенные потоки, такие как `php://memory` и `php://temp`.
 
-`StreamInterface` exposes several methods that enable streams to be read
-from, written to, and traversed effectively.
+StreamInterface предоставляет несколько методов, позволяющих эффективно читать, записывать и обходить потоки.
 
-Streams expose their capabilities using three methods: `isReadable()`,
-`isWritable()`, and `isSeekable()`. These methods can be used by stream
-collaborators to determine if a stream is capable of their requirements.
+Потоки раскрывают свои возможности с помощью трех методов: `isReadable()`,
+`isWritable()` и `isSeekable()`. Эти методы могут использоваться участниками совместной работы над потоком, чтобы
+определить, соответствует ли поток их требованиям.
 
-Each stream instance will have various capabilities: it can be read-only,
-write-only, or read-write. It can also allow arbitrary random access (seeking
-forwards or backwards to any location), or only sequential access (for
-example in the case of a socket, pipe, or callback-based stream).
+Каждый экземпляр потока будет иметь различные возможности: он может быть только для чтения, только для записи или для
+чтения-записи. Он также может разрешать произвольный произвольный доступ (поиск в любом месте вперед или назад) или
+только последовательный доступ (например, в случае потока на основе сокета, канала или обратного вызова).
 
-Finally, `StreamInterface` defines a `__toString()` method to simplify
-retrieving or emitting the entire body contents at once.
+Наконец, `StreamInterface` определяет метод `__toString()` для упрощения извлечения или одновременной передачи всего
+содержимого тела.
 
-Unlike the request and response interfaces, `StreamInterface` does not model
-immutability. In situations where an actual PHP stream is wrapped, immutability
-is impossible to enforce, as any code that interacts with the resource can
-potentially change its state (including cursor position, contents, and more).
-Our recommendation is that implementations use read-only streams for
-server-side requests and client-side responses. Consumers should be aware of
-the fact that the stream instance may be mutable, and, as such, could alter
-the state of the message; when in doubt, create a new stream instance and attach
-it to a message to enforce state.
+В отличие от интерфейсов запроса и ответа, `StreamInterface` не моделирует неизменяемость.
+В ситуациях, когда фактический поток PHP обернут, неизменяемость невозможно обеспечить,
+поскольку любой код, взаимодействующий с ресурсом, потенциально может изменить его состояние
+(включая положение курсора, содержимое и т. д.).
+Мы рекомендуем, чтобы реализации использовали потоки только для чтения для запросов на
+стороне сервера и ответов на стороне клиента. Потребители должны знать о том факте,
+что экземпляр потока может быть изменчивым и, как таковой, может изменить состояние сообщения;
+если есть сомнения, создайте новый экземпляр потока и прикрепите его к сообщению,
+чтобы принудительно применить состояние.
 
-### 1.4 Request Targets and URIs
+### 1.4 Цели запросов и URI
 
-Per RFC 7230, request messages contain a "request-target" as the second segment
-of the request line. The request target can be one of the following forms:
+Согласно RFC 7230, сообщения запроса содержат «цель запроса» в качестве второго сегмента строки запроса.
+Цель запроса может быть одной из следующих:
 
-- **origin-form**, which consists of the path, and, if present, the query
-  string; this is often referred to as a relative URL. Messages as transmitted
-  over TCP typically are of origin-form; scheme and authority data are usually
-  only present via CGI variables.
-- **absolute-form**, which consists of the scheme, authority
-  ("[user-info@]host[:port]", where items in brackets are optional), path (if
-  present), query string (if present), and fragment (if present). This is often
-  referred to as an absolute URI, and is the only form to specify a URI as
-  detailed in RFC 3986. This form is commonly used when making requests to
-  HTTP proxies.
-- **authority-form**, which consists of the authority only. This is typically
-  used in CONNECT requests only, to establish a connection between an HTTP
-  client and a proxy server.
-- **asterisk-form**, which consists solely of the string `*`, and which is used
-  with the OPTIONS method to determine the general capabilities of a web server.
+- **Исходная форма**, которая состоит из пути и, если есть, строки запроса
+  такую запись часто называют относительным URL-адресом. Сообщения, передаваемые по протоколу TCP, обычно имеют исходную
+  форму;
+  схема и авторитетные данные обычно представлены только через переменные CGI.
+- **Абсолютная форма**, состоящая из схемы
+  ("[user-info@]host[:port]", где элементы в скобках являются необязательными), путь (если есть), строка запроса (если
+  есть) и фрагмент (если есть).
+  Такой формат часто называют абсолютным URI, и это единственная форма для указания URI, как подробно описано в RFC
+  3986. Эта форма обычно используется при выполнении запросов к HTTP-прокси.
+- **Авторитетная форма**, состоящая только из полномочий. Обычно это используется только в запросах CONNECT для
+  установления соединения между HTTP-клиентом и прокси-сервером.
+- **Форма-звездочка**, состоящая исключительно из строки `*` и используемая с методом OPTIONS для определения общих
+  возможностей веб-сервера.
 
-Aside from these request-targets, there is often an 'effective URL' which is
-separate from the request target. The effective URL is not transmitted within
-an HTTP message, but it is used to determine the protocol (http/https), port
-and hostname for making the request.
+Помимо этих целей запроса, часто существует «действующий URL», который отделен от цели запроса.
+Действующий URL-адрес не передается в HTTP-сообщении, но используется для определения протокола (http/https), порта и
+имени хоста для выполнения запроса.
 
-The effective URL is represented by `UriInterface`. `UriInterface` models HTTP
-and HTTPS URIs as specified in RFC 3986 (the primary use case). The interface
-provides methods for interacting with the various URI parts, which will obviate
-the need for repeated parsing of the URI. It also specifies a `__toString()`
-method for casting the modeled URI to its string representation.
+Эффективный URL-адрес представлен посредством `UriInterface`.
+`UriInterface` моделирует URI HTTP и HTTPS, как указано в RFC 3986 (основной вариант использования).
+Интерфейс предоставляет методы для взаимодействия с различными частями URI, что устраняет необходимость повторного
+анализа URI.
+Он также определяет метод `__toString()` для приведения смоделированного URI к его строковому представлению.
 
-When retrieving the request-target with `getRequestTarget()`, by default this
-method will use the URI object and extract all the necessary components to
-construct the _origin-form_. The _origin-form_ is by far the most common
-request-target.
+При получении цели запроса с помощью `getRequestTarget()` по умолчанию этот метод будет
+использовать объект URI и извлекать все необходимые компоненты для создания **Исходная форма**. **Исходная форма** на
+сегодняшний день является наиболее распространенной целью запроса.
 
-If it's desired by an end-user to use one of the other three forms, or if the
-user wants to explicitly override the request-target, it is possible to do so
-with `withRequestTarget()`.
+Если конечный пользователь желает использовать одну из трех других форм или если пользователь хочет явно переопределить
+цель запроса, это можно сделать с помощью `withRequestTarget()`.
 
-Calling this method does not affect the URI, as it is returned from `getUri()`.
+Вызов этого метода не влияет на URI, так как он возвращается из `getUri()`.
 
-For example, a user may want to make an asterisk-form request to a server:
+Например, пользователь может захотеть сделать запрос на сервер в форме звездочки:
 
 ~~~php
 $request = $request
@@ -258,317 +242,275 @@ $request = $request
     ->withUri(new Uri('https://example.org/'));
 ~~~
 
-This example may ultimately result in an HTTP request that looks like this:
+Этот пример может в конечном итоге привести к HTTP-запросу, который выглядит следующим образом:
 
 ~~~http
 OPTIONS * HTTP/1.1
 ~~~
 
-But the HTTP client will be able to use the effective URL (from `getUri()`),
-to determine the protocol, hostname and TCP port.
+Но HTTP-клиент сможет использовать эффективный URL-адрес (из `getUri()`), чтобы определить протокол, имя хоста и TCP-порт.
 
-An HTTP client MUST ignore the values of `Uri::getPath()` and `Uri::getQuery()`,
-and instead use the value returned by `getRequestTarget()`, which defaults
-to concatenating these two values.
+HTTP-клиент ДОЛЖЕН игнорировать значения `Uri::getPath()` и `Uri::getQuery()` и вместо этого использовать значение, возвращаемое `getRequestTarget()`, которое по умолчанию объединяет эти два значения.
 
-Clients that choose to not implement 1 or more of the 4 request-target forms,
-MUST still use `getRequestTarget()`. These clients MUST reject request-targets
-they do not support, and MUST NOT fall back on the values from `getUri()`.
+Клиенты, которые решили не реализовывать 1 или более из 4 форм запроса-цели, 
+ДОЛЖНЫ по-прежнему использовать `getRequestTarget()`. 
+Эти клиенты ДОЛЖНЫ отклонять цели запроса, которые они не поддерживают, и 
+НЕ ДОЛЖНЫ возвращаться к значениям из `getUri()`.
 
-`RequestInterface` provides methods for retrieving the request-target or
-creating a new instance with the provided request-target. By default, if no
-request-target is specifically composed in the instance, `getRequestTarget()`
-will return the origin-form of the composed URI (or "/" if no URI is composed).
-`withRequestTarget($requestTarget)` creates a new instance with the
-specified request target, and thus allows developers to create request messages
-that represent the other three request-target forms (absolute-form,
-authority-form, and asterisk-form). When used, the composed URI instance can
-still be of use, particularly in clients, where it may be used to create the
-connection to the server.
+`RequestInterface` предоставляет методы для получения цели запроса или создания нового экземпляра с предоставленной целью запроса. По умолчанию, если в экземпляре специально не составлена цель запроса, `getRequestTarget()` вернет исходную форму составленного URI (или "/", если URI не составлен). `withRequestTarget($requestTarget)` создает новый экземпляр с указанной целью запроса и, таким образом, позволяет разработчикам создавать сообщения запроса, которые представляют три другие формы цели запроса (абсолютная форма, форма полномочий и форма звездочки). 
 
-### 1.5 Server-side Requests
+### 1.5 Запросы на стороне сервера
 
-`RequestInterface` provides the general representation of an HTTP request
-message. However, server-side requests need additional treatment, due to the
-nature of the server-side environment. Server-side processing needs to take into
-account Common Gateway Interface (CGI), and, more specifically, PHP's
-abstraction and extension of CGI via its Server APIs (SAPI). PHP has provided
-simplification around input marshaling via superglobals such as:
+`RequestInterface` обеспечивает общее представление сообщения HTTP-запроса. 
+Однако запросы на стороне сервера требуют дополнительной обработки из-за особенностей среды на стороне сервера. 
+Обработка на стороне сервера должна учитывать общий интерфейс шлюза (CGI) и, в частности, абстракцию PHP и расширение CGI через его серверные API (SAPI). 
+PHP упростил работу с помощью суперглобальных переменных, таких как:
 
-- `$_COOKIE`, which deserializes and provides simplified access to HTTP
-  cookies.
-- `$_GET`, which deserializes and provides simplified access to query string
-  arguments.
-- `$_POST`, which deserializes and provides simplified access for urlencoded
-  parameters submitted via HTTP POST; generically, it can be considered the
-  results of parsing the message body.
-- `$_FILES`, which provides serialized metadata around file uploads.
-- `$_SERVER`, which provides access to CGI/SAPI environment variables, which
-  commonly include the request method, the request scheme, the request URI, and
-  headers.
+- `$_COOKIE`, который десериализует и обеспечивает упрощенный доступ к файлам HTTP cookie.
+- `$_GET`, который десериализует и обеспечивает упрощенный доступ к аргументам строки запроса.
+- `$_POST`, который десериализует и обеспечивает упрощенный доступ к urlencoded параметрам, отправленным через HTTP POST; в общем случае его можно рассматривать как результат разбора тела сообщения.
+- `$_FILES`, который предоставляет сериализованные метаданные для загрузки файлов.
+- `$_SERVER`, который обеспечивает доступ к переменным среды CGI/SAPI, которые обычно включают метод запроса, схему запроса, URI запроса и заголовки.
 
-`ServerRequestInterface` extends `RequestInterface` to provide an abstraction
-around these various superglobals. This practice helps reduce coupling to the
-superglobals by consumers, and encourages and promotes the ability to test
-request consumers.
+`ServerRequestInterface` расширяет `RequestInterface`, чтобы обеспечить абстракцию вокруг этих различных суперглобальных переменных. 
+Эта практика помогает уменьшить связь разработчиков с суперглобальными переменными, а также поощряет и продвигает возможность тестирования запросов.
 
-The server request provides one additional property, "attributes", to allow
-consumers the ability to introspect, decompose, and match the request against
-application-specific rules (such as path matching, scheme matching, host
-matching, etc.). As such, the server request can also provide messaging between
-multiple request consumers.
+Запрос к серверу предоставляет одно дополнительное свойство `attributes`, 
+чтобы позволить разработчикам проводить самоанализ, декомпозировать и сопоставлять запрос с правилами, специфичными для приложения (такими как сопоставление пути, сопоставление схемы, сопоставление хоста и т. д.). 
+Таким образом, запрос сервера также может обеспечивать обмен сообщениями между несколькими запросами.
 
-### 1.6 Uploaded files
+### 1.6 Загрузка файлов
 
-`ServerRequestInterface` specifies a method for retrieving a tree of upload
-files in a normalized structure, with each leaf an instance of
+`ServerRequestInterface` определяет метод получения дерева загружаемых файлов в нормализованной структуре, где каждый лист является экземпляром 
 `UploadedFileInterface`.
 
-The `$_FILES` superglobal has some well-known problems when dealing with arrays
-of file inputs. As an example, if you have a form that submits an array of files
-— e.g., the input name "files", submitting `files[0]` and `files[1]` — PHP will
-represent this as:
+Суперглобальная переменная `$_FILES` имеет некоторые хорошо известные проблемы при работе с массивами входных файлов. 
+Например, если у вас есть форма, которая отправляет массив файлов — например, входное имя «files», отправка «files[0]» и «files[1]» — PHP будет представлять это как:
 
 ~~~php
-array(
-    'files' => array(
-        'name' => array(
+[
+    'files' => [
+        'name' => [
             0 => 'file0.txt',
             1 => 'file1.html',
-        ),
-        'type' => array(
+        ],
+        'type' => [
             0 => 'text/plain',
             1 => 'text/html',
-        ),
-        /* etc. */
-    ),
-)
+        ],
+        /*  и т.д. */
+    ],
+]
 ~~~
 
-instead of the expected:
+вместо ожидаемого:
 
 ~~~php
-array(
-    'files' => array(
-        0 => array(
+[
+    'files' => [
+        0 => [
             'name' => 'file0.txt',
             'type' => 'text/plain',
-            /* etc. */
-        ),
-        1 => array(
+            /* и т.д. */
+        ],
+        1 => [
             'name' => 'file1.html',
             'type' => 'text/html',
-            /* etc. */
-        ),
-    ),
-)
+            /* и т.д. */
+        ],
+    ],
+]
 ~~~
 
-The result is that consumers need to know this language implementation detail,
-and write code for gathering the data for a given upload.
+В результате разработчики должны знать детали реализации этого языка и писать код под конкретные реализации.
 
-Additionally, scenarios exist where `$_FILES` is not populated when file uploads
-occur:
+Кроме того, существуют сценарии, в которых `$_FILES` не заполняется при загрузке файлов:
 
-- When the HTTP method is not `POST`.
-- When unit testing.
-- When operating under a non-SAPI environment, such as [ReactPHP](http://reactphp.org).
+- Когда метод HTTP не POST.
+- При модульном тестировании.
+- При работе в среде, отличной от SAPI, такой как [ReactPHP](http://reactphp.org).
 
-In such cases, the data will need to be seeded differently. As examples:
+В таких случаях данные должны быть заполнены по-другому. Например:
 
-- A process might parse the message body to discover the file uploads. In such
-  cases, the implementation may choose *not* to write the file uploads to the
-  file system, but instead wrap them in a stream in order to reduce memory,
-  I/O, and storage overhead.
-- In unit testing scenarios, developers need to be able to stub and/or mock the
-  file upload metadata in order to validate and verify different scenarios.
+- Процесс может анализировать тело сообщения, чтобы обнаружить загруженные файлы. В таких случаях реализация может решить *не* записывать загружаемые файлы в файловую систему, а вместо этого заключать их в поток, чтобы уменьшить нагрузку на память, ввод-вывод и хранилище.
+- В сценариях модульного тестирования разработчики должны иметь возможность заглушать и/или имитировать метаданные загрузки файлов, чтобы валидировать и проверять различные сценарии.
 
-`getUploadedFiles()` provides the normalized structure for consumers.
-Implementations are expected to:
+`getUploadedFiles()` предоставляет нормализованную структуру для разработчиков.
+Ожидается, что реализации:
 
-- Aggregate all information for a given file upload, and use it to populate a
-  `Psr\Http\Message\UploadedFileInterface` instance.
-- Re-create the submitted tree structure, with each leaf being the appropriate
-  `Psr\Http\Message\UploadedFileInterface` instance for the given location in
-  the tree.
+- Соберают всю информацию для данной загрузки файла и используют ее для заполнения экземпляра `Psr\Http\Message\UploadedFileInterface`.
+- Повторно создавать отправленную древовидную структуру, где каждый лист является соответствующим экземпляром `Psr\Http\Message\UploadedFileInterface` для данного местоположения в дереве.
 
-The tree structure referenced should mimic the naming structure in which files
-were submitted.
+Упомянутая древовидная структура должна имитировать структуру именования, в которой были отправлены файлы.
 
-In the simplest example, this might be a single named form element submitted as:
+В самом простом примере это может быть один именованный элемент формы, представленный как:
 
 ~~~html
-<input type="file" name="avatar" />
+<input type='file' name='avatar' />
 ~~~
 
-In this case, the structure in `$_FILES` would look like:
+В этом случае структура в `$_FILES` будет выглядеть так:
 
 ~~~php
-array(
-    'avatar' => array(
+[
+    'avatar' => [
         'tmp_name' => 'phpUxcOty',
         'name' => 'my-avatar.png',
         'size' => 90996,
         'type' => 'image/png',
         'error' => 0,
-    ),
-)
+    ],
+]
 ~~~
 
-The normalized form returned by `getUploadedFiles()` would be:
+Нормализованная форма, возвращаемая функцией `getUploadedFiles()`, будет следующей:
 
 ~~~php
-array(
+[
     'avatar' => /* UploadedFileInterface instance */
-)
+]
 ~~~
 
-In the case of an input using array notation for the name:
+В случае ввода с использованием обозначения массива для имени:
 
 ~~~html
-<input type="file" name="my-form[details][avatar]" />
+<input type='file' name='my-form[details][avatar]' />
 ~~~
 
-`$_FILES` ends up looking like this:
+`$_FILES` в конечном итоге выглядит так:
 
 ~~~php
-array (
-    'my-form' => array (
-        'name' => array (
-            'details' => array (
+ [
+    'my-form' => [
+        'name' => [
+            'details' => [
                 'avatar' => 'my-avatar.png',
-            ),
-        ),
-        'type' => array (
-            'details' => array (
+            ],
+        ],
+        'type' => [
+            'details' => [
                 'avatar' => 'image/png',
-            ),
-        ),
-        'tmp_name' => array (
-            'details' => array (
+            ],
+        ],
+        'tmp_name' => [
+            'details' => [
                 'avatar' => 'phpmFLrzD',
-            ),
-        ),
-        'error' => array (
-            'details' => array (
+            ],
+        ],
+        'error' => [
+            'details' => [
                 'avatar' => 0,
-            ),
-        ),
-        'size' => array (
-            'details' => array (
+            ],
+        ],
+        'size' => [
+            'details' => [
                 'avatar' => 90996,
-            ),
-        ),
-    ),
-)
+            ],
+        ],
+    ],
+]
 ~~~
 
-And the corresponding tree returned by `getUploadedFiles()` should be:
+И соответствующее дерево, возвращаемое getUploadedFiles(), должно быть:
 
 ~~~php
-array(
-    'my-form' => array(
-        'details' => array(
+[
+    'my-form' => [
+        'details' => [
             'avatar' => /* UploadedFileInterface instance */
-        ),
-    ),
-)
+        ],
+    ],
+]
 ~~~
 
-In some cases, you may specify an array of files:
+В некоторых случаях вы можете указать массив файлов:
 
 ~~~html
-Upload an avatar: <input type="file" name="my-form[details][avatars][]" />
-Upload an avatar: <input type="file" name="my-form[details][avatars][]" />
+Upload an avatar: <input type='file' name='my-form[details][avatars][]' />
+Upload an avatar: <input type='file' name='my-form[details][avatars][]' />
 ~~~
 
-(As an example, JavaScript controls might spawn additional file upload inputs to
-allow uploading multiple files at once.)
+(Например, элементы управления JavaScript могут создавать дополнительные поля для загрузки файлов, чтобы разрешить загрузку нескольких файлов одновременно.)
 
-In such a case, the specification implementation must aggregate all information
-related to the file at the given index. The reason is because `$_FILES` deviates
-from its normal structure in such cases:
+В таком случае реализация спецификации должна агрегировать всю информацию, относящуюся к файлу с заданным индексом. Причина в том, что `$_FILES` в таких случаях отклоняется от своей обычной структуры:
 
 ~~~php
-array (
-    'my-form' => array (
-        'name' => array (
-            'details' => array (
-                'avatars' => array (
+ [
+    'my-form' => [
+        'name' => [
+            'details' => [
+                'avatars' => [
                     0 => 'my-avatar.png',
                     1 => 'my-avatar2.png',
                     2 => 'my-avatar3.png',
-                ),
-            ),
-        ),
-        'type' => array (
-            'details' => array (
-                'avatars' => array (
+                ],
+            ],
+        ],
+        'type' => [
+            'details' => [
+                'avatars' => [
                     0 => 'image/png',
                     1 => 'image/png',
                     2 => 'image/png',
-                ),
-            ),
-        ),
-        'tmp_name' => array (
-            'details' => array (
-                'avatars' => array (
+                ],
+            ],
+        ],
+        'tmp_name' => [
+            'details' => [
+                'avatars' => [
                     0 => 'phpmFLrzD',
                     1 => 'phpV2pBil',
                     2 => 'php8RUG8v',
-                ),
-            ),
-        ),
-        'error' => array (
-            'details' => array (
-                'avatars' => array (
+                ],
+            ],
+        ],
+        'error' => [
+            'details' => [
+                'avatars' => [
                     0 => 0,
                     1 => 0,
                     2 => 0,
-                ),
-            ),
-        ),
-        'size' => array (
-            'details' => array (
-                'avatars' => array (
+                ],
+            ],
+        ],
+        'size' => [
+            'details' => [
+                'avatars' => [
                     0 => 90996,
                     1 => 90996,
                     3 => 90996,
-                ),
-            ),
-        ),
-    ),
-)
+                ],
+            ],
+        ],
+    ],
+]
 ~~~
 
-The above `$_FILES` array would correspond to the following structure as
-returned by `getUploadedFiles()`:
+Приведенный выше массив `$_FILES` будет соответствовать следующей структуре, возвращаемой функцией `getUploadedFiles()`:
 
 ~~~php
-array(
-    'my-form' => array(
-        'details' => array(
-            'avatars' => array(
+[
+    'my-form' => [
+        'details' => [
+            'avatars' => [
                 0 => /* UploadedFileInterface instance */,
                 1 => /* UploadedFileInterface instance */,
                 2 => /* UploadedFileInterface instance */,
-            ),
-        ),
-    ),
-)
+            ],
+        ],
+    ],
+]
 ~~~
 
-Consumers would access index `1` of the nested array using:
+Разработчики будут обращаться к индексу `1` вложенного массива, используя:
 
 ~~~php
 $request->getUploadedFiles()['my-form']['details']['avatars'][1];
 ~~~
 
-Because the uploaded files data is derivative (derived from `$_FILES` or the
-request body), a mutator method, `withUploadedFiles()`, is also present in the
-interface, allowing delegation of the normalization to another process.
+Поскольку данные загруженных файлов являются производными (получены из `$_FILES` или тела запроса), в интерфейсе также присутствует метод-мутатор `withUploadedFiles()`, позволяющий делегировать нормализацию другому процессу.
 
-In the case of the original examples, consumption resembles the following:
+В случае с исходными примерами реализация выглядит следующим образом:
 
 ~~~php
 $file0 = $request->getUploadedFiles()['files'][0];
@@ -583,23 +525,16 @@ printf(
 // "Received the files file0.txt and file1.html"
 ~~~
 
-This proposal also recognizes that implementations may operate in non-SAPI
-environments. As such, `UploadedFileInterface` provides methods for ensuring
-operations will work regardless of environment. In particular:
+В этом предложении также признается, что реализации могут работать в средах, отличных от SAPI. Таким образом, `UploadedFileInterface` предоставляет методы для обеспечения работы операций независимо от среды. Особенно:
 
-- `moveTo($targetPath)` is provided as a safe and recommended alternative to calling
-  `move_uploaded_file()` directly on the temporary upload file. Implementations
-  will detect the correct operation to use based on environment.
-- `getStream()` will return a `StreamInterface` instance. In non-SAPI
-  environments, one proposed possibility is to parse individual upload files
-  into `php://temp` streams instead of directly to files; in such cases, no
-  upload file is present. `getStream()` is therefore guaranteed to work
-  regardless of environment.
+- `moveTo($targetPath)` предоставляется как безопасная и рекомендуемая альтернатива вызову `move_uploaded_file()` непосредственно для временного загружаемого файла. Реализации определят правильную операцию для использования в зависимости от среды.
+- `getStream()` вернет экземпляр `StreamInterface`. В не SAPI
+  средах одна из предлагаемых возможностей состоит в том, чтобы анализировать отдельные загружаемые файлы в потоки `php://temp`, а не непосредственно в файлы; в таких случаях загружаемый файл отсутствует. Таким образом, `getStream()` гарантированно работает независимо от среды.
 
-As examples:
+В качестве примеров:
 
 ~~~
-// Move a file to an upload directory
+// Переместить файл в каталог загрузки
 $filename = sprintf(
     '%s.%s',
     create_uuid(),
@@ -615,12 +550,12 @@ $stream = new Psr7StreamWrapper($file1->getStream());
 stream_copy_to_stream($stream, $s3wrapper);
 ~~~
 
-## 2. Package
+## 2. Пакеты
 
-The interfaces and classes described are provided as part of the
-[psr/http-message](https://packagist.org/packages/psr/http-message) package.
+Описанные интерфейсы и классы предоставляются как часть
+Пакета [psr/http-message](https://packagist.org/packages/psr/http-message).
 
-## 3. Interfaces
+## 3. Интерфейсы
 
 ### 3.1 `Psr\Http\Message\MessageInterface`
 
@@ -629,13 +564,14 @@ The interfaces and classes described are provided as part of the
 namespace Psr\Http\Message;
 
 /**
- * HTTP messages consist of requests from a client to a server and responses
- * from a server to a client. This interface defines the methods common to
- * each.
+ * Сообщения HTTP состоят из запросов от клиента к серверу и ответов от сервера 
+ * к клиенту. 
+ * Этот интерфейс определяет методы, общие для каждого из них.
  *
- * Messages are considered immutable; all methods that might change state MUST
- * be implemented such that they retain the internal state of the current
- * message and return an instance that contains the changed state.
+ * Сообщения считаются неизменяемыми; все методы, которые могут изменить 
+ * состояние, ДОЛЖНЫ быть реализованы таким образом, чтобы они сохраняли 
+ * внутреннее состояние текущего сообщения и возвращали экземпляр, 
+ * содержащий измененное состояние.
  *
  * @see http://www.ietf.org/rfc/rfc7230.txt
  * @see http://www.ietf.org/rfc/rfc7231.txt
@@ -643,172 +579,169 @@ namespace Psr\Http\Message;
 interface MessageInterface
 {
     /**
-     * Retrieves the HTTP protocol version as a string.
+     * Извлекает версию протокола HTTP в виде строки.
      *
-     * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
+     * Строка ДОЛЖНА содержать только номер версии HTTP (например, «1.1», «1.0»).
      *
-     * @return string HTTP protocol version.
+     * @return string Версия протокола HTTP.
      */
     public function getProtocolVersion();
 
     /**
-     * Return an instance with the specified HTTP protocol version.
+     * Возвращает экземпляр с указанной версией протокола HTTP.
      *
-     * The version string MUST contain only the HTTP version number (e.g.,
-     * "1.1", "1.0").
+     * Строка ДОЛЖНА содержать только номер версии HTTP (например, «1.1», «1.0»).
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * new protocol version.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с новой 
+     * версией протокола.
      *
-     * @param string $version HTTP protocol version
+     * @param string $version Версия протокола HTTP.
      * @return static
      */
     public function withProtocolVersion($version);
 
     /**
-     * Retrieves all message header values.
+     * Извлекает все значения заголовков сообщений.
      *
-     * The keys represent the header name as it will be sent over the wire, and
-     * each value is an array of strings associated with the header.
+     * Ключи представляют собой имя заголовка, которое будет отправлено по сети, 
+     * а каждое значение представляет собой массив строк, связанных с заголовком.
      *
-     *     // Represent the headers as a string
+     *     // Представляем заголовки в виде строки
      *     foreach ($message->getHeaders() as $name => $values) {
      *         echo $name . ': ' . implode(', ', $values);
      *     }
      *
-     *     // Emit headers iteratively:
+     *     // Генерируйте заголовки итеративно:
      *     foreach ($message->getHeaders() as $name => $values) {
      *         foreach ($values as $value) {
      *             header(sprintf('%s: %s', $name, $value), false);
      *         }
      *     }
      *
-     * While header names are not case-sensitive, getHeaders() will preserve the
-     * exact case in which headers were originally specified.
+     * Хотя имена заголовков не чувствительны к регистру, getHeaders() 
+     * сохранит точный регистр, в котором заголовки были изначально указаны.
      *
-     * @return string[][] Returns an associative array of the message's headers.
-     *     Each key MUST be a header name, and each value MUST be an array of
-     *     strings for that header.
+     * @return string[][] Возвращает ассоциативный массив заголовков сообщения. 
+     * Каждый ключ ДОЛЖЕН быть именем заголовка, 
+     * а каждое значение ДОЛЖНО быть массивом строк для этого заголовка.
      */
     public function getHeaders();
 
     /**
-     * Checks if a header exists by the given case-insensitive name.
+     * Проверяет, существует ли заголовок по данному имени без учета регистра.
      *
-     * @param string $name Case-insensitive header field name.
-     * @return bool Returns true if any header names match the given header
-     *     name using a case-insensitive string comparison. Returns false if
-     *     no matching header name is found in the message.
+     * @param string $name Имя поля заголовка без учета регистра.
+     * @return bool Возвращает true, если какие-либо имена заголовков совпадают 
+     * с заданным именем заголовка, используя сравнение строк без учета регистра. 
+     * Возвращает false, если в сообщении не найдено подходящего имени заголовка.
      */
     public function hasHeader($name);
 
     /**
-     * Retrieves a message header value by the given case-insensitive name.
+     * Извлекает значение заголовка сообщения по заданному имени без учета регистра.
      *
-     * This method returns an array of all the header values of the given
-     * case-insensitive header name.
+     * Этот метод возвращает массив всех значений заголовка данного имени заголовка 
+     * без учета регистра.
      *
-     * If the header does not appear in the message, this method MUST return an
-     * empty array.
+     * Если заголовок не отображается в сообщении, этот метод ДОЛЖЕН возвращать 
+     * пустой массив.
      *
-     * @param string $name Case-insensitive header field name.
-     * @return string[] An array of string values as provided for the given
-     *    header. If the header does not appear in the message, this method MUST
-     *    return an empty array.
+     * @param string $name Имя поля заголовка без учета регистра.
+     * @return string[] Массив строковых значений, предусмотренный для данного 
+     * заголовка. 
+     * Если заголовок не отображается в сообщении, этот метод ДОЛЖЕН возвращать 
+     * пустой массив.
      */
     public function getHeader($name);
 
     /**
-     * Retrieves a comma-separated string of the values for a single header.
+     * Извлекает разделенную запятыми строку значений для одного заголовка.
      *
-     * This method returns all of the header values of the given
-     * case-insensitive header name as a string concatenated together using
-     * a comma.
+     * Этот метод возвращает все значения заголовка данного имени заголовка 
+     * без учета регистра в виде строки, объединенной вместе с помощью запятой.
      *
-     * NOTE: Not all header values may be appropriately represented using
-     * comma concatenation. For such headers, use getHeader() instead
-     * and supply your own delimiter when concatenating.
+     * ПРИМЕЧАНИЕ. Не все значения заголовков могут быть надлежащим образом представлены
+     * с помощью конкатенации запятых. Для таких заголовков используйте вместо этого
+     * getHeader() и укажите свой собственный разделитель при объединении.
      *
-     * If the header does not appear in the message, this method MUST return
-     * an empty string.
+     * Если заголовок не отображается в сообщении, этот метод ДОЛЖЕН возвращать пустую строку.
      *
-     * @param string $name Case-insensitive header field name.
-     * @return string A string of values as provided for the given header
-     *    concatenated together using a comma. If the header does not appear in
-     *    the message, this method MUST return an empty string.
+     * @param string $name Имя поля заголовка без учета регистра.
+     * @return string Строка значений, предусмотренных для данного заголовка, 
+     * объединенных вместе с помощью запятой. Если заголовок не отображается в сообщении, 
+     * этот метод ДОЛЖЕН возвращать пустую строку.
      */
     public function getHeaderLine($name);
 
     /**
-     * Return an instance with the provided value replacing the specified header.
+     * Возвращает экземпляр с предоставленным значением, заменяющим указанный заголовок.
      *
-     * While header names are case-insensitive, the casing of the header will
-     * be preserved by this function, and returned from getHeaders().
+     * Хотя имена заголовков нечувствительны к регистру, эта функция сохраняет 
+     * регистр заголовков и возвращает их из getHeaders().
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * new and/or updated header and value.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с новым и/или 
+     * обновленным заголовком и значением.
      *
-     * @param string $name Case-insensitive header field name.
-     * @param string|string[] $value Header value(s).
+     * @param string $name Имя поля заголовка без учета регистра.
+     * @param string|string[] $value Значение(я) заголовка.
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws \InvalidArgumentException для недопустимых имен заголовков или значений.
      */
     public function withHeader($name, $value);
 
     /**
-     * Return an instance with the specified header appended with the given value.
+     * Возвращает экземпляр с указанным заголовком, к которому добавлено заданное значение.
      *
-     * Existing values for the specified header will be maintained. The new
-     * value(s) will be appended to the existing list. If the header did not
-     * exist previously, it will be added.
+     * Существующие значения для указанного заголовка будут сохранены. 
+     * Новые значения будут добавлены к существующему списку. 
+     * Если заголовок ранее не существовал, он будет добавлен.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * new header and/or value.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить неизменность сообщения, 
+     * и ДОЛЖЕН возвращать экземпляр с новым заголовком и/или значением.
      *
-     * @param string $name Case-insensitive header field name to add.
-     * @param string|string[] $value Header value(s).
+     * @param string $name Добавляемое имя поля заголовка без учета регистра.
+     * @param string|string[] $value Значение(я) заголовка.
      * @return static
-     * @throws \InvalidArgumentException for invalid header names.
-     * @throws \InvalidArgumentException for invalid header values.
+     * @throws \InvalidArgumentException для недопустимых имен заголовков.
+     * @throws \InvalidArgumentException для недопустимых значений заголовка.
      */
     public function withAddedHeader($name, $value);
 
     /**
-     * Return an instance without the specified header.
+     * Возвращает экземпляр без указанного заголовка.
      *
-     * Header resolution MUST be done without case-sensitivity.
+     * Разрешение заголовка ДОЛЖНО выполняться без учета регистра.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that removes
-     * the named header.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр, удаляющий 
+     * именованный заголовок.
      *
-     * @param string $name Case-insensitive header field name to remove.
+     * @param string $name Имя поля заголовка без учета регистра, которое нужно удалить.
      * @return static
      */
     public function withoutHeader($name);
 
     /**
-     * Gets the body of the message.
+     * Получает тело сообщения.
      *
-     * @return StreamInterface Returns the body as a stream.
+     * @return StreamInterface Возвращает тело в виде потока.
      */
     public function getBody();
 
     /**
-     * Return an instance with the specified message body.
+     * Возвращает экземпляр с указанным телом сообщения.
      *
-     * The body MUST be a StreamInterface object.
+     * Тело ДОЛЖНО быть объектом StreamInterface.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return a new instance that has the
-     * new body stream.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать новый экземпляр с 
+     * новым потоком тела.
      *
-     * @param StreamInterface $body Body.
+     * @param StreamInterface $body Тело.
      * @return static
-     * @throws \InvalidArgumentException When the body is not valid.
+     * @throws \InvalidArgumentException Когда тело недействительно.
      */
     public function withBody(StreamInterface $body);
 }
@@ -821,126 +754,129 @@ interface MessageInterface
 namespace Psr\Http\Message;
 
 /**
- * Representation of an outgoing, client-side request.
+ * Представляет исходящий запрос на стороне клиента.
  *
- * Per the HTTP specification, this interface includes properties for
- * each of the following:
+ * В соответствии со спецификацией HTTP этот интерфейс включает 
+ * свойства для каждого из следующих элементов:
  *
- * - Protocol version
- * - HTTP method
+ * - Версия протокола
+ * - HTTP-метод
  * - URI
- * - Headers
- * - Message body
+ * - Заголовки
+ * - Тело сообщения
  *
- * During construction, implementations MUST attempt to set the Host header from
- * a provided URI if no Host header is provided.
+ * Во время выполнения различные реализации ДОЛЖНЫ пытаться установить 
+ * заголовок узла из предоставленного URI, если заголовок узла не предоставлен.
  *
- * Requests are considered immutable; all methods that might change state MUST
- * be implemented such that they retain the internal state of the current
- * message and return an instance that contains the changed state.
+ * Запросы считаются неизменяемыми; все методы, которые могут изменить 
+ * состояние, ДОЛЖНЫ быть реализованы таким образом, чтобы они сохраняли 
+ * внутреннее состояние текущего сообщения и возвращали экземпляр, 
+ * содержащий измененное состояние.
  */
 interface RequestInterface extends MessageInterface
 {
     /**
-     * Retrieves the message's request target.
+     * Извлекает цель запроса сообщения.
      *
-     * Retrieves the message's request-target either as it will appear (for
-     * clients), as it appeared at request (for servers), or as it was
-     * specified for the instance (see withRequestTarget()).
+     * Извлекает цель запроса сообщения либо в том виде, в каком она 
+     * появится (для клиентов), в том виде, в каком она появилась по 
+     * запросу (для серверов), либо в том виде, в каком она была указана 
+     * для экземпляра (см. withRequestTarget()).
      *
-     * In most cases, this will be the origin-form of the composed URI,
-     * unless a value was provided to the concrete implementation (see
-     * withRequestTarget() below).
+     * В большинстве случаев это будет исходная форма составленного URI, 
+     * если только конкретная реализация не предоставила значение 
+     * (см. withRequestTarget() ниже).
      *
-     * If no URI is available, and no request-target has been specifically
-     * provided, this method MUST return the string "/".
+     * Если URI недоступен и цель запроса не указана, этот метод 
+     * ДОЛЖЕН вернуть строку «/».
      *
      * @return string
      */
     public function getRequestTarget();
 
     /**
-     * Return an instance with the specific request-target.
+     * Возвращает экземпляр с определенной целью запроса.
      *
-     * If the request needs a non-origin-form request-target — e.g., for
-     * specifying an absolute-form, authority-form, or asterisk-form —
-     * this method may be used to create an instance with the specified
-     * request-target, verbatim.
+     * Если для запроса требуется цель запроса, отличная от формы источника, 
+     * например, для указания абсолютной формы, формы полномочий или 
+     * формы звездочки,bэтот метод может использоваться для создания экземпляра 
+     * с указанной целью запроса, дословно.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * changed request target.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с измененной 
+     * целью запроса.
      *
-     * @see http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
-     *     request-target forms allowed in request messages)
+     * @see http://tools.ietf.org/html/rfc7230#section-5.3 (для различных форм 
+     * запроса-цели, разрешенных в сообщениях запроса)
      * @param mixed $requestTarget
      * @return static
      */
     public function withRequestTarget($requestTarget);
 
     /**
-     * Retrieves the HTTP method of the request.
+     * Извлекает HTTP-метод запроса.
      *
-     * @return string Returns the request method.
+     * @return string Возвращает метод запроса.
      */
     public function getMethod();
 
     /**
-     * Return an instance with the provided HTTP method.
+     * Возвращает экземпляр с предоставленным методом HTTP.
      *
-     * While HTTP method names are typically all uppercase characters, HTTP
-     * method names are case-sensitive and thus implementations SHOULD NOT
-     * modify the given string.
+     * Хотя имена методов HTTP обычно состоят из символов верхнего регистра, 
+     * имена методов HTTP чувствительны к регистру, поэтому реализациям 
+     * НЕ СЛЕДУЕТ изменять данную строку.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * changed request method.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с измененным 
+     * методом запроса.
      *
-     * @param string $method Case-sensitive method.
+     * @param string $method Метод с учетом регистра.
      * @return static
-     * @throws \InvalidArgumentException for invalid HTTP methods.
+     * @throws \InvalidArgumentException для недопустимых методов HTTP.
      */
     public function withMethod($method);
 
     /**
-     * Retrieves the URI instance.
+     * Извлекает экземпляр URI.
      *
-     * This method MUST return a UriInterface instance.
+     * Этот метод ДОЛЖЕН возвращать экземпляр UriInterface.
      *
      * @see http://tools.ietf.org/html/rfc3986#section-4.3
-     * @return UriInterface Returns a UriInterface instance
-     *     representing the URI of the request.
+     * @return UriInterface Возвращает экземпляр UriInterface, 
+     * представляющий URI запроса.
      */
     public function getUri();
 
     /**
-     * Returns an instance with the provided URI.
+     * Возвращает экземпляр с предоставленным URI.
      *
-     * This method MUST update the Host header of the returned request by
-     * default if the URI contains a host component. If the URI does not
-     * contain a host component, any pre-existing Host header MUST be carried
-     * over to the returned request.
+     * Этот метод ДОЛЖЕН обновлять заголовок узла возвращенного запроса 
+     * по умолчанию, если URI содержит компонент узла. Если URI не содержит 
+     * компонента хоста, любой ранее существовавший заголовок хоста ДОЛЖЕН 
+     * быть перенесен в возвращаемый запрос.
      *
-     * You can opt-in to preserving the original state of the Host header by
-     * setting `$preserveHost` to `true`. When `$preserveHost` is set to
-     * `true`, this method interacts with the Host header in the following ways:
+     * Вы можете согласиться на сохранение исходного состояния заголовка Host, 
+     * установив для `$preserveHost` значение `true`. Когда для `$preserveHost`
+     * установлено значение `true`, этот метод взаимодействует с заголовком
+     * Host следующими способами:
      *
-     * - If the Host header is missing or empty, and the new URI contains
-     *   a host component, this method MUST update the Host header in the returned
-     *   request.
-     * - If the Host header is missing or empty, and the new URI does not contain a
-     *   host component, this method MUST NOT update the Host header in the returned
-     *   request.
-     * - If a Host header is present and non-empty, this method MUST NOT update
-     *   the Host header in the returned request.
+     * - Если заголовок узла отсутствует или пуст, а новый URI содержит компонент 
+     *   узла, этот метод ДОЛЖЕН обновить заголовок узла в возвращаемом запросе.
+     * - Если заголовок узла отсутствует или пуст, а новый URI не содержит 
+     *   компонента узла, этот метод НЕ ДОЛЖЕН обновлять заголовок узла 
+     *   в возвращаемом запросе.
+     * - Если заголовок Host присутствует и не является пустым, 
+     *   этот метод НЕ ДОЛЖЕН обновлять заголовок Host 
+     *   в возвращаемом запросе.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * new UriInterface instance.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр, который имеет 
+     * новый экземпляр UriInterface.
      *
      * @see http://tools.ietf.org/html/rfc3986#section-4.3
-     * @param UriInterface $uri New request URI to use.
-     * @param bool $preserveHost Preserve the original state of the Host header.
+     * @param UriInterface $uri Новый URI запроса для использования.
+     * @param bool $preserveHost Сохранять исходное состояние заголовка узла?
      * @return static
      */
     public function withUri(UriInterface $uri, $preserveHost = false);
@@ -954,258 +890,271 @@ interface RequestInterface extends MessageInterface
 namespace Psr\Http\Message;
 
 /**
- * Representation of an incoming, server-side HTTP request.
+ * Представляет входящий HTTP-запрос на стороне сервера.
  *
- * Per the HTTP specification, this interface includes properties for
- * each of the following:
+ * В соответствии со спецификацией HTTP этот интерфейс включает 
+ * свойства для каждого из следующих элементов:
  *
- * - Protocol version
- * - HTTP method
+ * - Версия протокола
+ * - HTTP-метод
  * - URI
- * - Headers
- * - Message body
+ * - Заголовки
+ * - Тело сообщения
  *
- * Additionally, it encapsulates all data as it has arrived at the
- * application from the CGI and/or PHP environment, including:
+ * Кроме того, он инкапсулирует все данные, поступающие в приложение из 
+ * среды CGI и/или PHP, включая:
  *
- * - The values represented in $_SERVER.
- * - Any cookies provided (generally via $_COOKIE)
- * - Query string arguments (generally via $_GET, or as parsed via parse_str())
- * - Upload files, if any (as represented by $_FILES)
- * - Deserialized body parameters (generally from $_POST)
+  * - Значения, представленные в $_SERVER.
+  * - Любые предоставленные файлы cookie (обычно через $_COOKIE)
+  * - Аргументы строки запроса (обычно через $_GET или анализируются с помощью
+  * parse_str())
+  * - Загруженные файлы, если они есть (представлено в $_FILES)
+  * - Десериализованные параметры тела (обычно из $_POST)
  *
- * $_SERVER values MUST be treated as immutable, as they represent application
- * state at the time of request; as such, no methods are provided to allow
- * modification of those values. The other values provide such methods, as they
- * can be restored from $_SERVER or the request body, and may need treatment
- * during the application (e.g., body parameters may be deserialized based on
- * content type).
+ * Значения $_SERVER ДОЛЖНЫ рассматриваться как неизменяемые, поскольку
+ * они представляют состояние приложения во время запроса; как таковые, 
+ * не предусмотрено никаких методов, позволяющих изменять эти значения. 
+ * Другие значения предоставляют такие методы, поскольку они могут быть 
+ * восстановлены из $_SERVER или тела запроса и могут нуждаться в 
+ * обработке во время приложения (например, параметры тела могут быть 
+ * десериализованы на основе типа контента).
  *
- * Additionally, this interface recognizes the utility of introspecting a
- * request to derive and match additional parameters (e.g., via URI path
- * matching, decrypting cookie values, deserializing non-form-encoded body
- * content, matching authorization headers to users, etc). These parameters
- * are stored in an "attributes" property.
+ * Кроме того, этот интерфейс распознает полезность самопроверки запроса
+ * для получения и сопоставления дополнительных параметров (например, 
+ * путем сопоставления пути URI, расшифровки значений cookie, 
+ * десериализации содержимого тела, не закодированного в форме, 
+ * сопоставления заголовков авторизации с пользователями и т. д.). 
+ * Эти параметры хранятся в свойстве «атрибуты».
  *
- * Requests are considered immutable; all methods that might change state MUST
- * be implemented such that they retain the internal state of the current
- * message and return an instance that contains the changed state.
+ * Запросы считаются неизменяемыми; все методы, которые могут изменить
+ * состояние, ДОЛЖНЫ быть реализованы таким образом, чтобы они 
+ * сохраняли внутреннее состояние текущего сообщения и возвращали 
+ * экземпляр, содержащий измененное состояние.
  */
 interface ServerRequestInterface extends RequestInterface
 {
     /**
-     * Retrieve server parameters.
+     * Получить параметры сервера.
      *
-     * Retrieves data related to the incoming request environment,
-     * typically derived from PHP's $_SERVER superglobal. The data IS NOT
-     * REQUIRED to originate from $_SERVER.
+     * Извлекает данные, относящиеся к среде входящих запросов, 
+     * обычно получаемые из суперглобальной переменной PHP $_SERVER. 
+     * НЕ ТРЕБУЕТСЯ, чтобы данные изначально были в $_SERVER.
      *
      * @return array
      */
     public function getServerParams();
 
     /**
-     * Retrieve cookies.
+     * Получить данные в файлах cookie.
      *
-     * Retrieves cookies sent by the client to the server.
+     * Извлекает файлы cookie, отправленные клиентом на сервер.
      *
-     * The data MUST be compatible with the structure of the $_COOKIE
-     * superglobal.
+     * Данные ДОЛЖНЫ быть совместимы со структурой суперглобального 
+     * массива $_COOKIE.
      *
      * @return array
      */
     public function getCookieParams();
 
     /**
-     * Return an instance with the specified cookies.
+     * Вернуть экземпляр с указанными файлами cookie.
      *
-     * The data IS NOT REQUIRED to come from the $_COOKIE superglobal, but MUST
-     * be compatible with the structure of $_COOKIE. Typically, this data will
-     * be injected at instantiation.
+     * НЕ ТРЕБУЕТСЯ, чтобы данные поступали из суперглобала $_COOKIE, 
+     * но ДОЛЖНЫ быть совместимы со структурой $_COOKIE. 
+     * Как правило, эти данные создаются при создании экземпляра.
      *
-     * This method MUST NOT update the related Cookie header of the request
-     * instance, nor related values in the server params.
+     * Этот метод НЕ ДОЛЖЕН обновлять соответствующий заголовок Cookie 
+     * экземпляра запроса или соответствующие значения в параметрах сервера.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated cookie values.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с 
+     * обновленными значениями cookie.
      *
-     * @param array $cookies Array of key/value pairs representing cookies.
+     * @param array $cookies Массив пар ключ/значение, представляющий файлы cookie.
      * @return static
      */
     public function withCookieParams(array $cookies);
 
     /**
-     * Retrieve query string arguments.
+     * Получить аргументы строки запроса.
      *
-     * Retrieves the deserialized query string arguments, if any.
+     * Извлекает десериализованные аргументы строки запроса, если они есть.
      *
-     * Note: the query params might not be in sync with the URI or server
-     * params. If you need to ensure you are only getting the original
-     * values, you may need to parse the query string from `getUri()->getQuery()`
-     * or from the `QUERY_STRING` server param.
+     * Примечание: параметры запроса могут не синхронизироваться с параметрами 
+     * URI или сервера. Если вам нужно убедиться, что вы получаете только исходные 
+     * значения, вам может потребоваться проанализировать строку запроса из 
+     * `getUri()->getQuery()` или из параметра сервера `QUERY_STRING`.
      *
      * @return array
      */
     public function getQueryParams();
 
     /**
-     * Return an instance with the specified query string arguments.
+     * Возвращает экземпляр с указанными аргументами строки запроса.
      *
-     * These values SHOULD remain immutable over the course of the incoming
-     * request. They MAY be injected during instantiation, such as from PHP's
-     * $_GET superglobal, or MAY be derived from some other value such as the
-     * URI. In cases where the arguments are parsed from the URI, the data
-     * MUST be compatible with what PHP's parse_str() would return for
-     * purposes of how duplicate query parameters are handled, and how nested
-     * sets are handled.
+     * Эти значения ДОЛЖНЫ оставаться неизменными в течение входящего запроса. 
+     * Они МОГУТ быть введены во время создания экземпляра, например, 
+     * из суперглобального массива PHP $_GET, или МОГУТ быть получены 
+     * из какого-либо другого значения, такого как URI. В тех случаях, 
+     * когда аргументы анализируются из URI, данные ДОЛЖНЫ быть совместимы с тем, 
+     * что возвращает PHP-функция parse_str() для целей обработки повторяющихся 
+     * параметров запроса и обработки вложенных наборов.
      *
-     * Setting query string arguments MUST NOT change the URI stored by the
-     * request, nor the values in the server params.
+     * Установка аргументов строки запроса НЕ ДОЛЖНА изменять URI, 
+     * хранящийся в запросе, или значения в параметрах сервера.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated query string arguments.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с обновленными 
+     * аргументами строки запроса.
      *
-     * @param array $query Array of query string arguments, typically from
-     *     $_GET.
+     * @param array $query Массив аргументов строки запроса, обычно из $_GET.
      * @return static
      */
     public function withQueryParams(array $query);
 
     /**
-     * Retrieve normalized file upload data.
+     * Получить нормализованные данные загрузки файла.
      *
-     * This method returns upload metadata in a normalized tree, with each leaf
-     * an instance of Psr\Http\Message\UploadedFileInterface.
+     * Этот метод возвращает метаданные загрузки в нормализованном дереве, 
+     * где каждый лист является экземпляром Psr\Http\Message\UploadedFileInterface.
      *
-     * These values MAY be prepared from $_FILES or the message body during
-     * instantiation, or MAY be injected via withUploadedFiles().
+     * Эти значения МОГУТ быть подготовлены из $_FILES или тела сообщения во время 
+     * создания экземпляра или МОГУТ вводиться через withUploadedFiles().
      *
-     * @return array An array tree of UploadedFileInterface instances; an empty
-     *     array MUST be returned if no data is present.
+     * @return array Дерево массива экземпляров UploadedFileInterface; 
+     * пустой массив ДОЛЖЕН быть возвращен, если данные отсутствуют.
      */
     public function getUploadedFiles();
 
     /**
-     * Create a new instance with the specified uploaded files.
+     * Создает новый экземпляр с указанными загруженными файлами.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated body parameters.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, чтобы сохранить 
+     * неизменность сообщения, и ДОЛЖЕН возвращать экземпляр с обновленными 
+     * параметрами тела.
      *
-     * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
+     * @param array $uploadedFiles Дерево массива экземпляров UploadedFileInterface.
      * @return static
-     * @throws \InvalidArgumentException if an invalid structure is provided.
+     * @throws \InvalidArgumentException если указана недопустимая структура.
      */
     public function withUploadedFiles(array $uploadedFiles);
 
     /**
-     * Retrieve any parameters provided in the request body.
+     * Получить все параметры, указанные в теле запроса.
      *
-     * If the request Content-Type is either application/x-www-form-urlencoded
-     * or multipart/form-data, and the request method is POST, this method MUST
-     * return the contents of $_POST.
+     * Если Content-Type запроса имеет значение application/x-www-form-urlencoded 
+     * или multipart/form-data, а метод запроса — POST, этот метод ДОЛЖЕН 
+     * возвращать содержимое $_POST.
      *
-     * Otherwise, this method may return any results of deserializing
-     * the request body content; as parsing returns structured content, the
-     * potential types MUST be arrays or objects only. A null value indicates
-     * the absence of body content.
+     * В противном случае этот метод может вернуть любые результаты десериализации 
+     * содержимого тела запроса; поскольку синтаксический анализ возвращает 
+     * структурированное содержимое, потенциальные типы ДОЛЖНЫ быть только 
+     * массивами или объектами. Нулевое значение указывает на отсутствие 
+     * основного содержимого.
      *
-     * @return null|array|object The deserialized body parameters, if any.
-     *     These will typically be an array or object.
+     * @return null|array|object Десериализованные параметры тела, если они есть.
+     *     Обычно это массив или объект.
      */
     public function getParsedBody();
 
     /**
-     * Return an instance with the specified body parameters.
+     * Возвращает экземпляр с указанными параметрами тела.
      *
-     * These MAY be injected during instantiation.
+     * Они МОГУТ быть введены во время создания экземпляра.
      *
-     * If the request Content-Type is either application/x-www-form-urlencoded
-     * or multipart/form-data, and the request method is POST, use this method
-     * ONLY to inject the contents of $_POST.
+     * Если Content-Type запроса имеет значение 
+     * application/x-www-form-urlencoded или multipart/form-data, 
+     * а метод запроса — POST, используйте этот метод ТОЛЬКО 
+     * для внедрения содержимого $_POST.
      *
-     * The data IS NOT REQUIRED to come from $_POST, but MUST be the results of
-     * deserializing the request body content. Deserialization/parsing returns
-     * structured data, and, as such, this method ONLY accepts arrays or objects,
-     * or a null value if nothing was available to parse.
+     * НЕ ТРЕБУЮТСЯ чтобы данные поступали из $_POST, но они ДОЛЖНЫ 
+     * быть результатом десериализации содержимого тела запроса. 
+     * Десериализация/анализ возвращает структурированные данные, 
+     * и поэтому этот метод принимает ТОЛЬКО массивы или объекты или 
+     * нулевое значение, если ничего не было доступно для анализа.
      *
-     * As an example, if content negotiation determines that the request data
-     * is a JSON payload, this method could be used to create a request
-     * instance with the deserialized parameters.
+     * Например, если согласование содержимого определяет, 
+     * что данные запроса представляют собой полезные данные JSON, 
+     * этот метод можно использовать для создания экземпляра 
+     * запроса с десериализованными параметрами.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated body parameters.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, 
+     * чтобы сохранить неизменность сообщения, и 
+     * ДОЛЖЕН возвращать экземпляр с обновленными параметрами тела.
      *
-     * @param null|array|object $data The deserialized body data. This will
-     *     typically be in an array or object.
+     * @param null|array|object $data Десериализованные данные тела. 
+     * Обычно это массив или объект.
      * @return static
-     * @throws \InvalidArgumentException if an unsupported argument type is
-     *     provided.
+     * @throws \InvalidArgumentException если указан неподдерживаемый 
+     * тип аргумента.
      */
     public function withParsedBody($data);
 
     /**
-     * Retrieve attributes derived from the request.
+     * Получить атрибуты, полученные из запроса.
      *
-     * The request "attributes" may be used to allow injection of any
-     * parameters derived from the request: e.g., the results of path
-     * match operations; the results of decrypting cookies; the results of
-     * deserializing non-form-encoded message bodies; etc. Attributes
-     * will be application and request specific, and CAN be mutable.
+     * «Атрибуты» запроса могут использоваться для обеспечения 
+     * возможности внедрения любых параметров, полученных из запроса: 
+     * например, результаты операций сопоставления пути; 
+     * результаты расшифровки файлов cookie; 
+     * результаты десериализации тел сообщений, не закодированных в форме; 
+     * и т. д. 
+     * Атрибуты будут зависеть от приложения и запроса и МОГУТ 
+     * быть изменяемыми.
      *
-     * @return mixed[] Attributes derived from the request.
+     * @return mixed[] Атрибуты, полученные из запроса.
      */
     public function getAttributes();
 
     /**
-     * Retrieve a single derived request attribute.
+     * Получить один производный атрибут запроса.
      *
-     * Retrieves a single derived request attribute as described in
-     * getAttributes(). If the attribute has not been previously set, returns
-     * the default value as provided.
+     * Извлекает один производный атрибут запроса, как описано 
+     * в getAttributes(). Если атрибут ранее не был установлен, 
+     * возвращает значение по умолчанию, как указано.
      *
-     * This method obviates the need for a hasAttribute() method, as it allows
-     * specifying a default value to return if the attribute is not found.
+     * Этот метод устраняет необходимость в методе hasAttribute(), 
+     * поскольку он позволяет указать значение по умолчанию, 
+     * которое будет возвращено, если атрибут не найден.
      *
      * @see getAttributes()
-     * @param string $name The attribute name.
-     * @param mixed $default Default value to return if the attribute does not exist.
+     * @param string $name Имя атрибута.
+     * @param mixed $default Значение по умолчанию, которое возвращается, 
+     * если атрибут не существует.
      * @return mixed
      */
     public function getAttribute($name, $default = null);
 
     /**
-     * Return an instance with the specified derived request attribute.
+     * Возвращает экземпляр с указанным производным атрибутом запроса.
      *
-     * This method allows setting a single derived request attribute as
-     * described in getAttributes().
+     * Этот метод позволяет установить один производный атрибут запроса,
+     * как описано в getAttributes().
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated attribute.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, 
+     * чтобы сохранить неизменность сообщения, и 
+     * ДОЛЖЕН возвращать экземпляр с обновленным атрибутом.
      *
      * @see getAttributes()
-     * @param string $name The attribute name.
-     * @param mixed $value The value of the attribute.
+     * @param string $name Имя атрибута.
+     * @param mixed $value Значение атрибута.
      * @return static
      */
     public function withAttribute($name, $value);
 
     /**
-     * Return an instance that removes the specified derived request attribute.
+     * Возвращает экземпляр, который удаляет указанный производный 
+     * атрибут запроса.
      *
-     * This method allows removing a single derived request attribute as
-     * described in getAttributes().
+     * Этот метод позволяет удалить один производный атрибут запроса, 
+     * как описано в getAttributes().
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that removes
-     * the attribute.
+     * Этот метод ДОЛЖЕН быть реализован таким образом,
+     * чтобы сохранить неизменность сообщения, и ДОЛЖЕН 
+     * возвращать экземпляр, удаляющий атрибут.
      *
      * @see getAttributes()
-     * @param string $name The attribute name.
+     * @param string $name Имя атрибута.
      * @return static
      */
     public function withoutAttribute($name);
@@ -1219,62 +1168,68 @@ interface ServerRequestInterface extends RequestInterface
 namespace Psr\Http\Message;
 
 /**
- * Representation of an outgoing, server-side response.
+ * Представление исходящего ответа на стороне сервера.
  *
- * Per the HTTP specification, this interface includes properties for
- * each of the following:
+ * В соответствии со спецификацией HTTP этот интерфейс 
+ * включает свойства для каждого из следующих элементов:
  *
- * - Protocol version
- * - Status code and reason phrase
- * - Headers
- * - Message body
+ * - Версия протокола
+ * - Код состояния и фраза причины
+ * - Заголовки
+ * - Тело сообщения
  *
- * Responses are considered immutable; all methods that might change state MUST
- * be implemented such that they retain the internal state of the current
- * message and return an instance that contains the changed state.
+ * Ответы считаются неизменными; все методы, которые могут 
+ * изменить состояние, ДОЛЖНЫ быть реализованы таким образом, 
+ * чтобы они сохраняли внутреннее состояние текущего сообщения 
+ * и возвращали экземпляр, содержащий измененное состояние.
  */
 interface ResponseInterface extends MessageInterface
 {
     /**
-     * Gets the response status code.
+     * Получает код состояния ответа.
      *
-     * The status code is a 3-digit integer result code of the server's attempt
-     * to understand and satisfy the request.
+     * Код состояния представляет собой 3-значный целочисленный 
+     * код результата попытки сервера понять и удовлетворить запрос.
      *
-     * @return int Status code.
+     * @return int Код состояния.
      */
     public function getStatusCode();
 
     /**
-     * Return an instance with the specified status code and, optionally, reason phrase.
+     * Возвращает экземпляр с указанным кодом состояния и, 
+     * необязательно, фразой причины.
      *
-     * If no reason phrase is specified, implementations MAY choose to default
-     * to the RFC 7231 or IANA recommended reason phrase for the response's
-     * status code.
+     * Если фраза причины не указана, реализации МОГУТ выбрать 
+     * по умолчанию RFC 7231 или рекомендованную IANA фразу 
+     * причины для кода состояния ответа.
      *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated status and reason phrase.
+     * Этот метод ДОЛЖЕН быть реализован таким образом, 
+     * чтобы сохранить неизменность сообщения, и 
+     * ДОЛЖЕН возвращать экземпляр с обновленным статусом и 
+     * фразой причины.
      *
      * @see http://tools.ietf.org/html/rfc7231#section-6
      * @see http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @param int $code The 3-digit integer result code to set.
-     * @param string $reasonPhrase The reason phrase to use with the
-     *     provided status code; if none is provided, implementations MAY
-     *     use the defaults as suggested in the HTTP specification.
+     * @param int $code 3-значный целочисленный код результата, 
+     * который необходимо установить.
+     * @param string $reasonPhrase Фраза причины для использования 
+     * с предоставленным кодом состояния; если ничего не указано, 
+     * реализации МОГУТ использовать значения по умолчанию, 
+     * как это предлагается в спецификации HTTP.
      * @return static
-     * @throws \InvalidArgumentException For invalid status code arguments.
+     * @throws \InvalidArgumentException Для недопустимых аргументов 
+     * кода состояния.
      */
     public function withStatus($code, $reasonPhrase = '');
 
     /**
-     * Gets the response reason phrase associated with the status code.
+     * Получает фразу причины ответа, связанную с кодом состояния.
      *
-     * Because a reason phrase is not a required element in a response
-     * status line, the reason phrase value MAY be empty. Implementations MAY
-     * choose to return the default RFC 7231 recommended reason phrase (or those
-     * listed in the IANA HTTP Status Code Registry) for the response's
-     * status code.
+     * Поскольку фраза причины не является обязательным элементом 
+     * в строке состояния ответа, значение фразы причины МОЖЕТ быть пустым. 
+     * Реализации МОГУТ возвращать фразу причины, рекомендованную RFC 7231 
+     * по умолчанию (или те, которые перечислены в реестре кодов состояния 
+     * HTTP IANA) для кода состояния ответа.
      *
      * @see http://tools.ietf.org/html/rfc7231#section-6
      * @see http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
@@ -1291,24 +1246,24 @@ interface ResponseInterface extends MessageInterface
 namespace Psr\Http\Message;
 
 /**
- * Describes a data stream.
+ * Описывает поток данных.
  *
- * Typically, an instance will wrap a PHP stream; this interface provides
- * a wrapper around the most common operations, including serialization of
- * the entire stream to a string.
+ * Как правило, экземпляр оборачивает поток PHP; 
+ * этот интерфейс обеспечивает оболочку для наиболее распространенных
+ * операций, включая сериализацию всего потока в строку.
  */
 interface StreamInterface
 {
     /**
-     * Reads all data from the stream into a string, from the beginning to end.
+     * Считывает все данные из потока в строку от начала до конца.
      *
-     * This method MUST attempt to seek to the beginning of the stream before
-     * reading data and read the stream until the end is reached.
+     * Этот метод ДОЛЖЕН пытаться найти начало потока перед чтением 
+     * данных и читать поток, пока не будет достигнут конец.
      *
-     * Warning: This could attempt to load a large amount of data into memory.
+     * Предупреждение: Это может попытаться загрузить в память большой объем данных.
      *
-     * This method MUST NOT raise an exception in order to conform with PHP's
-     * string casting operations.
+     * Этот метод НЕ ДОЛЖЕН вызывать исключение, чтобы соответствовать 
+     * операциям приведения строк PHP.
      *
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
      * @return string
@@ -1316,131 +1271,136 @@ interface StreamInterface
     public function __toString();
 
     /**
-     * Closes the stream and any underlying resources.
+     * Закрывает поток и все базовые ресурсы.
      *
      * @return void
      */
     public function close();
 
     /**
-     * Separates any underlying resources from the stream.
+     * Отделяет любые базовые ресурсы от потока.
      *
-     * After the stream has been detached, the stream is in an unusable state.
+     * После того, как поток был отсоединен, поток находится в 
+     * непригодном для использования состоянии.
      *
-     * @return resource|null Underlying PHP stream, if any
+     * @return resource|null Базовый поток PHP, если таковой имеется
      */
     public function detach();
 
     /**
-     * Get the size of the stream if known.
+     * Получает размер потока, если он известен.
      *
-     * @return int|null Returns the size in bytes if known, or null if unknown.
+     * @return int|null Возвращает размер в байтах, если он известен, 
+     * или null, если он неизвестен.
      */
     public function getSize();
 
     /**
-     * Returns the current position of the file read/write pointer
+     * Возвращает текущую позицию указателя чтения/записи файла.
      *
-     * @return int Position of the file pointer
-     * @throws \RuntimeException on error.
+     * @return int Позиция указателя файла
+     * @throws \RuntimeException по ошибке.
      */
     public function tell();
 
     /**
-     * Returns true if the stream is at the end of the stream.
+     * Возвращает true, если поток находится в конце потока.
      *
      * @return bool
      */
     public function eof();
 
     /**
-     * Returns whether or not the stream is seekable.
+     * Возвращает, является ли поток доступным для поиска.
      *
      * @return bool
      */
     public function isSeekable();
 
     /**
-     * Seek to a position in the stream.
+     * Ищет позицию в потоке.
      *
      * @see http://www.php.net/manual/en/function.fseek.php
-     * @param int $offset Stream offset
-     * @param int $whence Specifies how the cursor position will be calculated
-     *     based on the seek offset. Valid values are identical to the built-in
-     *     PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
-     *     offset bytes SEEK_CUR: Set position to current location plus offset
-     *     SEEK_END: Set position to end-of-stream plus offset.
+     * @param int $offset Смещение
+     * @param int $whence Указывает, как будет рассчитываться позиция
+     * курсора на основе смещения. Допустимые значения идентичны
+     * встроенным в PHP значениям $whence для `fseek()`. SEEK_SET: 
+     * Установить позицию, равную байтам смещения. SEEK_CUR: Установить 
+     * позицию как текущую позицию плюс смещение. SEEK_END: Установить 
+     * позицию как конец потока плюс смещение.
      * @throws \RuntimeException on failure.
      */
     public function seek($offset, $whence = SEEK_SET);
 
     /**
-     * Seek to the beginning of the stream.
+     * Ищет начало потока.
      *
-     * If the stream is not seekable, this method will raise an exception;
-     * otherwise, it will perform a seek(0).
+     * Если поток недоступен для поиска, этот метод вызовет исключение; 
+     * в противном случае он выполнит seek(0).
      *
      * @see seek()
      * @see http://www.php.net/manual/en/function.fseek.php
-     * @throws \RuntimeException on failure.
+     * @throws \RuntimeException при неудаче.
      */
     public function rewind();
 
     /**
-     * Returns whether or not the stream is writable.
+     * Возвращает, доступен ли поток для записи.
      *
      * @return bool
      */
     public function isWritable();
 
     /**
-     * Write data to the stream.
+     * Записывает данные в поток.
      *
-     * @param string $string The string that is to be written.
-     * @return int Returns the number of bytes written to the stream.
-     * @throws \RuntimeException on failure.
+     * @param string $string Строка, которая должна быть записана.
+     * @return int Возвращает количество байтов, записанных в поток.
+     * @throws \RuntimeException при неудаче.
      */
     public function write($string);
 
     /**
-     * Returns whether or not the stream is readable.
+     * Возвращает, доступен ли поток для чтения.
      *
      * @return bool
      */
     public function isReadable();
 
     /**
-     * Read data from the stream.
+     * Чтение данных из потока.
      *
-     * @param int $length Read up to $length bytes from the object and return
-     *     them. Fewer than $length bytes may be returned if underlying stream
-     *     call returns fewer bytes.
-     * @return string Returns the data read from the stream, or an empty string
-     *     if no bytes are available.
-     * @throws \RuntimeException if an error occurs.
+     * @param int $length Считайте до $length байтов из объекта и верните их. 
+     * Может быть возвращено меньше байтов, чем $length, 
+     * если базовый вызов потока возвращает меньше байтов.
+     * @return string Возвращает данные, считанные из потока, 
+     * или пустую строку, если нет доступных байтов.
+     * @throws \RuntimeException если возникает ошибка.
      */
     public function read($length);
 
     /**
-     * Returns the remaining contents in a string
+     * Возвращает оставшееся содержимое в строке
      *
      * @return string
-     * @throws \RuntimeException if unable to read.
-     * @throws \RuntimeException if error occurs while reading.
+     * @throws \RuntimeException если чтение невозможно.
+     * @throws \RuntimeException если при чтении возникает ошибка.
      */
     public function getContents();
 
     /**
-     * Get stream metadata as an associative array or retrieve a specific key.
+     * Получает метаданные потока в виде ассоциативного массива 
+     * или извлекает определенный ключ.
      *
-     * The keys returned are identical to the keys returned from PHP's
-     * stream_get_meta_data() function.
+     * Возвращаемые ключи идентичны ключам, возвращаемым функцией
+     * PHP stream_get_meta_data().
      *
      * @see http://php.net/manual/en/function.stream-get-meta-data.php
-     * @param string $key Specific metadata to retrieve.
-     * @return array|mixed|null Returns an associative array if no key is
-     *     provided. Returns a specific key value if a key is provided and the
-     *     value is found, or null if the key is not found.
+     * @param string $key Конкретные метаданные для извлечения.
+     * @return array|mixed|null Возвращает ассоциативный массив, 
+     * если ключ не указан. Возвращает конкретное значение ключа, 
+     * если ключ предоставлен и значение найдено, или ноль, 
+     * если ключ не найден.
      */
     public function getMetadata($key = null);
 }
@@ -1453,57 +1413,59 @@ interface StreamInterface
 namespace Psr\Http\Message;
 
 /**
- * Value object representing a URI.
+ * Объект значения, представляющий URI.
  *
- * This interface is meant to represent URIs according to RFC 3986 and to
- * provide methods for most common operations. Additional functionality for
- * working with URIs can be provided on top of the interface or externally.
- * Its primary use is for HTTP requests, but may also be used in other
- * contexts.
+ * Этот интерфейс предназначен для представления URI в соответствии с 
+ * RFC 3986 и предоставления методов для наиболее распространенных операций. 
+ * Дополнительные функции для работы с URI могут быть предоставлены 
+ * поверх интерфейса или извне. В основном он используется для HTTP-запросов, 
+ * но может использоваться и в других контекстах.
  *
- * Instances of this interface are considered immutable; all methods that
- * might change state MUST be implemented such that they retain the internal
- * state of the current instance and return an instance that contains the
- * changed state.
+ * Экземпляры этого интерфейса считаются неизменяемыми; 
+ * все методы, которые могут изменить состояние, ДОЛЖНЫ быть 
+ * реализованы таким образом, чтобы они сохраняли внутреннее 
+ * состояние текущего экземпляра и возвращали экземпляр, 
+ * содержащий измененное состояние.
  *
- * Typically the Host header will also be present in the request message.
- * For server-side requests, the scheme will typically be discoverable in the
- * server parameters.
+ * Обычно заголовок Host также присутствует в сообщении запроса. 
+ * Для запросов на стороне сервера схему обычно можно 
+ * обнаружить в параметрах сервера.
  *
  * @see http://tools.ietf.org/html/rfc3986 (the URI specification)
  */
 interface UriInterface
 {
     /**
-     * Retrieve the scheme component of the URI.
+     * Получает компонент схемы URI.
      *
-     * If no scheme is present, this method MUST return an empty string.
+     * Если схемы нет, этот метод ДОЛЖЕН возвращать пустую строку.
      *
-     * The value returned MUST be normalized to lowercase, per RFC 3986
-     * Section 3.1.
+     * Возвращаемое значение ДОЛЖНО быть приведено к нижнему регистру 
+     * в соответствии с RFC 3986. Section 3.1.
+     * 
      *
-     * The trailing ":" character is not part of the scheme and MUST NOT be
-     * added.
+     * Завершающий символ «:» не является частью схемы и 
+     * НЕ ДОЛЖЕН добавляться.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
-     * @return string The URI scheme.
+     * @return string Схема URI.
      */
     public function getScheme();
 
     /**
-     * Retrieve the authority component of the URI.
+     * Получите компонент полномочий URI.
      *
-     * If no authority information is present, this method MUST return an empty
-     * string.
+     * Если информация о полномочиях отсутствует, 
+     * этот метод ДОЛЖЕН возвращать пустую строку.
      *
-     * The authority syntax of the URI is:
+     * Синтаксис полномочий URI:
      *
      * <pre>
      * [user-info@]host[:port]
      * </pre>
      *
-     * If the port component is not set or is the standard port for the current
-     * scheme, it SHOULD NOT be included.
+     * Если компонент порта не установлен или является стандартным 
+     * портом для текущей схемы, его НЕ СЛЕДУЕТ включать.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      * @return string The URI authority, in "[user-info@]host[:port]" format.
@@ -1511,262 +1473,278 @@ interface UriInterface
     public function getAuthority();
 
     /**
-     * Retrieve the user information component of the URI.
+     * Получите компонент информации о пользователе URI.
      *
-     * If no user information is present, this method MUST return an empty
-     * string.
+     * Если информация о пользователе отсутствует, 
+     * этот метод ДОЛЖЕН возвращать пустую строку.
      *
-     * If a user is present in the URI, this will return that value;
-     * additionally, if the password is also present, it will be appended to the
-     * user value, with a colon (":") separating the values.
+     * Если пользователь присутствует в URI, это вернет это значение; 
+     * кроме того, если пароль также присутствует, 
+     * он будет добавлен к значению пользователя с двоеточием (":"), 
+     * разделяющим значения.
      *
-     * The trailing "@" character is not part of the user information and MUST
-     * NOT be added.
+     * Завершающий символ «@» не является частью информации 
+     * о пользователе и НЕ ДОЛЖЕН добавляться.
      *
-     * @return string The URI user information, in "username[:password]" format.
+     * @return string Информация о пользователе URI в формате 
+     * «имя пользователя[:пароль]».
      */
     public function getUserInfo();
 
     /**
-     * Retrieve the host component of the URI.
+     * Получите хост-компонент URI.
      *
-     * If no host is present, this method MUST return an empty string.
+     * Если хост отсутствует, этот метод ДОЛЖЕН возвращать пустую строку.
      *
-     * The value returned MUST be normalized to lowercase, per RFC 3986
-     * Section 3.2.2.
+     * Возвращаемое значение ДОЛЖНО быть приведено к 
+        * нижнему регистру в соответствии с RFC 3986. Section 3.2.2.
+     * 
      *
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
-     * @return string The URI host.
+     * @return string Хост URI.
      */
     public function getHost();
 
     /**
-     * Retrieve the port component of the URI.
+     * Получите компонент порта URI.
      *
-     * If a port is present, and it is non-standard for the current scheme,
-     * this method MUST return it as an integer. If the port is the standard port
-     * used with the current scheme, this method SHOULD return null.
+     * Если порт присутствует, и он нестандартен для текущей схемы, 
+     * этот метод ДОЛЖЕН вернуть его как целое число. 
+     * Если порт является стандартным портом, 
+     * используемым в текущей схеме, этот метод ДОЛЖЕН возвращать значение null.
      *
-     * If no port is present, and no scheme is present, this method MUST return
-     * a null value.
+     * Если нет ни порта, ни схемы, этот метод ДОЛЖЕН возвращать нулевое значение.
      *
-     * If no port is present, but a scheme is present, this method MAY return
-     * the standard port for that scheme, but SHOULD return null.
+     * Если порт отсутствует, но присутствует схема, этот метод МОЖЕТ вернуть 
+     * стандартный порт для этой схемы, но ДОЛЖЕН возвращать значение null.
      *
-     * @return null|int The URI port.
+     * @return null|int URI-порт.
      */
     public function getPort();
 
     /**
-     * Retrieve the path component of the URI.
+     * Получите компонент пути URI.
      *
-     * The path can either be empty or absolute (starting with a slash) or
-     * rootless (not starting with a slash). Implementations MUST support all
-     * three syntaxes.
+     * Путь может быть либо пустым, либо абсолютным (начиная с косой черты), 
+     * либо без корневого каталога (не начинающимся с косой черты). 
+     * Реализации ДОЛЖНЫ поддерживать все три синтаксиса.
      *
-     * Normally, the empty path "" and absolute path "/" are considered equal as
-     * defined in RFC 7230 Section 2.7.3. But this method MUST NOT automatically
-     * do this normalization because in contexts with a trimmed base path, e.g.
-     * the front controller, this difference becomes significant. It's the task
-     * of the user to handle both "" and "/".
+     * Обычно пустой путь "" и абсолютный путь "/" считаются равными, 
+     * как определено в RFC 7230, раздел 2.7.3. Но этот метод НЕ ДОЛЖЕН 
+     * автоматически выполнять эту нормализацию, потому что в контекстах с 
+     * обрезанным базовым путем, например. фронт-контроллера эта разница 
+     * становится существенной. Задача пользователя — обрабатывать 
+     * как «», так и «/».
      *
-     * The value returned MUST be percent-encoded, but MUST NOT double-encode
-     * any characters. To determine what characters to encode, please refer to
-     * RFC 3986, Sections 2 and 3.3.
+     * Возвращаемое значение ДОЛЖНО быть закодировано в процентах, 
+     * но НЕ ДОЛЖНО дважды кодировать какие-либо символы. 
+     * Чтобы определить, какие символы следует кодировать, 
+     * обратитесь к RFC 3986, разделы 2 и 3.3.
      *
-     * As an example, if the value should include a slash ("/") not intended as
-     * delimiter between path segments, that value MUST be passed in encoded
-     * form (e.g., "%2F") to the instance.
+     * Например, если значение должно включать косую черту ("/"), 
+     * не предназначенную для использования в качестве разделителя между 
+     * сегментами пути, это значение ДОЛЖНО быть передано экземпляру 
+     * в закодированной форме (например, "%2F").
      *
      * @see https://tools.ietf.org/html/rfc3986#section-2
      * @see https://tools.ietf.org/html/rfc3986#section-3.3
-     * @return string The URI path.
+     * @return string Путь URI.
      */
     public function getPath();
 
     /**
-     * Retrieve the query string of the URI.
+     * Получите строку запроса URI.
      *
-     * If no query string is present, this method MUST return an empty string.
+     * Если строка запроса отсутствует, этот метод ДОЛЖЕН возвращать 
+     * пустую строку.
      *
-     * The leading "?" character is not part of the query and MUST NOT be
-     * added.
+     * Ведущий "?" символ не является частью запроса и НЕ ДОЛЖЕН добавляться.
      *
-     * The value returned MUST be percent-encoded, but MUST NOT double-encode
-     * any characters. To determine what characters to encode, please refer to
-     * RFC 3986, Sections 2 and 3.4.
+     * Возвращаемое значение ДОЛЖНО быть закодировано в процентах, 
+     * но НЕ ДОЛЖНО дважды кодировать какие-либо символы. 
+     * Чтобы определить, какие символы следует кодировать, обратитесь к
+     * RFC 3986, разделы 2 и 3.4.
      *
-     * As an example, if a value in a key/value pair of the query string should
-     * include an ampersand ("&") not intended as a delimiter between values,
-     * that value MUST be passed in encoded form (e.g., "%26") to the instance.
+     * Например, если значение в паре ключ/значение строки запроса 
+     * должно включать амперсанд ("&"), не предназначенный для использования 
+     * в качестве разделителя между значениями, это значение ДОЛЖНО быть 
+     * передано в закодированной форме (например, "%26"). к экземпляру.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-2
      * @see https://tools.ietf.org/html/rfc3986#section-3.4
-     * @return string The URI query string.
+     * @return string Строка запроса URI.
      */
     public function getQuery();
 
     /**
-     * Retrieve the fragment component of the URI.
+     * Возвращает компонент фрагмента URI.
      *
-     * If no fragment is present, this method MUST return an empty string.
+     * Если фрагмента нет, этот метод ДОЛЖЕН возвращать пустую строку.
      *
-     * The leading "#" character is not part of the fragment and MUST NOT be
-     * added.
+     * Начальный символ «#» не является частью фрагмента и 
+     * НЕ ДОЛЖЕН быть добавлен.
      *
-     * The value returned MUST be percent-encoded, but MUST NOT double-encode
-     * any characters. To determine what characters to encode, please refer to
-     * RFC 3986, Sections 2 and 3.5.
+     * Возвращаемое значение ДОЛЖНО быть закодировано в процентах, 
+     * но НЕ ДОЛЖНО дважды кодировать какие-либо символы. Чтобы определить, 
+     * какие символы следует кодировать, обратитесь к RFC 3986, разделы 2 и 3.5.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-2
      * @see https://tools.ietf.org/html/rfc3986#section-3.5
-     * @return string The URI fragment.
+     * @return string Фрагмент URI.
      */
     public function getFragment();
 
     /**
-     * Return an instance with the specified scheme.
+     * Возвращает экземпляр с указанной схемой.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified scheme.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанную схему.
      *
-     * Implementations MUST support the schemes "http" and "https" case
-     * insensitively, and MAY accommodate other schemes if required.
+     * Реализации ДОЛЖНЫ поддерживать схемы "http" и "https" без
+     * учета регистра и МОГУТ использовать другие схемы,
+     * если это необходимо.
      *
-     * An empty scheme is equivalent to removing the scheme.
+     * Пустая схема эквивалентна удалению схемы.
      *
-     * @param string $scheme The scheme to use with the new instance.
-     * @return static A new instance with the specified scheme.
-     * @throws \InvalidArgumentException for invalid schemes.
-     * @throws \InvalidArgumentException for unsupported schemes.
+     * @param string $scheme Схема для использования с новым экземпляром.
+     * @return static Новый экземпляр с указанной схемой.
+     * @throws \InvalidArgumentException за недействительные схемы.
+     * @throws \InvalidArgumentException для неподдерживаемых схем.
      */
     public function withScheme($scheme);
 
     /**
-     * Return an instance with the specified user information.
+     * Вернуть экземпляр с указанной информацией о пользователе.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified user information.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанную информацию
+     * о пользователе.
      *
-     * Password is optional, but the user information MUST include the
-     * user; an empty string for the user is equivalent to removing user
-     * information.
+     * Пароль необязателен, но информация о пользователе ДОЛЖНА включать 
+     * имя пользователя; пустая строка для пользователя эквивалентна 
+     * удалению информации о пользователе.
      *
-     * @param string $user The user name to use for authority.
-     * @param null|string $password The password associated with $user.
-     * @return static A new instance with the specified user information.
+     * @param string $user Имя пользователя, используемое для полномочий.
+     * @param null|string $password Пароль, связанный с $user.
+     * @return static Новый экземпляр с указанной информацией о пользователе.
      */
     public function withUserInfo($user, $password = null);
 
     /**
-     * Return an instance with the specified host.
+     * Вернуть экземпляр с указанным хостом.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified host.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанный хост.
      *
-     * An empty host value is equivalent to removing the host.
+     * Пустое значение хоста эквивалентно удалению хоста.
      *
-     * @param string $host The hostname to use with the new instance.
-     * @return static A new instance with the specified host.
-     * @throws \InvalidArgumentException for invalid hostnames.
+     * @param string $host Имя хоста для использования с новым экземпляром.
+     * @return static Новый экземпляр с указанным хостом.
+     * @throws \InvalidArgumentException для недопустимых имен хостов.
      */
     public function withHost($host);
 
     /**
-     * Return an instance with the specified port.
+     * Вернуть экземпляр с указанным портом.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified port.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанный порт.
      *
-     * Implementations MUST raise an exception for ports outside the
-     * established TCP and UDP port ranges.
+     * Реализации ДОЛЖНЫ вызывать исключение для портов за 
+     * пределами установленных диапазонов портов TCP и UDP.
      *
-     * A null value provided for the port is equivalent to removing the port
-     * information.
+     *Пустое значение, указанное для порта, эквивалентно удалению 
+     * информации о порте.
      *
-     * @param null|int $port The port to use with the new instance; a null value
-     *     removes the port information.
-     * @return static A new instance with the specified port.
-     * @throws \InvalidArgumentException for invalid ports.
+     * @param null|int $port Порт для использования с новым экземпляром; 
+     * нулевое значение удаляет информацию о порте.
+     * @return static Новый экземпляр с указанным портом.
+     * @throws \InvalidArgumentException для недопустимых портов.
      */
     public function withPort($port);
 
     /**
-     * Return an instance with the specified path.
+     * Возвращает экземпляр с указанным путем.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified path.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанный путь.
      *
-     * The path can either be empty or absolute (starting with a slash) or
-     * rootless (not starting with a slash). Implementations MUST support all
-     * three syntaxes.
+     * Путь может быть либо пустым, либо абсолютным (начиная с косой черты), 
+     * либо без корневого каталога (не начинающимся с косой черты). 
+     * Реализации ДОЛЖНЫ поддерживать все три синтаксиса.
      *
-     * If an HTTP path is intended to be host-relative rather than path-relative
-     * then it must begin with a slash ("/"). HTTP paths not starting with a slash
-     * are assumed to be relative to some base path known to the application or
-     * consumer.
+     * Если предполагается, что путь HTTP относится к хосту, а не к пути, 
+     * он должен начинаться с косой черты ("/"). Предполагается, что пути HTTP,
+     * не начинающиеся с косой черты, относятся к некоторому базовому пути, 
+     * известному приложению или потребителю.
      *
-     * Users can provide both encoded and decoded path characters.
-     * Implementations ensure the correct encoding as outlined in getPath().
+     * Пользователи могут предоставлять как закодированные, 
+     * так и декодированные символы пути. Реализации обеспечивают 
+     * правильное кодирование, как указано в getPath().
      *
-     * @param string $path The path to use with the new instance.
-     * @return static A new instance with the specified path.
-     * @throws \InvalidArgumentException for invalid paths.
+     * @param string $path Путь для использования с новым экземпляром.
+     * @return static Новый экземпляр с указанным путем.
+     * @throws \InvalidArgumentException для неверных путей.
      */
     public function withPath($path);
 
     /**
-     * Return an instance with the specified query string.
+     * Возвращает экземпляр с указанной строкой запроса.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified query string.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанную строку запроса.
      *
-     * Users can provide both encoded and decoded query characters.
-     * Implementations ensure the correct encoding as outlined in getQuery().
+     * Пользователи могут предоставлять как закодированные, 
+     * так и декодированные символы запроса.
+     * Реализации обеспечивают правильное кодирование, 
+     * как описано в getQuery().
      *
-     * An empty query string value is equivalent to removing the query string.
+     * Пустое значение строки запроса эквивалентно удалению строки запроса.
      *
-     * @param string $query The query string to use with the new instance.
-     * @return static A new instance with the specified query string.
-     * @throws \InvalidArgumentException for invalid query strings.
+     * @param string $query Строка запроса для использования с новым экземпляром.
+     * @return static Новый экземпляр с указанной строкой запроса.
+     * @throws \InvalidArgumentException для недопустимых строк запроса.
      */
     public function withQuery($query);
 
     /**
-     * Return an instance with the specified URI fragment.
+     * Возвращает экземпляр с указанным фрагментом URI.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified URI fragment.
+     * Этот метод ДОЛЖЕН сохранять состояние текущего экземпляра и 
+     * возвращать экземпляр, содержащий указанный фрагмент URI.
      *
-     * Users can provide both encoded and decoded fragment characters.
-     * Implementations ensure the correct encoding as outlined in getFragment().
+     * Пользователи могут предоставлять как закодированные, 
+     * так и декодированные символы фрагментов.
+     * Реализации обеспечивают правильное кодирование, 
+     * как указано в getFragment().
      *
-     * An empty fragment value is equivalent to removing the fragment.
+     * Пустое значение фрагмента эквивалентно удалению фрагмента.
      *
-     * @param string $fragment The fragment to use with the new instance.
-     * @return static A new instance with the specified fragment.
+     * @param string $fragment Фрагмент для использования с новым экземпляром.
+     * @return static Новый экземпляр с указанным фрагментом.
      */
     public function withFragment($fragment);
 
     /**
-     * Return the string representation as a URI reference.
+     * Возвращает строковое представление URI.
      *
-     * Depending on which components of the URI are present, the resulting
-     * string is either a full URI or relative reference according to RFC 3986,
-     * Section 4.1. The method concatenates the various components of the URI,
-     * using the appropriate delimiters:
+     * В зависимости от того, какие компоненты URI присутствуют, 
+     * результирующая строка является либо полным URI, 
+     * либо относительной ссылкой в соответствии с RFC 3986, раздел 4.1. 
+     * Метод объединяет различные компоненты URI, 
+     * используя соответствующие разделители:
      *
-     * - If a scheme is present, it MUST be suffixed by ":".
-     * - If an authority is present, it MUST be prefixed by "//".
-     * - The path can be concatenated without delimiters. But there are two
-     *   cases where the path has to be adjusted to make the URI reference
-     *   valid as PHP does not allow to throw an exception in __toString():
-     *     - If the path is rootless and an authority is present, the path MUST
-     *       be prefixed by "/".
-     *     - If the path is starting with more than one "/" and no authority is
-     *       present, the starting slashes MUST be reduced to one.
-     * - If a query is present, it MUST be prefixed by "?".
-     * - If a fragment is present, it MUST be prefixed by "#".
+     * - Если схема присутствует, она ДОЛЖНА иметь суффикс «:».
+     * - Если полномочия присутствуют, они ДОЛЖНЫ иметь префикс «//».
+     * - Путь может быть объединен без разделителей. Но есть два случая, 
+     * когда необходимо изменить путь, чтобы сделать ссылку URI действительной, 
+     * поскольку PHP не позволяет генерировать исключение в __toString():
+         - Если путь не имеет корня и присутствуют полномочия, 
+     * путь ДОЛЖЕН иметь префикс «/».
+           - Если путь начинается с более чем одного «/» и 
+     * отсутствуют полномочия, начальные косые черты ДОЛЖНЫ быть сокращены до одного.
+      - Если присутствует запрос, он ДОЛЖЕН иметь префикс «?».
+      - Если присутствует фрагмент, он ДОЛЖЕН иметь префикс "#".
      *
      * @see http://tools.ietf.org/html/rfc3986#section-4.1
      * @return string
@@ -1782,121 +1760,125 @@ interface UriInterface
 namespace Psr\Http\Message;
 
 /**
- * Value object representing a file uploaded through an HTTP request.
+ * Объект, представляющий файл, загруженный с помощью HTTP-запроса.
  *
- * Instances of this interface are considered immutable; all methods that
- * might change state MUST be implemented such that they retain the internal
- * state of the current instance and return an instance that contains the
- * changed state.
+ * Экземпляры этого интерфейса считаются неизменяемыми; 
+ * все методы, которые могут изменить состояние, 
+ * ДОЛЖНЫ быть реализованы таким образом, 
+ * чтобы они сохраняли внутреннее состояние текущего экземпляра 
+ * и возвращали экземпляр, содержащий измененное состояние.
  */
 interface UploadedFileInterface
 {
     /**
-     * Retrieve a stream representing the uploaded file.
+     * Возвращает поток, представляющий загруженный файл.
      *
-     * This method MUST return a StreamInterface instance, representing the
-     * uploaded file. The purpose of this method is to allow utilizing native PHP
-     * stream functionality to manipulate the file upload, such as
-     * stream_copy_to_stream() (though the result will need to be decorated in a
-     * native PHP stream wrapper to work with such functions).
+     * Этот метод ДОЛЖЕН возвращать экземпляр StreamInterface, 
+     * представляющий загруженный файл. Цель этого метода — 
+     * позволить использовать встроенную функциональность потока 
+     * PHP для управления загрузкой файла, например, 
+     * stream_copy_to_stream() (хотя для работы с такими функциями 
+     * результат должен быть оформлен в встроенной оболочке потока PHP).
      *
-     * If the moveTo() method has been called previously, this method MUST raise
-     * an exception.
+     * Если метод moveTo() был вызван ранее, 
+     * этот метод ДОЛЖЕН вызвать исключение.
      *
-     * @return StreamInterface Stream representation of the uploaded file.
-     * @throws \RuntimeException in cases when no stream is available.
-     * @throws \RuntimeException in cases when no stream can be created.
+     * @return StreamInterface Потоковое представление загруженного файла.
+     * @throws \RuntimeException в случаях, когда поток недоступен.
+     * @throws \RuntimeException в случаях, когда поток не может быть создан.
      */
     public function getStream();
 
     /**
-     * Move the uploaded file to a new location.
+     * Перемещает загруженный файл в новое место.
      *
-     * Use this method as an alternative to move_uploaded_file(). This method is
-     * guaranteed to work in both SAPI and non-SAPI environments.
-     * Implementations must determine which environment they are in, and use the
-     * appropriate method (move_uploaded_file(), rename(), or a stream
-     * operation) to perform the operation.
+     * Используйте этот метод как альтернативу move_uploaded_file(). 
+     * Этот метод гарантированно работает как в средах SAPI, 
+     * так и в средах, отличных от SAPI. Реализации должны определить, 
+     * в какой среде они находятся, и использовать соответствующий метод 
+     * (move_uploaded_file(), rename() или потоковая операция) 
+     * для выполнения операции.
      *
-     * $targetPath may be an absolute path, or a relative path. If it is a
-     * relative path, resolution should be the same as used by PHP's rename()
-     * function.
+     * $targetPath может быть абсолютным или относительным путем. 
+     * Если это относительный путь, разрешение должно быть таким же,
+     * как и в функции PHP rename().
      *
-     * The original file or stream MUST be removed on completion.
+     * Исходный файл или поток ДОЛЖЕН быть удален после завершения.
      *
-     * If this method is called more than once, any subsequent calls MUST raise
-     * an exception.
+     * Если этот метод вызывается более одного раза, 
+     * любые последующие вызовы ДОЛЖНЫ вызывать исключение.
      *
-     * When used in an SAPI environment where $_FILES is populated, when writing
-     * files via moveTo(), is_uploaded_file() and move_uploaded_file() SHOULD be
-     * used to ensure permissions and upload status are verified correctly.
+     * При использовании в среде SAPI, где $_FILES заполняется, 
+     * при записи файлов через moveTo() СЛЕДУЕТ использовать 
+     * is_uploaded_file() и move_uploaded_file(), 
+     * чтобы обеспечить правильную проверку разрешений 
+     * и статуса загрузки.
      *
-     * If you wish to move to a stream, use getStream(), as SAPI operations
-     * cannot guarantee writing to stream destinations.
+     * Если вы хотите перейти к потоку, используйте getStream(), 
+     * так как операции SAPI не могут гарантировать запись в места назначения потока.
      *
      * @see http://php.net/is_uploaded_file
      * @see http://php.net/move_uploaded_file
-     * @param string $targetPath Path to which to move the uploaded file.
-     * @throws \InvalidArgumentException if the $targetPath specified is invalid.
-     * @throws \RuntimeException on any error during the move operation.
-     * @throws \RuntimeException on the second or subsequent call to the method.
+     * @param string $targetPath Путь, по которому следует переместить загруженный файл.
+     * @throws \InvalidArgumentException если указанный $targetPath недействителен.
+     * @throws \RuntimeException при любой ошибке во время операции перемещения.
+     * @throws \RuntimeException при втором или последующем вызове метода.
      */
     public function moveTo($targetPath);
 
     /**
-     * Retrieve the file size.
+     * Получить размер файла.
      *
-     * Implementations SHOULD return the value stored in the "size" key of
-     * the file in the $_FILES array if available, as PHP calculates this based
-     * on the actual size transmitted.
+     * Реализации ДОЛЖНЫ возвращать значение, хранящееся в ключе "размер" 
+     * файла в массиве $_FILES, если он доступен, поскольку PHP вычисляет
+     * это на основе переданного фактического размера.
      *
-     * @return int|null The file size in bytes or null if unknown.
+     * @return int|null Размер файла в байтах или null, если он неизвестен.
      */
     public function getSize();
 
     /**
-     * Retrieve the error associated with the uploaded file.
+     * Возвращает ошибку, связанную с загруженным файлом.
      *
-     * The return value MUST be one of PHP's UPLOAD_ERR_XXX constants.
+     * Возвращаемое значение ДОЛЖНО быть одной из констант PHP UPLOAD_ERR_XXX.
      *
-     * If the file was uploaded successfully, this method MUST return
-     * UPLOAD_ERR_OK.
+     * Если файл был успешно загружен, этот метод ДОЛЖЕН вернуть UPLOAD_ERR_OK.
      *
-     * Implementations SHOULD return the value stored in the "error" key of
-     * the file in the $_FILES array.
+     * Реализации ДОЛЖНЫ возвращать значение, 
+     * хранящееся в ключе «ошибка» файла в массиве $_FILES.
      *
      * @see http://php.net/manual/en/features.file-upload.errors.php
-     * @return int One of PHP's UPLOAD_ERR_XXX constants.
+     * @return int Одна из констант PHP UPLOAD_ERR_XXX.
      */
     public function getError();
 
     /**
-     * Retrieve the filename sent by the client.
+     * Получить имя файла, отправленное клиентом.
      *
-     * Do not trust the value returned by this method. A client could send
-     * a malicious filename with the intention to corrupt or hack your
-     * application.
+     * Не доверяйте значению, возвращаемому этим методом. 
+     * Клиент может отправить вредоносное имя файла с 
+     * намерением повредить или взломать ваше приложение.
      *
-     * Implementations SHOULD return the value stored in the "name" key of
-     * the file in the $_FILES array.
+     * Реализации ДОЛЖНЫ возвращать значение, 
+     * хранящееся в ключе «имя» файла в массиве $_FILES.
      *
-     * @return string|null The filename sent by the client or null if none
-     *     was provided.
+     * @return string|null Имя файла, отправленное клиентом, 
+     * или значение NULL, если оно не было указано.
      */
     public function getClientFilename();
 
     /**
-     * Retrieve the media type sent by the client.
+     * Возвращает тип мультимедиа, отправленный клиентом.
      *
-     * Do not trust the value returned by this method. A client could send
-     * a malicious media type with the intention to corrupt or hack your
-     * application.
+     * Не доверяйте значению, возвращаемому этим методом. 
+     * Клиент может отправить вредоносный тип носителя с намерением 
+     * повредить или взломать ваше приложение.
      *
-     * Implementations SHOULD return the value stored in the "type" key of
-     * the file in the $_FILES array.
+     * Реализации ДОЛЖНЫ возвращать значение, 
+     * хранящееся в ключе "type" файла в массиве $_FILES.
      *
-     * @return string|null The media type sent by the client or null if none
-     *     was provided.
+     * @return string|null Тип носителя, отправленный клиентом, или null, 
+     * если он не был указан.
      */
     public function getClientMediaType();
 }

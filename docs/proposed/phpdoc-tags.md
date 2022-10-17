@@ -1,19 +1,19 @@
 PSR-19: PHPDoc tags
 =============
 
-## Table Of Contents
+## Оглавление
 
-- [1. Introduction](#1-introduction)
-- [2. Conventions Used In This Document](#2-conventions-used-in-this-document)
-- [3. Definitions](#3-definitions)
-- [4. Inheritance](#4-inheritance)
-  - [4.1. Making inheritance explicit using the @inheritDoc tag](#41-making-inheritance-explicit-using-the-inheritdoc-tag)
-  - [4.2. Using the {@inheritDoc} inline tag to augment a Description](#42-using-the-inheritdoc-inline-tag-to-augment-a-description)
-  - [4.3. Element-specific inherited parts](#43-element-specific-inherited-parts)
-    - [4.3.1. Class Or Interface](#431-class-or-interface)
-    - [4.3.2. Function Or Method](#432-function-or-method)
-    - [4.3.3. Constant Or Property](#433-constant-or-property)
-- [5. Tags](#5-tags)
+- [1. Введение](#1-introduction)
+- [2. Условные обозначения, используемые в этом документе](#2-conventions-used-in-this-document)
+- [3. Определения](#3-definitions)
+- [4. Наследование](#4-inheritance)
+  - [4.1. Явное наследование с помощью тега @inheritDoc](#41-making-inheritance-explicit-using-the-inheritdoc-tag)
+  - [4.2. Использование встроенного тега {@inheritDoc} для дополнения описания](#42-using-the-inheritdoc-inline-tag-to-augment-a-description)
+  - [4.3. Унаследованные части, зависящие от элемента](#43-element-specific-inherited-parts)
+    - [4.3.1. Класс или интерфейс](#431-class-or-interface)
+    - [4.3.2. Функция или метод](#432-function-or-method)
+    - [4.3.3. Константа или свойство](#433-constant-or-property)
+- [5. Теги](#5-tags)
   - [5.1.  @api](#51-api)
   - [5.2.  @author](#52-author)
   - [5.3.  @copyright](#53-copyright)
@@ -34,67 +34,56 @@ PSR-19: PHPDoc tags
   - [5.18. @var](#518-var)
   - [5.19. @version](#519-version)
 
-## 1. Introduction
+## 1. Введение
 
-The main purpose of this PSR is to provide a complete catalog of Tags in
-the [PHPDoc standard][PHPDOC_PSR].
+Основная цель этого PSR — предоставить полный каталог тегов в [стандарте PHPDoc][PHPDOC_PSR].
 
-This document SHALL NOT:
+Этот документ НЕ ДОЛЖЕН:
 
-* Describe a catalog of Annotations.
-* Describe best practices or recommendations for Coding Standards on the
-  application of the PHPDoc standard. This document is limited to a formal
-  specification of syntax and intention.
+* Опиcывать каталог аннотаций.
+* Опиcывать лучшие практики или рекомендации для стандартов кодирования по применению стандарта PHPDoc. Этот документ ограничен формальной спецификацией синтаксиса и намерений.
 
-## 2. Conventions Used In This Document
+## 2. Условные обозначения, используемые в этом документе
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][RFC2119].
+Слова «НЕОБХОДИМО» / «ДОЛЖНО» ("MUST"), «НЕДОПУСТИМО» ("MUST NOT"),
+«ТРЕБУЕТСЯ» ("REQUIRED"), «НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"),
+«СЛЕДУЕТ» ("SHOULD"), «НЕ СЛЕДУЕТ» ("SHOULD NOT"),
+«РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
+«НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC-2119] (и его [переводе]).
 
-## 3. Definitions
 
-See the Definitions section of the [PHPDoc PSR][PHPDOC_PSR], as those definitions
-apply here as well.
+## 3. Определения
 
-## 4. Regarding Inheritance
+См. раздел «Определения» в [PHPDoc PSR][PHPDOC_PSR], так как эти определения применимы и здесь.
 
-A PHPDoc that is associated with a "Structural Element" that implements, extends
-or overrides a "Structural Element" has the ability to inherit parts of
-information from the PHPDoc associated with the "Structural Element" that is
-implemented, extended or overridden.
+## 4. О наследовании
 
-The PHPDoc for every type of "Structural Element" MUST inherit the following
-parts if that part is absent:
+Документ PHPDoc, связанный со «Структурным элементом», который реализует, расширяет или переопределяет «Структурный элемент», имеет возможность наследовать части информации из документа PHPDoc, связанного с «Структурным элементом», который реализован, расширен или переопределен.
 
-* [Summary]([PHPDOC_PSR]#51-summary)
-* [Description]([PHPDOC_PSR]#52-description) and
-* A specific subset of [Tags]([PHPDOC_PSR]#53-tags):
+PHPDoc для каждого типа «Структурного элемента» ДОЛЖЕН наследовать следующие части, если эта часть отсутствует:
+
+* [Резюме](#51-summary)
+* [Описание](#52-description) и
+* Определенное подмножество [Тегов](#53-tags):
   * [@author](#52-author)
   * [@copyright](#53-copyright)
   * [@version](#519-version)
 
-The PHPDoc for each type of "Structural Element" MUST also inherit a
-specialized subset of tags depending on which "Structural Element" is
-associated.
+PHPDoc для каждого типа «Структурного элемента» ДОЛЖЕН также наследовать
+специализированное подмножество тегов в зависимости от того, какой «Структурный элемент»
+связан с тегом.
 
-If a PHPDoc does not feature a part, such as Summary or Description, that is
-present in the PHPDoc of a super-element, then that part is always implicitly
-inherited.
-The following is a list of all elements whose DocBlocks are able to inherit
-information from a super-element's DocBlock:
+Если в PHPDoc нет такой части, как Summary или Description, которая присутствует в PHPDoc суперэлемента, то эта часть всегда неявно наследуется.
 
-1. a Class' or Interface's DocBlock can inherit information from a Class or
-   Interface which it extends.
-2. a Property's DocBlock can inherit information from a Property with the same
-   name that is declared in a superclass.
-3. a Method's DocBlock can inherit information from a Method with the same
-   name that is declared in a superclass.
-4. a Method's DocBlock can inherit information from a Method with the same
-   name that is declared in an implemented interface in the current Class
-   or that is implemented in a superclass.
+Ниже приведен список всех элементов, чьи DocBlocks могут наследовать информацию от DocBlock суперэлемента:
 
-> For example:
+1. DocBlock класса или интерфейса может наследовать информацию от класса или интерфейса, который он расширяет.
+2. DocBlock свойства может наследовать информацию от свойства с тем же именем, которое объявлено в суперклассе.
+3. DocBlock метода может наследовать информацию от метода с тем же именем, которое объявлено в суперклассе.
+4. DocBlock метода может наследовать информацию от метода с тем же именем, который объявлен в реализованном интерфейсе в текущем классе или реализован в суперклассе.
+
+> Например:
 >
 > Let's assume you have a method `\SubClass::myMethod()` and its class
 > `\SubClass` extends the class `\SuperClass`. And in the class `\SuperClass`
@@ -1109,4 +1098,4 @@ class Foo
 [SEMVER2]:      http://www.semver.org
 [PHP_SUBSTR]:   https://php.net/manual/function.substr.php
 [SPDX]:         https://www.spdx.org/licenses
-[PHPDOC_PSR]:   https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md
+[PHPDOC_PSR]:   /proposed/phpdoc/

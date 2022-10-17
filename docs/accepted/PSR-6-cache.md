@@ -21,7 +21,8 @@
 «НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
 как это описано в [RFC-2119] (и его [переводе]).
 
-[RFC 2119]: http://tools.ietf.org/html/rfc2119
+[RFC-2119]:  http://www.ietf.org/rfc/rfc2119.txt
+[переводе]: http://rfc.com.ru/rfc2119.htm
 
 ## Цель
 
