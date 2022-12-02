@@ -77,7 +77,7 @@
 [psr1]: accepted/PSR-1-basic-coding-standard.md
 [psr2]: accepted/PSR-2-coding-style-guide.md
 [psr3]: accepted/PSR-3-logger-interface.md
-[psr4]: accepted/PSR-4-autoloader-meta.md
+[psr4]: accepted/PSR-4-autoloader.md
 [psr5]: proposed/phpdoc.md
 [psr6]: accepted/PSR-6-cache.md
 [psr7]: accepted/PSR-7-http-message.md
