@@ -81,16 +81,20 @@
 [psr5]: proposed/phpdoc.md
 [psr6]: accepted/PSR-6-cache.md
 [psr7]: accepted/PSR-7-http-message.md
-[psr8]: proposed/psr-8-hug/
-[psr9]: proposed/security-disclosure-publication.md
-[psr10]: proposed/security-reporting-process.md
-[psr11]: accepted/PSR-11-container.md
+
+[//]: # ([psr8]: proposed/psr-8-hug/)
+[//]: # ([psr9]: proposed/security-disclosure-publication.md)
+[//]: # ([psr10]: proposed/security-reporting-process.md)
+
+[//]: # ([psr11]: accepted/PSR-11-container.md)
 [psr12]: accepted/PSR-12-extended-coding-style-guide.md
-[psr13]: accepted/PSR-13-links.md
-[psr14]: accepted/PSR-14-event-dispatcher.md
-[psr15]: accepted/PSR-15-request-handlers.md
-[psr16]: accepted/PSR-16-simple-cache.md
-[psr17]: accepted/PSR-17-http-factory.md
-[psr18]: accepted/PSR-18-http-client.md
+
+[//]: # ([psr13]: accepted/PSR-13-links.md)
+[//]: # ([psr14]: accepted/PSR-14-event-dispatcher.md)
+[//]: # ([psr15]: accepted/PSR-15-request-handlers.md)
+[//]: # ([psr16]: accepted/PSR-16-simple-cache.md)
+[//]: # ([psr17]: accepted/PSR-17-http-factory.md)
+[//]: # ([psr18]: accepted/PSR-18-http-client.md)
 [psr19]: proposed/phpdoc-tags.md
-[psr20]: proposed/clock.md
+
+[//]: # ([psr20]: proposed/clock.md)
