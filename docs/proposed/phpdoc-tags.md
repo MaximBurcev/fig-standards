@@ -1099,3 +1099,5 @@ class Foo
 [PHP_SUBSTR]:   https://php.net/manual/function.substr.php
 [SPDX]:         https://www.spdx.org/licenses
 [PHPDOC_PSR]:   /proposed/phpdoc/
+
+<!--s_links--><!--check code--><!--/s_links-->

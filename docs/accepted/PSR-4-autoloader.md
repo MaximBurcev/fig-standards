@@ -80,3 +80,5 @@
 [примерах]: /accepted/PSR-4-autoloader-examples/
 
 [переводе]: http://rfc.com.ru/rfc2119.htm
+
+<!--s_links--><!--check code--><!--/s_links-->

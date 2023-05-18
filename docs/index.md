@@ -98,3 +98,5 @@
 [psr19]: proposed/phpdoc-tags.md
 
 [//]: # ([psr20]: proposed/clock.md)
+
+<!--s_links--><!--check code--><!--/s_links-->

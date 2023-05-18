@@ -425,3 +425,5 @@ interface InvalidArgumentException extends CacheException
 
 Начиная с версии [psr/cache 2.0](https://packagist.org/packages/psr/cache#2.0.0), вышеуказанные интерфейсы были обновлены для добавления подсказки типа аргумента.
 Начиная с версии [psr/cache 3.0](https://packagist.org/packages/psr/cache#3.0.0), вышеуказанные интерфейсы были обновлены для добавления подсказки возвращаемого типа. Ссылки на `array|\Traversable` были заменены на `iterable`.
+
+<!--s_links--><!--check code--><!--/s_links-->

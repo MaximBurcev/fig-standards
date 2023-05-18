@@ -80,3 +80,4 @@ spl_autoload_register('autoload');
 
 * [http://gist.github.com/221634](http://gist.github.com/221634)
 
+<!--s_links--><!--check code--><!--/s_links-->

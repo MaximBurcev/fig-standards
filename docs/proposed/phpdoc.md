@@ -590,3 +590,5 @@ public $array = null;
 [TAG_PSR]:      TBD
 [RFC-2119]:  http://www.ietf.org/rfc/rfc2119.txt
 [переводе]: http://rfc.com.ru/rfc2119.htm
+
+<!--s_links--><!--check code--><!--/s_links-->
