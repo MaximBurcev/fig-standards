@@ -1,6 +1,6 @@
 PSR-19: PHPDoc tags
 =============
-<!--s_links--><!--check code--><!--/s_links-->
+<!--s_links--> <!--check code--> <!--/s_links-->
 ## Оглавление
 
 - [1. Введение](#1-introduction)
