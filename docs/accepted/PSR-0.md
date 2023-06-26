@@ -4,10 +4,10 @@
 > **Устарело** — по состоянию на 21 октября 2014 г. PSR-0 помечен как устаревший. [PSR-4] теперь рекомендуется
 как альтернатива.
 
-[PSR-4]: ../accepted/PSR-4-autoloader-meta.md
+[PSR-4]: ../accepted/PSR-4-autoloader.md
 
 Ниже описаны обязательные требования, которые необходимо соблюдать  для совместимости с автозагрузчиком.
-
+<!--s_links--><!--check code--><!--/s_links-->
 Обязательно
 ---------
 
@@ -80,4 +80,4 @@ spl_autoload_register('autoload');
 
 * [http://gist.github.com/221634](http://gist.github.com/221634)
 
-<!--s_links--><!--check code--><!--/s_links-->
+
