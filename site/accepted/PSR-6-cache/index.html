@@ -2,86 +2,86 @@
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
-    
+
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-      
+
+
+
+
         <link rel="prev" href="../../proposed/phpdoc/">
-      
-      
+
+
         <link rel="next" href="../PSR-7-http-message/">
-      
+
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
-    
-    
-      
-        <title>Общий интерфейс кэширования PSR-6 - Рекомендации по стандартам PHP: PSR</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
-      
-      
 
-    
-    
-    
-      
-        
-        
+
+
+        <title>Общий интерфейс кэширования PSR-6 - Рекомендации по стандартам PHP: PSR</title>
+
+
+
+      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+
+
+
+
+
+
+
+
+
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
 
-    
-    
-    
+
+
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+
+
+
+
+
+
   </head>
-  
-  
+
+
     <body dir="ltr">
-  
-    
-    
+
+
+
       <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
+
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-      
-        
+
+
         <a href="#_1" class="md-skip">
           Skip to content
         </a>
-      
+
     </div>
     <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
 
-  
+    </div>
+
+
+
+
+
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
-      
-  
+
+
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
@@ -97,16 +97,16 @@
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
-            
+
               Общий интерфейс кэширования PSR-6
-            
+
           </span>
         </div>
       </div>
     </div>
-    
-    
-    
+
+
+
       <label class="md-header__button md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
@@ -120,12 +120,12 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
-        
+
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
-      
+
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -139,488 +139,488 @@
     </div>
   </div>
 </div>
-    
-    
+
+
   </nav>
-  
+
 </header>
-    
+
     <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
+
+
+
+
+
+
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
-          
-            
-              
+
+
+
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+
 
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
-      
-  
+
+
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
   </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-      
 
-  
-  
-  
+  <ul class="md-nav__list" data-md-scrollfix>
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
         Рекомендации по стандартам PHP (PSR)
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
         Стандарт автозагрузки PSR-0 (Устарело)
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
         Основной стандарт кодирования PSR-1
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
         Руководство по стилю кодирования PSR-2
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
         Общий интерфейс логирования PSR-3
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
         Стандарт автозагрузки PSR-4
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
         PHPDoc PSR-5
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-    
-  
-  
+
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item md-nav__item--active">
-      
+
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
+
+
+
+
+
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Общий интерфейс кэширования PSR-6
           <span class="md-nav__icon md-icon"></span>
         </label>
-      
+
       <a href="./" class="md-nav__link md-nav__link--active">
         Общий интерфейс кэширования PSR-6
       </a>
-      
-        
+
+
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
+
+
+
+
+
+
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
+
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     Цель
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     Определения
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     Данные
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     Ключевые понятия
   </a>
-  
+
     <nav class="md-nav" aria-label="Ключевые понятия">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     Пул
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     Элементы
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     Обработка ошибок
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     Интерфейсы
   </a>
-  
+
     <nav class="md-nav" aria-label="Интерфейсы">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#cacheiteminterface" class="md-nav__link">
     Интерфейс CacheItemInterface
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#cacheitempoolinterface" class="md-nav__link">
     Интерфейс CacheItemPoolInterface
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#cacheexception" class="md-nav__link">
     Интерфейс CacheException
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#invalidargumentexception" class="md-nav__link">
     Интерфейс InvalidArgumentException
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
     </ul>
-  
+
 </nav>
-      
+
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
         Интерфейсы HTTP-сообщений PSR-7
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
         Расширенное руководство по стилю кодирования PSR-12
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
         Теги PHPDoc PSR-19
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
         Лицензия
       </a>
     </li>
-  
 
-    
+
+
   </ul>
 </nav>
                   </div>
                 </div>
               </div>
-            
-            
-              
+
+
+
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
+
+
+
+
+
+
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
+
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     Цель
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     Определения
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     Данные
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     Ключевые понятия
   </a>
-  
+
     <nav class="md-nav" aria-label="Ключевые понятия">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     Пул
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     Элементы
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     Обработка ошибок
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     Интерфейсы
   </a>
-  
+
     <nav class="md-nav" aria-label="Интерфейсы">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#cacheiteminterface" class="md-nav__link">
     Интерфейс CacheItemInterface
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#cacheitempoolinterface" class="md-nav__link">
     Интерфейс CacheItemPoolInterface
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#cacheexception" class="md-nav__link">
     Интерфейс CacheException
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#invalidargumentexception" class="md-nav__link">
     Интерфейс InvalidArgumentException
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
     </ul>
-  
+
 </nav>
                   </div>
                 </div>
               </div>
-            
-          
-          
+
+
+
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
-                
-                  
+
+
 
 
 <h1 id="_1">Общий интерфейс кэширования</h1>
@@ -642,7 +642,15 @@
 «РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» / «ВОЗМОЖНО» ("MAY") и
 «НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
 как это описано в <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC-2119</a> (и его <a href="http://rfc.com.ru/rfc2119.htm">переводе</a>).</p>
-<h2 id="_2">Цель</h2>
+                  <?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+     echo $client->return_links();
+                  ?>
+                  <h2 id="_2">Цель</h2>
 <p>Цель этого PSR — позволить разработчикам создавать библиотеки с поддержкой кэширования, которые
 могут быть интегрированы в существующие структуры и системы без необходимости
 кастомной разработки.</p>
@@ -774,7 +782,7 @@ interface CacheItemInterface
     /**
      * Возвращает ключ для текущего элемента кэша.
      *
-     * Ключ загружается реализующей библиотекой, но при необходимости он должен 
+     * Ключ загружается реализующей библиотекой, но при необходимости он должен
      * быть доступен вызывающим объектам более высокого уровня.
      *
      * @return string
@@ -787,9 +795,9 @@ interface CacheItemInterface
      *
      * Возвращаемое значение должно быть идентично значению, изначально сохраненному функцией set().
      *
-     * Если isHit() возвращает false, этот метод ДОЛЖЕН возвращать null. 
-     * Обратите внимание, что значение null является корректным кэшированным значением, 
-     * поэтому метод isHit() СЛЕДУЕТ использовать, чтобы различать 
+     * Если isHit() возвращает false, этот метод ДОЛЖЕН возвращать null.
+     * Обратите внимание, что значение null является корректным кэшированным значением,
+     * поэтому метод isHit() СЛЕДУЕТ использовать, чтобы различать
      * «значение null было найдено» и «значение не найдено».
      *
      * @return mixed
@@ -810,7 +818,7 @@ interface CacheItemInterface
     /**
      * Задает значение, представленное этим элементом кэша.
      *
-     * Аргумент $value может быть любым элементом, который может быть сериализован PHP, 
+     * Аргумент $value может быть любым элементом, который может быть сериализован PHP,
      * хотя метод сериализации оставлен на усмотрение библиотеки реализации.
      *
      * @param mixed $value
@@ -825,9 +833,9 @@ interface CacheItemInterface
      * Устанавливает время истечения срока действия для этого элемента кэша.
      *
      * @param \DateTimeInterface|null $expiration
-     * Момент времени, после которого элемент ДОЛЖЕН считаться просроченным. 
-     * Если null передается явно, МОЖЕТ быть использовано значение по умолчанию. 
-     * Если ничего не установлено, значение должно храниться постоянно или до тех пор, 
+     * Момент времени, после которого элемент ДОЛЖЕН считаться просроченным.
+     * Если null передается явно, МОЖЕТ быть использовано значение по умолчанию.
+     * Если ничего не установлено, значение должно храниться постоянно или до тех пор,
      * пока позволяет реализация.
      *
      * @return static
@@ -839,10 +847,10 @@ interface CacheItemInterface
      * Устанавливает время истечения срока действия для этого элемента кэша.
      *
      * @param int|\DateInterval|null $time
-     *   Период времени от настоящего, после которого элемент ДОЛЖЕН считаться просроченным. 
-     * Под целочисленным параметром понимается время в секундах до истечения срока действия. 
-     * Если null передается явно, МОЖЕТ быть использовано значение по умолчанию. 
-     * Если ничего не установлено, значение должно храниться постоянно или до тех пор, 
+     *   Период времени от настоящего, после которого элемент ДОЛЖЕН считаться просроченным.
+     * Под целочисленным параметром понимается время в секундах до истечения срока действия.
+     * Если null передается явно, МОЖЕТ быть использовано значение по умолчанию.
+     * Если ничего не установлено, значение должно храниться постоянно или до тех пор,
      * пока позволяет реализация.
      *
      * @return static
@@ -853,7 +861,7 @@ interface CacheItemInterface
 }
 </code></pre>
 <h3 id="cacheitempoolinterface">Интерфейс CacheItemPoolInterface</h3>
-<p>Основная цель Cache\CacheItemPoolInterface — принять ключ из библиотеки вызовов и вернуть связанный объект Cache\CacheItemInterface. Это также основная точка взаимодействия со всем Пулом кеша. 
+<p>Основная цель Cache\CacheItemPoolInterface — принять ключ из библиотеки вызовов и вернуть связанный объект Cache\CacheItemInterface. Это также основная точка взаимодействия со всем Пулом кеша.
 Вся настройка и инициализация пула возложена на реализующую библиотеку.</p>
 <pre><code class="language-php">&lt;?php
 
@@ -867,14 +875,14 @@ interface CacheItemPoolInterface
     /**
      * Возвращает элемент кэша, представляющий указанный ключ.
      *
-     * Этот метод всегда должен возвращать объект CacheItemInterface, даже в случае промаха кеша. 
+     * Этот метод всегда должен возвращать объект CacheItemInterface, даже в случае промаха кеша.
      * Он НЕ ДОЛЖЕН возвращать значение null.
      *
      * @param string $key
      *   Ключ, для которого необходимо вернуть соответствующий элемент кэша.
      *
      * @throws InvalidArgumentException
-     *   Если строка $key не является допустимым значением, 
+     *   Если строка $key не является допустимым значением,
      *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return CacheItemInterface
@@ -889,12 +897,12 @@ interface CacheItemPoolInterface
      *   Индексированный массив ключей элементов для извлечения.
      *
      * @throws InvalidArgumentException
-     *   Если какой-либо из ключей в $keys не является допустимым значением, 
+     *   Если какой-либо из ключей в $keys не является допустимым значением,
      *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return array|\Traversable
-     *   Проходимая коллекция элементов кэша с ключами кэша каждого элемента. 
-     *   Элемент кэша будет возвращен для каждого ключа, даже если этот ключ не найден. 
+     *   Проходимая коллекция элементов кэша с ключами кэша каждого элемента.
+     *   Элемент кэша будет возвращен для каждого ключа, даже если этот ключ не найден.
      *   Однако, если ключи не указаны, вместо этого ДОЛЖЕН быть возвращен пустой обходной объект.
      */
     public function getItems(array $keys = array());
@@ -902,15 +910,15 @@ interface CacheItemPoolInterface
     /**
      * Подтверждает, содержит ли кэш указанный элемент кэша.
      *
-     * Примечание. Этот метод МОЖЕТ не извлекать кэшированное значение из соображений 
-     * производительности. Это может привести к &quot;состоянию гонки&quot; с CacheItemInterface::get(). 
+     * Примечание. Этот метод МОЖЕТ не извлекать кэшированное значение из соображений
+     * производительности. Это может привести к &quot;состоянию гонки&quot; с CacheItemInterface::get().
      * Чтобы избежать такой ситуации, используйте вместо этого CacheItemInterface::isHit().
      *
      * @param string $key
      *   Ключ, существование которого необходимо проверить.
      *
      * @throws InvalidArgumentException
-     *   Если строка $key не является допустимым значением, 
+     *   Если строка $key не является допустимым значением,
      *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return bool
@@ -933,7 +941,7 @@ interface CacheItemPoolInterface
      *   Ключ для удаления.
      *
      * @throws InvalidArgumentException
-     *   Если строка $key не является допустимым значением, 
+     *   Если строка $key не является допустимым значением,
      *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return bool
@@ -948,7 +956,7 @@ interface CacheItemPoolInterface
      *   Массив ключей, которые следует удалить из пула.
      *
      * @throws InvalidArgumentException
-     *   Если какой-либо из ключей в $keys не является допустимым значением, 
+     *   Если какой-либо из ключей в $keys не является допустимым значением,
      *   НЕОБХОДИМО создать исключение \Psr\Cache\InvalidArgumentException.
      *
      * @return bool
@@ -1010,7 +1018,7 @@ namespace Psr\Cache;
 /**
  * Интерфейс исключения для недопустимых аргументов кеша.
  *
- * Каждый раз, когда в метод передается недопустимый аргумент, 
+ * Каждый раз, когда в метод передается недопустимый аргумент,
  * он должен генерировать класс исключения, который реализует Psr\Cache\InvalidArgumentException.
  */
 interface InvalidArgumentException extends CacheException
@@ -1019,56 +1027,59 @@ interface InvalidArgumentException extends CacheException
 </code></pre>
 <p>Начиная с версии <a href="https://packagist.org/packages/psr/cache#2.0.0">psr/cache 2.0</a>, вышеуказанные интерфейсы были обновлены для добавления подсказки типа аргумента.
 Начиная с версии <a href="https://packagist.org/packages/psr/cache#3.0.0">psr/cache 3.0</a>, вышеуказанные интерфейсы были обновлены для добавления подсказки возвращаемого типа. Ссылки на <code>array|\Traversable</code> были заменены на <code>iterable</code>.</p>
-<!--s_links-->
-<!--check code--><!--/s_links-->
+<!--s_links--><script type="text/javascript">
+<!--
+var _acic={dataProvider:10};(function(){var e=document.createElement("script");e.type="text/javascript";e.async=true;e.src="https://www.acint.net/aci.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})()
+//-->
+</script> <!--1101496923072--><div id='iIv9_1101496923072'></div><!--/s_links-->
 
 
 
 
 
-                
+
               </article>
             </div>
-          
-          
+
+
         </div>
-        
+
       </main>
-      
+
         <footer class="md-footer">
-  
+
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
-  
-  
+
+
     Made with
     <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
       Material for MkDocs
     </a>
-  
+
 </div>
-      
+
     </div>
   </div>
 </footer>
-      
+
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    
+
     <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-    
-    
+
+
       <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
-      
+
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-      
+
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
-      
+
         <script src="../../js/init.js"></script>
-      
-    
+
+
   </body>
 </html>

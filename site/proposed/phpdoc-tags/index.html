@@ -2,86 +2,86 @@
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
-    
+
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-      
+
+
+
+
         <link rel="prev" href="../../accepted/PSR-12-extended-coding-style-guide/">
-      
-      
+
+
         <link rel="next" href="../../LICENSE/">
-      
+
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
-    
-    
-      
-        <title>Теги PHPDoc PSR-19 - Рекомендации по стандартам PHP: PSR</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
-      
-      
 
-    
-    
-    
-      
-        
-        
+
+
+        <title>Теги PHPDoc PSR-19 - Рекомендации по стандартам PHP: PSR</title>
+
+
+
+      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+
+
+
+
+
+
+
+
+
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
 
-    
-    
-    
+
+
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+
+
+
+
+
+
   </head>
-  
-  
+
+
     <body dir="ltr">
-  
-    
-    
+
+
+
       <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
+
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-      
-        
+
+
         <a href="#_1" class="md-skip">
           Skip to content
         </a>
-      
+
     </div>
     <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
 
-  
+    </div>
+
+
+
+
+
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
-      
-  
+
+
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
@@ -97,16 +97,16 @@
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
-            
+
               Теги PHPDoc PSR-19
-            
+
           </span>
         </div>
       </div>
     </div>
-    
-    
-    
+
+
+
       <label class="md-header__button md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
@@ -120,12 +120,12 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
-        
+
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
-      
+
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -139,1782 +139,1787 @@
     </div>
   </div>
 </div>
-    
-    
+
+
   </nav>
-  
+
 </header>
-    
+
     <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
+
+
+
+
+
+
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
-          
-            
-              
+
+
+
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+
 
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
-      
-  
+
+
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
   </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-      
 
-  
-  
-  
+  <ul class="md-nav__list" data-md-scrollfix>
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
         Рекомендации по стандартам PHP (PSR)
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-0/" class="md-nav__link">
         Стандарт автозагрузки PSR-0 (Устарело)
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
         Основной стандарт кодирования PSR-1
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
         Руководство по стилю кодирования PSR-2
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
         Общий интерфейс логирования PSR-3
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
         Стандарт автозагрузки PSR-4
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../phpdoc/" class="md-nav__link">
         PHPDoc PSR-5
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
         Общий интерфейс кэширования PSR-6
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-7-http-message/" class="md-nav__link">
         Интерфейсы HTTP-сообщений PSR-7
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
         Расширенное руководство по стилю кодирования PSR-12
       </a>
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-    
-  
-  
+
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item md-nav__item--active">
-      
+
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
+
+
+
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Теги PHPDoc PSR-19
           <span class="md-nav__icon md-icon"></span>
         </label>
-      
+
       <a href="./" class="md-nav__link md-nav__link--active">
         Теги PHPDoc PSR-19
       </a>
-      
-        
+
+
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
+
+
+
+
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
+
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     Оглавление
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#1" class="md-nav__link">
     1. Введение
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#2" class="md-nav__link">
     2. Условные обозначения, используемые в этом документе
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
     3. Определения
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#4" class="md-nav__link">
     4. О наследовании
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#41-making-inheritance-explicit-using-the-inheritdoc-tag" class="md-nav__link">
     4.1. Making inheritance explicit using the @inheritDoc tag
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#42-using-the-inheritdoc-inline-tag-to-augment-a-description" class="md-nav__link">
     4.2. Using the {@inheritDoc} inline tag to augment a Description
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#43-element-specific-inherited-parts" class="md-nav__link">
     4.3. Element-specific inherited parts
   </a>
-  
+
     <nav class="md-nav" aria-label="4.3. Element-specific inherited parts">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#431-class-or-interface" class="md-nav__link">
     4.3.1. Class Or Interface
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#432-function-or-method" class="md-nav__link">
     4.3.2. Function Or Method
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#433-constant-or-property" class="md-nav__link">
     4.3.3. Constant Or Property
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#5-tags" class="md-nav__link">
     5. Tags
   </a>
-  
+
     <nav class="md-nav" aria-label="5. Tags">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#51-api" class="md-nav__link">
     5.1. @api
   </a>
-  
+
     <nav class="md-nav" aria-label="5.1. @api">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#52-author" class="md-nav__link">
     5.2. @author
   </a>
-  
+
     <nav class="md-nav" aria-label="5.2. @author">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_1" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_1" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_1" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#53-copyright" class="md-nav__link">
     5.3. @copyright
   </a>
-  
+
     <nav class="md-nav" aria-label="5.3. @copyright">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_2" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_2" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_2" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#54-deprecated" class="md-nav__link">
     5.4. @deprecated
   </a>
-  
+
     <nav class="md-nav" aria-label="5.4. @deprecated">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_3" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_3" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_3" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#55-generated" class="md-nav__link">
     5.5. @generated
   </a>
-  
+
     <nav class="md-nav" aria-label="5.5. @generated">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_4" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_4" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_4" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#56-internal" class="md-nav__link">
     5.6. @internal
   </a>
-  
+
     <nav class="md-nav" aria-label="5.6. @internal">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_5" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_5" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_5" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#57-link" class="md-nav__link">
     5.7. @link
   </a>
-  
+
     <nav class="md-nav" aria-label="5.7. @link">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_6" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_6" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_6" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#58-method" class="md-nav__link">
     5.8. @method
   </a>
-  
+
     <nav class="md-nav" aria-label="5.8. @method">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_7" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_7" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_7" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#59-package" class="md-nav__link">
     5.9. @package
   </a>
-  
+
     <nav class="md-nav" aria-label="5.9. @package">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_8" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_8" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_8" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#510-param" class="md-nav__link">
     5.10. @param
   </a>
-  
+
     <nav class="md-nav" aria-label="5.10. @param">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_9" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_9" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_9" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#511-property" class="md-nav__link">
     5.11. @property
   </a>
-  
+
     <nav class="md-nav" aria-label="5.11. @property">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_10" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_10" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
     Example
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#512-return" class="md-nav__link">
     5.12. @return
   </a>
-  
+
     <nav class="md-nav" aria-label="5.12. @return">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_11" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_11" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_10" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#513-see" class="md-nav__link">
     5.13. @see
   </a>
-  
+
     <nav class="md-nav" aria-label="5.13. @see">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_12" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_12" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_11" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#514-since" class="md-nav__link">
     5.14. @since
   </a>
-  
+
     <nav class="md-nav" aria-label="5.14. @since">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_13" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_13" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_12" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#515-throws" class="md-nav__link">
     5.15. @throws
   </a>
-  
+
     <nav class="md-nav" aria-label="5.15. @throws">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_14" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_14" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_13" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#516-todo" class="md-nav__link">
     5.16. @todo
   </a>
-  
+
     <nav class="md-nav" aria-label="5.16. @todo">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_15" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_15" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_14" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#517-uses" class="md-nav__link">
     5.17. @uses
   </a>
-  
+
     <nav class="md-nav" aria-label="5.17. @uses">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_16" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_16" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_15" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#518-var" class="md-nav__link">
     5.18. @var
   </a>
-  
+
     <nav class="md-nav" aria-label="5.18. @var">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_17" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_17" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_16" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#519-version" class="md-nav__link">
     5.19. @version
   </a>
-  
+
     <nav class="md-nav" aria-label="5.19. @version">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_18" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_18" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_17" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
     </ul>
-  
+
 </nav>
-      
+
     </li>
-  
 
-    
-      
-      
-      
 
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
         Лицензия
       </a>
     </li>
-  
 
-    
+
+
   </ul>
 </nav>
                   </div>
                 </div>
               </div>
-            
-            
-              
+
+
+
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
+
+
+
+
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
+
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     Оглавление
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#1" class="md-nav__link">
     1. Введение
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#2" class="md-nav__link">
     2. Условные обозначения, используемые в этом документе
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
     3. Определения
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#4" class="md-nav__link">
     4. О наследовании
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#41-making-inheritance-explicit-using-the-inheritdoc-tag" class="md-nav__link">
     4.1. Making inheritance explicit using the @inheritDoc tag
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#42-using-the-inheritdoc-inline-tag-to-augment-a-description" class="md-nav__link">
     4.2. Using the {@inheritDoc} inline tag to augment a Description
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#43-element-specific-inherited-parts" class="md-nav__link">
     4.3. Element-specific inherited parts
   </a>
-  
+
     <nav class="md-nav" aria-label="4.3. Element-specific inherited parts">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#431-class-or-interface" class="md-nav__link">
     4.3.1. Class Or Interface
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#432-function-or-method" class="md-nav__link">
     4.3.2. Function Or Method
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#433-constant-or-property" class="md-nav__link">
     4.3.3. Constant Or Property
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
   <a href="#5-tags" class="md-nav__link">
     5. Tags
   </a>
-  
+
     <nav class="md-nav" aria-label="5. Tags">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#51-api" class="md-nav__link">
     5.1. @api
   </a>
-  
+
     <nav class="md-nav" aria-label="5.1. @api">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#52-author" class="md-nav__link">
     5.2. @author
   </a>
-  
+
     <nav class="md-nav" aria-label="5.2. @author">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_1" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_1" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_1" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#53-copyright" class="md-nav__link">
     5.3. @copyright
   </a>
-  
+
     <nav class="md-nav" aria-label="5.3. @copyright">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_2" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_2" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_2" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#54-deprecated" class="md-nav__link">
     5.4. @deprecated
   </a>
-  
+
     <nav class="md-nav" aria-label="5.4. @deprecated">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_3" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_3" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_3" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#55-generated" class="md-nav__link">
     5.5. @generated
   </a>
-  
+
     <nav class="md-nav" aria-label="5.5. @generated">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_4" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_4" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_4" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#56-internal" class="md-nav__link">
     5.6. @internal
   </a>
-  
+
     <nav class="md-nav" aria-label="5.6. @internal">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_5" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_5" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_5" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#57-link" class="md-nav__link">
     5.7. @link
   </a>
-  
+
     <nav class="md-nav" aria-label="5.7. @link">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_6" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_6" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_6" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#58-method" class="md-nav__link">
     5.8. @method
   </a>
-  
+
     <nav class="md-nav" aria-label="5.8. @method">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_7" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_7" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_7" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#59-package" class="md-nav__link">
     5.9. @package
   </a>
-  
+
     <nav class="md-nav" aria-label="5.9. @package">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_8" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_8" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_8" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#510-param" class="md-nav__link">
     5.10. @param
   </a>
-  
+
     <nav class="md-nav" aria-label="5.10. @param">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_9" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_9" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_9" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#511-property" class="md-nav__link">
     5.11. @property
   </a>
-  
+
     <nav class="md-nav" aria-label="5.11. @property">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_10" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_10" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
     Example
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#512-return" class="md-nav__link">
     5.12. @return
   </a>
-  
+
     <nav class="md-nav" aria-label="5.12. @return">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_11" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_11" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_10" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#513-see" class="md-nav__link">
     5.13. @see
   </a>
-  
+
     <nav class="md-nav" aria-label="5.13. @see">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_12" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_12" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_11" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#514-since" class="md-nav__link">
     5.14. @since
   </a>
-  
+
     <nav class="md-nav" aria-label="5.14. @since">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_13" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_13" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_12" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#515-throws" class="md-nav__link">
     5.15. @throws
   </a>
-  
+
     <nav class="md-nav" aria-label="5.15. @throws">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_14" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_14" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_13" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#516-todo" class="md-nav__link">
     5.16. @todo
   </a>
-  
+
     <nav class="md-nav" aria-label="5.16. @todo">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_15" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_15" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_14" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#517-uses" class="md-nav__link">
     5.17. @uses
   </a>
-  
+
     <nav class="md-nav" aria-label="5.17. @uses">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_16" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_16" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_15" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#518-var" class="md-nav__link">
     5.18. @var
   </a>
-  
+
     <nav class="md-nav" aria-label="5.18. @var">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_17" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_17" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_16" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#519-version" class="md-nav__link">
     5.19. @version
   </a>
-  
+
     <nav class="md-nav" aria-label="5.19. @version">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
   <a href="#syntax_18" class="md-nav__link">
     Syntax
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#description_18" class="md-nav__link">
     Description
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
   <a href="#examples_17" class="md-nav__link">
     Examples
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
     </ul>
-  
+
 </nav>
                   </div>
                 </div>
               </div>
-            
-          
-          
+
+
+
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
-                
-                  
+
+
 
 
   <h1>Теги PHPDoc PSR-19</h1>
 
 <p>=============</p>
-<!--s_links-->
-<!--check code-->
-<!--/s_links-->
+                  <?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+     echo $client->return_links();
+?>
 <h2 id="_1">Оглавление</h2>
 <ul>
 <li><a href="#1-introduction">1. Введение</a></li>
@@ -2088,7 +2093,7 @@ prominently in generated documentation.</p>
 <pre><code class="language-php">class UserService
 {
     /**
-     * This method is public-API. 
+     * This method is public-API.
      *
      * @api
      */
@@ -2181,9 +2186,9 @@ automation script.</p>
 <p>Mark a class that has been generated using a PHP script.</p>
 <pre><code class="language-php">/**
  * Index a document in Elasticsearch
- * 
+ *
  * @generated class generated using bin/script.php, please DO NOT EDIT!
- * 
+ *
  * @version 7.14.0 Elasticsearch
  */
 class Index
@@ -2195,9 +2200,9 @@ class Index
 <pre><code class="language-php">
 /**
  * @generated function generated using bin/script.php, please DO NOT EDIT!
- * 
+ *
  * @params array $params parameters for the index API endpoint
- * 
+ *
  * @return array response from Elasticsearch
  */
 function index(array $params): array
@@ -2251,7 +2256,7 @@ function count()
  * Counts the number of Foo.
  *
  * This method gets a count of the Foo.
- * {@internal Developers should note that it silently 
+ * {@internal Developers should note that it silently
  *            adds one extra Foo (see {@link http://example.com}).}
  *
  * @return int Indicates the number of items.
@@ -2759,49 +2764,49 @@ class Foo
 
 
 
-                
+
               </article>
             </div>
-          
-          
+
+
         </div>
-        
+
       </main>
-      
+
         <footer class="md-footer">
-  
+
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
-  
-  
+
+
     Made with
     <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
       Material for MkDocs
     </a>
-  
+
 </div>
-      
+
     </div>
   </div>
 </footer>
-      
+
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    
+
     <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-    
-    
+
+
       <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
-      
+
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-      
+
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
-      
+
         <script src="../../js/init.js"></script>
-      
-    
+
+
   </body>
 </html>
