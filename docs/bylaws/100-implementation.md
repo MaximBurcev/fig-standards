@@ -1,15 +1,15 @@
-# Implementation of FIG 3.0 changes
+# Реализация изменений FIG 3.0
 
-Upon the adoption of these bylaws:
+При принятии настоящего устава:
 
-All currently sitting Secretaries will remain in their positions with no change in their term.
+Все действующие в настоящее время секретари останутся на своих должностях без изменения срока их полномочий.
 
-The recognized Voting Representatives for member projects have 30 days to state their intent to remain member projects. If they do so, the Voting Representative will be recognized as the Project Representative going forward. No new admission vote is necessary. If the Voting Representative does not make any statement for 30 days, the project will be dropped from FIG membership.
+У признанных представителей с правом голоса для проектов-участников есть 30 дней, чтобы заявить о своем намерении оставаться проектами-участниками. В этом случае Представитель с правом голоса будет признан Представителем проекта в будущем. Нет необходимости в новом голосовании. Если представитель с правом голоса не сделает никаких заявлений в течение 30 дней, проект будет исключен из членства в ФИЖ.
 
-The Core Committee will be selected as though there were a 12-member vacancy according to the Vacancy rules above. The timetable of when this vote will occur will be announced by the Secretaries.
+Основной комитет будет выбран так, как если бы было 12 вакансий в соответствии с приведенными выше правилами вакансий. График проведения этого голосования будет объявлен Секретарями.
 
-All previously-approved PSRs will remain approved with no change, and will retain their current PSR number.
+Все ранее утвержденные PSR останутся утвержденными без изменений и сохранят свой текущий номер PSR.
 
-The Editor of any PSR that is in Draft or Needs Review state will have a time limit from the time the Core Committee is seated to form an official Working Group, as defined in these bylaws. If a 5-member working group is formed then the PSR will automatically continue under these rules with no need for re-approval or re-entry. If the 5-member Working Group cannot be formed in that time then the PSR will automatically be listed as Abandoned. The exact timetable will be announced by the Secretaries.
+Редактор любого PSR, находящегося в состоянии «Черновик» или «Требует пересмотра», будет иметь ограничение по времени с момента заседания основного комитета для формирования официальной рабочей группы, как определено в настоящем уставе. Если будет сформирована рабочая группа из 5 человек, PSR автоматически продолжится в соответствии с этими правилами без необходимости повторного утверждения или повторного входа. Если рабочая группа из 5 человек не может быть сформирована за это время, то PSR автоматически будет занесен в список заброшенных. Точное расписание будет объявлено секретарями.
 
-This bylaw (100) may be removed by the Secretaries when it is deemed no longer necessary to be kept and the transition to the new structure is complete.
+Этот устав (100) может быть удален Секретарями, когда будет сочтено, что в его сохранении больше нет необходимости и переход к новой структуре завершен.

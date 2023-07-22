@@ -1,112 +1,112 @@
-# Votes
+# голосов
 
-There are a number of different types of vote, each of which has its own rule set and expected threshold. Unless otherwise specified, all votes take place over a period of two weeks, or until all eligible voters have voted, whichever comes first, and votes are public. Explicit abstentions (+0) will count toward quorum, if applicable, but do not count toward majority.
+Существует несколько различных типов голосования, каждый из которых имеет свой собственный набор правил и ожидаемый порог. Если не указано иное, все голосования проводятся в течение двух недель или до тех пор, пока не проголосуют все имеющие право голоса, в зависимости от того, что наступит раньше, и голосование является публичным. Явные воздержавшиеся (+0) учитываются при определении кворума, если это применимо, но не учитываются при определении большинства.
 
-Non-trivial votes should be preceded by at least two weeks of discussion, although no formal discussion mechanism is required.
+Нетривиальным голосованиям должно предшествовать как минимум двухнедельное обсуждение, хотя формальный механизм обсуждения не требуется.
 
-The mechanics of voting (email, forum, any conventional subject lines, etc.) may be established and publicized by the Secretaries.
+Механизмы голосования (электронная почта, форум, любые обычные темы и т. д.) могут устанавливаться и публиковаться Секретарями.
 
-Votes may be changed at will until the end of the voting period.
+Голоса могут быть изменены по желанию до конца периода голосования.
 
-In some cases, votes may overlap such that an individual would become eligible to cast a vote only as a result of another overlapping vote, such as a membership vote. In all cases, eligibility to vote will be defined based on membership at the moment a given vote starts. For nominations for Secretary or Core Committee member, eligibility to vote will be defined based on membership at the moment the nominating period begins.
+В некоторых случаях голоса могут накладываться друг на друга, так что человек получает право голосовать только в результате другого совпадающего голоса, такого как членское голосование. Во всех случаях право голоса будет определяться на основе членства в момент начала данного голосования. Для кандидатур Секретаря или члена Основного комитета право голоса будет определяться на основе членства на момент начала периода выдвижения кандидатур.
 
-A secretary may trigger any type of vote if appropriate and necessary.
+Секретарь может инициировать голосование любого типа, если это уместно и необходимо.
 
-Rounding of quorums and majorities would occur such that:
+Округление кворумов и большинства будет происходить таким образом, что:
 
-* A vote requiring a quorum of 1/3 of an electorate of 20, 21 or 22 members would require 7 votes to be cast
-* A vote requiring a quorum of 1/3 of an electorate of 23, 24 or 25 members would require 8 votes to be cast
-* A vote requiring a 50% majority with 10 or 11 votes cast would require 6 or more to be in favour to pass
-* A vote requiring a 50% majority with 12 or 13 votes cast would require 7 or more to be in favour to pass
+* Голосование, требующее кворума в 1/3 электората из 20, 21 или 22 членов, потребует 7 голосов.
+* Голосование, требующее кворума в 1/3 электората из 23, 24 или 25 членов, потребует 8 голосов.
+* Голосование, требующее большинства в 50% при 10 или 11 поданных голосах, потребует 6 или более голосов, чтобы пройти.
+* Голосование, требующее большинства в 50% при 12 или 13 поданных голосах, потребует 7 или более голосов, чтобы пройти.
 
-## Vote Types
+## Типы голосования
 
-Most votes are held by the Core Committee, and fall into one of two categories: Approval or Decision.  Unless otherwise specified, any member of the Core Committee or a Secretary may call an Approval or Decision Vote.
+Большинство голосов принадлежат основному комитету и относятся к одной из двух категорий: одобрение или решение. Если не указано иное, любой член Основного комитета или секретарь может объявить голосование по утверждению или решению.
 
-### Approval Vote
+### Одобрение Голосование
 
-An Approval Vote is a yes-or-no question, in which case the status quo (voting "no") produces a stable outcome. Only Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.
+Одобрительное голосование — это вопрос, на который можно ответить «да» или «нет», и в этом случае статус-кво (голосование «против») дает стабильный результат. Только члены основного комитета могут голосовать за (+1), против (-1) или воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 2/3 голосов.
 
-### Decision Vote
+### Решение Голосование
 
-A Decision Vote is used to select between two or more mutually-exclusive courses of action, in which case the status quo is not stable (e.g., a vacancy is being filled).  Only Core Committee members may vote.  A Decision Vote will be conducted using Single Transferable Vote with a single-winner.  Quorum is 50%.
+Голосование за решение используется для выбора между двумя или более взаимоисключающими курсами действий, и в этом случае статус-кво не является стабильным (например, вакансия заполняется). Голосовать могут только члены основного комитета. Голосование по решению будет проводиться с использованием единого передаваемого голоса с одним победителем. Кворум 50%.
 
-## Entrance Vote
+## Голосование за вход
 
-An Entrance Vote is called by the Sponsor of a proposed PSR.  It follows Approval Vote procedures.
+Вступительное голосование объявляется спонсором предлагаемого PSR. Он следует процедурам голосования по утверждению.
 
-## Readiness Vote
+## Голосование за готовность
 
-A Readiness Vote is called by the Editor of a proposed PSR in Draft Phase. Only members of the PSR's Working Group (including the Editor and Sponsor) may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.
+Голосование о готовности объявляется редактором предлагаемого PSR на этапе черновика. Только члены рабочей группы PSR (включая редактора и спонсора) могут голосовать либо за (+1), либо против (-1), либо воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 2/3 голосов.
 
-## Acceptance Vote
+## Голосование за принятие
 
-An Acceptance Vote is called by the Sponsor of a proposed PSR in the Review Phase. It follows Approval Vote procedures.
+Голосование о принятии объявляется спонсором предлагаемого PSR на этапе проверки. Он следует процедурам голосования по утверждению.
 
-## Errata Vote
+## Голосование за ошибки
 
-An Errata Vote is called by the Editor of an approved PSR, or a Secretary if the Editor is no longer available. It follows Approval Vote procedures.
+Голосование за ошибки назначается редактором утвержденного PSR или секретарем, если редактор недоступен. Он следует процедурам голосования по утверждению.
 
-## Deprecation Vote
+## Голосование об устаревании
 
-A Deprecation Vote is called by any Core Committee Member. It follows Approval Vote procedures.
+Голосование об отказе от поддержки назначается любым членом Ключевого комитета. Он следует процедурам голосования по утверждению.
 
-## Abandonment Vote
+## Отказ от голосования
 
-An Abandonment Vote is called by any Secretary or Core Committee Member. It follows Approval Vote procedures.
+Голосование об отказе объявляется любым секретарем или членом основного комитета. Он следует процедурам голосования по утверждению.
 
-## Implicit Approval
+## Неявное одобрение
 
-At times, routine Working Group activity is subject to the approval of the Core Committee but in most cases is not sufficiently controversial to warrant a full vote.  In such cases, an individual may declare an Intent to take an action.  If no member of the Core Committee objects within seven days, the action is implicitly approved.
+Иногда рутинная деятельность рабочей группы подлежит одобрению Ключевым комитетом, но в большинстве случаев не является достаточно спорной, чтобы гарантировать полное голосование. В таких случаях человек может заявить о Намерении совершить действие. Если ни один член Основного комитета не возражает в течение семи дней, действие безоговорочно утверждается.
 
-Any member of the Core Committee may request during that seven-day period that the change be put to a vote.  If any member does so, the action is put to an Approval Vote or Decision Vote (as appropriate to the situation) to determine if it is accepted or not.
+В течение этого семидневного периода любой член Основного комитета может потребовать, чтобы изменение было поставлено на голосование. Если какой-либо участник делает это, действие ставится на голосование по утверждению или голосование по решению (в зависимости от ситуации), чтобы определить, принято оно или нет.
 
-## Membership Vote
+## Членское голосование
 
-A Membership Vote is called by any Project Representative and consists of a separate concurrent vote by the Core Committee and Project Representatives.
+Членское голосование объявляется любым Представителем проекта и состоит из отдельного одновременного голосования Ключевого комитета и Представителей проекта.
 
-For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 50% majority is required for passage.
+При голосовании в Основном комитете члены Основного комитета могут голосовать либо за (+1), либо против (-1), либо воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 50%.
 
-For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 50% majority is required for passage.
+При голосовании представителей проекта представители проекта могут голосовать либо за (+1), либо против (-1), либо воздержались (+0). Кворума нет. Для прохождения требуется большинство в 50%.
 
-Both the Core Committee and Project Representative votes must pass for the Membership Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote. If an individual is on the Core Committee and they are to be the Project Represenative for the project in question, they are not eligible to vote.
+Голоса основного комитета и представителя проекта должны пройти, чтобы голосование членства было одобрено. Если физическое лицо одновременно является представителем проекта и членом основного комитета, оно не имеет права участвовать в голосовании в качестве представителя проекта. Если человек входит в Основной комитет и должен быть Представителем проекта ввопрос, они не имеют права голоса.
 
-## Expulsion vote
+## Голосование об исключении
 
-An Expulsion Vote is called by any Secretary or Core Committee member and consists of a separate concurrent vote by the Core Committee and Project Representatives.
+Голосование об исключении назначается любым секретарем или членом основного комитета и состоит из отдельного одновременного голосования основного комитета и представителей проекта.
 
-For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 50% majority is required for passage.
+При голосовании в Основном комитете члены Основного комитета могут голосовать либо за (+1), либо против (-1), либо воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 50%.
 
-For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 50% majority is required for passage.
+При голосовании представителей проекта представители проекта могут голосовать либо за (+1), либо против (-1), либо воздержались (+0). Кворума нет. Для прохождения требуется большинство в 50%.
 
-Both the Core Committee and Project Representative votes must pass for the Expulsion Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote. The Project Representative that is the subject, or whose project is the subject, of the Expulsion Vote is not eligible to vote.
+Голоса основного комитета и представителя проекта должны пройти, чтобы голосование об исключении было одобрено. Если физическое лицо одновременно является представителем проекта и членом основного комитета, оно не имеет права участвовать в голосовании в качестве представителя проекта. Представитель проекта, являющийся субъектом или чей проект является предметом голосования об исключении, не имеет права голоса.
 
-## Recall Vote
+## Отзыв Голосование
 
-A Recall Vote is called by any two of a Secretary, Core Committee member, and Project Representative, and consists of a separate concurrent vote by the Core Committee and Project Representatives.
+Голосование об отзыве назначается любыми двумя из Секретаря, члена Основного комитета и Представителя проекта и состоит из отдельного одновременного голосования Основного комитета и представителей проекта.
 
-For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.
+При голосовании в Основном комитете члены Основного комитета могут голосовать либо за (+1), либо против (-1), либо воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 2/3 голосов.
 
-For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 2/3 majority is required for passage.
+При голосовании представителей проекта представители проекта могут голосовать либо за (+1), либо против (-1), либо воздержались (+0). Кворума нет. Для прохождения требуется большинство в 2/3 голосов.
 
-Both the Core Committee and Project Representative votes must pass for the Recall Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote. If a Core Committee member is the subject of the Recall Vote, they are not eligible to vote.
+Голоса основного комитета и представителя проекта должны пройти, чтобы голосование по отзыву было одобрено. Если физическое лицо одновременно является представителем проекта и членом основного комитета, оно не имеет права участвовать в голосовании в качестве представителя проекта. Если член основного комитета является субъектом голосования по отзыву, он не имеет права голоса.
 
-## Bylaw Votes
+## Голоса по Уставу
 
-A vote to amend any FIG bylaw is called by a Secretary, and consists of a separate concurrent vote by the Core Committee and Project Representatives.
+Голосование по внесению поправок в любой устав ФИЖ назначается Секретарем и состоит из отдельного одновременного голосования Ключевого комитета и представителей проекта.
 
-For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.
+При голосовании в Основном комитете члены Основного комитета могут голосовать либо за (+1), либо против (-1), либо воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 2/3 голосов.
 
-For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 2/3 majority is required for passage.
+При голосовании представителей проекта представители проекта могут голосовать либо за (+1), либо против (-1), либо воздержались (+0). Кворума нет. Для прохождения требуется большинство в 2/3 голосов.
 
-Both the Core Committee and Project Representative votes must pass for the Bylaw Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote.
+Голоса основного комитета и представителя проекта должны пройти, чтобы голосование по Уставу было одобрено. Если физическое лицо одновременно является представителем проекта и членом основного комитета, оно не имеет права участвовать в голосовании в качестве представителя проекта.
 
-## Other Votes
+## Другие голоса
 
-Should a need arise to call a formal vote for any situation not described here, the vote will be called by a Secretary. It consists of a separate vote by the Core Committee and Project Representatives.
+Если возникнет необходимость объявить официальное голосование по какой-либо ситуации, не описанной здесь, голосование будет назначено Секретарем. Он состоит из отдельного голосования Ключевого комитета и представителей проекта.
 
-For the Core Committee vote, Core Committee members may vote, either For (+1), Against (-1), or Abstain (+0). Quorum is 50%. A 2/3 majority is required for passage.
+При голосовании в Основном комитете члены Основного комитета могут голосовать либо за (+1), либо против (-1), либо воздержаться (+0). Кворум 50%. Для прохождения требуется большинство в 2/3 голосов.
 
-For the Project Representative vote, Project Representatives may vote, either For (+1), Against (-1), or Abstain (+0). There is no quorum. A 50% majority is required for passage.
+При голосовании представителей проекта представители проекта могут голосовать либо за (+1), либо против (-1), либо воздержались (+0). Кворума нет. Для прохождения требуется большинство в 50%.
 
-Both the Core Committee and Project Representative votes must pass for the Vote to be approved. If an individual is serving as both a Project Representative and Core Committee member, they are ineligible to vote in the Project Representative vote.
+Голоса основного комитета и представителя проекта должны пройти, чтобы голосование было одобрено. Если физическое лицо одновременно является представителем проекта и членом основного комитета, оно не имеет права участвовать в голосовании в качестве представителя проекта.

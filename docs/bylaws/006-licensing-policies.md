@@ -1,16 +1,16 @@
-Licensing Policies
+Политика лицензирования
 ==================
 
-## 1. Code
+## 1. Код
 
-1. All PHP FIG code must be licensed under the MIT license.
+1. Весь код PHP FIG должен быть под лицензией MIT.
 
-2. Code includes any pure PHP files (including but not limited to classes,
-   functions, interfaces and procedural code), as well as any code inside of
-   examples, tutorials, supporting documents, website code and the PSRs themselves.
+2. Код включает в себя любые чистые файлы PHP (включая, помимо прочего, классы,
+   функции, интерфейсы и процедурный код), а также любой код внутри
+   примеры, руководства, вспомогательные документы, код веб-сайта и сами PSR.
 
-## 2. Documentation
+## 2. Документация
 
-All remaining non-code items must be licensed under the Creative Commons BY 3.0
-license. Attribution policies will be defined in the bylaws based on the type
-of asset created.
+Все остальные элементы, не относящиеся к коду, должны быть лицензированы Creative Commons BY 3.0.
+лицензия. Политика атрибуции будет определена в уставе в зависимости от типа
+созданного актива.

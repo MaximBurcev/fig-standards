@@ -1,11 +1,11 @@
-Naming conventions for code released by PHP FIG
+Соглашения об именах для кода, выпущенного PHP FIG
 ===============================================
 
-1. Interfaces MUST be suffixed by `Interface`: e.g. `Psr\Foo\BarInterface`.
-2. Abstract classes MUST be prefixed by `Abstract`: e.g. `Psr\Foo\AbstractBar`.
-3. Traits MUST be suffixed by `Trait`: e.g. `Psr\Foo\BarTrait`.
-4. PSR-1, 4, and 12 MUST be followed.
-5. For code released as part of a PSR, the vendor namespace MUST be `Psr` and the Composer package name MUST be `psr/<package>` (e.g., `psr/log`).
-6. For code released as part of a PER or any other Auxiliary Resources, the vendor namespace MUST be `Fig` and the Composer package name MUST be `fig/<package>` (e.g., `fig/cache-util`).
-7. There MUST be a package/second-level namespace in relation with the PSR or PER that  covers the code.
-8. Implementations of a given PSR or PER SHOULD declare a `provides` key in their `composer.json` file in the form `psr/<package>-implementation` with a version number that matches the PSR being implemented.  For example, `"psr/<package>-implementation": "1.0.0"`.
+1. Интерфейсы ДОЛЖНЫ иметь суффикс «Интерфейс»: например. `Psr\Foo\BarInterface`.
+2. Абстрактные классы ДОЛЖНЫ иметь префикс «Abstract»: например. `Psr\Foo\AbstractBar`.
+3. Черты ДОЛЖНЫ иметь суффикс «Черта»: например. `Psr\Foo\BarTrait`.
+4. ДОЛЖНЫ соблюдаться PSR-1, 4 и 12.
+5. Для кода, выпущенного как часть PSR, пространство имен поставщика ДОЛЖНО быть `Psr`, а имя пакета Composer ДОЛЖНО быть `psr/<package>` (например, `psr/log`).
+6. Для кода, выпущенного как часть PER или любых других Вспомогательных ресурсов, пространство имен поставщика ДОЛЖНО быть «Fig», а имя пакета Composer ДОЛЖНО быть «fig/<package>» (например, «fig/cache-util»).
+7. ДОЛЖНО существовать пространство имен пакета/второго уровня по отношению к PSR или PER, которое охватывает код.
+8. Реализации данного PSR или PER ДОЛЖНЫ объявить ключ «provides» в своем файле «composer.json» в форме «psr/<package>-implementation» с номером версии, соответствующим реализуемому PSR. Например, `"psr/<package>-implementation": "1.0.0"`.

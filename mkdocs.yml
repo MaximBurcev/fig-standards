@@ -1,4 +1,5 @@
 site_name: 'Рекомендации по стандартам PHP: PSR'
+site_url: 'https://php-psr.ru/'
 theme: material
 extra_css:
     - //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css

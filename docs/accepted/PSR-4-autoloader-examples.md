@@ -1,9 +1,10 @@
-Example Implementations of PSR-4
+Пример реализации PSR-4
 ================================
 
-The following examples illustrate PSR-4 compliant code:
+Следующие примеры иллюстрируют код, совместимый с PSR-4:
 
-Closure Example
+
+Пример замыкания
 ---------------
 
 ~~~php
@@ -50,11 +51,10 @@ spl_autoload_register(function ($class) {
 });
 ~~~
 
-Class Example
+Пример класса
 -------------
 
-The following is an example class implementation to handle multiple
-namespaces:
+Ниже приведен пример реализации класса для обработки нескольких пространства имен:
 
 ~~~php
 <?php
@@ -246,9 +246,9 @@ class Psr4AutoloaderClass
 }
 ~~~
 
-### Unit Tests
+### Модульные тесты
 
-The following example is one way of unit testing the above class loader:
+Следующий пример является одним из способов модульного тестирования вышеуказанного загрузчика классов:
 
 ~~~php
 <?php

@@ -1,3 +1,0 @@
-<IfModule mod_authz_host.c>
-    Deny from all
-</IfModule>

@@ -1,27 +1,27 @@
-# PSR-2 Meta Document
+# Метадокумент PSR-2
 
-## 1. Summary
+## 1. Резюме
 
-The intent of this guide is to reduce cognitive friction when scanning code from different authors. It does so
-by enumerating a shared set of rules and expectations about how to format PHP code.
+Цель этого руководства — уменьшить когнитивные трения при сканировании кода от разных авторов. это так
+путем перечисления общего набора правил и ожиданий относительно того, как форматировать PHP-код.
 
-The style rules herein are derived from commonalities among the various member projects. When various authors
-collaborate across multiple projects, it helps to have one set of guidelines to be used among all those
-projects. Thus, the benefit of this guide is not in the rules themselves, but in the sharing of those rules.
+Приведенные здесь правила стиля основаны на общих чертах различных проектов-участников. Когда разные авторы
+сотрудничать в нескольких проектах, это помогает иметь один набор руководящих принципов, который будет использоваться всеми теми, кто
+проекты. Таким образом, польза от этого руководства заключается не в самих правилах, а в возможности поделиться этими правилами.
 
-## 2. Votes
+## 2. Голоса
 
-- **Acceptance Vote:** [ML](https://groups.google.com/d/msg/php-fig/c-QVvnZdMQ0/TdDMdzKFpdIJ)
+– **Голосование за принятие:** [ML](https://groups.google.com/d/msg/php-fig/c-QVvnZdMQ0/TdDMdzKFpdIJ)
 
-## 3. Errata
+## 3. Исправления
 
-### 3.1 - Multi-line Arguments (09/08/2013)
+### 3.1 - Многострочные аргументы (08.09.2013)
 
-Using one or more multi-line arguments (i.e: arrays or anonymous functions) does not constitute
-splitting the argument list itself, therefore Section 4.6 is not automatically enforced. Arrays and anonymous
-functions are able to span multiple lines.
+Использование одного или нескольких многострочных аргументов (например, массивов или анонимных функций) не является
+разделение самого списка аргументов, поэтому Раздел 4.6 не применяется автоматически. Массивы и анонимы
+функции могут занимать несколько строк.
 
-The following examples are perfectly valid in PSR-2:
+Следующие примеры вполне допустимы в PSR-2:
 
 ~~~php
 <?php
@@ -34,7 +34,7 @@ $app->get('/hello/{name}', function ($name) use ($app) {
 });
 ~~~
 
-### 3.2 - Extending Multiple Interfaces (10/17/2013)
+### 3.2 - Расширение нескольких интерфейсов (17.10.2013)
 
-When extending multiple interfaces, the list of `extends` should be treated the same as a list
-of `implements`, as declared in Section 4.1.
+При расширении нескольких интерфейсов список расширений следует рассматривать так же, как и список.
+«орудий», как указано в Разделе 4.1.

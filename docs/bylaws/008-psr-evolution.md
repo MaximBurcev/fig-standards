@@ -1,61 +1,60 @@
-# PSR evolution
+# Эволюция ПСР
 
-## Scope and objectives
+## Объем и цели
 
-A PSR is often comprised of text and code, generally interfaces. Those interfaces are pieces of code that are released and tagged at a specific moment in time. However, the PHP language doesn't stand still; it evolves over time.
+PSR часто состоит из текста и кода, как правило, интерфейсов. Эти интерфейсы представляют собой фрагменты кода, которые выпускаются и помечаются в определенный момент времени. Однако язык PHP не стоит на месте; он развивается со временем.
 
-This means that those interfaces need to both provide a stable contract, as well as evolve to leverage new language features that could help better enforce the behaviors described in the PSR itself.
+Это означает, что эти интерфейсы должны обеспечивать стабильный контракт, а также развиваться, чтобы использовать новые языковые функции, которые могут помочь лучше реализовать поведение, описанное в самом PSR.
 
-At the same time, a PSR cannot be changed after its release (at which point only erratas are allowed), to protect a package that declared compatibility from becoming de facto incompatible.
+В то же время PSR не может быть изменен после его выпуска (с этого момента допускаются только опечатки), чтобы защитить пакет, объявленный совместимым, от фактической несовместимости.
 
-This document defines a process to be followed in updating PSR interfaces, in a way that is not breaking in regard to behavior for end users, and with an appropriate upgrade path for the consumers.
+Этот документ определяет процесс, которому необходимо следовать при обновлении интерфейсов PSR таким образом, чтобы не нарушать поведение конечных пользователей и с соответствующим путем обновления для потребителей.
 
-## Definitions
+## Определения
 
- * **Consumer** - libraries and projects that consume one or more interfaces from the code released as part of the PSR in question.
- * **Implementer** - libraries and projects that implement one or more interfaces from code released as part of the PSR in question.
- * **Cross-compatibility** - the ability for a consumer or an implementer to support more than one code version of the PSR with a single release of their own.
+* **Потребитель** — библиотеки и проекты, использующие один или несколько интерфейсов из кода, выпущенного как часть рассматриваемого PSR.
+* **Реализатор** — библиотеки и проекты, реализующие один или несколько интерфейсов из кода, выпущенного как часть рассматриваемого PSR.
+* **Кросс-совместимость** — возможность для потребителя или разработчика поддерживать более одной версии кода PSR в одном собственном выпуске.
 
-## New releases
+## Новые релизы
 
-A new minor release of a PHP-FIG package containing interfaces for a PSR MUST follow these rules:
- * the new release MUST follow [Semantic Versioning](https://semver.org/) rules;
- * the PSR behavior MUST NOT be altered;
- * consumers or implementers of those interfaces MUST NOT suffer breaking changes;
- * the PHP version constraint of the PHP-FIG package MAY be increased to leverage newer language features, especially those that would aid cross-compatibility of consumers and implementers with the old and the new versions;
- * the PHP version constraint of the PHP-FIG package MUST NOT be altered to use newer language features that would create cross-compatibility issues.
- 
-A new major release of a PHP-FIG package containing interfaces for a PSR MUST follow the same rules, with this exception:
- * the new major version of the package MAY contain breaking changes if the implementing packages have a reasonable upgrade path, like the possibility of releasing a cross-compatible implementation with the previous releases;
- * the new major version of the package MAY refer to a new, superseding PSR.
- 
-Note that if the upgrade path causes the consumers or implementers to maintain multiple versions of their libraries side-by-side, only to support multiple versions of the same PSR, the upgrade path is to be considered too steep.
+Новый второстепенный выпуск пакета PHP-FIG, содержащий интерфейсы для PSR, ДОЛЖЕН соответствовать следующим правилам:
+* новый выпуск ДОЛЖЕН следовать правилам [Semantic Versioning](https://semver.org/);
+* поведение PSR НЕ ДОЛЖНО изменяться;
+* потребители или разработчики этих интерфейсов НЕ ДОЛЖНЫ подвергаться критическим изменениям;
+* ограничение версии PHP пакета PHP-FIG МОЖЕТ быть увеличено, чтобы использовать новые языковые функции, особенно те, которые будут способствовать кросс-совместимости потребителей и разработчиков со старой и новой версиями;
+* ограничение версии PHP пакета PHP-FIG НЕ ДОЛЖНО изменяться для использования новых языковых функций, которые могут создать проблемы кросс-совместимости.
 
-### Workflow
+Новый основной выпуск пакета PHP-FIG, содержащий интерфейсы для PSR, ДОЛЖЕН следовать тем же правилам, за одним исключением:
+* новая основная версия пакета МОЖЕТ содержать критические изменения, если реализующие пакеты имеют разумный путь обновления, например, возможность выпуска кросс-совместимой реализации с предыдущими выпусками;
+* новая основная версия пакета МОЖЕТ ссылаться на новый, заменяющий PSR.
 
-Since releasing new versions of the interfaces MUST NOT alter the PSR in its behavior, those releases can be voted in with the same process as errata changes. The new releases MUST be declared and embedded with a brief explanation and a link in the PSR document, like in the following example:
+Обратите внимание, что если путь обновления заставляет потребителей или разработчиков поддерживать несколько версий своих библиотек параллельно только для поддержки нескольких версий одного и того же PSR, путь обновления следует считать слишком крутым.
 
-> \`\`\`php
+### Рабочий процесс
+
+Поскольку выпуск новых версий интерфейсов НЕ ДОЛЖЕН изменять поведение PSR, за эти выпуски можно проголосовать с помощью того же процесса, что и изменения опечаток. Новые выпуски ДОЛЖНЫ быть объявлены и включены с кратким пояснением и ссылкой в документе PSR, как в следующем примере:
+
+```php
 interface ContainerInterface
 {
 > // code snippet here
 }
-\`\`\`
+```
 >
-> Since [psr/container version 1.1](https://packagist.org/packages/psr/container#1.1.0), the above interface has been updated to add argument type hints.
+> Начиная с версии [psr/container 1.1](https://packagist.org/packages/psr/container#1.1.0), приведенный выше интерфейс был обновлен для добавления подсказок типа аргумента.
 
-In the example above, the last line is indicative of what should be added to the specification.
+В приведенном выше примере последняя строка указывает, что следует добавить в спецификацию.
 
-The meta document MUST be amended with information detailing the consumer and/or implementer upgrade path.
+Метадокумент ДОЛЖЕН быть дополнен информацией, подробно описывающей путь обновления потребителя и/или исполнителя.
 
-### Practical example
+### Практический пример
 
-A common case for an upgrade in the interfaces is to add types for parameters and returns, since they are new language features introduced by PHP 7, and many PSR interfaces predate that release. We'll use a method from PSR-11 as an example of how a PSR interface could be updated.
+Распространенным случаем обновления интерфейсов является добавление типов для параметров и возвращаемых значений, поскольку они представляют собой новые языковые функции, представленные в PHP 7, а многие интерфейсы PSR предшествуют этому выпуску. Мы будем использовать метод из PSR-11 в качестве примера того, как можно обновить интерфейс PSR.
 
-#### PSR-11: the interface
+#### ПСР-11: интерфейс
 
-PSR-11 is released with the [`psr/container` package](https://packagist.org/packages/psr/container) and it holds the `ContainerInterface`, which has this method:
-
+PSR-11 выпущен с пакетом [`psr/container`](https://packagist.org/packages/psr/container) и содержит `ContainerInterface`, который имеет этот метод:
 ```php
     /**
      * @param string $id Identifier of the entry to look for.
@@ -65,37 +64,37 @@ PSR-11 is released with the [`psr/container` package](https://packagist.org/pack
     public function has($id);
 ```
 
-This method could be updated with a new minor release that adds the argument type for `$id`:
+Этот метод может быть обновлен новым второстепенным выпуском, который добавляет тип аргумента для `$id`:
 
 ```php
 public function has(string $id);
 ```
 
-This change would technically be a breaking change, but thanks to the [limited contravariance possible in PHP 7.2](https://wiki.php.net/rfc/parameter-no-type-variance), we can avoid that. This means that just by requiring `"php": "^7.2"` in the `psr/container` `composer.json`, we could tag this change as a minor release, and have all the consumers and implementers be automatically cross-compatible, provided that they declare `"psr/container": "^1.0"` (or equivalent) as a constraint.
+Это изменение технически было бы критическим изменением, но благодаря [ограниченной контравариантности, возможной в PHP 7.2](https://wiki.php.net/rfc/parameter-no-type-variance) мы можем этого избежать. Это означает, что просто потребовав `"php": "^7.2"` в `psr/container` `composer.json`, мы могли бы пометить это изменение как второстепенный выпуск, и все потребители и разработчики будут автоматически кросс-совместимы, при условии, что они объявляют `"psr/container": "^1.0"` (или эквивалент) в качестве ограничения.
 
-After this intermediate step, it would be possible to release a new major version, adding a return type hint:
+После этого промежуточного шага можно было бы выпустить новую основную версию, добавив подсказку типа возвращаемого значения:
 
 ```php
 public function has(string $id): bool;
 ```
 
-This must be released as a new major version of `psr/container` (2.0); any package that would implement this would be able to declare `"psr/container": "^1.1 || ^2.0"`, since backward compatibility to the first release would be impossible, due to the sum of covariance and contravariance rules.
+Это должно быть выпущено как новая основная версия `psr/container` (2.0); любой пакет, реализующий это, сможет объявить `"psr/container": "^1.1 || ^2.0"`, поскольку обратная совместимость с первым выпуском будет невозможна из-за суммы правил ковариантности и контравариантности.
 
-#### PSR-11: the implementation
+#### PSR-11: реализация
 
-On the other side, the implementers would be able to do a release cycle in the opposite fashion. The first release looks like this:
+С другой стороны, разработчики смогут выполнить цикл выпуска противоположным образом. Первый выпуск выглядит так:
 
 ```php
 public function has($id);
 ```
 
-The second release would add the return type, maintaining compatibility with the original interface:
+Во втором выпуске будет добавлен возвращаемый тип, сохраняя совместимость с исходным интерфейсом:
 
 ```php
 public function has($id): bool;
 ```
 
-A third release would also add the argument type hint:
+В третьем выпуске также будет добавлена подсказка типа аргумента:
 
 ```php
 public function has(string $id): bool;

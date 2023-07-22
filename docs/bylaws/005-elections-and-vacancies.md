@@ -1,57 +1,57 @@
-# Elections
+# Выборы
 
-## Election Calendar
+## Календарь выборов
 
-Both Secretaries and Core Committee members are elected for two year terms with votes staggered eight months apart. One election is held in January of even numbered years, one election is held in August of even numbered years, and one election is held in May of odd numbered years. For example there would be elections in January 2018, August 2018 and May 2019. Each regular election includes a single Secretary and four (4) Core Committee members, plus any potential unplanned vacancies.
+И секретари, и члены основного комитета избираются на двухлетний срок с голосованием с интервалом в восемь месяцев. Одни выборы проводятся в январе четных лет, одни выборы проводятся в августе четных лет и одни выборы проводятся в мае нечетных лет. Например, выборы состоятся в январе 2018 г., августе 2018 г. и мае 2019 г. Каждые очередные выборы включают одного секретаря и четырех (4) членов основного комитета, а также любые потенциальные незапланированные вакансии.
 
-The election calendar will be established by the Secretaries at least one week before the start of the election month. Nominations must run for a minimum of seven (7) days. The vote will open immediately upon the end of the nomination period and must run for fourteen (14) days. The new Secretary and Core Committee members will take office at 5pm UTC time on the last Sunday of the month, and the voting period must conclude at least 24 hours prior to that.
+Календарь выборов будет установлен секретарями как минимум за неделю до начала месяца выборов. Номинации должны длиться не менее семи (7) дней. Голосование начнется сразу после окончания периода номинации и должно продолжаться четырнадцать (14) дней. Новый секретарь и члены основного комитета вступят в должность в 17:00 по всемирному координированному времени в последнее воскресенье месяца, и период голосования должен завершиться как минимум за 24 часа до этого.
 
-The election process will be overseen by either of the Secretaries whose term is not expiring, and both the Secretary and Core Committee elections may be overseen by the same Secretary or different Secretaries.
+За процессом выборов будет наблюдать любой из секретарей, срок полномочий которых не истекает, и выборы секретаря и основного комитета могут контролироваться одним и тем же секретарем или разными секретарями.
 
-## Eligibility
+## Право на участие
 
-Any individual may run for election as Secretary, including the outgoing Secretary. If they are a Core Committee Member or PSR Editor and are elected they must resign between the vote ending and taking office.
+Любое лицо может баллотироваться на пост Секретаря, включая уходящего Секретаря. Если они являются членом основного комитета или редактором PSR и избраны, они должны уйти в отставку в период между окончанием голосования и вступлением в должность.
 
-Any individual may run for election as a Core Committee member, including the outgoing Core Committee member. If they are a Secretary and are elected they must resign between the vote ending and taking office.
+Любое лицо может баллотироваться на выборах в качестве члена Основного комитета, включая уходящего члена Основного комитета. Если они являются секретарем и избраны, они должны уйти в отставку между окончанием голосования и вступлением в должность.
 
-## Nomination
+## Номинация
 
-Candidates for Secretary or the Core Committee must be nominated/proposed by an existing Project Representative or FIG Secretary to be considered, and must publicly accept their nomination in order to be valid. Prospective candidates may seek nominations in any way they see fit.
+Кандидаты на пост Секретаря или в Основной комитет должны быть выдвинуты/предложены существующим Представителем проекта или Секретарем ФИЖ для рассмотрения, и они должны публично принять их кандидатуры, чтобы они были действительными. Потенциальные кандидаты могут добиваться выдвижения кандидатур любым способом, который они считают нужным.
 
-## Electorate
+## Электорат
 
-Any Project Representative or Core Committee member is eligible to to vote on Secretary candidates.
+Любой представитель проекта или член основного комитета имеет право голосовать за кандидатов в секретари.
 
-Any individual that has posted a non-trivial message in the official FIG venue (mailing list, forum, etc.) at least five (5) times within the past calendar year as of the start of nominations or any Project Representative is eligible to vote on Core Committee candidates.
+Любое лицо, разместившее нетривиальное сообщение на официальном сайте ФИЖ (список рассылки, форум и т. д.) не менее пяти (5) раз в течение прошедшего календарного года с момента начала выдвижения кандидатур, или любой Представитель проекта имеет право голосовать за кандидатов в Основной комитет.
 
-The Secretaries whose terms are not expiring have final jurisdiction to determine eligibility.
+Секретари, срок полномочий которых не истекает, имеют окончательную юрисдикцию для определения права на участие.
 
-## Voting
+## Голосование
 
-The election will be conducted using Single Transferable Vote with specific algorithms being maintained by the Secretaries. If multiple seats are open (either for Core Committee membership or due to a vacancy) then the open seats with the longest term will go to first candidate(s) to reach the required quota.
+Выборы будут проводиться с использованием единого передаваемого голоса с конкретными алгоритмами, поддерживаемыми секретарями. Если открыто несколько мест (либо для членства в Основном комитете, либо из-за вакансии), то открытые места с наибольшим сроком полномочий перейдут к первому кандидату (кандидатам) для достижения требуемой квоты.
 
-## Recall Votes
+## Отозвать голоса
 
-Should a Secretary or Core Committee member be determined to be acting with gross negligence or in a way that undermines the FIG's mission or good standing, a Recall Vote may be called by any two of a Secretary, Core Committee member, and Project Representative. Any such vote must be preceded by at least a two week discussion period. The vote will be overseen by a Secretary other than the subject of the Recall Vote. Should the vote pass the individual in question is removed immediately. If it does not pass the matter is considered closed and a new vote may not be called for the same incident, if applicable.
+Если будет установлено, что Секретарь или член Основного комитета действует с грубой небрежностью или таким образом, который подрывает миссию или репутацию ФИЖ, голосование об отзыве может быть объявлено любыми двумя из Секретаря, члена Основного комитета и представителя проекта. Любому такому голосованию должен предшествовать как минимум двухнедельный период обсуждения. За голосованием будет наблюдать секретарь, не являющийся субъектом голосования по отзыву. Если голосование проходит, данное лицо немедленно удаляется. Если он не проходит, вопрос считается закрытым, и новое голосование по тому же инциденту не может быть назначено, если это применимо.
 
-# Vacancies
+# Вакансии
 
-## Editor Vacancies
+## Вакансии редактора
 
-Should the Editor of a PSR under consideration resign or become inactive for a period of 60 days, the Sponsor may select a new Editor subject to rejection by the Core Committee. Current members of the Working Group should be given preference. If no new Editor is named within 30 days from the vacancy notice then the PSR can be marked as Abandoned.
+Если редактор рассматриваемого PSR уходит в отставку или становится неактивным в течение 60 дней, Спонсор может выбрать нового редактора, который будет отклонен Основным комитетом. Предпочтение следует отдавать действующим членам Рабочей группы. Если новый редактор не будет назван в течение 30 дней после объявления о вакансии, то PSR может быть помечен как прекращенный.
 
-## Sponsor Vacancies
+## Спонсорские вакансии
 
-Should the Sponsor of a PSR under consideration resign or become inactive for a period of 60 days, the Editor may select a new Sponsor subject to rejection by the Core Committee. If no new Sponsor is named within 30 days from the vacancy notice then the PSR can become Abandoned.
+Если спонсор рассматриваемого PSR уходит в отставку или становится неактивным в течение 60 дней, редактор может выбрать нового спонсора, который будет отклонен Основным комитетом. Если новый спонсор не будет назван в течение 30 дней после объявления о вакансии, PSR может быть отменен.
 
-## Secretary Vacancies
+## Секретарь Вакансии
 
-Should a Secretary resign or be removed due to a Recall vote, an existing Secretary shall call a special election for a new Secretary following the same protocols as for a normal election. The newly elected Secretary will serve out the remainder of the term for the seat filled.
+Если Секретарь уходит в отставку или снимается с должности в связи с голосованием об отзыве, действующий Секретарь назначает внеочередные выборы нового Секретаря в соответствии с теми же протоколами, что и при обычных выборах. Вновь избранный секретарь будет отбывать оставшийся срок на заполненное место.
 
-Should the vacancy occur less than four months before the next regular election month, the seat may be left vacant until the next election at the discretion of the other Secretaries and Core Committee. In that case, the second-highest voted candidate will assume the available seat with less time remaining in its term. Should two Secretary positions become vacant simultaneously a special election must be called immediately for both seats.
+Если вакансия появится менее чем за четыре месяца до следующего месяца очередных выборов, место может быть оставлено вакантным до следующих выборов по усмотрению других секретарей и основного комитета. В этом случае кандидат, набравший второе место, займет доступное место с меньшим количеством времени, оставшимся до его срока. Если две должности секретаря становятся вакантными одновременно, должны быть немедленно созваны внеочередные выборы на оба места.
 
-## Core Committee Vacancy
+## Вакансия основного комитета
 
-Should a Core Committee member resign or be removed due to a Recall Vote, the Secretaries shall call a special election for a new Core Committee member following the same protocols as for a normal election. The newly elected Core Committee member will serve out the remainder of the term for the seat filled.
+Если член Основного комитета уходит в отставку или снимается с должности в связи с голосованием об отзыве, Секретари должны объявить внеочередные выборы нового члена Основного комитета послепротоколы, как для обычных выборов. Вновь избранный член Основного комитета будет отбывать оставшийся срок на занятое место.
 
-Should the vacancy occur less than four months before the next regular election month, the seat may be left vacant until the next election at the discretion of the Secretaries and Core Committee. In that case, the fifth-highest voted candidate will assume the available seat with less time remaining in its term.
+Если вакансия появится менее чем за четыре месяца до следующего месяца очередных выборов, место может быть оставлено вакантным до следующих выборов по усмотрению секретарей и основного комитета. В этом случае кандидат, получивший пятое наибольшее количество голосов, займет доступное место с меньшим количеством времени, оставшимся до его срока.

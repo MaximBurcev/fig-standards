@@ -1,132 +1,136 @@
-# Mission Statement
+# Заявление о миссии
 
-The PHP Framework Interoperability Group (The PHP FIG) aims to advance the PHP ecosystem and promote good standards by bringing together projects and people to collaborate. It develops and publicises standards, informed by real-world experience as well as research and experimentation by itself and others, to form PHP Standard Recommendations (PSRs), PHP Evolving Recommendations (PERs), and Auxiliary Resources (ARs).
+Группа по взаимодействию с PHP Framework (PHPH FIG) стремится продвигать экосистему PHP и продвигать хорошие стандарты, объединяя проекты и людей для совместной работы. Он разрабатывает и публикует стандарты, основанные на реальном опыте, а также исследованиях и экспериментах, проведенных им самим и другими, для формирования стандартных рекомендаций PHP (PSR), рекомендаций по развитию PHP (PER) и вспомогательных ресурсов (AR).
 
-# Structure
+# Состав
 
-## Member Projects
+## Проекты участников
 
-The PHP FIG member projects are known, publicly available PHP projects or significant PHP stakeholder organizations that have shown an interest in supporting the FIG's mission and work. Member Projects must be released projects with known production deployments, not aspirational projects. Member Projects are not required to implement any particular PSR, although are expected to give relevant PSRs due consideration.
+Проекты-члены PHP FIG — это известные общедоступные проекты PHP или важные заинтересованные организации PHP, которые проявили интерес к поддержке миссии и работы FIG. Проекты участников должны быть выпущенными проектами с известными производственными развертываниями, а не амбициозными проектами. Проекты-члены не обязаны реализовывать какие-либо конкретные ПРБ, хотя ожидается, что соответствующие ПРБ должным образом учтены.
 
-A project that exists solely as an extension or plugin of another project is not eligible. However, projects may leverage code, libraries, or frameworks from other projects without being disqualified. In cases where that distinction is unclear Project Representatives should use their best judgment to implement the spirit of this clause.
+Проект, который существует исключительно как расширение или плагин другого проекта, не соответствует требованиям. Однако проекты могут использовать код, библиотеки или платформы из других проектов без дисквалификации. В тех случаях, когда это различие неясно, представители проекта должны использовать все свои возможности для реализации духа этого пункта.
 
-An application for membership by a project must include a current Project Representative or Core Committee member as a sponsor, the name of the proposed Project Representative, and a description of the project and its relevance to the FIG. The application once posted must be given a discussion period of at least two weeks. Once that period has passed, the sponsoring Representative may call for a Membership Vote. If it passes, the project is recognized as a Member Project with the stated Project Representative. If it does not, a project may reapply at any time if a sponsor may still be found.
+Заявка на членство от проекта должна включать действующего представителя проекта или члена основного комитета в качестве спонсора, имя предлагаемого представителя проекта, а также описание проекта и его отношение к ФИЖ. Заявка после размещения должна быть обсуждена не менее двух недель. По истечении этого периода спонсирующий Представитель может объявить голосование членства. Если он проходит, проект признается проектом-участником с указанным Представителем проекта. Если это не так, проект может повторно подать заявку в любое время, если спонсор все еще может быть найден.
 
-A Member Project may resign from the PHP FIG in writing to an official FIG public channel. Once such a statement is published and the resignation is confirmed by a secretary, a PHP project immediately ceases to be a Member Project.
+Членский проект может выйти из PHP FIG в письменной форме через официальный общедоступный канал FIG. Как только такое заявление опубликовано и отставка подтверждена секретарем, PHP-проект немедленно перестает быть проектом участника.
 
-A former Member Project may reapply for membership at any future date.
+Бывший участник проекта может повторно подать заявку на членство в любое время в будущем.
 
-## Project Representatives
+## Представители проекта
 
-The votes of all Member Projects are cast by Project Representatives who have been authorised to do so by the Member Project. Each Project Representative is chosen solely by a Member Project and their selection is not subject to the approval of the PHP FIG. A Project Representative may be replaced by the Member Project which they represent at any time.
+Голоса всех проектов-участников подаются представителями проектов, уполномоченными на это проектом-участником. Каждый представитель проекта выбирается исключительно проектом-участником, и их выбор не подлежит утверждению PHP FIG. Представитель проекта может быть заменен Участником проекта, который он представляет, в любое время.
 
-A Member Project may not have more than one Project Representative at a time. No individual may represent more than one project at a time.
+Членский проект не может иметь одновременно более одного Представителя проекта. Ни один человек не может представлять более одного проекта одновременно.
 
-A Project Representative may temporarily confer their voting rights or Working Group eligibility onto another individual who is authorised by the Member Project which they represent. This conferral must be notified to the PHP FIG by the current Project Representative, and must state the name of the temporary Project Representative and the period of time for which their temporary voting rights or eligibility will remain valid. All voting rights will automatically return to the original Project Representative at the end of the period of time stated.
+Представитель проекта может временно передать свое право голоса или право на участие в рабочей группе другому лицу, уполномоченному Проектом-участником, который он представляет. Текущий Представитель проекта должен уведомить PHP FIG об этом назначении, и в нем должно быть указано имя временного Представителя проекта и период времени, в течение которого его временное право голоса или право на участие будут оставаться в силе. Все права голоса автоматически возвращаются первоначальному Представителю проекта по истечении указанного периода времени.
 
-If, in the judgement of the PHP FIG, a Project Representative is acting inappropriately and to the detriment of the PHP FIG's ability to meet its objectives, any member of the Core Committee may call an Expulsion Vote to request a replacement Project Representative or to expel the Member Project where replacing a Project Representative is not possible. In these instances the Member Project/Project Representative concerned may not vote. If a member project is expelled it may reapply for membership after a minimum of one year. If a project representative is voted to be replaced, they may not return to represent the project they represented at the time of the vote, or any other project, indefinitely.
+Если, по мнению PHP FIG, Представитель проекта действует ненадлежащим образом и наносит ущерб способности PHP FIG выполнять свои задачи, любой член Ключевого комитета может объявить голосование об исключении, чтобы запросить замену Представителя проекта или исключить Участника проекта, если замена Представителя проекта невозможна. В этих случаях соответствующий член проекта/представитель проекта не может голосовать. Если членский проект исключен, он может повторно подать заявку на членство как минимум через год. Если за представителя проекта проголосовали за замену, он не может вернуться, чтобы представлять проект, который он представлял во время голосования, или любой другой проект на неопределенный срок.
 
-A Project Representative may also simultaneously serve as a Core Committee member, PSR Editor or Working Group member but not as a Secretary.
+Представитель проекта также может одновременно быть членом основного комитета, редактором PSR или членом рабочей группы, но не секретарем.
 
-## The Core Committee
+## Основной комитет
 
-The Core Committee is a twelve (12) member board of individuals recognized for their technical skill and expertise. The Core Committee is responsible for final decisions regarding what specifications FIG will consider and those that are approved. The Core Committee is responsible for ensuring a high level of quality and consistency amongst all published specifications, and that all relevant perspectives and use cases are given due consideration.
+Основной комитет состоит из двенадцати (12) членов, признанных за их технические навыки и опыт. Основной комитет несет ответственность за окончательные решения относительно того, какие спецификации будут рассмотрены ФИЖ, а какие утверждены. Основной комитет отвечает за обеспечение высокого уровня качества и согласованности всех опубликованных спецификаций, а также за то, чтобы все соответствующие точки зрения и варианты использования были должным образом учтены.
 
-Core Committee members are not permitted to also be a Secretary. A Project Representative is permitted but not required to also serve as a member of the Core Committee, however, Core Committee members are expected to consider the impact of their actions on the PHP ecosystem as a whole when acting in their capacity as a Core Committee member
+Членам основного комитета не разрешается также быть секретарем. Представителю проекта разрешено, но не обязательно, также быть членом Основного комитета, однако ожидается, что члены Основного комитета будут учитывать влияние своих действий на экосистему PHP в целом, когда действуют в качестве члена Основного комитета.
 
-Core Committee members are expected to take an active interest in all topics brought before FIG.
+Ожидается, что члены основного комитета будут проявлять активный интерес ко всем темам, выносимым на рассмотрение ФИЖ.
 
-## Secretaries
+## Секретари
 
-The primary responsibility of a FIG Secretary is to serve as an impartial administrator of the FIG. They serve at the member projects and core committee's pleasure but act as independent and impartial adjudicators. FIG Secretaries also represent the FIG as a whole to the general community and public on matters relating to the FIG's activities.
+Основная обязанность Секретаря ФИЖ состоит в том, чтобы выполнять функции беспристрастного администратора ФИЖ. Они служат в проектах членов и основном комитете, но действуют как независимые и беспристрастные судьи. Секретари ФИЖ также представляют ФИЖ в целом перед обществом и общественностью по вопросам, касающимся деятельности ФИЖ.
 
-Whilst there are a number of defined functions below but they should also perform other duties as required. As the role has continuity (in that there will always be a post holder) and redundancy (There are a number of post holders in case of the absence of one) it can be ensured that responsibilities assigned to the secretary will always be completed and therefore administrative responsibilities such as vote management should always be assigned to the FIG Secretary.
+Хотя ниже приведен ряд определенных функций, они также должны выполнять другие обязанности по мере необходимости. Поскольку роль имеет преемственность (в том смысле, что всегда будет занимающий должность) и избыточность (есть несколько занимающих посты в случае отсутствия одного), можно гарантировать, что обязанности, возложенные на секретаря, всегда будут выполняться, и поэтому административные обязанности, такие как управление голосованием, всегда должны возлагаться на секретаря ФИЖ.
 
-All FIG Secretaries are expected to remain impartial and professional when acting in an official capacity as Secretary and should also remain aware that even when not acting in an official capacity, their actions reflect back on the PHP FIG and the FIG must not be brought into disrepute.
+Ожидается, что все секретари ФИЖ будут оставаться беспристрастными и профессиональными, когда действуют в официальном качестве Секретаря, а также должны осознавать, что даже когда они не действуют в официальном качестве, их действия отражаются на PHP FIG, и ФИЖ не должна наносить дурную славу.
 
-In order to ensure impartiality, Secretaries may not concurrently serve as a Project Representative, Core Committee Member, or Editor of a PSR. They may, however, be a member of a Working Group. Secretaries must also publicly declare all conflicts of interest for example if they are participating in a working group or are a core team member of a Member Project.
+В целях обеспечения беспристрастности секретари не могут одновременно выполнять функции представителя проекта, члена основного комитета или редактора PSR. Однако они могут быть членами рабочей группы. Секретари также должны публично заявлять обо всех конфликтах интересов, например, если они участвуют в рабочей группе или являются членами основной команды членского проекта.
 
-### Defined functions
+### Определенные функции
 
-There are a number of defined functions that the FIG Secretaries are expected to complete but they may also, within their remit defined in the above overarching role, perform other duties as necessary.
+Существует ряд определенных функций, которые должны выполнять секретари ФИЖ, но они также могут, в рамках своих полномочий, определенных вышеописанной всеобъемлющей ролью, выполнять другие обязанности по мере необходимости.
 
-* Managing the website
-* GitHub organization and repository administration
-* Tallying votes and managing the voting system
-* Tracking member project activity
-* Ensuring bylaws are being followed
-* Clarifying any interpretation of bylaw text, subject to a lack of objection from Core Committee members and Project Representatives**
-* Ensure that relevant marketing mediums (e.g. Twitter and Facebook) are kept professional, up to date and impartial
-* Moderate discussions on github, the mailing list, IRC channels and other official communication mediums to ensure that an appropriate environment is maintained. This includes the ability to restrict posting and impose bans with the exception that they cannot permanently ban or restrict a Core Committee member or Project Representative
-* Should there be a FIG meeting at a conference or other ad hoc gathering any Secretary in attendance should take notes to report back to the mailing list
-* Acting throughout their term essentially as Developer Advocates for the PHP FIG
+* Управление сайтом
+* Организация GitHub и администрирование репозитория
+* Подсчет голосов и управление системой голосования
+* Отслеживание активности участников проекта
+* Обеспечение соблюдения устава
+* Разъяснение любого толкования текста устава при условии отсутствия возражений со стороны членов основного комитета и представителей проекта**
+* Обеспечьте, чтобы соответствующие маркетинговые средства (например, Twitter и Facebook) оставались профессиональными, актуальными и беспристрастными.
+* Умеренные обсуждения на github, в списке рассылки, каналах IRC и других официальных средствах связи, чтобы обеспечить поддержание соответствующей среды. Это включает в себя возможность ограничивать публикации и налагать запреты, за исключением того, что они не могут навсегда заблокировать или ограничить члена основного комитета или представителя проекта.
+* Если на конференции или другом специальном собрании проводится собрание ФИЖ, любой присутствующий секретарь должен делать заметки, чтобы сообщить об этом в список рассылки.
+* Действуя на протяжении всего своего срока в основном как защитники разработчиков для PHP FIG
 
- ** Should any bylaw clarification by challenged or objected to by three or more project representatives or core committee members it must go to a vote. If between Secretaries consensus cannot be found on a clarification, it must go to a full vote.
+  ** Если какое-либо разъяснение устава оспаривается или против него возражают три или более представителей проекта или членов основного комитета, оно должно быть поставлено на голосование. Если между секретарями не может быть достигнут консенсус по разъяснению, оно должно быть поставлено на полное голосование.
 
-### Access and Abilities
+### Доступ и возможности
 
-FIG Secretaries will be given access to the GitHub organisation as "Owners" and full (admin) access to anything relating to official website, marketing and communication mediums including but not limited to the domain, Twitter, IRC channel, packagist.org packages and mailing list in order to allow them to complete their duties and ensure that FIG mediums are managed by representatives elected by the PHP FIG.
+Секретарям FIG будет предоставлен доступ к организации GitHub в качестве «Владельцев» и полный (административный) доступ ко всему, что касается официального веб-сайта, маркетинговых и коммуникационных средств, включая, помимо прочего, домен, Twitter, IRC-канал, пакеты packagist.org и список рассылки, чтобы они могли выполнять свои обязанности и обеспечивать управление средствами FIG представителями, избранными PHP FIG.
 
-Also, whilst not full members themselves, they have the ability to start any vote, but not cast any votes. However it should be noted that any vote started by one FIG Secretary must be managed and tallied by a different secretary to ensure impartiality.
+Кроме того, хотя они сами не являются полноправными членами, они могут начать любое голосование, но не подавать никаких голосов. Однако следует отметить, что любое голосование, начатое одним секретарем ФИЖ, должно управляться и подсчитываться другим секретарем для обеспечения беспристрастности.
 
-## Working Groups
+## Рабочие группы
 
-The majority of the PHP FIG's work is carried out by Working Groups, under the guidance and support of the Core Committee.  Members of a Working Group are expected to be actively engaged in the Working Group's efforts.
+Большая часть работы PHP FIG осуществляется рабочими группами под руководством и при поддержке основного комитета. Ожидается, что члены рабочей группы будут активно участвовать в работе рабочей группы.
 
-Every Working Group has a single Editor, who is responsible for the smooth operation of the Working Group's mission and has final authority on the group's output.  Editors are appointed by the Core Committee.  Editors are responsible for managing the development of the Working Group's efforts; for representing the Working Group in discussions with the rest of the PHP FIG; for coordinating other contributors; and for working with other members of the Working Group and Core Committee as appropriate to see an effort through the appropriate process.  Any individual may be an Editor, provided they are not also a Secretary. If the Editor of a proposal is missing for more than 45 days without notice then the Core Committee may agree upon a new Editor. The Editor is the final authority on the output of a Working Group's efforts, unless otherwise noted.
+У каждой рабочей группы есть единственный редактор, который отвечает за бесперебойную работу рабочей группы и имеет окончательные полномочия в отношении результатов группы. Редакторы назначаются Основным комитетом. Редакторы несут ответственность за управление развитием усилий Рабочей группы; для представления Рабочей группы в обсуждениях с остальной частью PHP FIG; для координации других участников; и для работы с другими членами Рабочей группы и Ключевого комитета по мере необходимости, чтобы увидеть усилия через соответствующий процесс. Любое лицо может быть редактором, если оно не является также секретарем. Если редактор предложения отсутствует без уведомления более 45 дней, Основной комитет может согласовать нового редактора. Редактор является окончательным авторитетом в отношении результатов работы рабочей группы, если не указано иное.
 
-Members of the general public may apply to join the Working Group at any time, subject to the approval of the Editor, in their judgment, the applicant's experience and perspective would be particularly valuable to the development of the Working Group's efforts. A Working Group member may be removed at any time by the Editor if, in their judgment, the individual has become inactive for more than 30 days or if the individual is disruptive to the smooth functioning of the Working Group.
+Представители широкой общественности могут подать заявку на вступление в рабочую группу в любое время, при условии одобрения редактором, по их мнению, опыт и точка зрения заявителя будут особенно ценны для развития
 
-Project Representatives or a proxy they specify may apply to join the Working Group at any time, unless objected to by the Editor if, in their judgment, the applicant has little value to offer the process and/or would be disruptive to the smooth functioning of the Working Group.
+усилия Рабочей группы. Член Рабочей группы может быть удален в любое время Редактором, если, по его мнению, это лицо стало неактивным в течение более 30 дней или если это лицо мешает нормальному функционированию Рабочей группы.
 
-An individual may be the Editor for more than one Working Group simultaneously.
+Представители проекта или доверенное лицо, которое они укажут, могут подать заявку на вступление в Рабочую группу в любое время, если Редактор не возражает против этого, если, по их мнению, заявитель не имеет большого значения для предложения процесса и/или будет мешать нормальному функционированию Рабочей группы.
 
-### Full Working Group
+Одно лицо может быть редактором более чем одной рабочей группы одновременно.
 
-A Full Working Group consists of an Editor, a Sponsor, and at least three other individuals.  A Sponsor must be a member of the Core Committee.  In a Full Working Group, the Editor and Sponsor share membership management responsibilities.
+### Полная рабочая группа
 
-An individual may be the Sponsor of more than one Working Group simultaneously.
+Полная рабочая группа состоит из редактора, спонсора и как минимум трех других лиц. Спонсор должен быть членом основного комитета. В полной рабочей группе редактор и спонсор разделяют обязанности по управлению членством.
 
-Multiple other Core Committee members may also be on the working group if they wish.
+Физическое лицо может быть Спонсором более чем одной Рабочей группы одновременно.
 
-### Limited Working Group
+При желании в состав рабочей группы также могут входить несколько других членов Основного комитета.
 
-A Limited Working Group consists of an Editor and at least two other individuals.  No Sponsor is required.  Any individual may be the Editor or member of a Limited Working Group, with the exception that the Editor may not also be a Secretary.
+### Ограниченная рабочая группа
 
-### Working Group Management
+Ограниченная рабочая группа состоит из редактора и как минимум двух других лиц. Спонсор не требуется. Любое лицо может быть редактором или членом ограниченной рабочей группы, за исключением того, что редактор не может быть также секретарем.
 
-Working Groups are created by an Entrance Vote of the Core Committee.  The Entrance Vote includes the appointment of an Editor and, if applicable, the Sponsor.
+### Управление рабочей группой
 
-The Editor and, if applicable, the Sponsor may at any time notify the Core Committee that a given Working Group's task is complete.  At that point the Working Group is dissolved, by Implicit Approval.  If necessary, a Decision Vote to appoint a new Editor may be held.
+Рабочие группы создаются вступительным голосованием Основного комитета. Вступительное голосование включает в себя назначение редактора и, если применимо, спонсора.
 
-The Editor or Sponsor of a Working Group may step down at any time by informing the Core Committee via the mailing list.  If the departing individual specifies an intended replacement from the Working Group membership, that individual will assume the vacant role immediately, by Implicit Approval.  If necessary, a Decision Vote to appoint a new Editor or Sponsor may be held following a suitable nomination period.
+Редактор и, если применимо, Спонсор могут в любое время уведомить Основной комитет о том, что задача данной Рабочей группы выполнена. В этот момент Рабочая группа распускается путем неявного одобрения. При необходимости может быть проведено голосование по решению о назначении нового редактора.
 
-Should a Working Group be missing an Editor for 60 days; be missing a Sponsor for 60 days; have insufficient active members for 60 days; or show no signs of activity for six months, then the Core Committee may hold a Decision Vote to name a new Editor or Sponsor, following a suitable nomination process.  One of the options in that Decision Vote must be to dissolve the Working Group.  If no suitable candidates for Editor or Sponsor may be found, then the Working Group is automatically dissolved.
+Редактор или спонсор рабочей группы может уйти в отставку в любое время, сообщив об этом Основному комитету через список рассылки. Если уходящее лицо укажет на предполагаемую замену членства в Рабочей группе, это лицо немедленно примет на себя вакантную роль после неявного одобрения. При необходимости голосование по решению о назначении нового редактора или спонсора может быть проведено после соответствующего периода выдвижения кандидатур.
 
-If a Working Group is dissolved, a new Working Group covering the same scope may be formed at a later date through a new Entrance Vote.
+Если рабочей группе не хватает редактора в течение 60 дней; не иметь Спонсора в течение 60 дней; иметь недостаточно активных членов в течение 60 дней; или не проявляет признаков активности в течение шести месяцев, тогда Основной комитет может провести голосование по решению, чтобы назначить нового редактора или спонсора после соответствующего процесса выдвижения кандидатур. Одним из вариантов этого голосования по решению должен быть роспуск Рабочей группы. Если не удается найти подходящих кандидатов в редакторы или спонсоры, рабочая группа автоматически распускается.
 
-The Secretaries will ensure that the Working Group is provided with necessary resources to support their efforts, such as a dedicated GitHub repository, mailing list, chat room, or similar such tools.
+Если рабочая группа распущена, новая рабочая группа, охватывающая ту же сферу деятельности, может быть сформирована позднее путем нового голосования.
 
-## Maintainers
+Секретари обеспечивают предоставление Рабочей группе необходимых ресурсов для поддержки их усилий, таких как выделенный репозиторий GitHub, список рассылки, чат или аналогичные инструменты.
 
-The Core Committee is ultimately responsible for all artifacts produced by the PHP FIG.  However, in the case of artifacts that are intended to change over time, the Core Committee may delegate that responsibility to a Maintainer for one or more related artifacts.
+## Сопровождающие
 
-Evolving artifacts follow Semantic Versioning.  If it is unclear if a given change would qualify as a bugfix vs a minor release, the Maintainer will assume minor release.
+Основной комитет несет полную ответственность за все артефакты, созданные PHP FIG. Однако в случае артефактов, которые должны изменяться с течением времени, Основной комитет может делегировать эту ответственность Сопровождающему за один или несколько связанных артефактов.
 
-* For changes that would qualify as bugfix releases, the Maintainer may issue a new release of the artifact at any time.
-* For changes that would qualify as minor releases, the Maintainer must notify the Core Committee via a post to the mailing list of an Intent to Merge a given change.  The Intent to Merge is subject to Implicit Approval with an Approval Vote if necessary.
-* For changes that would qualify as major releases, the release is subject to a mandatory Approval Vote from the Core Committee.
+Развивающиеся артефакты следуют за семантическим управлением версиями. Если неясно, будет ли данное изменение считаться исправлением ошибки или второстепенным выпуском, Специалист по сопровождению будет считать второстепенным выпуском.
 
-The Editor of a Working Group is automatically the Maintainer of that Working Group's effort and output.
+* Для изменений, которые можно квалифицировать как выпуски исправлений ошибок, сопровождающий может выпустить новый выпуск артефакта в любое время.
+* Для изменений, которые можно квалифицировать как незначительные выпуски, Сопровождающий должен уведомить Основной комитет через сообщение в списке рассылки о намерении объединить данное изменение. Намерение слияния подлежит неявному одобрению с голосованием за одобрение, если это необходимо.
+* Для изменений, которые можно квалифицировать как основные выпуски, выпуск подлежит обязательному одобрению со стороны Основного комитета.
 
-The Maintainer of a given artifact is appointed by the Core Committee by Approval Vote.  Once a given artifact is created, the Maintainer may step down and name a replacement Maintainer at any time with Implicit Approval.  If necessary, a Decision vote to appoint a new Maintainer may be held following a suitable nomination period.
+Редактор рабочей группы автоматически является ответственным за работу и результаты этой рабочей группы.
 
-The Secretaries will ensure that the Maintainer has the necessary access and resources to develop the artifact, such as access to a GitHub repository, mailing list, chat room, or similar such tools.
+Сопровождающий данного артефакта назначается Главным комитетом голосованием. После создания данного артефакта Сопровождающий может уйти в отставку и назначить нового Сопровождающего в любое время с неявным одобрением. При необходимости голосование по решению о назначении нового Сопровождающего может быть проведено после соответствующего периода выдвижения кандидатур.
 
-## Artifacts
+Секретари гарантируют, что у сопровождающего есть необходимый доступ и ресурсы для разработки артефакта, такие как доступ к репозиторию GitHub, списку рассылки, чату или подобным инструментам.
 
-The PHP FIG produces three primary forms of output artifact that are subject to established workflow processes.  This list is not exhaustive of the activity or publication that the PHP FIG may engage in.
+## Артефакты
 
-* A PHP Standard Recommendation (PSR) defines an interoperability standard that establishes a "contract" between providers and consumers.  The goal of any PSR is to encourage or facilitate cross-project collaboration and standardization.  PSRs are developed to a particular end-state and, once approved, are considered frozen in time to provide a stable and reliable target for implementers, with certain exceptions as specified in the PSR Amendments and PSR Evolution bylaws.  PSRs are developed by a Working Group.
-* A PHP Evolving Recommendation (PER) is a formal definition of best practices, references, guidelines, universal tooling, or tools to support the same.  They may evolve over time as the PHP language and ecosystem evolves.  PERs are developed by a Working Group.
-* Auxiliary Resources (ARs) are additional tools, code libraries, or examples that relate to or support a PSR or PER.  Examples include common partial implementations of a PSR or PER, "no-op" implementations, or testing utilities for PSR or PER implementations.  All ARs must directly relate to one or more PSRs or PERs.  An AR is developed by a Maintainer.
+PHP FIG создает три основных формы выходных артефактов, которые подчиняются установленным рабочим процессам. Этот список не является исчерпывающим для действий или публикаций, которыми может заниматься PHP FIG.
+
+* Стандартная рекомендация PHP (PSR) определяет стандарт взаимодействия, который устанавливает «контракт» между поставщиками и потребителями. Т
+
+Целью любого PSR является поощрение или облегчение межпроектного сотрудничества и стандартизации. PSR разрабатываются до определенного конечного состояния и после утверждения считаются замороженными во времени, чтобы обеспечить стабильную и надежную цель для разработчиков, за некоторыми исключениями, как указано в поправках к PSR и уставе PSR Evolution. ПРБ разрабатываются рабочей группой.
+* Рекомендация по развитию PHP (PER) — это формальное определение лучших практик, ссылок, руководств, универсальных инструментов или инструментов для их поддержки. Они могут развиваться со временем по мере развития языка PHP и экосистемы. PER разрабатываются рабочей группой.
+* Вспомогательные ресурсы (AR) — это дополнительные инструменты, библиотеки кода или примеры, относящиеся к PSR или PER или поддерживающие их. Примеры включают общие частичные реализации PSR или PER, реализации без операций или утилиты тестирования для реализаций PSR или PER. Все AR должны быть непосредственно связаны с одним или несколькими PSR или PER. AR разрабатывается сопровождающим.

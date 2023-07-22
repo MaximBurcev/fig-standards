@@ -1,83 +1,83 @@
-Amendments
+Поправки
 ==========
 
-Following the rules of the [workflow bylaw], once a PSR has been "Accepted" the PSR meaning
-cannot change, backwards compatibility must remain at 100%, and any confusion that arises from
-original wording can be clarified through errata.
+Следуя правилам [положения о рабочем процессе], после того, как PSR был «принят», PSR означает
+не может измениться, обратная совместимость должна оставаться на уровне 100 %, и любая путаница, возникающая из-за
+первоначальная формулировка может быть уточнена с помощью опечаток.
 
-The rules for errata are covered in the [workflow bylaw], and only allow non-backwards compatible
-clarification to be added to the meta document. Sometimes, modifications will be necessary in PSR
-document itself, and this document outlines those cases.
+Правила для опечаток описаны в [положении о рабочем процессе] и разрешают только несовместимые с предыдущими версиями
+уточнение, которое необходимо добавить в метадокумент. Иногда в PSR потребуются модификации.
+сам документ, и этот документ описывает эти случаи.
 
-## 1. Deprecation and Replacement
+## 1. Прекращение поддержки и замена
 
-If a PSR is found to require substantive updates or errata is no longer able to clarify confusion,
-then the PSR must be replaced, following the workflow set out in [workflow bylaw].
+Если выясняется, что PSR требует существенных обновлений или опечаток больше не может устранить путаницу,
+затем необходимо заменить PSR в соответствии с рабочим процессом, изложенным в [правиле рабочего процесса].
 
-The original PSR may at some point in time be deprecated, as specified in the [votes bylaw].
+Первоначальный PSR может в какой-то момент устареть, как указано в [постановлении о голосовании].
 
-Once a vote to deprecate a PSR and supersede it with another PSR has passed, the deprecated PSR must
-be marked as such in the original document and a link should be placed in the body.
+После того, как голосование за прекращение поддержки PSR и замену его другим PSR прошло, устаревшая PSR должна
+быть помечены как таковые в исходном документе, а ссылка должна быть размещена в теле.
 
-For example, the following Markdown be placed at the very top of the relevant standard file in the
-official PHP FIG GitHub repo `fig-standards`.
+Например, следующий Markdown должен быть размещен в самом верху соответствующего стандартного файла в
+официальный репозиторий PHP FIG GitHub `fig-standards`.
 
-> **Deprecated** - As of 2014-12-30 PSR-0 has been marked as deprecated. [PSR-4] is now recommended
-as an alternative.
+> **Устарело** — по состоянию на 30 декабря 2014 года PSR-0 помечен как устаревший. [PSR-4] теперь рекомендуется
+как альтернатива.
 > [PSR-4]: http://php-fig.org/psr/psr-4
 
-## 2. Dependencies
+## 2. Зависимости
 
-As documents are expected to be replaced rather than amended, dependencies on
-other PSR's should be avoided whenever possible. For instance, the following is
-no longer permitted:
+Поскольку ожидается, что документы будут заменены, а не изменены, зависимости от
+по возможности следует избегать других PSR. Например, следующее
+больше не разрешено:
 
-> - Namespaces and classes MUST follow PSR-0.
+> - Пространства имен и классы ДОЛЖНЫ соответствовать PSR-0.
 
-Instead - if a dependency is considered necessary by the working group creating it - then the following
-example can be used:
+Вместо этого - если создающая ее рабочая группа считает зависимость необходимой - тогда следующее
+можно использовать пример:
 
-> - Namespaces and classes MUST follow an autoloading PSR: [ [PSR-0] ].
+> - Пространства имен и классы ДОЛЖНЫ следовать PSR автозагрузки: [[PSR-0]].
 
-The outer set of square brackets denote a "dependency list", which is a list of PSRs
-that are considered a compatible dependency.
+Внешний набор квадратных скобок обозначает «список зависимостей», который представляет собой список PSR.
+которые считаются совместимой зависимостью.
 
-When more PSR's are added to the "dependency list" the same example would look like this:
+Когда в «список зависимостей» добавляется больше PSR, тот же пример будет выглядеть так:
 
-> - Namespaces and classes MUST follow an autoloading PSR: [ [PSR-0], [PSR-4] ].
+> - Пространства имен и классы ДОЛЖНЫ следовать PSR автозагрузки: [[PSR-0], [PSR-4]].
 
-New PSR's can be added to the "dependency list", but old PSR's can never be removed as this would break
-backwards compatibility.
+Новые PSR могут быть добавлены в «список зависимостей», но старые PSR никогда не могут быть удалены, так как это приведет к поломке.
+обратная совместимость.
 
-## 3. Acceptable Amendments
+## 3. Приемлемые поправки
 
-Other than updating the "dependency list", there are two other potentially acceptable amendment scenarios
-which do not require their own special vote.
+Помимо обновления «списка зависимостей», есть два других потенциально приемлемых сценария внесения поправок.
+которые не требуют своего специального голосования.
 
-### 3.1. Annotations
+### 3.1. Аннотации
 
-If Errata is added which is deemed important enough by whoever is initiating the errata vote,
-annotations may be placed in or near the offending line so that readers know to view the errata for
-more information, with a link containing an anchor to that specific piece of errata.
+Если добавляется опечатка, которая считается достаточно важной тем, кто инициирует голосование по ошибке,
+аннотации могут быть размещены в строке нарушения или рядом с ней, чтобы читатели знали, что нужно просмотреть опечатки для
+дополнительную информацию со ссылкой, содержащей привязку к этому конкретному фрагменту опечаток.
 
-> - Something confusing about where brackets go. [cf. [errata](foo-meta.md#errata-1-foo)]
+> - Что-то запутанное в том, куда идут скобки. [ср. [ошибка](foo-meta.md#errata-1-foo)]
 
-This will be done as part of the errata vote, not its own.
+Это будет сделано в рамках голосования по ошибкам, а не его собственного.
 
-### 3.2. Formatting & Typos
+### 3.2. Форматирование и опечатки
 
-If formatting is broken for any reason then changing formatting must not be considered a
-change to the document. These can be merged or pushed without hesitation by a secretary, as long as they
-don't change anything of any meaning or syntax.
+Если форматирование по какой-либо причине нарушено, изменение форматирования не должно рассматриваться как
+изменить документ. Они могут быть объединены или отправлены секретарем без колебаний, если они
+ничего не меняйте ни в смысле, ни в синтаксисе.
 
-Some typos as trivial as a misplaced comma could have a subtle impact on meaning. Take special care not to
-alter backwards compatibility and create a vote if unsure. Common sense will help here.
+Некоторые опечатки, такие тривиальные, как неуместная запятая, могут незначительно повлиять на смысл. Будьте особенно осторожны, чтобы не
+измените обратную совместимость и создайте голосование, если не уверены. Тут поможет здравый смысл.
 
-Examples:
+Примеры:
 
-1. HTML Tables are currently broken on php-fig.org because of the syntax used.
-2. Somebody spelled something wrong and nobody spotted it for a year.
-3. Problems with GitHub Markdown
+1. Таблицы HTML в настоящее время не работают на php-fig.org из-за используемого синтаксиса.
+2. Кто-то написал что-то неправильно, и никто не заметил этого в течение года.
+3. Проблемы с GitHub Markdown
 
-[workflow bylaw]: https://github.com/php-fig/fig-standards/blob/master/bylaws/002-psr-workflow.md
-[votes bylaw]: https://github.com/php-fig/fig-standards/blob/master/bylaws/004-votes.md
+[положение о рабочем процессе]: https://github.com/php-fig/fig-standards/blob/master/bylaws/002-psr-workflow.md
+[постановление о голосовании]: https://github.com/php-fig/fig-standards/blob/master/bylaws/004-votes.md

@@ -1,44 +1,44 @@
-# Logger Meta Document
+# Метадокумент логгера
 
-## 1. Summary
+## 1. Резюме
 
-The logger interface defines a common interface for logging system messages from an application or library.
+Интерфейс регистратора определяет общий интерфейс для регистрации системных сообщений из приложения или библиотеки.
 
-This metadocument was written post-hoc, as PSR-3 was originally passed before meta-documents were standard practice.
+Этот метадокумент был написан задним числом, поскольку PSR-3 изначально был принят до того, как метадокументы стали стандартной практикой.
 
-## 2. Design Decisions
+## 2. Дизайнерские решения
 
-### Static log messages
+### Статические сообщения журнала
 
-It is the intent of this specification that the message passed to a logging method always be a static value.  Any context-specific variability (such as a username, timestamp, or other information) should be provided via the `$context` array only, and the string should use a placeholder to reference it.
+Цель этой спецификации состоит в том, чтобы сообщение, передаваемое методу регистрации, всегда было статическим значением. Любая зависящая от контекста изменчивость (например, имя пользователя, отметка времени или другая информация) должна предоставляться только через массив `$context`, а строка должна использовать заполнитель для ссылки на нее.
 
-The intent of this design is twofold.  One, the message is then readily available to translation systems to create localized versions of log messages.  Two, context-specific data may contain user input, and thus requires escaping.  That escaping will be necessarily different if the log message is stored in a database for later rendering in HTML, serialized to JSON, serialized to a syslog message string, etc.  It is the responsibility of the logging implementation to ensure that `$context` data that is shown to the user is appropriately escaped. 
+Цель этого дизайна двояка. Во-первых, сообщение становится доступным для систем перевода для создания локализованных версий сообщений журнала. Во-вторых, данные, зависящие от контекста, могут содержать пользовательский ввод и, следовательно, требуют экранирования. Это экранирование обязательно будет другим, если сообщение журнала хранится в базе данных для последующего рендеринга в HTML, сериализуется в JSON, сериализуется в строку сообщения системного журнала и т. д. Реализация ведения журнала отвечает за то, чтобы данные `$context`, отображаемые пользователю, были соответствующим образом экранированы.
 
-## 3. People
+## 3 человека
 
-### 3.1 Editor(s)
+### 3.1 Редактор(ы)
 
-* Jordi Boggiano
+* Хорди Богджано
 
-## 4. Votes
+## 4. Голоса
 
-[Approval vote](https://groups.google.com/g/php-fig/c/d0yPC7jWPAE/m/rhexAfz2T_8J)
+[Голосование](https://groups.google.com/g/php-fig/c/d0yPC7jWPAE/m/rhexAfz2T_8J)
 
-## 5. Errata
+## 5. Исправления
 
-### 5.1 Type additions
+### 5.1 Добавление типов
 
-The 2.0 release of the `psr/log` package includes scalar parameter types.  The 3.0 release of the package includes return types.  This structure leverages PHP 7.2 covariance support to allow for a gradual upgrade process, but requires PHP 8.0 for type compatibility.
+Версия 2.0 пакета `psr/log` включает скалярные типы параметров. Версия пакета 3.0 включает возвращаемые типы. Эта структура использует поддержку ковариации PHP 7.2, чтобы обеспечить постепенный процесс обновления, но требует PHP 8.0 для совместимости типов.
 
-Implementers MAY add return types to their own packages at their discretion, provided that:
+Разработчики МОГУТ добавлять типы возвращаемых значений в свои пакеты по своему усмотрению при условии, что:
 
-* the return types match those in the 3.0 package.
-* the implementation specifies a minimum PHP version of 8.0.0 or later.
+* типы возврата совпадают с типами в пакете 3.0.
+* реализация указывает минимальную версию PHP 8.0.0 или более позднюю.
 
-Implementers MAY add parameter types to their own packages in a new major release, either at the same time as adding return types or in a subsequent release, provided that:
+Разработчики МОГУТ добавлять типы параметров в свои собственные пакеты в новом основном выпуске либо одновременно с добавлением возвращаемых типов, либо в последующем выпуске, при условии, что:
 
-* the parameter types match those in the 2.0 package.
-* the implementation specifies a minimum PHP version of 8.0.0 or later.
-* the implementation depends on `"psr/log": "^2.0 || ^3.0"` so as to exclude the untyped 1.0 version.
+* типы параметров соответствуют типам в пакете 2.0.
+* реализация указывает минимальную версию PHP 8.0.0 или более позднюю.
+* реализация зависит от `"psr/log": "^2.0 || ^3.0"`, чтобы исключить нетипизированную версию 1.0.
 
-Implementers are encouraged but not required to transition their packages toward the 3.0 version of the package at their earliest convenience.
+Разработчики поощряются, но не обязаны переводить свои пакеты на версию 3.0 при первой же возможности.

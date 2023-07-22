@@ -1,4 +1,4 @@
-# PSR-Cache Meta Document
+# Метадокумент PSR-кэша
 
 ## 1. Summary
 

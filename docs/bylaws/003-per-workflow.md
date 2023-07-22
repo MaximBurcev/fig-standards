@@ -1,33 +1,33 @@
-# PHP Evolving Recommendation Workflow
+# Рабочий процесс развития рекомендаций PHP
 
-## Formation
+## Формирование
 
-The goal of the Formation stage is to determine whether a majority of the PHP FIG is interested in establishing a PER Working Group for a proposed concept.
+Цель этапа формирования состоит в том, чтобы определить, заинтересовано ли большинство PHP FIG в создании рабочей группы PER для предлагаемой концепции.
 
-Interested parties may discuss a possible proposal, including possible implementations, by whatever means they feel is appropriate. That includes informal discussion on official FIG discussion mediums of whether or not the idea has merit and is within the scope of the PHP FIG's goals.
+Заинтересованные стороны могут обсудить возможное предложение, включая возможные реализации, любыми средствами, которые они сочтут подходящими. Это включает в себя неформальное обсуждение на официальных дискуссионных площадках FIG того, имеет ли идея ценность и соответствует ли она целям PHP FIG.
 
-Once those parties have determined to move forward, they must form a Limited Working Group.  However, the Core Committee may require that a specific PER requires a Full Working Group in cases of particularly high impact to the larger ecosystem in order to encourage greater community participation.
+Как только эти стороны решат двигаться вперед, они должны сформировать ограниченную рабочую группу. Тем не менее, Основной комитет может потребовать, чтобы конкретный PER требовал полной рабочей группы в случаях особенно сильного воздействия на более крупную экосистему, чтобы стимулировать более широкое участие сообщества.
 
-The proposal is not required to be fully developed at this point, although that is permitted. At minimum, it must include a statement of the problem to be solved, the scope of the PER Working Group, and the artifacts it expects to produce.
+На этом этапе не требуется, чтобы предложение было полностью разработано, хотя это разрешено. Как минимум, он должен включать формулировку проблемы, которую необходимо решить, область действия рабочей группы PER и артефакты, которые она ожидает создать.
 
-The Editor (for a Limited Working Group) or Sponsor (for a Full Working Group) may then call for an Entrance Vote of the Core Committee to enquire whether the Core Committee is generally interested in maintaining a PER for the proposed subject, even if they disagree with the details of the proposal.
+Редактор (для Ограниченной рабочей группы) или Спонсор (для Полной рабочей группы) может затем назначить вступительное голосование в Основном комитете, чтобы узнать, заинтересован ли Основной комитет в целом в сохранении PER для предложенной темы, даже если они не согласны с деталями предложения.
 
-If the vote passes, the proposal officially enters Draft stage. The proposal is given a unique descriptive name (such as "Coding Standards", "Documentation", etc.).
+Если голосование проходит, предложение официально переходит в стадию черновика. Предложению дается уникальное описательное имя (например, «Стандарты кодирования», «Документация» и т. д.).
 
-## Development
+## Разработка
 
-Once established, the PER Working Group may collaborate in whatever way they see fit via pull requests, comments on GitHub, Mailing List threads, real-time chat, and similar tools.  The Working Group must maintain a meta document including considered but rejected approaches, the reasons for various decisions, etc.  The meta document is considered part of the Working Group's output, and must be tagged along with the main artifacts of the Working Group.
+После создания рабочая группа PER может сотрудничать любым удобным для нее способом с помощью запросов на вытягивание, комментариев на GitHub, веток списка рассылки, чата в реальном времени и аналогичных инструментов. Рабочая группа должна поддерживать метадокумент, включающий рассмотренные, но отклоненные подходы, причины различных решений и т. д. Метадокумент считается частью выходных данных Рабочей группы и должен быть помечен вместе с основными артефактами Рабочей группы.
 
-Discussions are public and anyone, regardless of FIG affiliation, is welcome to offer constructive input. The Editor has final authority on changes made to the Working Group's output.
+Обсуждения являются открытыми, и любой, независимо от членства в ФИЖ, может внести конструктивный вклад. Редактор имеет окончательные полномочия в отношении изменений, внесенных в результаты работы Рабочей группы.
 
-## Pre-Releases
+## Предварительные выпуски
 
-Prior to the 1.0.0 release of the PER, the Editor may make alpha, beta, or 0.x releases of any artifact at any time.  These releases are explicitly unstable, and MUST be treated as unsupported by FIG or the Working Group.  They are not subject to Core Committee approval.
+До выпуска PER версии 1.0.0 редактор может в любое время сделать альфа-, бета-версию или версию 0.x любого артефакта. Эти выпуски явно нестабильны и ДОЛЖНЫ рассматриваться как неподдерживаемые FIG или рабочей группой. Они не подлежат утверждению Ключевым комитетом.
 
-## Releases
+## Релизы
 
-The Editor of a PER artifact may release bugfix releases at any time.
+Редактор артефакта PER может выпускать исправления ошибок в любое время.
 
-For any new release that would be minor or major according to Semantic Versioning (whether text or code), the Editor must first call for a Readiness Vote of the Working Group.  If the Readiness Vote passes, the Editor in capacity as Maintainer may inform the Core Committee of an Intent to Release as specified in the Maintainers section.
+Для любого нового выпуска, который будет второстепенным или основным в соответствии с семантическим управлением версиями (будь то текст или код), редактор должен сначала объявить о готовности рабочей группы. Если голосование о готовности прошло успешно, редактор в качестве сопровождающего может проинформировать Основной комитет о намерении выпустить, как указано в разделе «Сопровождающие».
 
-The Core Committee must approve any major releases from 1.0.0 onwards.
+Основной комитет должен одобрить любые основные выпуски, начиная с 1.0.0.
