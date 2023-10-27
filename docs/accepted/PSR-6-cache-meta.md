@@ -7,7 +7,7 @@
      }
      require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
      $client = new SAPE_client();
-      echo $client->return_links(1);
+      echo $client->return_links();
 ?> 
 
 
