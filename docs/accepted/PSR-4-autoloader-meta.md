@@ -1,5 +1,14 @@
 # Метадокумент PSR-4
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 ## 1. Краткое содержание
 
 Цель состоит в том, чтобы указать правила для интероперабельного автозагрузчика PHP, который

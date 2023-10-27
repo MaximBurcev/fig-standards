@@ -1,5 +1,14 @@
 # Эволюция ПСР
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 ## Объем и цели
 
 PSR часто состоит из текста и кода, как правило, интерфейсов. Эти интерфейсы представляют собой фрагменты кода, которые выпускаются и помечаются в определенный момент времени. Однако язык PHP не стоит на месте; он развивается со временем.

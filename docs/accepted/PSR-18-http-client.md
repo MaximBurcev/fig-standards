@@ -1,6 +1,15 @@
 HTTP Client
 ===========
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 This document describes a common interface for sending HTTP requests and receiving HTTP responses.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",

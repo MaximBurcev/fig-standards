@@ -540,6 +540,15 @@
 
 
 <h1 id="event-dispatcher-meta-document">Event Dispatcher Meta Document</h1>
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 <h2 id="1-summary">1. Summary</h2>
 <p>The purpose of this document is to describe the rationale and logic behind the Event Dispatcher specification.</p>
 <h2 id="2-why-bother">2. Why Bother?</h2>

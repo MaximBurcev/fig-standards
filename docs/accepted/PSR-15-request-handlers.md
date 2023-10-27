@@ -1,6 +1,15 @@
 HTTP Server Request Handlers
 ============================
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 This document describes common interfaces for HTTP server request handlers
 ("request handlers") and HTTP server middleware components ("middleware")
 that use HTTP messages as described by [PSR-7][psr7] or subsequent

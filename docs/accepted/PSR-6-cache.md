@@ -1,5 +1,14 @@
 # Общий интерфейс кэширования
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 Кэширование — это распространенный способ повысить производительность любого проекта,
 что делает библиотеки кэширования одной из наиболее распространенных функций многих фреймворков и
 библиотек. Это привело к ситуации, когда многие библиотеки используют свои собственные
@@ -426,4 +435,4 @@ interface InvalidArgumentException extends CacheException
 Начиная с версии [psr/cache 2.0](https://packagist.org/packages/psr/cache#2.0.0), вышеуказанные интерфейсы были обновлены для добавления подсказки типа аргумента.
 Начиная с версии [psr/cache 3.0](https://packagist.org/packages/psr/cache#3.0.0), вышеуказанные интерфейсы были обновлены для добавления подсказки возвращаемого типа. Ссылки на `array|\Traversable` были заменены на `iterable`.
 
-<!--s_links--><!--check code--><!--/s_links-->
+

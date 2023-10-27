@@ -1,5 +1,14 @@
 # Руководство по стилю кодирования
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 > **Устарело** — по состоянию на 10 августа 2019 г. PSR-2 помечен как устаревший. [PSR-12] теперь рекомендуется
 как альтернатива.
 
@@ -598,4 +607,4 @@ $foo->bar(
 Будущие рекомендации МОГУТ пересматривать и расширять это руководство для решения тех или иных проблем.
 
 
-<!--s_links--><!--check code--><!--/s_links-->
+

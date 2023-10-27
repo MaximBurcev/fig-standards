@@ -388,6 +388,15 @@
 
 
 <h1 id="php-fig">Соглашения об именах для кода, выпущенного PHP FIG</h1>
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 <ol>
 <li>Интерфейсы ДОЛЖНЫ иметь суффикс «Интерфейс»: например. <code>Psr\Foo\BarInterface</code>.</li>
 <li>Абстрактные классы ДОЛЖНЫ иметь префикс «Abstract»: например. <code>Psr\Foo\AbstractBar</code>.</li>

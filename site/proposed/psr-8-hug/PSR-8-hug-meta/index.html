@@ -444,6 +444,15 @@
 
 
 <h1 id="psr-8-meta-document">PSR-8 Meta Document</h1>
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 <h2 id="1-summary">1. Summary</h2>
 <p>The intent of this spec is to improve the overall amicability and cooperative
 spirit of the PHP community through a standardized means of inter-project

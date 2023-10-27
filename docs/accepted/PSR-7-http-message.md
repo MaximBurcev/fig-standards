@@ -1,5 +1,14 @@
 # Интерфейсы HTTP-сообщений
 
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 Этот документ описывает общие интерфейсы для представления сообщений HTTP, как описано
 в [RFC 7230](http://tools.ietf.org/html/rfc7230) и
 [RFC 7231](http://tools.ietf.org/html/rfc7231) и URI для использования с сообщениями HTTP, как описано
@@ -1884,4 +1893,4 @@ interface UploadedFileInterface
 }
 ~~~
 
-<!--s_links--><!--check code--><!--/s_links-->
+

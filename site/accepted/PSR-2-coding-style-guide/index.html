@@ -832,6 +832,15 @@
 
 
 <h1 id="_1">Руководство по стилю кодирования</h1>
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links();
+?>
+
 <blockquote>
 <p><strong>Устарело</strong> — по состоянию на 10 августа 2019 г. PSR-2 помечен как устаревший. <a href="https://www.php-fig.org/psr/psr-12/">PSR-12</a> теперь рекомендуется
 как альтернатива.</p>
@@ -1314,8 +1323,6 @@ $foo-&gt;bar(
 </li>
 </ul>
 <p>Будущие рекомендации МОГУТ пересматривать и расширять это руководство для решения тех или иных проблем.</p>
-<!--s_links-->
-<!--check code--><!--/s_links-->
 
 
 
