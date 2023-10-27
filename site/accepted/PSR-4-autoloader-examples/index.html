@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#example-implementations-of-psr-4" class="md-skip">
+        <a href="#psr-4" class="md-skip">
           Skip to content
         </a>
       
@@ -381,23 +381,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#closure-example" class="md-nav__link">
-    Closure Example
+  <a href="#_1" class="md-nav__link">
+    Пример замыкания
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#class-example" class="md-nav__link">
-    Class Example
+  <a href="#_2" class="md-nav__link">
+    Пример класса
   </a>
   
-    <nav class="md-nav" aria-label="Class Example">
+    <nav class="md-nav" aria-label="Пример класса">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#unit-tests" class="md-nav__link">
-    Unit Tests
+  <a href="#_3" class="md-nav__link">
+    Модульные тесты
   </a>
   
 </li>
@@ -422,9 +422,9 @@
                   
 
 
-<h1 id="example-implementations-of-psr-4">Example Implementations of PSR-4</h1>
-<p>The following examples illustrate PSR-4 compliant code:</p>
-<h2 id="closure-example">Closure Example</h2>
+<h1 id="psr-4">Пример реализации PSR-4</h1>
+<p>Следующие примеры иллюстрируют код, совместимый с PSR-4:</p>
+<h2 id="_1">Пример замыкания</h2>
 <pre><code class="language-php">&lt;?php
 /**
  * An example of a project-specific implementation.
@@ -467,9 +467,8 @@ spl_autoload_register(function ($class) {
     }
 });
 </code></pre>
-<h2 id="class-example">Class Example</h2>
-<p>The following is an example class implementation to handle multiple
-namespaces:</p>
+<h2 id="_2">Пример класса</h2>
+<p>Ниже приведен пример реализации класса для обработки нескольких пространства имен:</p>
 <pre><code class="language-php">&lt;?php
 namespace Example;
 
@@ -658,8 +657,8 @@ class Psr4AutoloaderClass
     }
 }
 </code></pre>
-<h3 id="unit-tests">Unit Tests</h3>
-<p>The following example is one way of unit testing the above class loader:</p>
+<h3 id="_3">Модульные тесты</h3>
+<p>Следующий пример является одним из способов модульного тестирования вышеуказанного загрузчика классов:</p>
 <pre><code class="language-php">&lt;?php
 namespace Example\Tests;
 

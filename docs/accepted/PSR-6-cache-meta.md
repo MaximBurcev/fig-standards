@@ -1,90 +1,80 @@
 # Метадокумент PSR-кэша
 
-## 1. Summary
 
-Caching is a common way to improve the performance of any project, making
-caching libraries one of the most common features of many frameworks and
-libraries. This has lead to a situation where many libraries roll their own
-caching libraries, with various levels of functionality. These differences are
-causing developers to have to learn multiple systems which may or may not
-provide the functionality they need. In addition, the developers of caching
-libraries themselves face a choice between only supporting a limited number
-of frameworks or creating a large number of adapter classes.
+<?php
+     if (!defined('_SAPE_USER')){
+        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
+     }
+     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+     $client = new SAPE_client();
+      echo $client->return_links(1);
+?> 
 
-## 2. Why Bother?
 
-A common interface for caching systems will solve these problems. Library and
-framework developers can count on the caching systems working the way they're
-expecting, while the developers of caching systems will only have to implement
-a single set of interfaces rather than a whole assortment of adapters.
+## 1. Краткое содержание
 
-Moreover, the implementation presented here is designed for future extensibility.
-It allows a variety of internally-different but API-compatible implementations
-and offers a clear path for future extension by later PSRs or by specific
-implementers.
+Кэширование — это распространенный способ повысить производительность любого проекта, что делает библиотеки кэширования одной из наиболее распространенных функций многих фреймворков и библиотек. Это привело к ситуации, когда многие библиотеки используют свои собственные библиотеки кэширования с различными уровнями функциональности. Эти различия заставляют разработчиков изучать несколько систем, которые могут обеспечивать или не обеспечивать необходимую им функциональность. Кроме того, сами разработчики кэширующих библиотек сталкиваются с выбором между поддержкой ограниченного числа фреймворков или созданием большого количества классов адаптеров.
 
-Pros:
-* A standard interface for caching allows free-standing libraries to support
-caching of intermediary data without effort; they may simply (optionally) depend
-on this standard interface and leverage it without being concerned about
-implementation details.
-* Commonly developed caching libraries shared by multiple projects, even if
-they extend this interface, are likely to be more robust than a dozen separately
-developed implementations.
+## 2. Зачем беспокоиться?
 
-Cons:
-* Any interface standardization runs the risk of stifling future innovation as
-being "not the Way It's Done(tm)".  However, we believe caching is a sufficiently
-commoditized problem space that the extension capability offered here mitigates
-any potential risk of stagnation.
+Общий интерфейс для систем кэширования решит эти проблемы. Разработчики библиотек и фреймворков могут рассчитывать на то, что системы кэширования будут работать так, как они ожидают, в то время как разработчикам систем кэширования потребуется реализовать только один набор интерфейсов, а не целый набор адаптеров.
 
-## 3. Scope
+Более того, представленная здесь реализация предназначена для будущего расширения. Он допускает множество внутренне отличных, но совместимых с API реализаций и предлагает четкий путь для будущего расширения более поздними PSR или конкретными разработчиками.
 
-### 3.1 Goals
+Плюсы:
+* Стандартный интерфейс кэширования позволяет автономным библиотекам без труда поддерживать кэширование промежуточных данных; они могут просто (факультативно) зависеть от этого стандартного интерфейса и использовать его, не заботясь о деталях реализации.
+* Обычно разрабатываемые библиотеки кэширования, совместно используемые несколькими проектами, даже если они расширяют этот интерфейс, вероятно, будут более надежными, чем дюжина отдельно разработанных реализаций.
 
-* A common interface for basic and intermediate-level caching needs.
-* A clear mechanism for extending the specification to support advanced features,
-both by future PSRs or by individual implementations. This mechanism must allow
-for multiple independent extensions without collision.
+Минусы:
+* Любая стандартизация интерфейса сопряжена с риском задушить будущие инновации как «не то, как это делается (tm)». Тем не менее, мы считаем, что кэширование — это достаточно коммерциализированное проблемное пространство, поэтому предлагаемые здесь возможности расширения снижают любой потенциальный риск стагнации.
 
-### 3.2 Non-Goals
+## 3. Рамки
 
-* Architectural compatibility with all existing cache implementations.
-* Advanced caching features such as namespacing or tagging that are used by a
-minority of users.
+### 3.1 Цели
 
-## 4. Approaches
+* Общий интерфейс для базового и среднего уровня кэширования.
+* Четкий механизм расширения спецификации для поддержки расширенных функций,
+  как будущими PSR, так и отдельными реализациями. Этот механизм должен позволять
+  для нескольких независимых расширений без коллизий.
 
-### 4.1 Chosen Approach
+### 3.2 Нецели
 
-This specification adopts a "repository model" or "data mapper" model for caching
-rather than the more traditional "expire-able key-value" model.  The primary
-reason is flexibility.  A simple key/value model is much more difficult to extend.
+* Архитектурная совместимость со всеми существующими реализациями кэша.
+* Расширенные функции кэширования, такие как пространство имен или теги, которые используются
+  меньшинство пользователей.
 
-The model here mandates the use of a CacheItem object, which represents a cache
-entry, and a Pool object, which is a given store of cached data.  Items are
-retrieved from the pool, interacted with, and returned to it.  While a bit more
-verbose at times it offers a good, robust, flexible approach to caching,
-especially in cases where caching is more involved than simply saving and
-retrieving a string.
+## 4. Подходы
 
-Most method names were chosen based on common practice and method names in a
-survey of member projects and other popular non-member systems.
+### 4.1 Выбранный подход
 
-Pros:
+Эта спецификация принимает модель «репозиторий» или модель «сопоставителя данных» для кэширования.
+вместо более традиционной модели «ключ-значение с истекающим сроком действия». Главная
+причина в гибкости. Простую модель «ключ-значение» гораздо сложнее расширить.
 
-* Flexible and extensible
-* Allows a great deal of variation in implementation without violating the interface
-* Does not implicitly expose object constructors as a pseudo-interface.
+Модель здесь предписывает использование объекта CacheItem, представляющего кеш.
+запись и объект пула, который является заданным хранилищем кэшированных данных. Предметы
+извлекаются из пула, взаимодействуют с ним и возвращаются в него. Пока еще немного
+иногда многословный, он предлагает хороший, надежный и гибкий подход к кэшированию,
+особенно в тех случаях, когда кеширование более сложно, чем просто сохранение и
+получение строки.
 
-Cons:
+Большинство имен методов были выбраны на основе общепринятой практики и имен методов в
+обзор проектов участников и других популярных систем, не являющихся членами.
 
-* A bit more verbose than the naive approach
+Плюсы:
 
-Examples:
+* Гибкий и расширяемый
+* Допускает множество вариантов реализации без нарушения интерфейса
+* Неявно не предоставляет конструкторы объектов как псевдоинтерфейс.
 
-Some common usage patterns are shown below.  These are non-normative but should
-demonstrate the application of some design decisions.
+Минусы:
+
+* Немного более подробный, чем наивный подход
+
+Примеры:
+
+Некоторые общие шаблоны использования показаны ниже. Они не являются нормативными, но должны
+продемонстрировать применение некоторых проектных решений.
 
 ~~~php
 /**

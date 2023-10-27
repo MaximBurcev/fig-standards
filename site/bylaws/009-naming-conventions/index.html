@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#naming-conventions-for-code-released-by-php-fig" class="md-skip">
+        <a href="#php-fig" class="md-skip">
           Skip to content
         </a>
       
@@ -387,16 +387,16 @@
                   
 
 
-<h1 id="naming-conventions-for-code-released-by-php-fig">Naming conventions for code released by PHP FIG</h1>
+<h1 id="php-fig">Соглашения об именах для кода, выпущенного PHP FIG</h1>
 <ol>
-<li>Interfaces MUST be suffixed by <code>Interface</code>: e.g. <code>Psr\Foo\BarInterface</code>.</li>
-<li>Abstract classes MUST be prefixed by <code>Abstract</code>: e.g. <code>Psr\Foo\AbstractBar</code>.</li>
-<li>Traits MUST be suffixed by <code>Trait</code>: e.g. <code>Psr\Foo\BarTrait</code>.</li>
-<li>PSR-1, 4, and 12 MUST be followed.</li>
-<li>For code released as part of a PSR, the vendor namespace MUST be <code>Psr</code> and the Composer package name MUST be <code>psr/&lt;package&gt;</code> (e.g., <code>psr/log</code>).</li>
-<li>For code released as part of a PER or any other Auxiliary Resources, the vendor namespace MUST be <code>Fig</code> and the Composer package name MUST be <code>fig/&lt;package&gt;</code> (e.g., <code>fig/cache-util</code>).</li>
-<li>There MUST be a package/second-level namespace in relation with the PSR or PER that  covers the code.</li>
-<li>Implementations of a given PSR or PER SHOULD declare a <code>provides</code> key in their <code>composer.json</code> file in the form <code>psr/&lt;package&gt;-implementation</code> with a version number that matches the PSR being implemented.  For example, <code>"psr/&lt;package&gt;-implementation": "1.0.0"</code>.</li>
+<li>Интерфейсы ДОЛЖНЫ иметь суффикс «Интерфейс»: например. <code>Psr\Foo\BarInterface</code>.</li>
+<li>Абстрактные классы ДОЛЖНЫ иметь префикс «Abstract»: например. <code>Psr\Foo\AbstractBar</code>.</li>
+<li>Черты ДОЛЖНЫ иметь суффикс «Черта»: например. <code>Psr\Foo\BarTrait</code>.</li>
+<li>ДОЛЖНЫ соблюдаться PSR-1, 4 и 12.</li>
+<li>Для кода, выпущенного как часть PSR, пространство имен поставщика ДОЛЖНО быть <code>Psr</code>, а имя пакета Composer ДОЛЖНО быть <code>psr/&lt;package&gt;</code> (например, <code>psr/log</code>).</li>
+<li>Для кода, выпущенного как часть PER или любых других Вспомогательных ресурсов, пространство имен поставщика ДОЛЖНО быть «Fig», а имя пакета Composer ДОЛЖНО быть «fig/<package>» (например, «fig/cache-util»).</li>
+<li>ДОЛЖНО существовать пространство имен пакета/второго уровня по отношению к PSR или PER, которое охватывает код.</li>
+<li>Реализации данного PSR или PER ДОЛЖНЫ объявить ключ «provides» в своем файле «composer.json» в форме «psr/<package>-implementation» с номером версии, соответствующим реализуемому PSR. Например, <code>"psr/&lt;package&gt;-implementation": "1.0.0"</code>.</li>
 </ol>
 
 

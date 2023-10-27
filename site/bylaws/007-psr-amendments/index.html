@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#amendments" class="md-skip">
+        <a href="#_1" class="md-skip">
           Skip to content
         </a>
       
@@ -381,37 +381,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-deprecation-and-replacement" class="md-nav__link">
-    1. Deprecation and Replacement
+  <a href="#1" class="md-nav__link">
+    1. Прекращение поддержки и замена
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-dependencies" class="md-nav__link">
-    2. Dependencies
+  <a href="#2" class="md-nav__link">
+    2. Зависимости
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-acceptable-amendments" class="md-nav__link">
-    3. Acceptable Amendments
+  <a href="#3" class="md-nav__link">
+    3. Приемлемые поправки
   </a>
   
-    <nav class="md-nav" aria-label="3. Acceptable Amendments">
+    <nav class="md-nav" aria-label="3. Приемлемые поправки">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#31-annotations" class="md-nav__link">
-    3.1. Annotations
+  <a href="#31" class="md-nav__link">
+    3.1. Аннотации
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-formatting-typos" class="md-nav__link">
-    3.2. Formatting &amp; Typos
+  <a href="#32" class="md-nav__link">
+    3.2. Форматирование и опечатки
   </a>
   
 </li>
@@ -436,75 +436,75 @@
                   
 
 
-<h1 id="amendments">Amendments</h1>
-<p>Following the rules of the <a href="https://github.com/php-fig/fig-standards/blob/master/bylaws/002-psr-workflow.md">workflow bylaw</a>, once a PSR has been "Accepted" the PSR meaning
-cannot change, backwards compatibility must remain at 100%, and any confusion that arises from
-original wording can be clarified through errata.</p>
-<p>The rules for errata are covered in the <a href="https://github.com/php-fig/fig-standards/blob/master/bylaws/002-psr-workflow.md">workflow bylaw</a>, and only allow non-backwards compatible
-clarification to be added to the meta document. Sometimes, modifications will be necessary in PSR
-document itself, and this document outlines those cases.</p>
-<h2 id="1-deprecation-and-replacement">1. Deprecation and Replacement</h2>
-<p>If a PSR is found to require substantive updates or errata is no longer able to clarify confusion,
-then the PSR must be replaced, following the workflow set out in <a href="https://github.com/php-fig/fig-standards/blob/master/bylaws/002-psr-workflow.md">workflow bylaw</a>.</p>
-<p>The original PSR may at some point in time be deprecated, as specified in the <a href="https://github.com/php-fig/fig-standards/blob/master/bylaws/004-votes.md">votes bylaw</a>.</p>
-<p>Once a vote to deprecate a PSR and supersede it with another PSR has passed, the deprecated PSR must
-be marked as such in the original document and a link should be placed in the body.</p>
-<p>For example, the following Markdown be placed at the very top of the relevant standard file in the
-official PHP FIG GitHub repo <code>fig-standards</code>.</p>
+<h1 id="_1">Поправки</h1>
+<p>Следуя правилам [положения о рабочем процессе], после того, как PSR был «принят», PSR означает
+не может измениться, обратная совместимость должна оставаться на уровне 100 %, и любая путаница, возникающая из-за
+первоначальная формулировка может быть уточнена с помощью опечаток.</p>
+<p>Правила для опечаток описаны в [положении о рабочем процессе] и разрешают только несовместимые с предыдущими версиями
+уточнение, которое необходимо добавить в метадокумент. Иногда в PSR потребуются модификации.
+сам документ, и этот документ описывает эти случаи.</p>
+<h2 id="1">1. Прекращение поддержки и замена</h2>
+<p>Если выясняется, что PSR требует существенных обновлений или опечаток больше не может устранить путаницу,
+затем необходимо заменить PSR в соответствии с рабочим процессом, изложенным в [правиле рабочего процесса].</p>
+<p>Первоначальный PSR может в какой-то момент устареть, как указано в [постановлении о голосовании].</p>
+<p>После того, как голосование за прекращение поддержки PSR и замену его другим PSR прошло, устаревшая PSR должна
+быть помечены как таковые в исходном документе, а ссылка должна быть размещена в теле.</p>
+<p>Например, следующий Markdown должен быть размещен в самом верху соответствующего стандартного файла в
+официальный репозиторий PHP FIG GitHub <code>fig-standards</code>.</p>
 <blockquote>
-<p><strong>Deprecated</strong> - As of 2014-12-30 PSR-0 has been marked as deprecated. <a href="http://php-fig.org/psr/psr-4">PSR-4</a> is now recommended
-as an alternative.</p>
+<p><strong>Устарело</strong> — по состоянию на 30 декабря 2014 года PSR-0 помечен как устаревший. <a href="http://php-fig.org/psr/psr-4">PSR-4</a> теперь рекомендуется
+как альтернатива.</p>
 </blockquote>
-<h2 id="2-dependencies">2. Dependencies</h2>
-<p>As documents are expected to be replaced rather than amended, dependencies on
-other PSR's should be avoided whenever possible. For instance, the following is
-no longer permitted:</p>
-<blockquote>
-<ul>
-<li>Namespaces and classes MUST follow PSR-0.</li>
-</ul>
-</blockquote>
-<p>Instead - if a dependency is considered necessary by the working group creating it - then the following
-example can be used:</p>
+<h2 id="2">2. Зависимости</h2>
+<p>Поскольку ожидается, что документы будут заменены, а не изменены, зависимости от
+по возможности следует избегать других PSR. Например, следующее
+больше не разрешено:</p>
 <blockquote>
 <ul>
-<li>Namespaces and classes MUST follow an autoloading PSR: [ [PSR-0] ].</li>
+<li>Пространства имен и классы ДОЛЖНЫ соответствовать PSR-0.</li>
 </ul>
 </blockquote>
-<p>The outer set of square brackets denote a "dependency list", which is a list of PSRs
-that are considered a compatible dependency.</p>
-<p>When more PSR's are added to the "dependency list" the same example would look like this:</p>
+<p>Вместо этого - если создающая ее рабочая группа считает зависимость необходимой - тогда следующее
+можно использовать пример:</p>
 <blockquote>
 <ul>
-<li>Namespaces and classes MUST follow an autoloading PSR: [ [PSR-0], [PSR-4] ].</li>
+<li>Пространства имен и классы ДОЛЖНЫ следовать PSR автозагрузки: [[PSR-0]].</li>
 </ul>
 </blockquote>
-<p>New PSR's can be added to the "dependency list", but old PSR's can never be removed as this would break
-backwards compatibility.</p>
-<h2 id="3-acceptable-amendments">3. Acceptable Amendments</h2>
-<p>Other than updating the "dependency list", there are two other potentially acceptable amendment scenarios
-which do not require their own special vote.</p>
-<h3 id="31-annotations">3.1. Annotations</h3>
-<p>If Errata is added which is deemed important enough by whoever is initiating the errata vote,
-annotations may be placed in or near the offending line so that readers know to view the errata for
-more information, with a link containing an anchor to that specific piece of errata.</p>
+<p>Внешний набор квадратных скобок обозначает «список зависимостей», который представляет собой список PSR.
+которые считаются совместимой зависимостью.</p>
+<p>Когда в «список зависимостей» добавляется больше PSR, тот же пример будет выглядеть так:</p>
 <blockquote>
 <ul>
-<li>Something confusing about where brackets go. [cf. <a href="foo-meta.md#errata-1-foo">errata</a>]</li>
+<li>Пространства имен и классы ДОЛЖНЫ следовать PSR автозагрузки: [[PSR-0], [PSR-4]].</li>
 </ul>
 </blockquote>
-<p>This will be done as part of the errata vote, not its own.</p>
-<h3 id="32-formatting-typos">3.2. Formatting &amp; Typos</h3>
-<p>If formatting is broken for any reason then changing formatting must not be considered a
-change to the document. These can be merged or pushed without hesitation by a secretary, as long as they
-don't change anything of any meaning or syntax.</p>
-<p>Some typos as trivial as a misplaced comma could have a subtle impact on meaning. Take special care not to
-alter backwards compatibility and create a vote if unsure. Common sense will help here.</p>
-<p>Examples:</p>
+<p>Новые PSR могут быть добавлены в «список зависимостей», но старые PSR никогда не могут быть удалены, так как это приведет к поломке.
+обратная совместимость.</p>
+<h2 id="3">3. Приемлемые поправки</h2>
+<p>Помимо обновления «списка зависимостей», есть два других потенциально приемлемых сценария внесения поправок.
+которые не требуют своего специального голосования.</p>
+<h3 id="31">3.1. Аннотации</h3>
+<p>Если добавляется опечатка, которая считается достаточно важной тем, кто инициирует голосование по ошибке,
+аннотации могут быть размещены в строке нарушения или рядом с ней, чтобы читатели знали, что нужно просмотреть опечатки для
+дополнительную информацию со ссылкой, содержащей привязку к этому конкретному фрагменту опечаток.</p>
+<blockquote>
+<ul>
+<li>Что-то запутанное в том, куда идут скобки. [ср. <a href="foo-meta.md#errata-1-foo">ошибка</a>]</li>
+</ul>
+</blockquote>
+<p>Это будет сделано в рамках голосования по ошибкам, а не его собственного.</p>
+<h3 id="32">3.2. Форматирование и опечатки</h3>
+<p>Если форматирование по какой-либо причине нарушено, изменение форматирования не должно рассматриваться как
+изменить документ. Они могут быть объединены или отправлены секретарем без колебаний, если они
+ничего не меняйте ни в смысле, ни в синтаксисе.</p>
+<p>Некоторые опечатки, такие тривиальные, как неуместная запятая, могут незначительно повлиять на смысл. Будьте особенно осторожны, чтобы не
+измените обратную совместимость и создайте голосование, если не уверены. Тут поможет здравый смысл.</p>
+<p>Примеры:</p>
 <ol>
-<li>HTML Tables are currently broken on php-fig.org because of the syntax used.</li>
-<li>Somebody spelled something wrong and nobody spotted it for a year.</li>
-<li>Problems with GitHub Markdown</li>
+<li>Таблицы HTML в настоящее время не работают на php-fig.org из-за используемого синтаксиса.</li>
+<li>Кто-то написал что-то неправильно, и никто не заметил этого в течение года.</li>
+<li>Проблемы с GitHub Markdown</li>
 </ol>
 
 

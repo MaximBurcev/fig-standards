@@ -17,7 +17,7 @@
     
     
       
-        <title>Logger Meta Document - Рекомендации по стандартам PHP: PSR</title>
+        <title>Метадокумент логгера - Рекомендации по стандартам PHP: PSR</title>
       
     
     
@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#logger-meta-document" class="md-skip">
+        <a href="#_1" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Logger Meta Document
+              Метадокумент логгера
             
           </span>
         </div>
@@ -381,23 +381,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-summary" class="md-nav__link">
-    1. Summary
+  <a href="#1" class="md-nav__link">
+    1. Резюме
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-design-decisions" class="md-nav__link">
-    2. Design Decisions
+  <a href="#2" class="md-nav__link">
+    2. Дизайнерские решения
   </a>
   
-    <nav class="md-nav" aria-label="2. Design Decisions">
+    <nav class="md-nav" aria-label="2. Дизайнерские решения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#static-log-messages" class="md-nav__link">
-    Static log messages
+  <a href="#_2" class="md-nav__link">
+    Статические сообщения журнала
   </a>
   
 </li>
@@ -408,16 +408,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-people" class="md-nav__link">
-    3. People
+  <a href="#3" class="md-nav__link">
+    3 человека
   </a>
   
-    <nav class="md-nav" aria-label="3. People">
+    <nav class="md-nav" aria-label="3 человека">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#31-editors" class="md-nav__link">
-    3.1 Editor(s)
+  <a href="#31" class="md-nav__link">
+    3.1 Редактор(ы)
   </a>
   
 </li>
@@ -428,23 +428,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-votes" class="md-nav__link">
-    4. Votes
+  <a href="#4" class="md-nav__link">
+    4. Голоса
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-errata" class="md-nav__link">
-    5. Errata
+  <a href="#5" class="md-nav__link">
+    5. Исправления
   </a>
   
-    <nav class="md-nav" aria-label="5. Errata">
+    <nav class="md-nav" aria-label="5. Исправления">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#51-type-additions" class="md-nav__link">
-    5.1 Type additions
+  <a href="#51" class="md-nav__link">
+    5.1 Добавление типов
   </a>
   
 </li>
@@ -469,36 +469,36 @@
                   
 
 
-<h1 id="logger-meta-document">Logger Meta Document</h1>
-<h2 id="1-summary">1. Summary</h2>
-<p>The logger interface defines a common interface for logging system messages from an application or library.</p>
-<p>This metadocument was written post-hoc, as PSR-3 was originally passed before meta-documents were standard practice.</p>
-<h2 id="2-design-decisions">2. Design Decisions</h2>
-<h3 id="static-log-messages">Static log messages</h3>
-<p>It is the intent of this specification that the message passed to a logging method always be a static value.  Any context-specific variability (such as a username, timestamp, or other information) should be provided via the <code>$context</code> array only, and the string should use a placeholder to reference it.</p>
-<p>The intent of this design is twofold.  One, the message is then readily available to translation systems to create localized versions of log messages.  Two, context-specific data may contain user input, and thus requires escaping.  That escaping will be necessarily different if the log message is stored in a database for later rendering in HTML, serialized to JSON, serialized to a syslog message string, etc.  It is the responsibility of the logging implementation to ensure that <code>$context</code> data that is shown to the user is appropriately escaped. </p>
-<h2 id="3-people">3. People</h2>
-<h3 id="31-editors">3.1 Editor(s)</h3>
+<h1 id="_1">Метадокумент логгера</h1>
+<h2 id="1">1. Резюме</h2>
+<p>Интерфейс регистратора определяет общий интерфейс для регистрации системных сообщений из приложения или библиотеки.</p>
+<p>Этот метадокумент был написан задним числом, поскольку PSR-3 изначально был принят до того, как метадокументы стали стандартной практикой.</p>
+<h2 id="2">2. Дизайнерские решения</h2>
+<h3 id="_2">Статические сообщения журнала</h3>
+<p>Цель этой спецификации состоит в том, чтобы сообщение, передаваемое методу регистрации, всегда было статическим значением. Любая зависящая от контекста изменчивость (например, имя пользователя, отметка времени или другая информация) должна предоставляться только через массив <code>$context</code>, а строка должна использовать заполнитель для ссылки на нее.</p>
+<p>Цель этого дизайна двояка. Во-первых, сообщение становится доступным для систем перевода для создания локализованных версий сообщений журнала. Во-вторых, данные, зависящие от контекста, могут содержать пользовательский ввод и, следовательно, требуют экранирования. Это экранирование обязательно будет другим, если сообщение журнала хранится в базе данных для последующего рендеринга в HTML, сериализуется в JSON, сериализуется в строку сообщения системного журнала и т. д. Реализация ведения журнала отвечает за то, чтобы данные <code>$context</code>, отображаемые пользователю, были соответствующим образом экранированы.</p>
+<h2 id="3">3 человека</h2>
+<h3 id="31">3.1 Редактор(ы)</h3>
 <ul>
-<li>Jordi Boggiano</li>
+<li>Хорди Богджано</li>
 </ul>
-<h2 id="4-votes">4. Votes</h2>
-<p><a href="https://groups.google.com/g/php-fig/c/d0yPC7jWPAE/m/rhexAfz2T_8J">Approval vote</a></p>
-<h2 id="5-errata">5. Errata</h2>
-<h3 id="51-type-additions">5.1 Type additions</h3>
-<p>The 2.0 release of the <code>psr/log</code> package includes scalar parameter types.  The 3.0 release of the package includes return types.  This structure leverages PHP 7.2 covariance support to allow for a gradual upgrade process, but requires PHP 8.0 for type compatibility.</p>
-<p>Implementers MAY add return types to their own packages at their discretion, provided that:</p>
+<h2 id="4">4. Голоса</h2>
+<p><a href="https://groups.google.com/g/php-fig/c/d0yPC7jWPAE/m/rhexAfz2T_8J">Голосование</a></p>
+<h2 id="5">5. Исправления</h2>
+<h3 id="51">5.1 Добавление типов</h3>
+<p>Версия 2.0 пакета <code>psr/log</code> включает скалярные типы параметров. Версия пакета 3.0 включает возвращаемые типы. Эта структура использует поддержку ковариации PHP 7.2, чтобы обеспечить постепенный процесс обновления, но требует PHP 8.0 для совместимости типов.</p>
+<p>Разработчики МОГУТ добавлять типы возвращаемых значений в свои пакеты по своему усмотрению при условии, что:</p>
 <ul>
-<li>the return types match those in the 3.0 package.</li>
-<li>the implementation specifies a minimum PHP version of 8.0.0 or later.</li>
+<li>типы возврата совпадают с типами в пакете 3.0.</li>
+<li>реализация указывает минимальную версию PHP 8.0.0 или более позднюю.</li>
 </ul>
-<p>Implementers MAY add parameter types to their own packages in a new major release, either at the same time as adding return types or in a subsequent release, provided that:</p>
+<p>Разработчики МОГУТ добавлять типы параметров в свои собственные пакеты в новом основном выпуске либо одновременно с добавлением возвращаемых типов, либо в последующем выпуске, при условии, что:</p>
 <ul>
-<li>the parameter types match those in the 2.0 package.</li>
-<li>the implementation specifies a minimum PHP version of 8.0.0 or later.</li>
-<li>the implementation depends on <code>"psr/log": "^2.0 || ^3.0"</code> so as to exclude the untyped 1.0 version.</li>
+<li>типы параметров соответствуют типам в пакете 2.0.</li>
+<li>реализация указывает минимальную версию PHP 8.0.0 или более позднюю.</li>
+<li>реализация зависит от <code>"psr/log": "^2.0 || ^3.0"</code>, чтобы исключить нетипизированную версию 1.0.</li>
 </ul>
-<p>Implementers are encouraged but not required to transition their packages toward the 3.0 version of the package at their earliest convenience.</p>
+<p>Разработчики поощряются, но не обязаны переводить свои пакеты на версию 3.0 при первой же возможности.</p>
 
 
 

@@ -17,7 +17,7 @@
     
     
       
-        <title>PSR evolution - Рекомендации по стандартам PHP: PSR</title>
+        <title>Эволюция ПСР - Рекомендации по стандартам PHP: PSR</title>
       
     
     
@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#psr-evolution" class="md-skip">
+        <a href="#_1" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR evolution
+              Эволюция ПСР
             
           </span>
         </div>
@@ -381,52 +381,52 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#scope-and-objectives" class="md-nav__link">
-    Scope and objectives
+  <a href="#_2" class="md-nav__link">
+    Объем и цели
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#definitions" class="md-nav__link">
-    Definitions
+  <a href="#_3" class="md-nav__link">
+    Определения
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-releases" class="md-nav__link">
-    New releases
+  <a href="#_4" class="md-nav__link">
+    Новые релизы
   </a>
   
-    <nav class="md-nav" aria-label="New releases">
+    <nav class="md-nav" aria-label="Новые релизы">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#workflow" class="md-nav__link">
-    Workflow
+  <a href="#_5" class="md-nav__link">
+    Рабочий процесс
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#practical-example" class="md-nav__link">
-    Practical example
+  <a href="#_6" class="md-nav__link">
+    Практический пример
   </a>
   
-    <nav class="md-nav" aria-label="Practical example">
+    <nav class="md-nav" aria-label="Практический пример">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#psr-11-the-interface" class="md-nav__link">
-    PSR-11: the interface
+  <a href="#-11" class="md-nav__link">
+    ПСР-11: интерфейс
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#psr-11-the-implementation" class="md-nav__link">
-    PSR-11: the implementation
+  <a href="#psr-11" class="md-nav__link">
+    PSR-11: реализация
   </a>
   
 </li>
@@ -456,46 +456,45 @@
                   
 
 
-<h1 id="psr-evolution">PSR evolution</h1>
-<h2 id="scope-and-objectives">Scope and objectives</h2>
-<p>A PSR is often comprised of text and code, generally interfaces. Those interfaces are pieces of code that are released and tagged at a specific moment in time. However, the PHP language doesn't stand still; it evolves over time.</p>
-<p>This means that those interfaces need to both provide a stable contract, as well as evolve to leverage new language features that could help better enforce the behaviors described in the PSR itself.</p>
-<p>At the same time, a PSR cannot be changed after its release (at which point only erratas are allowed), to protect a package that declared compatibility from becoming de facto incompatible.</p>
-<p>This document defines a process to be followed in updating PSR interfaces, in a way that is not breaking in regard to behavior for end users, and with an appropriate upgrade path for the consumers.</p>
-<h2 id="definitions">Definitions</h2>
+<h1 id="_1">Эволюция ПСР</h1>
+<h2 id="_2">Объем и цели</h2>
+<p>PSR часто состоит из текста и кода, как правило, интерфейсов. Эти интерфейсы представляют собой фрагменты кода, которые выпускаются и помечаются в определенный момент времени. Однако язык PHP не стоит на месте; он развивается со временем.</p>
+<p>Это означает, что эти интерфейсы должны обеспечивать стабильный контракт, а также развиваться, чтобы использовать новые языковые функции, которые могут помочь лучше реализовать поведение, описанное в самом PSR.</p>
+<p>В то же время PSR не может быть изменен после его выпуска (с этого момента допускаются только опечатки), чтобы защитить пакет, объявленный совместимым, от фактической несовместимости.</p>
+<p>Этот документ определяет процесс, которому необходимо следовать при обновлении интерфейсов PSR таким образом, чтобы не нарушать поведение конечных пользователей и с соответствующим путем обновления для потребителей.</p>
+<h2 id="_3">Определения</h2>
 <ul>
-<li><strong>Consumer</strong> - libraries and projects that consume one or more interfaces from the code released as part of the PSR in question.</li>
-<li><strong>Implementer</strong> - libraries and projects that implement one or more interfaces from code released as part of the PSR in question.</li>
-<li><strong>Cross-compatibility</strong> - the ability for a consumer or an implementer to support more than one code version of the PSR with a single release of their own.</li>
+<li><strong>Потребитель</strong> — библиотеки и проекты, использующие один или несколько интерфейсов из кода, выпущенного как часть рассматриваемого PSR.</li>
+<li><strong>Реализатор</strong> — библиотеки и проекты, реализующие один или несколько интерфейсов из кода, выпущенного как часть рассматриваемого PSR.</li>
+<li><strong>Кросс-совместимость</strong> — возможность для потребителя или разработчика поддерживать более одной версии кода PSR в одном собственном выпуске.</li>
 </ul>
-<h2 id="new-releases">New releases</h2>
-<p>A new minor release of a PHP-FIG package containing interfaces for a PSR MUST follow these rules:
- * the new release MUST follow <a href="https://semver.org/">Semantic Versioning</a> rules;
- * the PSR behavior MUST NOT be altered;
- * consumers or implementers of those interfaces MUST NOT suffer breaking changes;
- * the PHP version constraint of the PHP-FIG package MAY be increased to leverage newer language features, especially those that would aid cross-compatibility of consumers and implementers with the old and the new versions;
- * the PHP version constraint of the PHP-FIG package MUST NOT be altered to use newer language features that would create cross-compatibility issues.</p>
-<p>A new major release of a PHP-FIG package containing interfaces for a PSR MUST follow the same rules, with this exception:
- * the new major version of the package MAY contain breaking changes if the implementing packages have a reasonable upgrade path, like the possibility of releasing a cross-compatible implementation with the previous releases;
- * the new major version of the package MAY refer to a new, superseding PSR.</p>
-<p>Note that if the upgrade path causes the consumers or implementers to maintain multiple versions of their libraries side-by-side, only to support multiple versions of the same PSR, the upgrade path is to be considered too steep.</p>
-<h3 id="workflow">Workflow</h3>
-<p>Since releasing new versions of the interfaces MUST NOT alter the PSR in its behavior, those releases can be voted in with the same process as errata changes. The new releases MUST be declared and embedded with a brief explanation and a link in the PSR document, like in the following example:</p>
-<blockquote>
-<p>```php
-interface ContainerInterface
+<h2 id="_4">Новые релизы</h2>
+<p>Новый второстепенный выпуск пакета PHP-FIG, содержащий интерфейсы для PSR, ДОЛЖЕН соответствовать следующим правилам:
+* новый выпуск ДОЛЖЕН следовать правилам <a href="https://semver.org/">Semantic Versioning</a>;
+* поведение PSR НЕ ДОЛЖНО изменяться;
+* потребители или разработчики этих интерфейсов НЕ ДОЛЖНЫ подвергаться критическим изменениям;
+* ограничение версии PHP пакета PHP-FIG МОЖЕТ быть увеличено, чтобы использовать новые языковые функции, особенно те, которые будут способствовать кросс-совместимости потребителей и разработчиков со старой и новой версиями;
+* ограничение версии PHP пакета PHP-FIG НЕ ДОЛЖНО изменяться для использования новых языковых функций, которые могут создать проблемы кросс-совместимости.</p>
+<p>Новый основной выпуск пакета PHP-FIG, содержащий интерфейсы для PSR, ДОЛЖЕН следовать тем же правилам, за одним исключением:
+* новая основная версия пакета МОЖЕТ содержать критические изменения, если реализующие пакеты имеют разумный путь обновления, например, возможность выпуска кросс-совместимой реализации с предыдущими выпусками;
+* новая основная версия пакета МОЖЕТ ссылаться на новый, заменяющий PSR.</p>
+<p>Обратите внимание, что если путь обновления заставляет потребителей или разработчиков поддерживать несколько версий своих библиотек параллельно только для поддержки нескольких версий одного и того же PSR, путь обновления следует считать слишком крутым.</p>
+<h3 id="_5">Рабочий процесс</h3>
+<p>Поскольку выпуск новых версий интерфейсов НЕ ДОЛЖЕН изменять поведение PSR, за эти выпуски можно проголосовать с помощью того же процесса, что и изменения опечаток. Новые выпуски ДОЛЖНЫ быть объявлены и включены с кратким пояснением и ссылкой в документе PSR, как в следующем примере:</p>
+<pre><code class="language-php">interface ContainerInterface
 {
-// code snippet here
+&gt; // code snippet here
 }
-```</p>
-<p>Since <a href="https://packagist.org/packages/psr/container#1.1.0">psr/container version 1.1</a>, the above interface has been updated to add argument type hints.</p>
+</code></pre>
+<blockquote>
+<p>Начиная с версии <a href="https://packagist.org/packages/psr/container#1.1.0">psr/container 1.1</a>, приведенный выше интерфейс был обновлен для добавления подсказок типа аргумента.</p>
 </blockquote>
-<p>In the example above, the last line is indicative of what should be added to the specification.</p>
-<p>The meta document MUST be amended with information detailing the consumer and/or implementer upgrade path.</p>
-<h3 id="practical-example">Practical example</h3>
-<p>A common case for an upgrade in the interfaces is to add types for parameters and returns, since they are new language features introduced by PHP 7, and many PSR interfaces predate that release. We'll use a method from PSR-11 as an example of how a PSR interface could be updated.</p>
-<h4 id="psr-11-the-interface">PSR-11: the interface</h4>
-<p>PSR-11 is released with the <a href="https://packagist.org/packages/psr/container"><code>psr/container</code> package</a> and it holds the <code>ContainerInterface</code>, which has this method:</p>
+<p>В приведенном выше примере последняя строка указывает, что следует добавить в спецификацию.</p>
+<p>Метадокумент ДОЛЖЕН быть дополнен информацией, подробно описывающей путь обновления потребителя и/или исполнителя.</p>
+<h3 id="_6">Практический пример</h3>
+<p>Распространенным случаем обновления интерфейсов является добавление типов для параметров и возвращаемых значений, поскольку они представляют собой новые языковые функции, представленные в PHP 7, а многие интерфейсы PSR предшествуют этому выпуску. Мы будем использовать метод из PSR-11 в качестве примера того, как можно обновить интерфейс PSR.</p>
+<h4 id="-11">ПСР-11: интерфейс</h4>
+<p>PSR-11 выпущен с пакетом <a href="https://packagist.org/packages/psr/container"><code>psr/container</code></a> и содержит <code>ContainerInterface</code>, который имеет этот метод:</p>
 <pre><code class="language-php">    /**
      * @param string $id Identifier of the entry to look for.
      *
@@ -503,22 +502,22 @@ interface ContainerInterface
      */
     public function has($id);
 </code></pre>
-<p>This method could be updated with a new minor release that adds the argument type for <code>$id</code>:</p>
+<p>Этот метод может быть обновлен новым второстепенным выпуском, который добавляет тип аргумента для <code>$id</code>:</p>
 <pre><code class="language-php">public function has(string $id);
 </code></pre>
-<p>This change would technically be a breaking change, but thanks to the <a href="https://wiki.php.net/rfc/parameter-no-type-variance">limited contravariance possible in PHP 7.2</a>, we can avoid that. This means that just by requiring <code>"php": "^7.2"</code> in the <code>psr/container</code> <code>composer.json</code>, we could tag this change as a minor release, and have all the consumers and implementers be automatically cross-compatible, provided that they declare <code>"psr/container": "^1.0"</code> (or equivalent) as a constraint.</p>
-<p>After this intermediate step, it would be possible to release a new major version, adding a return type hint:</p>
+<p>Это изменение технически было бы критическим изменением, но благодаря <a href="https://wiki.php.net/rfc/parameter-no-type-variance">ограниченной контравариантности, возможной в PHP 7.2</a> мы можем этого избежать. Это означает, что просто потребовав <code>"php": "^7.2"</code> в <code>psr/container</code> <code>composer.json</code>, мы могли бы пометить это изменение как второстепенный выпуск, и все потребители и разработчики будут автоматически кросс-совместимы, при условии, что они объявляют <code>"psr/container": "^1.0"</code> (или эквивалент) в качестве ограничения.</p>
+<p>После этого промежуточного шага можно было бы выпустить новую основную версию, добавив подсказку типа возвращаемого значения:</p>
 <pre><code class="language-php">public function has(string $id): bool;
 </code></pre>
-<p>This must be released as a new major version of <code>psr/container</code> (2.0); any package that would implement this would be able to declare <code>"psr/container": "^1.1 || ^2.0"</code>, since backward compatibility to the first release would be impossible, due to the sum of covariance and contravariance rules.</p>
-<h4 id="psr-11-the-implementation">PSR-11: the implementation</h4>
-<p>On the other side, the implementers would be able to do a release cycle in the opposite fashion. The first release looks like this:</p>
+<p>Это должно быть выпущено как новая основная версия <code>psr/container</code> (2.0); любой пакет, реализующий это, сможет объявить <code>"psr/container": "^1.1 || ^2.0"</code>, поскольку обратная совместимость с первым выпуском будет невозможна из-за суммы правил ковариантности и контравариантности.</p>
+<h4 id="psr-11">PSR-11: реализация</h4>
+<p>С другой стороны, разработчики смогут выполнить цикл выпуска противоположным образом. Первый выпуск выглядит так:</p>
 <pre><code class="language-php">public function has($id);
 </code></pre>
-<p>The second release would add the return type, maintaining compatibility with the original interface:</p>
+<p>Во втором выпуске будет добавлен возвращаемый тип, сохраняя совместимость с исходным интерфейсом:</p>
 <pre><code class="language-php">public function has($id): bool;
 </code></pre>
-<p>A third release would also add the argument type hint:</p>
+<p>В третьем выпуске также будет добавлена подсказка типа аргумента:</p>
 <pre><code class="language-php">public function has(string $id): bool;
 </code></pre>
 
