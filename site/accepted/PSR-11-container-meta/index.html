@@ -601,15 +601,6 @@
 
 
 <h1 id="container-meta-document">Container Meta Document</h1>
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 <h2 id="1-introduction">1. Introduction</h2>
 <p>This document describes the process and discussions that led to the Container PSR.
 Its goal is to explain the reasons behind each decision.</p>

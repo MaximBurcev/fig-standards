@@ -1,15 +1,6 @@
 Соглашения об именах для кода, выпущенного PHP FIG
 ===============================================
 
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 1. Интерфейсы ДОЛЖНЫ иметь суффикс «Интерфейс»: например. `Psr\Foo\BarInterface`.
 2. Абстрактные классы ДОЛЖНЫ иметь префикс «Abstract»: например. `Psr\Foo\AbstractBar`.
 3. Черты ДОЛЖНЫ иметь суффикс «Черта»: например. `Psr\Foo\BarTrait`.

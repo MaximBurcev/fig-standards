@@ -1,13 +1,6 @@
 # Link definition interfaces
 
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
+
 
 Hypermedia links are becoming an increasingly important part of the web, in both HTML contexts
 and various API format contexts. However, there is no single common hypermedia format, nor

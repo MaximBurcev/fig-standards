@@ -565,15 +565,6 @@
 
 
 <h1 id="http-client-meta-document">HTTP Client Meta Document</h1>
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 <h2 id="summary">Summary</h2>
 <p>HTTP requests and responses are the two fundamental objects in web programming.
 All clients communicating to an external API use some form of HTTP client. Many

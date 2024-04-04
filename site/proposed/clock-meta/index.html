@@ -526,15 +526,6 @@
 
 
 <h1 id="clock-meta-document">Clock Meta Document</h1>
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 <h2 id="1-summary">1. Summary</h2>
 <p>Getting the current time in applications is typically achieved using the <code>time()</code> or <code>microtime</code> functions, or by using a <code>new \DateTimeImmutable()</code> class.</p>
 <p>Due to the nature of time progression these methods cannot be used when predictable results are needed, such as during testing.</p>

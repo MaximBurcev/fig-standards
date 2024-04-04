@@ -519,15 +519,6 @@
 
 
 <h1 id="psr-16-meta-document">PSR-16 Meta Document</h1>
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 <h2 id="1-summary">1. Summary</h2>
 <p>Caching is a common way to improve the performance of any project, and many
 libraries make use or could make use of it. Interoperability at this level

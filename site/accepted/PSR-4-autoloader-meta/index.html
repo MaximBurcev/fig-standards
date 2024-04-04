@@ -560,15 +560,6 @@
 
 
 <h1 id="psr-4">Метадокумент PSR-4</h1>
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 <h2 id="1">1. Краткое содержание</h2>
 <p>Цель состоит в том, чтобы указать правила для интероперабельного автозагрузчика PHP, который
 сопоставляет пространства имен с путями файловой системы и может сосуществовать с любым другим SPL.

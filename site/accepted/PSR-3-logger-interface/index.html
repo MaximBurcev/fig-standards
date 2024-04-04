@@ -572,15 +572,6 @@
 
 
 <h1 id="_1">Общий интерфейс логирования</h1>
-<?php
-     if (!defined('_SAPE_USER')){
-        define('_SAPE_USER', 'ce7dddb141f6ce7a610262f3a8a805f7');
-     }
-     require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
-     $client = new SAPE_client();
-      echo $client->return_links();
-?>
-
 <p>Этот документ описывает общий интерфейс для библиотек логирования.</p>
 <p>Основная цель — позволить библиотекам получать объект <code>Psr\Log\LoggerInterface</code> и
 записывать в него логи простым и универсальным способом.
