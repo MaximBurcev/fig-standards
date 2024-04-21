@@ -1,73 +1,55 @@
-HTTP Client
+HTTP-клиент
 ===========
 
 
-This document describes a common interface for sending HTTP requests and receiving HTTP responses.
+В этом документе описывается общий интерфейс для отправки HTTP-запросов и получения HTTP-ответов.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+Ключевые слова «ДОЛЖЕН», «НЕ ДОЛЖЕН», «ТРЕБУЕТСЯ», «ДОЛЖЕН», «НЕ ДОЛЖЕН», «СЛЕДУЕТ», «НЕ ДОЛЖЕН», «РЕКОМЕНДУЕТСЯ», «МОЖЕТ» и «ДОПОЛНИТЕЛЬНО» в этом документе: интерпретировать, как описано в [RFC 2119](http://tools.ietf.org/html/rfc2119).
 
-## Goal
+## Цель
 
-The goal of this PSR is to allow developers to create libraries decoupled from HTTP client
-implementations. This will make libraries more reusable as it reduces the number of
-dependencies and lowers the likelihood of version conflicts.
+Цель этого PSR — позволить разработчикам создавать библиотеки, отделенные от реализаций HTTP-клиентов. Это сделает библиотеки более пригодными для повторного использования, поскольку уменьшит количество зависимостей и снизит вероятность конфликтов версий.
 
-A second goal is that HTTP clients can be replaced as per the
-[Liskov substitution principle][Liskov]. This means that all clients MUST behave in the
-same way when sending a request.
+Вторая цель состоит в том, чтобы HTTP-клиенты могли быть заменены в соответствии с
+[Принцип подстановки Лисков][Liskov]. Это означает, что все клиенты ДОЛЖНЫ вести себя одинаково при отправке запроса.
 
-## Definitions
+## Определения
 
-* **Client** - A Client is a library that implements this specification for the purposes of
-sending PSR-7-compatible HTTP Request messages and returning a PSR-7-compatible HTTP Response message to a Calling library.
-* **Calling Library** - A Calling Library is any code that makes use of a Client.  It does not implement
-this specification's interfaces but consumes an object that implements them (a Client).
+* **Клиент** — Клиент — это библиотека, которая реализует эту спецификацию для отправки сообщений HTTP-запроса, совместимого с PSR-7, и возврата ответного сообщения HTTP, совместимого с PSR-7, в вызывающую библиотеку.
+* **Библиотека вызовов**. Библиотека вызовов — это любой код, использующий Клиент. Он не реализует интерфейсы этой спецификации, но использует объект, который их реализует (Клиент).
 
-## Client
+## Клиент
 
-A Client is an object implementing `ClientInterface`.
+Клиент — это объект, реализующий ClientInterface.
 
-A Client MAY:
+Клиент МОЖЕТ:
 
-* Choose to send an altered HTTP request from the one it was provided. For example, it could
-compress an outgoing message body.
-* Choose to alter a received HTTP response before returning it to the calling library. For example, it could
-decompress an incoming message body.
+* Выбирать отправку измененного HTTP-запроса по сравнению с тем, который был предоставлен. Например, он может сжимать тело исходящего сообщения.
+* Выбирать изменение полученного HTTP-ответа перед его возвратом в вызывающую библиотеку. Например, он может распаковать тело входящего сообщения.
 
-If a Client chooses to alter either the HTTP request or HTTP response, it MUST ensure that the
-object remains internally consistent.  For example, if a Client chooses to decompress the message
-body then it MUST also remove the `Content-Encoding` header and adjust the `Content-Length` header.
+Если Клиент решает изменить либо HTTP-запрос, либо HTTP-ответ, он ДОЛЖЕН гарантировать, что объект остается внутренне согласованным. Например, если Клиент решает распаковать тело сообщения, он ДОЛЖЕН также удалить заголовок «Content-Encoding» и настроить заголовок «Content-Length».
 
-Note that as a result, since [PSR-7 objects are immutable](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message-meta.md#why-value-objects),
-the Calling Library MUST NOT assume that the object passed to `ClientInterface::sendRequest()` will be the same PHP object
-that is actually sent. For example, the Request object that is returned by an exception MAY be a different object than
-the one passed to `sendRequest()`, so comparison by reference (===) is not possible.
+Обратите внимание, что в результате, поскольку [объекты PSR-7 неизменяемы](https://php-psr.ru/accepted/PSR-7-http-message-meta/#why-value-objects),
+Вызывающая библиотека НЕ ДОЛЖНА предполагать, что объект, переданный в `ClientInterface::sendRequest()`, будет тем же самым объектом PHP, который фактически отправлен. Например, объект Request, возвращаемый исключением, МОЖЕТ быть другим объектом, чем тот, который был передан в sendRequest(), поэтому сравнение по ссылке (===) невозможно.
 
-A Client MUST:
+Клиент ДОЛЖЕН:
 
-* Reassemble a multi-step HTTP 1xx response itself so that what is returned to the Calling Library is a valid HTTP response
-of status code 200 or higher.
+* Собрать заново многоэтапный ответ HTTP 1xx, чтобы в библиотеку вызовов возвращался действительный ответ HTTP с кодом состояния 200 или выше.
 
-## Error handling
+## Обработка ошибок
 
-A Client MUST NOT treat a well-formed HTTP request or HTTP response as an error condition. For example, response
-status codes in the 400 and 500 range MUST NOT cause an exception and MUST be returned to the Calling Library as normal.
+Клиент НЕ ДОЛЖЕН рассматривать правильно сформированный HTTP-запрос или HTTP-ответ как состояние ошибки. 
+Например, коды состояния ответа в диапазоне 400 и 500 НЕ ДОЛЖНЫ вызывать исключение и ДОЛЖНЫ быть возвращены в вызывающую библиотеку как обычно.
 
-A Client MUST throw an instance of `Psr\Http\Client\ClientExceptionInterface` if and only if it is unable to send
-the HTTP request at all or if the HTTP response could not be parsed into a PSR-7 response object.
+Клиент ДОЛЖЕН генерировать экземпляр `Psr\Http\Client\ClientExceptionInterface` тогда и только тогда, когда он вообще не может отправить HTTP-запрос или если ответ HTTP не может быть преобразован в объект ответа PSR-7.
 
-If a request cannot be sent because the request message is not a well-formed HTTP request or is missing some critical
-piece of information (such as a Host or Method), the Client MUST throw an instance of `Psr\Http\Client\RequestExceptionInterface`.
+Если запрос не может быть отправлен, потому что сообщение запроса не является правильно сформированным HTTP-запросом или в нем отсутствует какая-либо важная часть информации (например, хост или метод), клиент ДОЛЖЕН выдать экземпляр `Psr\Http\Client\RequestExceptionInterface `.
 
-If the request cannot be sent due to a network failure of any kind, including a timeout, the Client MUST throw an
-instance of `Psr\Http\Client\NetworkExceptionInterface`.
+Если запрос не может быть отправлен из-за какого-либо сбоя сети, включая тайм-аут, Клиент ДОЛЖЕН создать экземпляр `Psr\Http\Client\NetworkExceptionInterface`.
 
-Clients MAY throw more specific exceptions than those defined here (a `TimeOutException` or `HostNotFoundException` for
-example), provided they implement the appropriate interface defined above.
+Клиенты МОГУТ генерировать более конкретные исключения, чем определенные здесь (например, TimeOutException или HostNotFoundException), при условии, что они реализуют соответствующий интерфейс, определенный выше.
 
-## Interfaces
+## Интерфейсы
 
 ### ClientInterface
 
@@ -80,13 +62,13 @@ use Psr\Http\Message\ResponseInterface;
 interface ClientInterface
 {
     /**
-     * Sends a PSR-7 request and returns a PSR-7 response.
+     * Отправляет запрос PSR-7 и возвращает ответ PSR-7.
      *
      * @param RequestInterface $request
      *
      * @return ResponseInterface
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface If an error happens while processing the request.
+     * @throws \Psr\Http\Client\ClientExceptionInterface Если при обработке запроса произошла ошибка.
      */
     public function sendRequest(RequestInterface $request): ResponseInterface;
 }
@@ -98,7 +80,7 @@ interface ClientInterface
 namespace Psr\Http\Client;
 
 /**
- * Every HTTP client related exception MUST implement this interface.
+ * Каждое исключение, связанное с HTTP-клиентом, ДОЛЖНО реализовывать этот интерфейс.
  */
 interface ClientExceptionInterface extends \Throwable
 {
@@ -113,18 +95,18 @@ namespace Psr\Http\Client;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Exception for when a request failed.
+ * Исключение для случаев, когда запрос не выполнен.
  *
- * Examples:
- *      - Request is invalid (e.g. method is missing)
- *      - Runtime request errors (e.g. the body stream is not seekable)
+ * Примеры:
+ *      - Запрос недействителен (например, отсутствует метод)
+ *      - Ошибки запроса во время выполнения (например, поток тела не доступен для поиска)
  */
 interface RequestExceptionInterface extends ClientExceptionInterface
 {
     /**
-     * Returns the request.
+     * Возвращает запрос.
      *
-     * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
+     * Объект запроса МОЖЕТ быть объектом, отличным от объекта, переданного в ClientInterface::sendRequest().
      *
      * @return RequestInterface
      */
@@ -140,18 +122,18 @@ namespace Psr\Http\Client;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Thrown when the request cannot be completed because of network issues.
+ * Бросается, когда запрос не может быть выполнен из-за проблем с сетью.
  *
- * There is no response object as this exception is thrown when no response has been received.
+ * Объект ответа отсутствует, поскольку это исключение генерируется, когда ответ не получен.
  *
- * Example: the target host name can not be resolved or the connection failed.
+ * Пример: имя целевого хоста не может быть разрешено или соединение не удалось.
  */
 interface NetworkExceptionInterface extends ClientExceptionInterface
 {
     /**
-     * Returns the request.
+     * Возвращает запрос.
      *
-     * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
+     * Объект запроса МОЖЕТ быть объектом, отличным от объекта, переданного в ClientInterface::sendRequest().
      *
      * @return RequestInterface
      */
@@ -159,4 +141,4 @@ interface NetworkExceptionInterface extends ClientExceptionInterface
 }
 ```
 
-[Liskov]: https://en.wikipedia.org/wiki/Liskov_substitution_principle
+[Liskov]: https://ru.wikipedia.org/wiki/%D0%9F%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF_%D0%BF%D0%BE%D0%B4%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B8_%D0%9B%D0%B8%D1%81%D0%BA%D0%BE%D0%B2

@@ -17,7 +17,7 @@
     
     
       
-        <title>HTTP Message Meta Document - Рекомендации по стандартам PHP: PSR</title>
+        <title>Метадокумент HTTP-сообщений - Рекомендации по стандартам PHP: PSR</title>
       
     
     
@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#http-message-meta-document" class="md-skip">
+        <a href="#http-" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              HTTP Message Meta Document
+              Метадокумент HTTP-сообщений
             
           </span>
         </div>
@@ -317,6 +317,36 @@
   
   
     <li class="md-nav__item">
+      <a href="../PSR-17-http-factory/" class="md-nav__link">
+        HTTP-фабрики PSR-17
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-18-http-client/" class="md-nav__link">
+        HTTP-клиент PSR-18
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
         Расширенное руководство по стилю кодирования PSR-12
       </a>
@@ -381,30 +411,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-summary" class="md-nav__link">
-    1. Summary
+  <a href="#1" class="md-nav__link">
+    1. Краткое содержание
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-http-messages-in-php" class="md-nav__link">
-    2. HTTP Messages in PHP
+  <a href="#2-http-php" class="md-nav__link">
+    2. HTTP-сообщения в PHP
   </a>
   
-    <nav class="md-nav" aria-label="2. HTTP Messages in PHP">
+    <nav class="md-nav" aria-label="2. HTTP-сообщения в PHP">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#client-side-http-support" class="md-nav__link">
-    Client-side HTTP support
+  <a href="#http" class="md-nav__link">
+    Поддержка HTTP на стороне клиента
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#server-side-http-support" class="md-nav__link">
-    Server-side HTTP Support
+  <a href="#http_1" class="md-nav__link">
+    Поддержка HTTP на стороне сервера
   </a>
   
 </li>
@@ -415,30 +445,30 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-why-bother" class="md-nav__link">
-    3. Why Bother?
+  <a href="#3" class="md-nav__link">
+    3. Зачем?
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-scope" class="md-nav__link">
-    4. Scope
+  <a href="#4" class="md-nav__link">
+    4. Суть
   </a>
   
-    <nav class="md-nav" aria-label="4. Scope">
+    <nav class="md-nav" aria-label="4. Суть">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#41-goals" class="md-nav__link">
-    4.1 Goals
+  <a href="#41" class="md-nav__link">
+    4.1 Цели
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#42-non-goals" class="md-nav__link">
-    4.2 Non-Goals
+  <a href="#42" class="md-nav__link">
+    4.2 Не является целью
   </a>
   
 </li>
@@ -449,61 +479,61 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-design-decisions" class="md-nav__link">
-    5. Design Decisions
+  <a href="#5" class="md-nav__link">
+    5. Дизайнерские решения
   </a>
   
-    <nav class="md-nav" aria-label="5. Design Decisions">
+    <nav class="md-nav" aria-label="5. Дизайнерские решения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#message-design" class="md-nav__link">
-    Message design
+  <a href="#_1" class="md-nav__link">
+    Дизайн сообщения
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-are-there-header-methods-on-messages-rather-than-in-a-header-bag" class="md-nav__link">
-    Why are there header methods on messages rather than in a header bag?
+  <a href="#_2" class="md-nav__link">
+    Почему в сообщениях есть методы заголовков, а не в пакете заголовков?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-are-uris-represented-as-objects" class="md-nav__link">
-    Why are URIs represented as objects?
+  <a href="#uri" class="md-nav__link">
+    Почему URI представлены как объекты?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-does-the-request-interface-have-methods-for-dealing-with-the-request-target-and-compose-a-uri" class="md-nav__link">
-    Why does the request interface have methods for dealing with the request-target AND compose a URI?
+  <a href="#uri_1" class="md-nav__link">
+    Почему в интерфейсе запроса есть методы для работы с целью запроса И создания URI?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-value-objects" class="md-nav__link">
-    Why value objects?
+  <a href="#_3" class="md-nav__link">
+    Почему Объекты Значения?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#new-instances-vs-returning-this" class="md-nav__link">
-    New instances vs returning $this
+  <a href="#vs-this" class="md-nav__link">
+    Новые экземпляры vs возврат $this
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-streams-instead-of-x" class="md-nav__link">
-    Using streams instead of X
+  <a href="#x" class="md-nav__link">
+    Использование потоков вместо X
   </a>
   
-    <nav class="md-nav" aria-label="Using streams instead of X">
+    <nav class="md-nav" aria-label="Использование потоков вместо X">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -628,220 +658,104 @@
                   
 
 
-<h1 id="http-message-meta-document">HTTP Message Meta Document</h1>
-<h2 id="1-summary">1. Summary</h2>
-<p>The purpose of this proposal is to provide a set of common interfaces for HTTP
-messages as described in <a href="http://tools.ietf.org/html/rfc7230">RFC 7230</a> and
-<a href="http://tools.ietf.org/html/rfc7231">RFC 7231</a>, and URIs as described in
-<a href="http://tools.ietf.org/html/rfc3986">RFC 3986</a> (in the context of HTTP messages).</p>
+<h1 id="http-">Метадокумент HTTP-сообщений</h1>
+<h2 id="1">1. Краткое содержание</h2>
+<p>Целью этого предложения является предоставление набора общих интерфейсов для HTTP-сообщений, как описано в <a href="http://tools.ietf.org/html/rfc7230">RFC 7230</a> и <a href="http://tools. ietf.org/html/rfc7231">RFC 7231</a> и URI, как описано в <a href="http://tools.ietf.org/html/rfc3986">RFC 3986</a> (в контексте HTTP-сообщений).</p>
 <ul>
 <li>RFC 7230: http://www.ietf.org/rfc/rfc7230.txt</li>
 <li>RFC 7231: http://www.ietf.org/rfc/rfc7231.txt</li>
 <li>RFC 3986: http://www.ietf.org/rfc/rfc3986.txt</li>
 </ul>
-<p>All HTTP messages consist of the HTTP protocol version being used, headers, and
-a message body. A <em>Request</em> builds on the message to include the HTTP method
-used to make the request, and the URI to which the request is made. A
-<em>Response</em> includes the HTTP status code and reason phrase.</p>
-<p>In PHP, HTTP messages are used in two contexts:</p>
+<p>Все сообщения HTTP состоят из используемой версии протокола HTTP, заголовков и тела сообщения. <em>Request</em> основывается на сообщении и включает метод HTTP, использованный для выполнения запроса, и URI, к которому выполняется запрос. <em>Ответ</em> включает код состояния HTTP и фразу причины.</p>
+<p>В PHP сообщения HTTP используются в двух контекстах:</p>
 <ul>
-<li>To send an HTTP request, via the <code>ext/curl</code> extension, PHP's native stream
-  layer, etc., and process the received HTTP response. In other words, HTTP
-  messages are used when using PHP as an <em>HTTP client</em>.</li>
-<li>To process an incoming HTTP request to the server, and return an HTTP response
-  to the client making the request. PHP can use HTTP messages when used as a
-  <em>server-side application</em> to fulfill HTTP requests.</li>
+<li>Чтобы отправить HTTP-запрос через расширение <code>ext/curl</code>, собственный уровень потока PHP и т. д. и обработать полученный HTTP-ответ. Другими словами, HTTP-сообщения используются при использовании PHP в качестве <em>HTTP-клиента</em>.</li>
+<li>Для обработки входящего HTTP-запроса на сервер и возврата HTTP-ответа клиенту, сделавшему запрос. PHP может использовать HTTP-сообщения при использовании в качестве «серверного приложения» для выполнения HTTP-запросов.</li>
 </ul>
-<p>This proposal presents an API for fully describing all parts of the various
-HTTP messages within PHP.</p>
-<h2 id="2-http-messages-in-php">2. HTTP Messages in PHP</h2>
-<p>PHP does not have built-in support for HTTP messages.</p>
-<h3 id="client-side-http-support">Client-side HTTP support</h3>
-<p>PHP supports sending HTTP requests via several mechanisms:</p>
+<p>В этом предложении представлен API для полного описания всех частей различных HTTP-сообщений в PHP.</p>
+<h2 id="2-http-php">2. HTTP-сообщения в PHP</h2>
+<p>PHP не имеет встроенной поддержки HTTP-сообщений.</p>
+<h3 id="http">Поддержка HTTP на стороне клиента</h3>
+<p>PHP поддерживает отправку HTTP-запросов с помощью нескольких механизмов:</p>
 <ul>
-<li><a href="http://php.net/streams">PHP streams</a></li>
-<li>The <a href="http://php.net/curl">cURL extension</a></li>
-<li><a href="http://php.net/http">ext/http</a> (v2 also attempts to address server-side support)</li>
+<li><a href="http://php.net/streams">Потоки</a></li>
+<li><a href="http://php.net/curl">Клиентская библиотека работы с URL</a></li>
+<li><a href="http://php.net/http">ext/http</a> (v2 также пытается обеспечить поддержку на стороне сервера.)</li>
 </ul>
-<p>PHP streams are the most convenient and ubiquitous way to send HTTP requests,
-but pose a number of limitations with regards to properly configuring SSL
-support, and provide a cumbersome interface around setting things such as
-headers. cURL provides a complete and expanded feature-set, but, as it is not a
-default extension, is often not present. The http extension suffers from the
-same problem as cURL, as well as the fact that it has traditionally had far
-fewer examples of usage.</p>
-<p>Most modern HTTP client libraries tend to abstract the implementation, to
-ensure they can work on whatever environment they are executed on, and across
-any of the above layers.</p>
-<h3 id="server-side-http-support">Server-side HTTP Support</h3>
-<p>PHP uses Server APIs (SAPI) to interpret incoming HTTP requests, marshal input,
-and pass off handling to scripts. The original SAPI design mirrored <a href="http://www.w3.org/CGI/">Common
-Gateway Interface</a>, which would marshal request data
-and push it into environment variables before passing delegation to a script;
-the script would then pull from the environment variables in order to process
-the request and return a response.</p>
-<p>PHP's SAPI design abstracts common input sources such as cookies, query string
-arguments, and url-encoded POST content via superglobals (<code>$_COOKIE</code>, <code>$_GET</code>,
-and <code>$_POST</code>, respectively), providing a layer of convenience for web developers.</p>
-<p>On the response side of the equation, PHP was originally developed as a
-templating language, and allows intermixing HTML and PHP; any HTML portions of
-a file are immediately flushed to the output buffer. Modern applications and
-frameworks eschew this practice, as it can lead to issues with
-regards to emitting a status line and/or response headers; they tend to
-aggregate all headers and content, and emit them at once when all other
-application processing is complete. Special care needs to be paid to ensure
-that error reporting and other actions that send content to the output buffer
-do not flush the output buffer.</p>
-<h2 id="3-why-bother">3. Why Bother?</h2>
-<p>HTTP messages are used in a wide number of PHP projects -- both clients and
-servers. In each case, we observe one or more of the following patterns or
-situations:</p>
+<p>Потоки PHP — это наиболее удобный и повсеместный способ отправки HTTP-запросов, но они налагают ряд ограничений в отношении правильной настройки поддержки SSL и предоставляют громоздкий интерфейс для настройки таких вещей, как заголовки. cURL предоставляет полный и расширенный набор функций, но, поскольку он не является расширением по умолчанию, часто отсутствует. Расширение http страдает той же проблемой, что и cURL, а также тем фактом, что у него традиционно гораздо меньше примеров использования.</p>
+<p>Большинство современных клиентских библиотек HTTP имеют тенденцию абстрагировать реализацию, чтобы гарантировать, что они могут работать в любой среде, в которой они выполняются, и на любом из вышеперечисленных уровней.</p>
+<h3 id="http_1">Поддержка HTTP на стороне сервера</h3>
+<p>PHP использует API-интерфейсы сервера (SAPI) для интерпретации входящих HTTP-запросов, маршалирования входных данных и передачи обработки сценариям. Исходный дизайн SAPI отражал [Common Gateway Interface (http://www.w3.org/CGI/), который маршалировал данные запроса и помещал их в переменные среды перед передачей делегирования сценарию; Затем сценарий извлекает данные из переменных среды, чтобы обработать запрос и вернуть ответ.</p>
+<p>Конструкция PHP SAPI абстрагирует общие источники входных данных, такие как файлы cookie, аргументы строки запроса и содержимое POST в кодировке URL-адреса, через суперглобальные переменные ($_COOKIE<code>,</code>$_GET<code>и</code>$_POST` соответственно), обеспечивая уровень удобства для веб-сайтов. Разработчики.</p>
+<p>Что касается ответа на уравнение, PHP изначально разрабатывался как язык шаблонов и позволяет смешивать HTML и PHP; любые части HTML файла немедленно сбрасываются в выходной буфер. Современные приложения и платформы избегают этой практики, поскольку это может привести к проблемам с отправкой строки состояния и/или заголовков ответа; они имеют тенденцию объединять все заголовки и содержимое и выдавать их сразу после завершения всей остальной обработки приложения. Особое внимание необходимо уделять тому, чтобы отчеты об ошибках и другие действия, отправляющие содержимое в выходной буфер, не очищали выходной буфер.</p>
+<h2 id="3">3. Зачем?</h2>
+<p>Сообщения HTTP используются во многих проектах PHP — как на клиентах, так и на серверах. В каждом случае мы наблюдаем одну или несколько из следующих закономерностей или ситуаций:</p>
 <ol>
-<li>Projects use PHP's superglobals directly.</li>
-<li>Projects will create implementations from scratch.</li>
-<li>Projects may require a specific HTTP client/server library that provides
-   HTTP message implementations.</li>
-<li>Projects may create adapters for common HTTP message implementations.</li>
+<li>Проекты напрямую используют суперглобальные переменные PHP.</li>
+<li>Проекты будут создавать реализации с нуля.</li>
+<li>Для проектов может потребоваться определенная клиент-серверная библиотека HTTP, обеспечивающая реализацию HTTP-сообщений.</li>
+<li>Проекты могут создавать адаптеры для распространенных реализаций HTTP-сообщений.</li>
 </ol>
-<p>As examples:</p>
+<p>В качестве примеров:</p>
 <ol>
-<li>Just about any application that began development before the rise of
-   frameworks, which includes a number of very popular CMS, forum, and shopping
-   cart systems, have historically used superglobals.</li>
-<li>Frameworks such as Symfony and Zend Framework each define HTTP components
-   that form the basis of their MVC layers; even small, single-purpose
-   libraries such as oauth2-server-php provide and require their own HTTP
-   request/response implementations. Guzzle, Buzz, and other HTTP client
-   implementations each create their own HTTP message implementations as well.</li>
-<li>Projects such as Silex, Stack, and Drupal 8 have hard dependencies on
-   Symfony's HTTP kernel. Any SDK built on Guzzle has a hard requirement on
-   Guzzle's HTTP message implementations.</li>
-<li>Projects such as Geocoder create redundant <a href="https://github.com/geocoder-php/Geocoder/tree/6a729c6869f55ad55ae641c74ac9ce7731635e6e/src/Geocoder/HttpAdapter">adapters for common
-   libraries</a>.</li>
+<li>Практически любое приложение, разработка которого началась до появления фреймворков, включая ряд очень популярных систем CMS, форумов и корзин покупок, исторически использовало суперглобальные переменные.</li>
+<li>Каждый из таких фреймворков, как Symfony и Zend Framework, определяет компоненты HTTP, которые составляют основу их уровней MVC; даже небольшие специализированные библиотеки, такие как oauth2-server-php, предоставляют и требуют своих собственных реализаций HTTP-запросов/ответов. Guzzle, Buzz и другие реализации HTTP-клиентов также создают свои собственные реализации HTTP-сообщений.</li>
+<li>Такие проекты, как Silex, Stack и Drupal 8, жестко зависят от HTTP-ядра Symfony. Любой SDK, созданный на Guzzle, имеет жесткие требования к реализации HTTP-сообщений Guzzle.</li>
+<li>Такие проекты, как Geocoder, создают избыточные <a href="https://github.com/geocoder-php/Geocoder/tree/6a729c6869f55ad55ae641c74ac9ce7731635e6e/src/Geocoder/HttpAdapter">адаптеры для общих библиотек</a>.</li>
 </ol>
-<p>Direct usage of superglobals has a number of concerns. First, these are
-mutable, which makes it possible for libraries and code to alter the values,
-and thus alter state for the application. Additionally, superglobals make unit
-and integration testing difficult and brittle, leading to code quality
-degradation.</p>
-<p>In the current ecosystem of frameworks that implement HTTP message abstractions,
-the net result is that projects are not capable of interoperability or
-cross-pollination. In order to consume code targeting one framework from
-another, the first order of business is building a bridge layer between the
-HTTP message implementations. On the client-side, if a particular library does
-not have an adapter you can utilize, you need to bridge the request/response
-pairs if you wish to use an adapter from another library.</p>
-<p>Finally, when it comes to server-side responses, PHP gets in its own way: any
-content emitted before a call to <code>header()</code> will result in that call becoming a
-no-op; depending on error reporting settings, this can often mean headers
-and/or response status are not correctly sent. One way to work around this is
-to use PHP's output buffering features, but nesting of output buffers can
-become problematic and difficult to debug. Frameworks and applications thus
-tend to create response abstractions for aggregating headers and content that
-can be emitted at once - and these abstractions are often incompatible.</p>
-<p>Thus, the goal of this proposal is to abstract both client- and server-side
-request and response interfaces in order to promote interoperability between
-projects. If projects implement these interfaces, a reasonable level of
-compatibility may be assumed when adopting code from different libraries.</p>
-<p>It should be noted that the goal of this proposal is not to obsolete the
-current interfaces utilized by existing PHP libraries. This proposal is aimed
-at interoperability between PHP packages for the purpose of describing HTTP
-messages.</p>
-<h2 id="4-scope">4. Scope</h2>
-<h3 id="41-goals">4.1 Goals</h3>
+<p>Прямое использование суперглобальных переменных вызывает ряд проблем. Во-первых, они изменяемы, что позволяет библиотекам и коду изменять значения и, таким образом, изменять состояние приложения. Кроме того, суперглобальные переменные усложняют и делают интеграционное тестирование сложным и хрупким, что приводит к ухудшению качества кода.</p>
+<p>В нынешней экосистеме фреймворков, реализующих абстракции HTTP-сообщений, конечным результатом является то, что проекты не способны к взаимодействию или перекрестному опылению. Чтобы использовать код, предназначенный для одной платформы, из другой, первым делом необходимо построить мостовой уровень между реализациями HTTP-сообщений. На стороне клиента, если в конкретной библиотеке нет адаптера, который вы могли бы использовать, вам необходимо соединить пары запрос/ответ, если вы хотите использовать адаптер из другой библиотеки.</p>
+<p>Наконец, когда дело доходит до ответов на стороне сервера, PHP действует по-своему: любой контент, созданный до вызова <code>header()</code>, приведет к тому, что этот вызов станет неактивным; в зависимости от настроек отчетов об ошибках это часто может означать, что заголовки и/или статус ответа отправляются неправильно. Один из способов обойти эту проблему — использовать функции буферизации вывода PHP, но вложение выходных буферов может стать проблематичным и затруднить отладку. Таким образом, фреймворки и приложения имеют тенденцию создавать абстракции ответов для агрегирования заголовков и контента, которые могут быть отправлены одновременно, и эти абстракции часто несовместимы.</p>
+<p>Таким образом, цель этого предложения — абстрагировать интерфейсы запросов и ответов как на стороне клиента, так и на стороне сервера, чтобы обеспечить совместимость между проектами. Если проекты реализуют эти интерфейсы, можно предположить разумный уровень совместимости при использовании кода из разных библиотек.</p>
+<p>Следует отметить, что целью этого предложения не является устаревание текущих интерфейсов, используемых существующими библиотеками PHP. Это предложение направлено на обеспечение совместимости между пакетами PHP с целью описания HTTP-сообщений.</p>
+<h2 id="4">4. Суть</h2>
+<h3 id="41">4.1 Цели</h3>
 <ul>
-<li>Provide the interfaces needed for describing HTTP messages.</li>
-<li>Focus on practical applications and usability.</li>
-<li>Define the interfaces to model all elements of the HTTP message and URI
-  specifications.</li>
-<li>Ensure that the API does not impose arbitrary limits on HTTP messages. For
-  example, some HTTP message bodies can be too large to store in memory, so we
-  must account for this.</li>
-<li>Provide useful abstractions both for handling incoming requests for
-  server-side applications and for sending outgoing requests in HTTP clients.</li>
+<li>Предоставить интерфейсы, необходимые для описания HTTP-сообщений.</li>
+<li>Сосредоточьтесь на практическом применении и удобстве использования.</li>
+<li>Определите интерфейсы для моделирования всех элементов HTTP-сообщения и спецификаций URI.</li>
+<li>Убедитесь, что API не накладывает произвольные ограничения на HTTP-сообщения. Например, некоторые тела HTTP-сообщений могут быть слишком большими для хранения в памяти, поэтому мы должны это учитывать.</li>
+<li>Предоставляйте полезные абстракции как для обработки входящих запросов к серверным приложениям, так и для отправки исходящих запросов в HTTP-клиентах.</li>
 </ul>
-<h3 id="42-non-goals">4.2 Non-Goals</h3>
+<h3 id="42">4.2 Не является целью</h3>
 <ul>
-<li>This proposal does not expect all HTTP client libraries or server-side
-  frameworks to change their interfaces to conform. It is strictly meant for
-  interoperability.</li>
-<li>While everyone's perception of what is and is not an implementation detail
-  varies, this proposal should not impose implementation details. As
-  RFCs 7230, 7231, and 3986 do not force any particular implementation,
-  there will be a certain amount of invention needed to describe HTTP message
-  interfaces in PHP.</li>
+<li>Это предложение не предполагает использования всех клиентских HTTP-библиотек или серверных библиотек.
+  фреймворки, чтобы изменить их интерфейсы в соответствии с ними. Это строго предназначено для совместимости.</li>
+<li>Хотя восприятие того, что является деталями реализации, а что нет, у каждого разное, это предложение не должно навязывать детали реализации. Поскольку RFC 7230, 7231 и 3986 не требуют какой-либо конкретной реализации, потребуется определенное количество изобретений для описания интерфейсов сообщений HTTP в PHP.</li>
 </ul>
-<h2 id="5-design-decisions">5. Design Decisions</h2>
-<h3 id="message-design">Message design</h3>
-<p>The <code>MessageInterface</code> provides accessors for the elements common to all HTTP
-messages, whether they are for requests or responses. These elements include:</p>
+<h2 id="5">5. Дизайнерские решения</h2>
+<h3 id="_1">Дизайн сообщения</h3>
+<p>MessageInterface предоставляет средства доступа к элементам, общим для всех HTTP-сообщений, независимо от того, предназначены ли они для запросов или ответов. Эти элементы включают в себя:</p>
 <ul>
-<li>HTTP protocol version (e.g., "1.0", "1.1")</li>
-<li>HTTP headers</li>
-<li>HTTP message body</li>
+<li>Версия протокола HTTP (например, «1.0», «1.1»)</li>
+<li>HTTP-заголовки</li>
+<li>Тело HTTP-сообщения</li>
 </ul>
-<p>More specific interfaces are used to describe requests and responses, and more
-specifically the context of each (client- vs. server-side). These divisions are
-partly inspired by existing PHP usage, but also by other languages such as
-Ruby's <a href="https://rack.github.io">Rack</a>,
-Python's <a href="https://www.python.org/dev/peps/pep-0333/">WSGI</a>,
-Go's <a href="http://golang.org/pkg/net/http/">http package</a>,
-Node's <a href="http://nodejs.org/api/http.html">http module</a>, etc.</p>
-<h3 id="why-are-there-header-methods-on-messages-rather-than-in-a-header-bag">Why are there header methods on messages rather than in a header bag?</h3>
-<p>The message itself is a container for the headers (as well as the other message
-properties). How these are represented internally is an implementation detail,
-but uniform access to headers is a responsibility of the message.</p>
-<h3 id="why-are-uris-represented-as-objects">Why are URIs represented as objects?</h3>
-<p>URIs are values, with identity defined by the value, and thus should be modeled
-as value objects.</p>
-<p>Additionally, URIs contain a variety of segments which may be accessed many
-times in a given request -- and which would require parsing the URI in order to
-determine (e.g., via <code>parse_url()</code>). Modeling URIs as value objects allows
-parsing once only, and simplifies access to individual segments. It also
-provides convenience in client applications by allowing users to create new
-instances of a base URI instance with only the segments that change (e.g.,
-updating the path only).</p>
-<h3 id="why-does-the-request-interface-have-methods-for-dealing-with-the-request-target-and-compose-a-uri">Why does the request interface have methods for dealing with the request-target AND compose a URI?</h3>
-<p>RFC 7230 details the request line as containing a "request-target". Of the four
-forms of request-target, only one is a URI compliant with RFC 3986; the most
-common form used is origin-form, which represents the URI without the
-scheme or authority information. Moreover, since all forms are valid for
-purposes of requests, the proposal must accommodate each.</p>
-<p><code>RequestInterface</code> thus has methods relating to the request-target. By default,
-it will use the composed URI to present an origin-form request-target, and, in
-the absence of a URI instance, return the string "/".  Another method,
-<code>withRequestTarget()</code>, allows specifying an instance with a specific
-request-target, allowing users to create requests that use one of the other
-valid request-target forms.</p>
-<p>The URI is kept as a discrete member of the request for a variety of reasons.
-For both clients and servers, knowledge of the absolute URI is typically
-required. In the case of clients, the URI, and specifically the scheme and
-authority details, is needed in order to make the actual TCP connection. For
-server-side applications, the full URI is often required in order to validate
-the request or to route to an appropriate handler.</p>
-<h3 id="why-value-objects">Why value objects?</h3>
-<p>The proposal models messages and URIs as <a href="http://en.wikipedia.org/wiki/Value_object">value objects</a>.</p>
-<p>Messages are values where the identity is the aggregate of all parts of the
-message; a change to any aspect of the message is essentially a new message.
-This is the very definition of a value object. The practice by which changes
-result in a new instance is termed <a href="http://en.wikipedia.org/wiki/Immutable_object">immutability</a>,
-and is a feature designed to ensure the integrity of a given value.</p>
-<p>The proposal also recognizes that most clients and server-side
-applications will need to be able to easily update message aspects, and, as
-such, provides interface methods that will create new message instances with
-the updates. These are generally prefixed with the verbiage <code>with</code> or
-<code>without</code>.</p>
-<p>Value objects provides several benefits when modeling HTTP messages:</p>
+<p>Для описания запросов и ответов используются более конкретные интерфейсы, а точнее контекст каждого из них (клиентская или серверная сторона). Эти подразделения частично вдохновлены существующим использованием PHP, а также другими языками, такими как [Rack] Ruby (https://rack.github.io),
+Python <a href="https://www.python.org/dev/peps/pep-0333/">WSGI</a>,
+[http-пакет] Go(http://golang.org/pkg/net/http/),
+[http-модуль] узла (http://nodejs.org/api/http.html) и т. д.</p>
+<h3 id="_2">Почему в сообщениях есть методы заголовков, а не в пакете заголовков?</h3>
+<p>Само сообщение является контейнером для заголовков (а также других свойств сообщения). То, как они представлены внутри, является деталью реализации, но единообразный доступ к заголовкам является обязанностью сообщения.</p>
+<h3 id="uri">Почему URI представлены как объекты?</h3>
+<p>URI — это значения, идентичность которых определяется значением, и поэтому их следует моделировать как объекты значений.</p>
+<p>Кроме того, URI содержат множество сегментов, к которым можно обращаться много раз в одном запросе, и для определения которых потребуется анализ URI (например, с помощью <code>parse_url()</code>). Моделирование URI как объектов значений позволяет выполнять синтаксический анализ только один раз и упрощает доступ к отдельным сегментам. Это также обеспечивает удобство в клиентских приложениях, позволяя пользователям создавать новые экземпляры базового экземпляра URI только с изменяющимися сегментами (например, обновляя только путь).</p>
+<h3 id="uri_1">Почему в интерфейсе запроса есть методы для работы с целью запроса И создания URI?</h3>
+<p>В RFC 7230 строка запроса подробно описана как содержащая «цель запроса». Из четырех форм запроса-цели только одна является URI, соответствующей RFC 3986; наиболее распространенной формой является origin-form, которая представляет URI без схемы или информации о полномочиях. Более того, поскольку все формы действительны для запросов, предложение должно учитывать каждую из них.</p>
+<p>Таким образом, <code>RequestInterface</code> имеет методы, относящиеся к цели запроса. По умолчанию он будет использовать составной URI для представления цели запроса в исходной форме и, при отсутствии экземпляра URI, возвращать строку «/». Другой метод, withRequestTarget(), позволяет указать экземпляр с определенной целью запроса, позволяя пользователям создавать запросы, использующие одну из других допустимых форм цели запроса.</p>
+<p>URI сохраняется как отдельный элемент запроса по ряду причин. Как для клиентов, так и для серверов обычно требуется знание абсолютного URI. В случае клиентов URI и, в частности, сведения о схеме и полномочиях необходимы для фактического TCP-соединения. Для серверных приложений полный URI часто требуется для проверки запроса или маршрутизации к соответствующему обработчику.</p>
+<h3 id="_3">Почему Объекты Значения?</h3>
+<p>В предложении сообщения и URI моделируются как <a href="http://en.wikipedia.org/wiki/Value_object">объекты значений</a>.</p>
+<p>Сообщения — это значения, где идентификатор — это совокупность всех частей сообщения; изменение любого аспекта сообщения по сути является новым сообщением.
+Это само определение объекта значения. Практика, при которой изменения приводят к созданию нового экземпляра, называется <a href="https://ru.wikipedia.org/wiki/%D0%9D%D0%B5%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D1%8F%D0%B5%D0%BC%D1%8B%D0%B9_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82">неизменяемостью</a> и представляет собой функцию, предназначенную для обеспечения целостности данного значения.</p>
+<p>В предложении также признается, что большинству клиентов и серверных приложений потребуется возможность легко обновлять аспекты сообщений, и поэтому предоставляются методы интерфейса, которые будут создавать новые экземпляры сообщений с обновлениями. Обычно к ним добавляются префиксы «с» или «без».</p>
+<p>Объекты-значения предоставляют несколько преимуществ при моделировании HTTP-сообщений:</p>
 <ul>
-<li>Changes in URI state cannot alter the request composing the URI instance.</li>
-<li>Changes in headers cannot alter the message composing them.</li>
+<li>Изменения в состоянии URI не могут изменить запрос, составляющий экземпляр URI.</li>
+<li>Изменения в заголовках не могут изменить составляющее их сообщение.</li>
 </ul>
-<p>In essence, modeling HTTP messages as value objects ensures the integrity of
-the message state, and prevents the need for bi-directional dependencies, which
-can often go out-of-sync or lead to debugging or performance issues.</p>
-<p>For HTTP clients, they allow consumers to build a base request with data such
-as the base URI and required headers, without needing to build a brand new
-request or reset request state for each message the client sends:</p>
+<p>По сути, моделирование HTTP-сообщений как объектов значений обеспечивает целостность состояния сообщения и предотвращает необходимость двунаправленных зависимостей, которые часто могут выйти из синхронизации или привести к проблемам отладки или производительности.</p>
+<p>Для HTTP-клиентов они позволяют потребителям создавать базовый запрос с такими данными, как базовый URI и необходимые заголовки, без необходимости создавать новый запрос или сбрасывать состояние запроса для каждого сообщения, отправляемого клиентом:</p>
 <pre><code class="language-php">$uri = new Uri('http://api.example.com');
 $baseRequest = new Request($uri, null, [
     'Authorization' =&gt; 'Bearer ' . $token,
@@ -851,7 +765,7 @@ $baseRequest = new Request($uri, null, [
 $request = $baseRequest-&gt;withUri($uri-&gt;withPath('/user'))-&gt;withMethod('GET');
 $response = $client-&gt;send($request);
 
-// get user id from $response
+// получаем идентификатор пользователя из $response
 
 $body = new StringStream(json_encode(['tasks' =&gt; [
     'Code',
@@ -864,37 +778,35 @@ $request = $baseRequest
     -&gt;withBody($body);
 $response = $client-&gt;send($request)
 
-// No need to overwrite headers or body!
+// Не нужно перезаписывать заголовки или тело!
 $request = $baseRequest-&gt;withUri($uri-&gt;withPath('/tasks'))-&gt;withMethod('GET');
 $response = $client-&gt;send($request);
 </code></pre>
-<p>On the server-side, developers will need to:</p>
+<p>На стороне сервера разработчикам необходимо:</p>
 <ul>
-<li>Deserialize the request message body.</li>
-<li>Decrypt HTTP cookies.</li>
-<li>Write to the response.</li>
+<li>Десериализовать тело сообщения запроса.</li>
+<li>Расшифровать файлы cookie HTTP.</li>
+<li>Напишите в ответ.</li>
 </ul>
-<p>These operations can be accomplished with value objects as well, with a number
-of benefits:</p>
+<p>Эти операции также можно выполнять с объектами-значениями, что дает ряд преимуществ:</p>
 <ul>
-<li>The original request state can be stored for retrieval by any consumer.</li>
-<li>A default response state can be created with default headers and/or message body.</li>
+<li>Исходное состояние запроса может быть сохранено для извлечения любым потребителем.</li>
+<li>Состояние ответа по умолчанию может быть создано с использованием заголовков и/или тела сообщения по умолчанию.</li>
 </ul>
-<p>Most popular PHP frameworks have fully mutable HTTP messages today. The main
-changes necessary in consuming true value objects are:</p>
+<p>Сегодня большинство популярных PHP-фреймворков имеют полностью изменяемые HTTP-сообщения. Основные изменения, необходимые для использования объектов истинной ценности:</p>
 <ul>
-<li>Instead of calling setter methods or setting public properties, mutator
-  methods will be called, and the result assigned.</li>
-<li>Developers must notify the application on a change in state.</li>
+<li>Вместо вызова методов установки или установки общедоступных свойств, мутатор
+  Будут вызываться методы и присваиваться результат.</li>
+<li>Разработчики должны уведомить приложение об изменении состояния.</li>
 </ul>
-<p>As an example, in Zend Framework 2, instead of the following:</p>
+<p>Например, в Zend Framework 2 вместо следующего:</p>
 <pre><code class="language-php">function (MvcEvent $e)
 {
     $response = $e-&gt;getResponse();
     $response-&gt;setHeaderLine('x-foo', 'bar');
 }
 </code></pre>
-<p>one would now write:</p>
+<p>сейчас бы написали:</p>
 <pre><code class="language-php">function (MvcEvent $e)
 {
     $response = $e-&gt;getResponse();
@@ -903,20 +815,12 @@ changes necessary in consuming true value objects are:</p>
     );
 }
 </code></pre>
-<p>The above combines assignment and notification in a single call.</p>
-<p>This practice has a side benefit of making explicit any changes to application
-state being made.</p>
-<h3 id="new-instances-vs-returning-this">New instances vs returning $this</h3>
-<p>One observation made on the various <code>with*()</code> methods is that they can likely
-safely <code>return $this;</code> if the argument presented will not result in a change in
-the value. One rationale for doing so is performance (as this will not result in
-a cloning operation).</p>
-<p>The various interfaces have been written with verbiage indicating that
-immutability MUST be preserved, but only indicate that "an instance" must be
-returned containing the new state. Since instances that represent the same value
-are considered equal, returning <code>$this</code> is functionally equivalent, and thus
-allowed.</p>
-<h3 id="using-streams-instead-of-x">Using streams instead of X</h3>
+<p>Вышеупомянутое объединяет назначение и уведомление в одном вызове.</p>
+<p>Побочным преимуществом этой практики является возможность явного внесения любых изменений в состояние приложения.</p>
+<h3 id="vs-this">Новые экземпляры vs возврат $this</h3>
+<p>Одно наблюдение, сделанное в отношении различных методов <code>with*()</code>, заключается в том, что они, вероятно, могут безопасно <code>вернуть $this;</code>, если представленный аргумент не приведет к изменению значения. Одним из оснований для этого является производительность (поскольку это не приведет к операции клонирования).</p>
+<p>Различные интерфейсы были написаны с многословием, указывающим, что неизменность ДОЛЖНА быть сохранена, но указывают только на то, что должен быть возвращен «экземпляр», содержащий новое состояние. Поскольку экземпляры, представляющие одно и то же значение, считаются равными, возврат $this функционально эквивалентен и, следовательно, разрешен.</p>
+<h3 id="x">Использование потоков вместо X</h3>
 <p><code>MessageInterface</code> uses a body value that must implement <code>StreamInterface</code>. This
 design decision was made so that developers can send and receive (and/or receive
 and send) HTTP messages that contain more data than can practically be stored in

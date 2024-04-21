@@ -11,13 +11,17 @@
         <link rel="canonical" href="https://php-psr.ru/accepted/PSR-17-http-factory/">
       
       
+        <link rel="prev" href="../PSR-7-http-message/">
+      
+      
+        <link rel="next" href="../PSR-18-http-client/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
     
     
       
-        <title>PSR 17 http factory - Рекомендации по стандартам PHP: PSR</title>
+        <title>HTTP-фабрики PSR-17 - Рекомендации по стандартам PHP: PSR</title>
       
     
     
@@ -61,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#http-factories" class="md-skip">
+        <a href="#http-" class="md-skip">
           Skip to content
         </a>
       
@@ -96,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR 17 http factory
+              HTTP-фабрики PSR-17
             
           </span>
         </div>
@@ -315,6 +319,132 @@
 
   
   
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          HTTP-фабрики PSR-17
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        HTTP-фабрики PSR-17
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    1. Спецификация
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    2. Интерфейсы
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Интерфейсы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-requestfactoryinterface" class="md-nav__link">
+    2.1 RequestFactoryInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-responsefactoryinterface" class="md-nav__link">
+    2.2 ResponseFactoryInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-serverrequestfactoryinterface" class="md-nav__link">
+    2.3 ServerRequestFactoryInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-streamfactoryinterface" class="md-nav__link">
+    2.4 StreamFactoryInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-uploadedfilefactoryinterface" class="md-nav__link">
+    2.5 UploadedFileFactoryInterface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-urifactoryinterface" class="md-nav__link">
+    2.6 UriFactoryInterface
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PSR-18-http-client/" class="md-nav__link">
+        HTTP-клиент PSR-18
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
@@ -381,18 +511,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-specification" class="md-nav__link">
-    1. Specification
+  <a href="#1" class="md-nav__link">
+    1. Спецификация
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-interfaces" class="md-nav__link">
-    2. Interfaces
+  <a href="#2" class="md-nav__link">
+    2. Интерфейсы
   </a>
   
-    <nav class="md-nav" aria-label="2. Interfaces">
+    <nav class="md-nav" aria-label="2. Интерфейсы">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -457,26 +587,17 @@
                   
 
 
-<h1 id="http-factories">HTTP Factories</h1>
-<p>This document describes a common standard for factories that create <a href="https://www.php-fig.org/psr/psr-7/">PSR-7</a>
-compliant HTTP objects.</p>
-<p>PSR-7 did not include a recommendation on how to create HTTP objects, which leads
-to difficulties when needing to create new HTTP objects within components that are
-not tied to a specific implementation of PSR-7.</p>
-<p>The interfaces outlined in this document describe methods by which PSR-7 objects
-can be instantiated.</p>
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
-<h2 id="1-specification">1. Specification</h2>
-<p>An HTTP factory is a method by which a new HTTP object, as defined by PSR-7,
-is created. HTTP factories MUST implement these interfaces for each object type
-that is provided by the package.</p>
-<h2 id="2-interfaces">2. Interfaces</h2>
-<p>The following interfaces MAY be implemented together within a single class or
-in separate classes.</p>
+<h1 id="http-">HTTP-фабрики</h1>
+<p>В этом документе описан общий стандарт для фабрик, создающих HTTP-объекты, соответствующие <a href="/accepted/PSR-7-http-message/">PSR-7</a>.</p>
+<p>В PSR-7 не было рекомендаций по созданию объектов HTTP, что приводит к трудностям при необходимости создания новых объектов HTTP внутри компонентов, не привязанных к конкретной реализации PSR-7.</p>
+<p>Интерфейсы, описанные в этом документе, описывают методы, с помощью которых можно создавать экземпляры объектов PSR-7.</p>
+<p>Ключевые слова «ДОЛЖЕН», «НЕ ДОЛЖЕН», «ТРЕБУЕТСЯ», «ДОЛЖЕН», «НЕ ДОЛЖЕН», «СЛЕДУЕТ», «НЕ ДОЛЖЕН», «РЕКОМЕНДУЕТСЯ», «МОЖЕТ» и «ДОПОЛНИТЕЛЬНО» в этом документе: интерпретироваться, как описано в <a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h2 id="1">1. Спецификация</h2>
+<p>Фабрика HTTP — это метод, с помощью которого создается новый объект HTTP, определенный PSR-7. Фабрики HTTP ДОЛЖНЫ реализовать эти интерфейсы для каждого типа объекта, предоставляемого пакетом.</p>
+<h2 id="2">2. Интерфейсы</h2>
+<p>Следующие интерфейсы МОГУТ быть реализованы вместе в одном классе или в отдельных классах.</p>
 <h3 id="21-requestfactoryinterface">2.1 RequestFactoryInterface</h3>
-<p>Has the ability to create client requests.</p>
+<p>Имеет возможность создавать клиентские запросы.</p>
 <pre><code class="language-php">namespace Psr\Http\Message;
 
 use Psr\Http\Message\RequestInterface;
@@ -485,16 +606,16 @@ use Psr\Http\Message\UriInterface;
 interface RequestFactoryInterface
 {
     /**
-     * Create a new request.
+     * Создает новый запрос
      *
-     * @param string $method The HTTP method associated with the request.
-     * @param UriInterface|string $uri The URI associated with the request. 
+     * @param string $method Метод HTTP, связанный с запросом.
+     * @param UriInterface|string $uri URI, связанный с запросом.
      */
     public function createRequest(string $method, $uri): RequestInterface;
 }
 </code></pre>
 <h3 id="22-responsefactoryinterface">2.2 ResponseFactoryInterface</h3>
-<p>Has the ability to create responses.</p>
+<p>Имеет возможность создавать ответы.</p>
 <pre><code class="language-php">namespace Psr\Http\Message;
 
 use Psr\Http\Message\ResponseInterface;
@@ -502,18 +623,19 @@ use Psr\Http\Message\ResponseInterface;
 interface ResponseFactoryInterface
 {
     /**
-     * Create a new response.
+     * Создает новый ответ.
      *
-     * @param int $code The HTTP status code. Defaults to 200.
-     * @param string $reasonPhrase The reason phrase to associate with the status code
-     *     in the generated response. If none is provided, implementations MAY use
-     *     the defaults as suggested in the HTTP specification.
+     * @param int $code Код состояния HTTP. По умолчанию 200.
+     * @param string $reasonPhrase Фраза причины, которую необходимо связать
+      с кодом состояния в сгенерированном ответе. Если ничего не указано, 
+      реализации МОГУТ использовать значения по умолчанию, предложенные 
+      в спецификации HTTP.
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface;
 }
 </code></pre>
 <h3 id="23-serverrequestfactoryinterface">2.3 ServerRequestFactoryInterface</h3>
-<p>Has the ability to create server requests.</p>
+<p>Имеет возможность создавать запросы к серверу.</p>
 <pre><code class="language-php">namespace Psr\Http\Message;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -522,22 +644,23 @@ use Psr\Http\Message\UriInterface;
 interface ServerRequestFactoryInterface
 {
     /**
-     * Create a new server request.
+     * Создает новый запрос к серверу.
      *
-     * Note that server parameters are taken precisely as given - no parsing/processing
-     * of the given values is performed. In particular, no attempt is made to
-     * determine the HTTP method or URI, which must be provided explicitly.
+     * Обратите внимание, что параметры сервера принимаются точно такими, 
+     какими они заданы — никакой синтаксический анализ/обработка заданных 
+     значений не производится. В частности, не предпринимается никаких 
+     попыток определить метод HTTP или URI, которые должны быть указаны явно.
      *
-     * @param string $method The HTTP method associated with the request.
-     * @param UriInterface|string $uri The URI associated with the request. 
-     * @param array $serverParams An array of Server API (SAPI) parameters with
-     *     which to seed the generated request instance.
+     * @param string $method Метод HTTP, связанный с запросом.
+     * @param UriInterface|string $uri URI, связанный с запросом.
+     * @param array $serverParams Массив параметров API сервера (SAPI), 
+     с помощью которых можно заполнить сгенерированный экземпляр запроса.
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface;
 }
 </code></pre>
 <h3 id="24-streamfactoryinterface">2.4 StreamFactoryInterface</h3>
-<p>Has the ability to create streams for requests and responses.</p>
+<p>Имеет возможность создавать потоки запросов и ответов.</p>
 <pre><code class="language-php">namespace Psr\Http\Message;
 
 use Psr\Http\Message\StreamInterface;
@@ -545,46 +668,46 @@ use Psr\Http\Message\StreamInterface;
 interface StreamFactoryInterface
 {
     /**
-     * Create a new stream from a string.
+     * Создает новый поток из строки.
      *
-     * The stream SHOULD be created with a temporary resource.
+     * Поток СЛЕДУЕТ создавать с использованием временного ресурса.
      *
-     * @param string $content String content with which to populate the stream.
+     * @param string $content Строковое содержимое, которым будет заполнен поток.
      */
     public function createStream(string $content = ''): StreamInterface;
 
     /**
-     * Create a stream from an existing file.
+     * Создает поток из существующего файла.
      *
-     * The file MUST be opened using the given mode, which may be any mode
-     * supported by the `fopen` function.
+     * Файл ДОЛЖЕН быть открыт в заданном режиме, 
+     который может быть любым режимом, поддерживаемым функцией fopen.
      *
-     * The `$filename` MAY be any string supported by `fopen()`.
+     * `$filename` МОЖЕТ быть любой строкой, поддерживаемой `fopen()`.
      *
-     * @param string $filename The filename or stream URI to use as basis of stream.
-     * @param string $mode The mode with which to open the underlying filename/stream.
+     * @param string $filename Имя файла или URI потока, который будет использоваться в качестве основы потока.
+     * @param string $mode Режим открытия основного имени файла/потока.
      *
-     * @throws \RuntimeException If the file cannot be opened.
-     * @throws \InvalidArgumentException If the mode is invalid.
+     * @throws \RuntimeException Если файл не открывается.
+     * @throws \InvalidArgumentException Если режим недействителен.
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface;
 
     /**
-     * Create a new stream from an existing resource.
+     * Создает новый поток из существующего ресурса.
      *
-     * The stream MUST be readable and may be writable.
+     * Поток ДОЛЖЕН быть доступен для чтения и записи.
      *
-     * @param resource $resource The PHP resource to use as the basis for the stream.
+     * @param resource $resource Ресурс PHP, который будет использоваться в качестве основы для потока.
      */
     public function createStreamFromResource($resource): StreamInterface;
 }
 </code></pre>
-<p>Implementations of this interface SHOULD use a temporary stream when creating
-resources from strings. The RECOMMENDED method for doing so is:</p>
+<p>Реализациям этого интерфейса СЛЕДУЕТ использовать временный поток при создании ресурсов из строк. 
+РЕКОМЕНДУЕМЫЙ способ сделать это:</p>
 <pre><code class="language-php">$resource = fopen('php://temp', 'r+');
 </code></pre>
 <h3 id="25-uploadedfilefactoryinterface">2.5 UploadedFileFactoryInterface</h3>
-<p>Has the ability to create streams for uploaded files.</p>
+<p>Имеет возможность создавать потоки для загружаемых файлов.</p>
 <pre><code class="language-php">namespace Psr\Http\Message;
 
 use Psr\Http\Message\StreamInterface;
@@ -593,22 +716,20 @@ use Psr\Http\Message\UploadedFileInterface;
 interface UploadedFileFactoryInterface
 {
     /**
-     * Create a new uploaded file.
+     * Создает новый загруженный файл.
      *
-     * If a size is not provided it will be determined by checking the size of
-     * the stream.
+     * Если размер не указан, он будет определен путем проверки размера потока.
      *
      * @link http://php.net/manual/features.file-upload.post-method.php
      * @link http://php.net/manual/features.file-upload.errors.php
      *
-     * @param StreamInterface $stream The underlying stream representing the
-     *     uploaded file content.
-     * @param int $size The size of the file in bytes.
-     * @param int $error The PHP file upload error.
-     * @param string $clientFilename The filename as provided by the client, if any.
-     * @param string $clientMediaType The media type as provided by the client, if any.
+     * @param StreamInterface $stream Базовый поток, представляющий загруженное содержимое файла.
+     * @param int $size Размер файла в байтах.
+     * @param int $error Ошибка загрузки файла PHP.
+     * @param string $clientFilename Имя файла, предоставленное клиентом, если таковое имеется.
+     * @param string $clientMediaType Тип носителя, предоставленный клиентом, если таковой имеется.
      *
-     * @throws \InvalidArgumentException If the file resource is not readable.
+     * @throws \InvalidArgumentException Если файловый ресурс не доступен для чтения.
      */
     public function createUploadedFile(
         StreamInterface $stream,
@@ -620,7 +741,7 @@ interface UploadedFileFactoryInterface
 }
 </code></pre>
 <h3 id="26-urifactoryinterface">2.6 UriFactoryInterface</h3>
-<p>Has the ability to create URIs for client and server requests.</p>
+<p>Имеет возможность создавать URI для запросов клиента и сервера.</p>
 <pre><code class="language-php">namespace Psr\Http\Message;
 
 use Psr\Http\Message\UriInterface;
@@ -630,9 +751,9 @@ interface UriFactoryInterface
     /**
      * Create a new URI.
      *
-     * @param string $uri The URI to parse.
+     * @param string $uri URI для анализа.
      *
-     * @throws \InvalidArgumentException If the given URI cannot be parsed.
+     * @throws \InvalidArgumentException Если данный URI не может быть проанализирован.
      */
     public function createUri(string $uri = '') : UriInterface;
 }

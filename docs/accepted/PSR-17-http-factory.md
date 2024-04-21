@@ -1,38 +1,29 @@
-HTTP Factories
+HTTP-фабрики
 ==============
 
 
-This document describes a common standard for factories that create [PSR-7][psr7]
-compliant HTTP objects.
+В этом документе описан общий стандарт для фабрик, создающих HTTP-объекты, соответствующие [PSR-7][psr7].
 
-PSR-7 did not include a recommendation on how to create HTTP objects, which leads
-to difficulties when needing to create new HTTP objects within components that are
-not tied to a specific implementation of PSR-7.
+В PSR-7 не было рекомендаций по созданию объектов HTTP, что приводит к трудностям при необходимости создания новых объектов HTTP внутри компонентов, не привязанных к конкретной реализации PSR-7.
 
-The interfaces outlined in this document describe methods by which PSR-7 objects
-can be instantiated.
+Интерфейсы, описанные в этом документе, описывают методы, с помощью которых можно создавать экземпляры объектов PSR-7.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][rfc2119].
+Ключевые слова «ДОЛЖЕН», «НЕ ДОЛЖЕН», «ТРЕБУЕТСЯ», «ДОЛЖЕН», «НЕ ДОЛЖЕН», «СЛЕДУЕТ», «НЕ ДОЛЖЕН», «РЕКОМЕНДУЕТСЯ», «МОЖЕТ» и «ДОПОЛНИТЕЛЬНО» в этом документе: интерпретироваться, как описано в [RFC 2119][rfc2119].
 
-[psr7]: https://www.php-fig.org/psr/psr-7/
+[psr7]: /accepted/PSR-7-http-message/
 [rfc2119]: https://tools.ietf.org/html/rfc2119
 
-## 1. Specification
+## 1. Спецификация
 
-An HTTP factory is a method by which a new HTTP object, as defined by PSR-7,
-is created. HTTP factories MUST implement these interfaces for each object type
-that is provided by the package.
+Фабрика HTTP — это метод, с помощью которого создается новый объект HTTP, определенный PSR-7. Фабрики HTTP ДОЛЖНЫ реализовать эти интерфейсы для каждого типа объекта, предоставляемого пакетом.
 
-## 2. Interfaces
+## 2. Интерфейсы
 
-The following interfaces MAY be implemented together within a single class or
-in separate classes.
+Следующие интерфейсы МОГУТ быть реализованы вместе в одном классе или в отдельных классах.
 
 ### 2.1 RequestFactoryInterface
 
-Has the ability to create client requests.
+Имеет возможность создавать клиентские запросы.
 
 ```php
 namespace Psr\Http\Message;
@@ -43,10 +34,10 @@ use Psr\Http\Message\UriInterface;
 interface RequestFactoryInterface
 {
     /**
-     * Create a new request.
+     * Создает новый запрос
      *
-     * @param string $method The HTTP method associated with the request.
-     * @param UriInterface|string $uri The URI associated with the request. 
+     * @param string $method Метод HTTP, связанный с запросом.
+     * @param UriInterface|string $uri URI, связанный с запросом.
      */
     public function createRequest(string $method, $uri): RequestInterface;
 }
@@ -54,7 +45,7 @@ interface RequestFactoryInterface
 
 ### 2.2 ResponseFactoryInterface
 
-Has the ability to create responses.
+Имеет возможность создавать ответы.
 
 ```php
 namespace Psr\Http\Message;
@@ -64,12 +55,13 @@ use Psr\Http\Message\ResponseInterface;
 interface ResponseFactoryInterface
 {
     /**
-     * Create a new response.
+     * Создает новый ответ.
      *
-     * @param int $code The HTTP status code. Defaults to 200.
-     * @param string $reasonPhrase The reason phrase to associate with the status code
-     *     in the generated response. If none is provided, implementations MAY use
-     *     the defaults as suggested in the HTTP specification.
+     * @param int $code Код состояния HTTP. По умолчанию 200.
+     * @param string $reasonPhrase Фраза причины, которую необходимо связать
+      с кодом состояния в сгенерированном ответе. Если ничего не указано, 
+      реализации МОГУТ использовать значения по умолчанию, предложенные 
+      в спецификации HTTP.
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface;
 }
@@ -77,7 +69,7 @@ interface ResponseFactoryInterface
 
 ### 2.3 ServerRequestFactoryInterface
 
-Has the ability to create server requests.
+Имеет возможность создавать запросы к серверу.
 
 ```php
 namespace Psr\Http\Message;
@@ -88,16 +80,17 @@ use Psr\Http\Message\UriInterface;
 interface ServerRequestFactoryInterface
 {
     /**
-     * Create a new server request.
+     * Создает новый запрос к серверу.
      *
-     * Note that server parameters are taken precisely as given - no parsing/processing
-     * of the given values is performed. In particular, no attempt is made to
-     * determine the HTTP method or URI, which must be provided explicitly.
+     * Обратите внимание, что параметры сервера принимаются точно такими, 
+     какими они заданы — никакой синтаксический анализ/обработка заданных 
+     значений не производится. В частности, не предпринимается никаких 
+     попыток определить метод HTTP или URI, которые должны быть указаны явно.
      *
-     * @param string $method The HTTP method associated with the request.
-     * @param UriInterface|string $uri The URI associated with the request. 
-     * @param array $serverParams An array of Server API (SAPI) parameters with
-     *     which to seed the generated request instance.
+     * @param string $method Метод HTTP, связанный с запросом.
+     * @param UriInterface|string $uri URI, связанный с запросом.
+     * @param array $serverParams Массив параметров API сервера (SAPI), 
+     с помощью которых можно заполнить сгенерированный экземпляр запроса.
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface;
 }
@@ -105,7 +98,7 @@ interface ServerRequestFactoryInterface
 
 ### 2.4 StreamFactoryInterface
 
-Has the ability to create streams for requests and responses.
+Имеет возможность создавать потоки запросов и ответов.
 
 ```php
 namespace Psr\Http\Message;
@@ -115,43 +108,43 @@ use Psr\Http\Message\StreamInterface;
 interface StreamFactoryInterface
 {
     /**
-     * Create a new stream from a string.
+     * Создает новый поток из строки.
      *
-     * The stream SHOULD be created with a temporary resource.
+     * Поток СЛЕДУЕТ создавать с использованием временного ресурса.
      *
-     * @param string $content String content with which to populate the stream.
+     * @param string $content Строковое содержимое, которым будет заполнен поток.
      */
     public function createStream(string $content = ''): StreamInterface;
 
     /**
-     * Create a stream from an existing file.
+     * Создает поток из существующего файла.
      *
-     * The file MUST be opened using the given mode, which may be any mode
-     * supported by the `fopen` function.
+     * Файл ДОЛЖЕН быть открыт в заданном режиме, 
+     который может быть любым режимом, поддерживаемым функцией fopen.
      *
-     * The `$filename` MAY be any string supported by `fopen()`.
+     * `$filename` МОЖЕТ быть любой строкой, поддерживаемой `fopen()`.
      *
-     * @param string $filename The filename or stream URI to use as basis of stream.
-     * @param string $mode The mode with which to open the underlying filename/stream.
+     * @param string $filename Имя файла или URI потока, который будет использоваться в качестве основы потока.
+     * @param string $mode Режим открытия основного имени файла/потока.
      *
-     * @throws \RuntimeException If the file cannot be opened.
-     * @throws \InvalidArgumentException If the mode is invalid.
+     * @throws \RuntimeException Если файл не открывается.
+     * @throws \InvalidArgumentException Если режим недействителен.
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface;
 
     /**
-     * Create a new stream from an existing resource.
+     * Создает новый поток из существующего ресурса.
      *
-     * The stream MUST be readable and may be writable.
+     * Поток ДОЛЖЕН быть доступен для чтения и записи.
      *
-     * @param resource $resource The PHP resource to use as the basis for the stream.
+     * @param resource $resource Ресурс PHP, который будет использоваться в качестве основы для потока.
      */
     public function createStreamFromResource($resource): StreamInterface;
 }
 ```
 
-Implementations of this interface SHOULD use a temporary stream when creating
-resources from strings. The RECOMMENDED method for doing so is:
+Реализациям этого интерфейса СЛЕДУЕТ использовать временный поток при создании ресурсов из строк. 
+РЕКОМЕНДУЕМЫЙ способ сделать это:
 
 ```php
 $resource = fopen('php://temp', 'r+');
@@ -159,7 +152,7 @@ $resource = fopen('php://temp', 'r+');
 
 ### 2.5 UploadedFileFactoryInterface
 
-Has the ability to create streams for uploaded files.
+Имеет возможность создавать потоки для загружаемых файлов.
 
 ```php
 namespace Psr\Http\Message;
@@ -170,22 +163,20 @@ use Psr\Http\Message\UploadedFileInterface;
 interface UploadedFileFactoryInterface
 {
     /**
-     * Create a new uploaded file.
+     * Создает новый загруженный файл.
      *
-     * If a size is not provided it will be determined by checking the size of
-     * the stream.
+     * Если размер не указан, он будет определен путем проверки размера потока.
      *
      * @link http://php.net/manual/features.file-upload.post-method.php
      * @link http://php.net/manual/features.file-upload.errors.php
      *
-     * @param StreamInterface $stream The underlying stream representing the
-     *     uploaded file content.
-     * @param int $size The size of the file in bytes.
-     * @param int $error The PHP file upload error.
-     * @param string $clientFilename The filename as provided by the client, if any.
-     * @param string $clientMediaType The media type as provided by the client, if any.
+     * @param StreamInterface $stream Базовый поток, представляющий загруженное содержимое файла.
+     * @param int $size Размер файла в байтах.
+     * @param int $error Ошибка загрузки файла PHP.
+     * @param string $clientFilename Имя файла, предоставленное клиентом, если таковое имеется.
+     * @param string $clientMediaType Тип носителя, предоставленный клиентом, если таковой имеется.
      *
-     * @throws \InvalidArgumentException If the file resource is not readable.
+     * @throws \InvalidArgumentException Если файловый ресурс не доступен для чтения.
      */
     public function createUploadedFile(
         StreamInterface $stream,
@@ -199,7 +190,7 @@ interface UploadedFileFactoryInterface
 
 ### 2.6 UriFactoryInterface
 
-Has the ability to create URIs for client and server requests.
+Имеет возможность создавать URI для запросов клиента и сервера.
 
 ```php
 namespace Psr\Http\Message;
@@ -211,9 +202,9 @@ interface UriFactoryInterface
     /**
      * Create a new URI.
      *
-     * @param string $uri The URI to parse.
+     * @param string $uri URI для анализа.
      *
-     * @throws \InvalidArgumentException If the given URI cannot be parsed.
+     * @throws \InvalidArgumentException Если данный URI не может быть проанализирован.
      */
     public function createUri(string $uri = '') : UriInterface;
 }
