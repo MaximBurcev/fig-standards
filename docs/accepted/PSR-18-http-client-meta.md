@@ -1,126 +1,87 @@
-HTTP Client Meta Document
+Мета-документ HTTP-клиента
 =========================
 
 
-## Summary
+## Краткое содержание
 
-HTTP requests and responses are the two fundamental objects in web programming.
-All clients communicating to an external API use some form of HTTP client. Many
-libraries are coupled to one specific client or implement a client and/or
-adapter layer themselves. This leads to bad library design, version conflicts,
-or code unrelated to the library domain.
+HTTP-запросы и ответы — два фундаментальных объекта веб-программирования.
+Все клиенты, взаимодействующие с внешним API, используют ту или иную форму HTTP-клиента. Многие библиотеки связаны с одним конкретным клиентом или сами реализуют уровень клиента и/или адаптера. Это приводит к плохому проектированию библиотеки, конфликтам версий или коду, не связанному с доменом библиотеки.
 
-## Why bother?
+## О чем речь?
 
-Thanks to PSR-7 we know how HTTP requests and responses ideally look, but nothing
-defines how a request should be sent and a response received. A common interface for HTTP
-clients will allow libraries to be decoupled from specific implementations.
+Благодаря PSR-7 мы знаем, как в идеале выглядят HTTP-запросы и ответы, но ничто не определяет, как должен быть отправлен запрос и получен ответ. Общий интерфейс для HTTP-клиентов позволит отделить библиотеки от конкретных реализаций.
 
-## Scope
+## Суть
 
-### Goals
+### Цели
 
-* A common interface for sending PSR-7 messages and returning PSR-7 responses.
+* Общий интерфейс для отправки сообщений PSR-7 и возврата ответов PSR-7.
 
-### Non-Goals
+### Не является целью
 
-* Support for asynchronous HTTP requests is left for another future PSR.
-* This PSR does not define how to configure an HTTP client. It only specifies the
-  default behaviours.
-* This PSR is neutral about the use of middleware.
+* Поддержка асинхронных HTTP-запросов оставлена для следующего будущего PSR.
+* Этот PSR не определяет, как настроить HTTP-клиент. Он определяет только поведение по умолчанию.
+* Этот PSR нейтрален в отношении использования промежуточного программного обеспечения.
 
-#### Asynchronous HTTP client
+#### Асинхронный HTTP-клиент
 
-The reason asynchronous requests are not covered by this PSR is the lack of a
-common standard for Promises. Promises are sufficiently complex enough that they
-deserve their own specification, and should not be wrapped into this one.
+Причина, по которой асинхронные запросы не охватываются этим PSR, заключается в отсутствии общего стандарта для промисов. Промисы достаточно сложны, поэтому заслуживают отдельной спецификации, и их не следует включать в эту спецификацию.
 
-A separate interface for asynchronous requests can be defined in a separate PSR
-once a Promise PSR is accepted. The method signature for asynchronous requests
-MUST be different from the method signature for synchronous requests because
-the return type of asynchronous calls will be a Promise. Thus this PSR is forwards
-compatible, and clients will be able to implement one or both interfaces based
-on the features they wish to expose.
+Отдельный интерфейс для асинхронных запросов можно определить в отдельном PSR после принятия Promise PSR. Сигнатура метода для асинхронных запросов ДОЛЖНА отличаться от сигнатуры метода для синхронных запросов, поскольку типом возврата асинхронных вызовов будет обещание. Таким образом, этот PSR совместим с прямой совместимостью, и клиенты смогут реализовать один или оба интерфейса в зависимости от функций, которые они хотят предоставить.
 
-## Approaches
+## Подходы
 
-### Default behavior
+### Поведение по умолчанию
 
-The intention of this PSR is to provide library developers with HTTP clients that
-have a well defined behaviour. A library should be able to use any compliant client
-without special code to handle client implementation details (Liskov substitution
-principle). The PSR does not try to restrict nor define how to configure HTTP clients.
+Цель этого PSR — предоставить разработчикам библиотек HTTP-клиенты с четко определенным поведением. Библиотека должна иметь возможность использовать любой совместимый клиент без специального кода для обработки деталей реализации клиента (принцип замены Лискова). PSR не пытается ограничивать или определять способ настройки HTTP-клиентов.
 
-An alternative approach would be to pass configuration to the client. That approach
-would have a few drawbacks:
+Альтернативный подход — передать конфигурацию клиенту. Такой подход будет иметь несколько недостатков:
 
-* Configuration must be defined by the PSR.
-* All clients must support the defined configuration.
-* If no configuration is passed to the client, the behavior is unpredictable.
+* Конфигурация должна быть определена PSR.
+* Все клиенты должны поддерживать определенную конфигурацию.
+* Если клиенту не передается никакая конфигурация, поведение будет непредсказуемым.
 
-#### Naming rationale
+#### Обоснование названия
 
-The main interface behaviour is defined by the method `sendRequest(RequestInterface $request): ResponseInterface`.  
-While the shorter method name `send()` has been proposed, this was already used by existing and very common HTTP clients like Guzzle. As such, if they are to adopt this standard, they may need to break backwards compatibility in order to implement the specification. By defining `sendRequest()` instead, we ensure they can adopt without any immediate BC breaks.
+Основное поведение интерфейса определяется методом sendRequest(RequestInterface $request): ResponseInterface.
+Хотя было предложено более короткое имя метода send(), оно уже использовалось существующими и очень распространенными HTTP-клиентами, такими как Guzzle. Таким образом, если они собираются принять этот стандарт, им, возможно, придется нарушить обратную совместимость, чтобы реализовать спецификацию. Определив вместо этого `sendRequest()`, мы гарантируем, что они могут быть приняты без каких-либо немедленных перерывов в BC.
 
-### Exception Model
+### Модель исключений
 
-The domain exceptions `NetworkExceptionInterface` and `RequestExceptionInterface` define
-a contract very similar to each other. The chosen approach is to not let them extend each other
-because inheritance does not make sense in the domain model. A `RequestExceptionInterface` is simply not a
-`NetworkExceptionInterface`.
+Исключения домена NetworkExceptionInterface и RequestExceptionInterface определяют контракт, очень похожий друг на друга. Выбранный подход состоит в том, чтобы не позволять им расширять друг друга, поскольку наследование не имеет смысла в модели предметной области. RequestExceptionInterface — это просто не NetworkExceptionInterface.
 
-Allowing exceptions to extend a `RequestAwareException` and/or `ResponseAwareException` interface
-has been discussed but that is a convenience shortcut that one should not take. One should rather
-catch the specific exceptions and handle them accordingly.
+Разрешение исключений для расширения интерфейса RequestAwareException и/или ResponseAwareException обсуждалось, но это удобный ярлык, который не следует использовать. Лучше перехватывать конкретные исключения и обрабатывать их соответствующим образом.
 
-One could be more granular when defining exceptions. For example, `TimeOutException` and `HostNotFoundException`
-could be subtypes of `NetworkExceptionInterface`. The chosen approach is not to define such subtypes because
-the exception handling in a consuming library would in most cases not be different between those exceptions.
+Можно было бы быть более детальным при определении исключений. Например, TimeOutException и HostNotFoundException могут быть подтипами NetworkExceptionInterface. Выбранный подход заключается в том, чтобы не определять такие подтипы, поскольку обработка исключений в потребляющей библиотеке в большинстве случаев не будет различаться между этими исключениями.
 
-#### Throwing exceptions for 4xx and 5xx responses
+#### Выдача исключений для ответов 4xx и 5xx
 
-The initial idea was to allow the client to be configured to throw exceptions for responses
-with HTTP status 4xx and 5xx. That approach is not desired because consuming libraries would
-have to check for 4xx and 5xx responses twice: first, by verifying the status code on the response,
-and second by catching potential exceptions.
+Первоначальная идея заключалась в том, чтобы позволить клиенту настроить выдачу исключений для ответов со статусом HTTP 4xx и 5xx. Такой подход нежелателен, поскольку потребляющим библиотекам придется проверять ответы 4xx и 5xx дважды: во-первых, путем проверки кода состояния в ответе, а во-вторых, путем перехвата потенциальных исключений.
 
-To make the specification more predictable, it was decided that HTTP clients never will throw
-exceptions for 4xx and 5xx responses.
+Чтобы сделать спецификацию более предсказуемой, было решено, что HTTP-клиенты никогда не будут генерировать исключения для ответов 4xx и 5xx.
 
-## Middleware and wrapping a client
+## Промежуточное программное обеспечение и упаковка клиента
 
-The specification does not put any limitations on middleware or classes that want 
-to wrap/decorate an HTTP client. If the decorating class also implements `ClientInterface`
-then it must also follow the specification. 
+Спецификация не накладывает никаких ограничений на промежуточное программное обеспечение или классы, которые хотят обернуть/украсить HTTP-клиент. Если класс оформления также реализует ClientInterface, он также должен соответствовать спецификации.
 
-It is temping to allow configuration or add middleware to an HTTP client so it could i.e.
-follow redirects or throw exceptions. If that is a decision from an application developer, 
-they have specifically said they want to break the specification. That is an issue (or feature)
-the application developer should handle. Third party libraries MUST NOT assume that
-a HTTP client breaks the specification.
+Соблазнительно разрешить настройку или добавить промежуточное программное обеспечение к HTTP-клиенту, чтобы он мог, например, следовать перенаправлениям или генерировать исключения. Если это решение разработчика приложения, то он прямо заявил, что хочет нарушить спецификацию. Это проблема (или функция), которую должен решить разработчик приложения. Сторонние библиотеки НЕ ДОЛЖНЫ предполагать, что HTTP-клиент нарушает спецификацию.
 
-## Background
+## Бэкграунд
 
-The HTTP client PSR has been inspired and created by the [php-http team](https://github.com/orgs/php-http/people).
-Back in 2015, they created HTTPlug as a common interface for HTTP clients. They wanted an
-abstraction that third party libraries could use so as not to rely on a specific HTTP client
-implementation. A stable version was tagged in January 2016, and the project has been 
-widely adopted since then. With over 3 million downloads in the two years
-following the initial stable version, it was time to convert this "de-facto"
-standard into a formal specification.
+HTTP-клиент PSR был вдохновлен и создан [командой php-http](https://github.com/orgs/php-http/people).
+Еще в 2015 году они создали HTTPlug как общий интерфейс для HTTP-клиентов. Им нужна была абстракция, которую могли бы использовать сторонние библиотеки, чтобы не полагаться на конкретную реализацию HTTP-клиента. Стабильная версия была выпущена в январе 2016 года, и с тех пор проект получил широкое распространение. Поскольку за два года после выхода первоначальной стабильной версии было скачано более 3 миллионов раз, пришло время преобразовать этот «де-факто» стандарт в официальную спецификацию.
 
-## People
+## Люди
 
-### 5.1 Editor
+### 5.1 Редактор
 
 * Tobias Nyholm
 
-### 5.2 Sponsors
+### 5.2 Спонсоры
 
 * Sara Golemon
 
-### 5.3 Workgroup
+### 5.3 Рабочая группа
 
 * Simon Asika (Windwalker)
 * David Buchmann (HTTPlug)
@@ -133,17 +94,15 @@ standard into a formal specification.
 * Mark Sagi-Kazar (Guzzle)
 * Joel Wurtz (HTTPlug)
 
-## Votes
+## Голоса
 
 * [Entrance vote](https://groups.google.com/d/topic/php-fig/MJGYRXfUJGk/discussion)
 * [Review Period Initiation](https://groups.google.com/d/topic/php-fig/dV9zIaOooZ4/discussion)
 * [Acceptance](https://groups.google.com/d/topic/php-fig/rScdiW38nLM/discussion)
 
-## Proposed implementations
+## Предлагаемые реализации
 
-Below are the two implementations provided by the working group to pass the review period:
+Ниже приведены две реализации, предоставленные рабочей группой для прохождения периода проверки:
 
- * HTTPlug has prepared a 2.0 to make sure it is supporting the new PSR. 
-   They are just waiting for the PSR to be released: https://github.com/php-http/httplug/tree/2.x
- * Buzz has been adapting to every version of the PSR and has their 0.17.3 release with the latest 
-   version of psr/http-client: https://github.com/kriswallsmith/Buzz
+ * HTTPlug подготовил версию 2.0, чтобы убедиться, что она поддерживает новый PSR. Они просто ждут выхода PSR: https://github.com/php-http/httplug/tree/2.x
+ * Buzz адаптируется к каждой версии PSR и выпустил версию 0.17.3 с последней версией psr/http-client: https://github.com/kriswallsmith/Buzz.

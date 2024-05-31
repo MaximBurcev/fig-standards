@@ -1,85 +1,65 @@
-HTTP Factories Meta
+Мета HTTP-фабрик
 ===================
 
 
-## 1. Summary
+## 1. Краткое содержание
 
-The purpose of this PSR is to provide factory interfaces that define methods to
-create [PSR-7][psr7] objects.
+Целью этого PSR является предоставление заводских интерфейсов, которые определяют методы для создания объектов [PSR-7][psr7].
 
-[psr7]: https://www.php-fig.org/psr/psr-7/
+[psr7]: /accepted/PSR-7-http-message/
 
-## 2. Why Bother?
+## 2. О чем речь?
 
-The current specification for PSR-7 allows for most objects to be modified by
-creating immutable copies. However, there are two notable exceptions:
+Текущая спецификация PSR-7 позволяет изменять большинство объектов путем создания неизменяемых копий. Однако есть два заметных исключения:
 
-- `StreamInterface` is a mutable object based on a resource that only allows
-  the resource to be written to when the resource is writable.
-- `UploadedFileInterface` is a read-only object based on a resource that offers
-  no modification capabilities.
+- `StreamInterface` — это изменяемый объект, основанный на ресурсе, который позволяет записывать в ресурс только тогда, когда ресурс доступен для записи.
+- `UploadedFileInterface` — это объект, доступный только для чтения, основанный на ресурсе, который не предлагает возможности изменения.
 
-The former is a significant pain point for PSR-7 middleware, as it can leave
-the response in an incomplete state. If the stream attached to the response body
-is not seekable or not writable, there is no way to recover from an error
-condition in which the body has already been written to.
+Первое является серьезной проблемой для промежуточного программного обеспечения PSR-7, поскольку оно может оставить ответ в неполном состоянии. Если поток, прикрепленный к телу ответа, недоступен для поиска или записи, невозможно восстановиться после ошибки, в которой тело ответа уже было записано.
 
-This scenario can be avoided by providing a factory to create new streams. Due to
-the lack of a formal standard for HTTP object factories, a developer must rely on
-a specific vendor implementation in order to create these objects.
+Этого сценария можно избежать, предоставив фабрику для создания новых потоков. Из-за отсутствия формального стандарта для фабрик объектов HTTP разработчик должен полагаться на реализацию конкретного поставщика для создания этих объектов.
 
-Another pain point is when writing re-usable middleware or request handlers. In
-such cases, package authors may need to create and return a response. However,
-creating discrete instances then ties the package to a specific PSR-7
-implementation. If these packages rely on the request factory interface instead,
-they can remain agnostic of the PSR-7 implementation.
+Еще одна проблема возникает при написании многоразового промежуточного программного обеспечения или обработчиков запросов. В таких случаях авторам пакетов может потребоваться создать и вернуть ответ. Однако создание дискретных экземпляров затем привязывает пакет к конкретной реализации PSR-7. Если вместо этого эти пакеты полагаются на интерфейс фабрики запросов, они могут оставаться независимыми от реализации PSR-7.
 
-Creating a formal standard for factories will allow developers to avoid
-dependencies on specific implementations while having the ability to create new
-objects when necessary.
+Создание формального стандарта для заводов позволит разработчикам избежать
+зависимости от конкретных реализаций, сохраняя при этом возможность создавать новые объекты при необходимости.
 
-## 3. Scope
+## 3. Основа
 
-### 3.1 Goals
+### 3.1 Цели
 
-- Provide a set of interfaces that define methods to create PSR-7 compatible objects.
+- Предоставить набор интерфейсов, которые определяют методы для создания объектов, совместимых с PSR-7.
 
-### 3.2 Non-Goals
+### 3.2 Не является целью
 
-- Provide a specific implementation of PSR-7 factories.
+- Предоставить конкретную реализацию фабрик PSR-7.
 
-## 4. Approaches
+## 4. Подходы
 
-### 4.1 Chosen Approach
+### 4.1 Выбранный подход
 
-The factory method definition has been chosen based on whether or not the object
-can be modified after instantiation. For interfaces that cannot be modified, all
-of the object properties must be defined at the time of instantiation.
+Определение фабричного метода было выбрано на основе того, можно ли изменить объект после создания экземпляра. Для интерфейсов, которые нельзя изменить, все свойства объекта должны быть определены во время создания экземпляра.
 
-In the case of `UriInterface` a complete URI may be passed for convenience.
+В случае UriInterface для удобства можно передать полный URI.
 
-The method names used will not conflict. This allows for a single class to
-implement multiple interfaces when appropriate.
+Используемые имена методов не будут конфликтовать. Это позволяет одному классу реализовать несколько интерфейсов, когда это необходимо.
 
-### 4.2 Existing Implementations
+### 4.2 Существующие реализации
 
-All of the current implementations of PSR-7 have defined their own requirements.
-In most cases, the required parameters are the same or less strict than the proposed
-factory methods.
+Все текущие реализации PSR-7 имеют свои собственные требования. В большинстве случаев требуемые параметры такие же или менее строгие, чем у предлагаемых заводских методов.
 
 #### 4.2.1 Diactoros
 
-[Diactoros][zend-diactoros] was one of the first HTTP Messages implementations for
-server usage, and was developed parallel to the PSR-7 specification.
+[Diactoros][zend-diactoros] был одной из первых реализаций HTTP-сообщений для использования на сервере и разрабатывался параллельно со спецификацией PSR-7.
 
-- [`Request`][diactoros-request] No required parameters, method and URI default to `null`.
-- [`Response`][diactoros-response] No required parameters, status code defaults to `200`.
-- [`ServerRequest`][diactoros-server-request] No required parameters. Contains a separate
-  [`ServerRequestFactory`][diactoros-server-request-factory] for creating requests from globals.
-- [`Stream`][diactoros-stream] Requires `string|resource $stream` for the body.
-- [`UploadedFile`][diactoros-uploaded-file] Requires `string|resource $streamOrFile`, `int $size`,
-  `int $errorStatus`. Error status must be a PHP upload constant.
-- [`Uri`][diactoros-uri] No required parameters, `string $uri` is empty by default.
+- [`Request`][diactoros-request] Нет обязательных параметров, метод и URI по умолчанию равны `null`.
+- [`Response`][diactoros-response] Никаких обязательных параметров нет, код состояния по умолчанию — «200».
+- [`ServerRequest`][diactoros-server-request] Нет обязательных параметров. Содержит отдельный
+  [`ServerRequestFactory`][diactoros-server-request-factory] для создания запросов из глобалов.
+- [`Stream`][diactoros-stream] Для тела требуется `string|resource $stream`.
+- [`UploadedFile`][diactoros-uploaded-file] Требуется `string|resource $streamOrFile`, `int $size`,
+  `int $errorStatus`. Статус ошибки должен быть константой загрузки PHP.
+- [`Uri`][diactoros-uri] Никаких обязательных параметров нет, строка $uri по умолчанию пуста.
 
 [zend-diactoros]: https://docs.zendframework.com/zend-diactoros/
 [diactoros-request]: https://github.com/zendframework/zend-diactoros/blob/b4e7758556c97b5bb9a5260d898e9788ee800538/src/Request.php#L33
@@ -90,21 +70,18 @@ server usage, and was developed parallel to the PSR-7 specification.
 [diactoros-uploaded-file]: https://github.com/zendframework/zend-diactoros/blob/b4e7758556c97b5bb9a5260d898e9788ee800538/src/UploadedFile.php#L62
 [diactoros-uri]: https://github.com/zendframework/zend-diactoros/blob/b4e7758556c97b5bb9a5260d898e9788ee800538/src/Uri.php#L94
 
-Overall this approach is quite similar to the proposed factories. In some cases,
-more options are given by Diactoros which are not required for a valid object.
-The proposed uploaded file factory allows for size and error status to be optional.
+В целом этот подход очень похож на предлагаемые фабрики. В некоторых случаях Diactoros предоставляет дополнительные параметры, которые не требуются для действительного объекта. Предлагаемая фабрика загруженных файлов позволяет указывать размер и статус ошибки по желанию.
 
 #### 4.2.2 Guzzle
 
-[Guzzle][guzzle] is an HTTP Messages implementation that focuses on client usage.
+[Guzzle][guzzle] — это реализация HTTP-сообщений, ориентированная на использование клиента.
 
-- [`Request`][guzzle-request] Requires both `string $method` and `string|UriInterface $uri`.
-- [`Response`][guzzle-response] No required parameters, status code defaults to `200`.
-- [`Stream`][guzzle-stream] Requires `resource $stream` for the body.
-- [`Uri`][guzzle-uri] No required parameters, `string $uri` is empty by default.
+- [`Request`][guzzle-request] Требуется как `string $method`, так и `string|UriInterface $uri`.
+- [`Response`][guzzle-response] Никаких обязательных параметров нет, код состояния по умолчанию — «200».
+- [`Stream`][guzzle-stream] Для тела требуется ресурс $stream.
+- [`Uri`][guzzle-uri] Никаких обязательных параметров нет, строка $uri по умолчанию пуста.
 
-_Being geared towards client usage, Guzzle does not contain a `ServerRequest` or
-`UploadedFile` implementation._
+_Будучи ориентированным на использование клиентом, Guzzle не содержит реализации ServerRequest или UploadedFile._
 
 [guzzle]: https://github.com/guzzle/psr7
 [guzzle-request]: https://github.com/guzzle/psr7/blob/58828615f7bb87013ce6365e9b1baa08580c7fc8/src/Request.php#L32-L38
@@ -112,36 +89,26 @@ _Being geared towards client usage, Guzzle does not contain a `ServerRequest` or
 [guzzle-stream]: https://github.com/guzzle/psr7/blob/58828615f7bb87013ce6365e9b1baa08580c7fc8/src/Stream.php#L51
 [guzzle-uri]: https://github.com/guzzle/psr7/blob/58828615f7bb87013ce6365e9b1baa08580c7fc8/src/Uri.php#L48
 
-Overall this approach is also quite similar to the proposed factories. One notable
-difference is that Guzzle requires streams to be constructed with a resource and
-does not allow a string. However, it does contain a helper function [`stream_for`][guzzle-stream-for]
-that will create a stream from a string of content and a function [`try_fopen`][guzzle-try-fopen]
-that will create a resource from a file path.
+В целом этот подход также очень похож на предлагаемые фабрики. Одно заметное отличие заключается в том, что Guzzle требует, чтобы потоки создавались с использованием ресурса, и не позволяет использовать строку. Однако он содержит вспомогательную функцию [`stream_for`][guzzle-stream-for]
+который создаст поток из строки содержимого и функции [`try_fopen`][guzzle-try-fopen], которая создаст ресурс из пути к файлу.
 
 [guzzle-stream-for]: https://github.com/guzzle/psr7/blob/58828615f7bb87013ce6365e9b1baa08580c7fc8/src/functions.php#L78
 [guzzle-try-fopen]: https://github.com/guzzle/psr7/blob/58828615f7bb87013ce6365e9b1baa08580c7fc8/src/functions.php#L295
 
 #### 4.2.3 Slim
 
-[Slim][slim] is a micro-framework that makes use of HTTP Messages from version
-3.0 forward.
+[Slim][slim] — это микрофреймворк, использующая HTTP-сообщения начиная с версии 3.0.
 
-- [`Request`][slim-request] Requires `string $method`, `UriInterface $uri`,
-  `HeadersInterface $headers`, `array $cookies`, `array $serverParams`, and
-  `StreamInterface $body`. Contains a factory method `createFromEnvironment(Environment $environment)`
-  that is framework specific but analogous to the proposed `createServerRequestFromArray`.
-- [`Response`][slim-response] No required parameters, status code defaults to `200`.
-- [`Stream`][slim-stream] Requires `resource $stream` for the body.
-- [`UploadedFile`][slim-uploaded-file] Requires `string $file` for the source file.
-  Contains a factory method `parseUploadedFiles(array $uploadedFiles)` for creating
-  an array of `UploadedFile` instances from `$_FILES` or similar format. Also contains
-  a factory method `createFromEnvironment(Environment $env)` that is framework specific
-  and makes use of `parseUploadedFiles`.
-- [`Uri`][slim-uri] Requires `string $scheme` and `string $host`. Contains a factory
-  method `createFromString($uri)` that can be used to create a `Uri` from a string.
+- [`Request`][slim-request] Требуется `строка $method`, `UriInterface $uri`,
+  `HeadersInterface $headers`, `array $cookies`, `array $serverParams` и `StreamInterface $body`. Содержит фабричный метод createFromEnvironment(Environment $environment), который зависит от платформы, но аналогичен предлагаемому createServerRequestFromArray.
+- [`Response`][slim-response] Никаких обязательных параметров нет, код состояния по умолчанию — «200».
+- [`Stream`][slim-stream] Для тела требуется ресурс $stream.
+- [`UploadedFile`][slim-uploaded-file] Для исходного файла требуется строка $file.
+  Содержит фабричный метод parseUploadedFiles(array $uploadedFiles) для создания массива экземпляров UploadedFile из $_FILES или аналогичного формата. Также содержит фабричный метод createFromEnvironment(Environment $env) специфичный для платформы и использующий parseUploadedFiles.
+- [`Uri`][slim-uri] Требуется строка $scheme и строка $host. Содержит фабрику
+  метод createFromString($uri)`, который можно использовать для создания Uri из строки.
 
-_Being geared towards server usage only, Slim does not contain an implementation
-of `Request`. The implementation listed above is an implementation of `ServerRequest`._
+_Будучи ориентированным только на использование сервера, Slim не содержит реализации Request. Перечисленная выше реализация является реализацией `ServerRequest`._
 
 [slim]: https://www.slimframework.com/
 [slim-request]: https://github.com/slimphp/Slim/blob/30cfe3c07dac28ec1129c0577e64b90ba11a54c4/Slim/Http/Request.php#L170-L178
@@ -150,131 +117,71 @@ of `Request`. The implementation listed above is an implementation of `ServerReq
 [slim-uploaded-file]: https://github.com/slimphp/Slim/blob/30cfe3c07dac28ec1129c0577e64b90ba11a54c4/Slim/Http/UploadedFile.php#L151
 [slim-uri]: https://github.com/slimphp/Slim/blob/30cfe3c07dac28ec1129c0577e64b90ba11a54c4/Slim/Http/Uri.php#L112-L121
 
-Of the compared approaches, Slim is most different from the proposed factories.
-Most notably, the `Request` implementation contains requirements specific
-to the framework that are not defined in HTTP Messages specification. The factory
-methods that are included are generally similar with the proposed factories.
+Из сравниваемых подходов Slim больше всего отличается от предложенных фабрик. В частности, реализация `Request` содержит требования, специфичные для платформы, которые не определены в спецификации HTTP-сообщений. Включенные фабричные методы в целом аналогичны предлагаемым фабрикам.
 
-### 4.3 Potential Issues
+### 4.3 Потенциальные проблемы
 
-The most difficult task in establishing this standard will be defining the
-method signatures for the interfaces. As there is no clear declaration in PSR-7
-as to what values are explicitly required, the properties that are read-only
-must be inferred based on whether the interfaces have methods to copy-and-modify
-the object.
+Самой сложной задачей при установлении этого стандарта будет определение сигнатур методов для интерфейсов. Поскольку в PSR-7 нет четкого объявления о том, какие значения явно требуются, свойства, доступные только для чтения, должны определяться на основе того, имеют ли интерфейсы методы для копирования и изменения объекта.
 
-## 5. Design Decisions
+## 5. Дизайнерские решения
 
-### 5.1 Why PHP 7?
+### 5.1 Почему PHP 7?
 
-While PSR-7 does not target PHP 7, the authors of this specification note that,
-at the time of writing (April 2018), PHP 5.6 stopped receiving bugfixes 15
-months ago, and will no longer receive security patches in 8 months; PHP 7.0
-itself will stop receiving security fixes in 7 months (see the [PHP supported
-versions document][php-support] for current support details). Since
-specifications are meant to be long-term, the authors feel the specification
-should target versions that will be supported for the foreseeable future; PHP 5
-will not. As such, from a security standpoint, targeting anything under PHP 7 is
-a disservice to users, as doing so would be tacit approval of usage of
-unsupported PHP versions.
+Хотя PSR-7 не ориентирован на PHP 7, авторы этой спецификации отмечают, что на момент написания (апрель 2018 г.) PHP 5.6 перестал получать исправления ошибок 15 месяцев назад и больше не будет получать исправления безопасности через 8 месяцев; Сам PHP 7.0 перестанет получать исправления безопасности через 7 месяцев (текущую информацию о поддержке см. в [документе о поддерживаемых версиях PHP][php-support]). Поскольку спецификации рассчитаны на долгосрочную перспективу, авторы считают, что спецификация должна быть ориентирована на версии, которые будут поддерживаться в обозримом будущем; PHP 5 не будет. Таким образом, с точки зрения безопасности, нацеливание на что-либо под PHP 7 оказывает медвежью услугу пользователям, поскольку это будет означать молчаливое одобрение использования неподдерживаемых версий PHP.
 
-Additionally, and equally importantly, PHP 7 gives us the ability to provide
-return type hints to interfaces we define. This guarantees a strong,
-predicatable contract for end users, as they can assume that the values returned
-by implementations will be exactly what they expect.
+Кроме того, что не менее важно, PHP 7 дает нам возможность предоставлять подсказки по типу возвращаемого значения для определяемых нами интерфейсов. Это гарантирует надежный и предсказуемый контракт для конечных пользователей, поскольку они могут предполагать, что значения, возвращаемые реализациями, будут именно такими, как они ожидают.
 
 [php-support]: http://php.net/supported-versions.php
 
-### 5.2 Why multiple interfaces?
+### 5.2 Зачем несколько интерфейсов?
 
-Each proposed interface is (primarily) responsible for producing one PSR-7 type.
-This allows consumers to typehint on exactly what they need: if they need a
-response, they typehint on `ResponseFactoryInterface`; if they need a URI, they
-typehint on `UriFactoryInterface`. In this way, users can be granular about what
-they need.
+Каждый предлагаемый интерфейс (в первую очередь) отвечает за создание одного типа PSR-7. Это позволяет потребителям вводить именно то, что им нужно: если им нужен ответ, они вводят подсказку в `ResponseFactoryInterface`; если им нужен URI, они вводят подсказку «UriFactoryInterface». Таким образом, пользователи могут точно определить, что им нужно.
 
-Doing so also allows application developers to provide anonymous implementations
-based on the PSR-7 implementation they are using, producing only the instances
-they need for the specific context. This reduces boilerplate; developers do not
-need to write stubs for unused methods.
+Это также позволяет разработчикам приложений предоставлять анонимные реализации на основе используемой ими реализации PSR-7, создавая только те экземпляры, которые им необходимы для конкретного контекста. Это уменьшает шаблонность; разработчикам не нужно писать заглушки для неиспользуемых методов.
 
-### 5.3 Why does the $reasonPhrase argument to the ResponseFactoryInterface exist?
+### 5.3 Почему существует аргумент $reasonPhrase для ResponseFactoryInterface?
 
-`ResponseFactoryInterface::createResponse()` includes an optional string
-argument, `$reasonPhrase`. In the PSR-7 specification, you can only provide a
-reason phrase at the same time you provide a status code, as the two are related
-pieces of data. The authors of this specification have chosen to mimic the PSR-7
-`ResponseInterface::withStatus()` signature to ensure both sets of data may be
-present in the response created.
+`ResponseFactoryInterface::createResponse()` включает необязательный строковый аргумент `$reasonPhrase`. В спецификации PSR-7 вы можете указать только фразу причины одновременно с кодом состояния, поскольку эти два фрагмента данных являются связанными. Авторы этой спецификации решили имитировать PSR-7.
+Подпись `ResponseInterface::withStatus()`, чтобы гарантировать, что оба набора данных могут присутствовать в созданном ответе.
 
-### 5.4 Why does the $serverParams argument to the ServerRequestFactoryInterface exist?
+### 5.4 Почему существует аргумент $serverParams для ServerRequestFactoryInterface?
 
-`ServerRequestFactoryInterface::createServerRequest()` includes an optional
-`$serverParams` array argument. The reason this is provided is to ensure that an
-instance can be created with the server params populated. Of the data accessible
-via the `ServerRequestInterface`, the only data that does not have a mutator
-method is the one corresponding to the server params. As such, this data MUST be
-provided at initial creation. For this reason, it exists as an argument to the
-factory method.
+`ServerRequestFactoryInterface::createServerRequest()` включает необязательный аргумент массива `$serverParams`. Причина, по которой это предусмотрено, заключается в том, чтобы гарантировать возможность создания экземпляра с заполненными параметрами сервера. Из данных, доступных через ServerRequestInterface, единственные данные, которые не имеют метода мутатора, — это те, которые соответствуют параметрам сервера. Таким образом, эти данные ДОЛЖНЫ быть предоставлены при первоначальном создании. По этой причине он существует как аргумент фабричного метода.
 
-### 5.5 Why is there no factory for creating a ServerRequestInterface from superglobals?
+### 5.5 Почему нет фабрики для создания ServerRequestInterface из суперглобальных переменных?
 
-The primary use case of `ServerRequestFactoryInterface` is for creating a new
-`ServerRequestInterface` instance from known data. Any solution around
-marshaling data from superglobals assumes that:
+Основной вариант использования ServerRequestFactoryInterface — создание нового экземпляра ServerRequestInterface на основе известных данных. Любое решение по маршалингу данных из суперглобальных переменных предполагает, что:
 
-- superglobals are present
-- superglobals follow a specific structure
+- суперглобальные переменные присутствуют
+- суперглобальные объекты имеют определенную структуру
 
-These two assumptions are not always true. When using asynchronous systems such
-as [Swoole][swoole], [ReactPHP][reactphp], and others:
+Эти два предположения не всегда верны. При использовании асинхронных систем, таких как [Swoole][swoole], [ReactPHP][reactphp] и других:
 
-- will not populate standard superglobals such as `$_GET`, `$_POST`, `$_COOKIE`,
-  and `$_FILES`
-- will not populate `$_SERVER` with the same elements as a standard SAPI (such as
-  mod_php, mod-cgi, and mod-fpm)
+- не будет заполнять стандартные суперглобальные переменные, такие как `$_GET`, `$_POST`, `$_COOKIE` и `$_FILES`
+- не будет заполнять `$_SERVER` теми же элементами, что и стандартный SAPI (например, mod_php, mod-cgi и mod-fpm).
 
-Moreover, different standard SAPIs provide different information to `$_SERVER`
-and access to request headers, requiring different approaches for initial
-population of the request.
+Более того, разные стандартные SAPI предоставляют разную информацию $_SERVER и доступ к заголовкам запросов, что требует разных подходов для первоначального заполнения запроса.
 
-As such, designing an interface for population of an instance from superglobals
-is out of scope of this specification, and should largely be
-implementation-specfic.
+Таким образом, разработка интерфейса для заполнения экземпляра из суперглобальных переменных выходит за рамки данной спецификации и в значительной степени должна зависеть от реализации.
 
 [swoole]: https://www.swoole.co.uk/
 [reactphp]: https://reactphp.org/
 
-### 5.6 Why does RequestFactoryInterface::createRequest allow a string URI?
+### 5.6 Почему RequestFactoryInterface::createRequest допускает строковый URI?
 
-The primary use case of `RequestFactoryInterface` is to create a request, and
-the only required values for any request are the request method and a URI. While
-`RequestFactoryInterface::createRequest()` can accept a `UriInterface` instance,
-it also allows a string.
+Основной вариант использования RequestFactoryInterface — создание запроса, и единственными обязательными значениями для любого запроса являются метод запроса и URI. Хотя `RequestFactoryInterface::createRequest()` может принимать экземпляр `UriInterface`, он также позволяет использовать строку.
 
-The rationale is two-fold. First, the majority use case is to create a request
-instance; creation of the URI instance is secondary. Requiring a `UriInterface`
-means users would either need to also have access to a `UriFactoryInterface`, or
-the `RequestFactoryInterface` would have a hard requirement on a
-`UriFactoryInterface`. The first complicates usage for consumers of the factory,
-the second complicates usage for either developers of the factory, or those
-creating the factory instance.
+Обоснование двоякое. Во-первых, большинство вариантов использования — создание экземпляра запроса; создание экземпляра URI является вторичным. Требование UriInterface означает, что пользователям либо потребуется доступ к UriFactoryInterface, либо у RequestFactoryInterface будут жесткие требования к UriFactoryInterface. Первый усложняет использование для потребителей фабрики, второй усложняет использование либо для разработчиков фабрики, либо для тех, кто создает экземпляр фабрики.
 
-Second, `UriFactoryInterface` provides exactly one way to create a
-`UriInterface` instance, and that is from a string URI. If creation of the URI
-is based on a string, there's no reason for the `RequestFactoryInterface` not to
-allow the same semantics. Additionally, every PSR-7 implementation surveyed at
-the time this proposal was developed allowed a string URI when creating a
-`RequestInterface` instance, as the value was then passed to whatever
-`UriInterface` implementation they provided. As such, accepting a string is
-expedient and follows existing semantics.
+Во-вторых, UriFactoryInterface предоставляет ровно один способ создания экземпляра UriInterface — из строкового URI. Если создание URI основано на строке, нет причин, по которым RequestFactoryInterface не разрешает ту же семантику. Кроме того, каждая реализация PSR-7, исследованная на момент разработки этого предложения, позволяла использовать строковый URI при создании экземпляра RequestInterface, поскольку значение затем передавалось любому
+Они предоставили реализацию `UriInterface`. Таким образом, принятие строки целесообразно и соответствует существующей семантике.
 
-## 6. People
+## 6. Люди
 
-This PSR was produced by a FIG Working Group with the following members:
+Данный PSR был подготовлен рабочей группой FIG в следующем составе:
 
-- Woody Gilk (editor), <woody.gilk@gmail.com>
-- Matthew Weier O'Phinney (sponsor), <mweierophinney@gmail.com>
+- Woody Gilk (редактор), <woody.gilk@gmail.com>
+- Matthew Weier O'Phinney (спонсор), <mweierophinney@gmail.com>
 - Stefano Torresi
 - Matthieu Napoli
 - Korvin Szanto
@@ -282,22 +189,22 @@ This PSR was produced by a FIG Working Group with the following members:
 - Oscar Otero
 - Tobias Nyholm
 
-The working group would also like to acknowledge the contributions of:
+Рабочая группа также хотела бы выразить признательность за вклад:
 
 - Paul M. Jones, <pmjones88@gmail.com>
 - Rasmus Schultz, <rasmus@mindplay.dk>
 - Roman Tsjupa, <draconyster@gmail.com>
 
-## 7. Votes
+## 7. Голоса
 
 - [Entrance Vote](https://groups.google.com/forum/#!topic/php-fig/6rZPZ8VglIM)
 - [Working Group Formation](https://groups.google.com/d/msg/php-fig/A5mZYTn5Jm8/j0FN6eZtBAAJ)
 - [Review Period Initiation](https://groups.google.com/d/msg/php-fig/OpUnkrnFhe0/y2dT7CakAQAJ)
 - [Acceptance Vote](https://groups.google.com/d/msg/php-fig/M8PapGXXE1E/uBq2Dq-ZAwAJ)
 
-## 8. Relevant Links
+## 8. Соответствующие ссылки
 
-_**Note:** Order descending chronologically._
+_**Примечание.** В порядке убывания в хронологическом порядке._
 
 - [PSR-7 Middleware Proposal](https://github.com/php-fig/fig-standards/pull/755)
 - [PHP-FIG mailing list discussion of middleware](https://groups.google.com/forum/#!topic/php-fig/vTtGxdIuBX8)

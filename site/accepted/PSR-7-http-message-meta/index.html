@@ -537,22 +537,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-if-i-just-want-to-return-a-file" class="md-nav__link">
-    What if I just want to return a file?
+  <a href="#_4" class="md-nav__link">
+    Что делать, если я просто хочу вернуть файл?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#what-if-i-want-to-directly-emit-output" class="md-nav__link">
-    What if I want to directly emit output?
+  <a href="#_5" class="md-nav__link">
+    Что, если я хочу напрямую выдавать выходные данные?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#what-if-i-want-to-use-an-iterator-for-content" class="md-nav__link">
-    What if I want to use an iterator for content?
+  <a href="#_6" class="md-nav__link">
+    Что делать, если я хочу использовать итератор для контента?
   </a>
   
 </li>
@@ -563,43 +563,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-are-streams-mutable" class="md-nav__link">
-    Why are streams mutable?
+  <a href="#_7" class="md-nav__link">
+    Почему потоки изменяемы?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rationale-for-serverrequestinterface" class="md-nav__link">
-    Rationale for ServerRequestInterface
+  <a href="#serverrequestinterface" class="md-nav__link">
+    Обоснование интерфейса ServerRequestInterface
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-parsed-body-in-the-serverrequestinterface" class="md-nav__link">
-    Why "parsed body" in the ServerRequestInterface?
+  <a href="#serverrequestinterface_1" class="md-nav__link">
+    Почему «разобранное тело» в ServerRequestInterface?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-is-no-functionality-included-for-retrieving-the-base-path" class="md-nav__link">
-    Why is no functionality included for retrieving the "base path"?
+  <a href="#_8" class="md-nav__link">
+    Почему не включена функция получения «базового пути»?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-does-getuploadedfiles-return-objects-instead-of-arrays" class="md-nav__link">
-    Why does getUploadedFiles() return objects instead of arrays?
+  <a href="#getuploadedfiles" class="md-nav__link">
+    Почему getUploadedFiles() возвращает объекты, а не массивы?
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#what-about-special-header-values" class="md-nav__link">
-    What about "special" header values?
+  <a href="#_9" class="md-nav__link">
+    А как насчет «специальных» значений заголовков?
   </a>
   
 </li>
@@ -610,30 +610,30 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-people" class="md-nav__link">
-    6. People
+  <a href="#6" class="md-nav__link">
+    6. Люди
   </a>
   
-    <nav class="md-nav" aria-label="6. People">
+    <nav class="md-nav" aria-label="6. Люди">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#61-editors" class="md-nav__link">
-    6.1 Editor(s)
+  <a href="#61" class="md-nav__link">
+    6.1 Редактор(ы)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#62-sponsors" class="md-nav__link">
-    6.2 Sponsors
+  <a href="#62" class="md-nav__link">
+    6.2 Спонсоры
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#63-contributors" class="md-nav__link">
-    6.3 Contributors
+  <a href="#63" class="md-nav__link">
+    6.3 Авторы
   </a>
   
 </li>
@@ -778,7 +778,7 @@ $request = $baseRequest
     -&gt;withBody($body);
 $response = $client-&gt;send($request)
 
-// Не нужно перезаписывать заголовки или тело!
+// Не нужно перезаписывать заголовки или тело запроса!
 $request = $baseRequest-&gt;withUri($uri-&gt;withPath('/tasks'))-&gt;withMethod('GET');
 $response = $client-&gt;send($request);
 </code></pre>
@@ -821,48 +821,20 @@ $response = $client-&gt;send($request);
 <p>Одно наблюдение, сделанное в отношении различных методов <code>with*()</code>, заключается в том, что они, вероятно, могут безопасно <code>вернуть $this;</code>, если представленный аргумент не приведет к изменению значения. Одним из оснований для этого является производительность (поскольку это не приведет к операции клонирования).</p>
 <p>Различные интерфейсы были написаны с многословием, указывающим, что неизменность ДОЛЖНА быть сохранена, но указывают только на то, что должен быть возвращен «экземпляр», содержащий новое состояние. Поскольку экземпляры, представляющие одно и то же значение, считаются равными, возврат $this функционально эквивалентен и, следовательно, разрешен.</p>
 <h3 id="x">Использование потоков вместо X</h3>
-<p><code>MessageInterface</code> uses a body value that must implement <code>StreamInterface</code>. This
-design decision was made so that developers can send and receive (and/or receive
-and send) HTTP messages that contain more data than can practically be stored in
-memory while still allowing the convenience of interacting with message bodies
-as a string. While PHP provides a stream abstraction by way of stream wrappers,
-stream resources can be cumbersome to work with: stream resources can only be
-cast to a string using <code>stream_get_contents()</code> or manually reading the remainder
-of a string. Adding custom behavior to a stream as it is consumed or populated
-requires registering a stream filter; however, stream filters can only be added
-to a stream after the filter is registered with PHP (i.e., there is no stream
-filter autoloading mechanism).</p>
-<p>The use of a well- defined stream interface allows for the potential of
-flexible stream decorators that can be added to a request or response
-pre-flight to enable things like encryption, compression, ensuring that the
-number of bytes downloaded reflects the number of bytes reported in the
-<code>Content-Length</code> of a response, etc. Decorating streams is a well-established
-<a href="http://docs.oracle.com/javase/7/docs/api/java/io/package-tree.html">pattern in the Java</a>
-and <a href="http://nodejs.org/api/stream.html#stream_class_stream_transform_1">Node</a>
-communities that allows for very flexible streams.</p>
-<p>The majority of the <code>StreamInterface</code> API is based on
-<a href="http://docs.python.org/3.1/library/io.html">Python's io module</a>, which provides
-a practical and consumable API. Instead of implementing stream
-capabilities using something like a <code>WritableStreamInterface</code> and
-<code>ReadableStreamInterface</code>, the capabilities of a stream are provided by methods
-like <code>isReadable()</code>, <code>isWritable()</code>, etc. This approach is used by Python,
-<a href="http://msdn.microsoft.com/en-us/library/system.io.stream.aspx">C#, C++</a>,
-<a href="http://www.ruby-doc.org/core-2.0.0/IO.html">Ruby</a>,
-<a href="http://nodejs.org/api/stream.html">Node</a>, and likely others.</p>
-<h4 id="what-if-i-just-want-to-return-a-file">What if I just want to return a file?</h4>
-<p>In some cases, you may want to return a file from the filesystem. The typical
-way to do this in PHP is one of the following:</p>
+<p><code>MessageInterface</code> использует значение тела, которое должно реализовывать <code>StreamInterface</code>. Это проектное решение было принято для того, чтобы разработчики могли отправлять и получать (и/или получать и отправлять) HTTP-сообщения, которые содержат больше данных, чем практически можно хранить в памяти, при этом обеспечивая удобство взаимодействия с телами сообщений в виде строки. Хотя PHP обеспечивает абстракцию потока посредством оболочек потока, работать с потоковыми ресурсами может быть неудобно: потоковые ресурсы можно преобразовать в строку только с помощью <code>stream_get_contents()</code> или вручную прочитать оставшуюся часть строки. Добавление пользовательского поведения к потоку по мере его потребления или заполнения требует регистрации фильтра потока; однако фильтры потока можно добавлять в поток только после регистрации фильтра в PHP (т. е. механизм автозагрузки фильтров потока отсутствует).</p>
+<p>Использование четко определенного интерфейса потока позволяет использовать гибкие декораторы потока, которые можно добавлять к запросу или ответу перед отправкой, чтобы обеспечить такие функции, как шифрование и сжатие, гарантируя, что количество загруженных байтов отражает количество переданных байтов. в «Content-Length» ответа и т. д. Декорирование потоков — это устоявшаяся практика в <a href="http://docs.oracle.com/javase/7/docs/api/java/io/package-tree.html">Java</a>
+и <a href="http://nodejs.org/api/stream.html#stream_class_stream_transform_1">Node</a>, что позволяет создавать очень гибкие потоки.</p>
+<p>Большая часть API StreamInterface основана на
+<a href="http://docs.python.org/3.1/library/io.html">Модуль io Python</a>, который предоставляет практичный и удобный API. Вместо реализации возможностей потока с использованием чего-то вроде <code>WritableStreamInterface</code> и <code>ReadableStreamInterface</code>, возможности потока предоставляются такими методами, как <code>isReadable()</code>, <code>isWritable()</code> и т. д. Этот подход используется Python,
+<a href="http://msdn.microsoft.com/en-us/library/system.io.stream.aspx">C#, C++</a>, <a href="http://www.ruby-doc.org/core-2.0 .0/IO.html">Ruby</a>, <a href="http://nodejs.org/api/stream.html">Node</a> и другими языками.</p>
+<h4 id="_4">Что делать, если я просто хочу вернуть файл?</h4>
+<p>В некоторых случаях вам может потребоваться вернуть файл из файловой системы. Типичный способ сделать это в PHP — один из следующих:</p>
 <pre><code class="language-php">readfile($filename);
 
 stream_copy_to_stream(fopen($filename, 'r'), fopen('php://output', 'w'));
 </code></pre>
-<p>Note that the above omits sending appropriate <code>Content-Type</code> and
-<code>Content-Length</code> headers; the developer would need to emit these prior to
-calling the above code.</p>
-<p>The equivalent using HTTP messages would be to use a <code>StreamInterface</code>
-implementation that accepts a filename and/or stream resource, and to provide
-this to the response instance. A complete example, including setting appropriate
-headers:</p>
+<p>Обратите внимание, что вышеизложенное не отправляет соответствующие заголовки Content-Type и Content-Length; разработчику необходимо будет создать их перед вызовом приведенного выше кода.</p>
+<p>Эквивалентом использования HTTP-сообщений было бы использование реализации StreamInterface, которая принимает имя файла и/или ресурс потока и передает это экземпляру ответа. Полный пример, включая установку соответствующих заголовков:</p>
 <pre><code class="language-php">// where Stream is a concrete StreamInterface:
 $stream   = new Stream($filename);
 $finfo    = new finfo(FILEINFO_MIME);
@@ -871,16 +843,9 @@ $response = $response
     -&gt;withHeader('Content-Length', (string) filesize($filename))
     -&gt;withBody($stream);
 </code></pre>
-<p>Emitting this response will send the file to the client.</p>
-<h4 id="what-if-i-want-to-directly-emit-output">What if I want to directly emit output?</h4>
-<p>Directly emitting output (e.g. via <code>echo</code>, <code>printf</code>, or writing to the
-<code>php://output</code> stream) is generally only advisable as a performance optimization
-or when emitting large data sets. If it needs to be done and you still wish
-to work in an HTTP message paradigm, one approach would be to use a
-callback-based <code>StreamInterface</code> implementation, per <a href="https://github.com/phly/psr7examples#direct-output">this
-example</a>. Wrap any code
-emitting output directly in a callback, pass that to an appropriate
-<code>StreamInterface</code> implementation, and provide it to the message body:</p>
+<p>При отправке этого ответа файл будет отправлен клиенту.</p>
+<h4 id="_5">Что, если я хочу напрямую выдавать выходные данные?</h4>
+<p>Непосредственная передача вывода (например, через <code>echo</code>, <code>printf</code> или запись в поток <code>php://output</code>) обычно рекомендуется только в целях оптимизации производительности или при отправке больших наборов данных. Если это необходимо сделать, и вы все еще хотите работать в парадигме HTTP-сообщений, одним из подходов может быть использование реализации StreamInterface на основе обратного вызова, согласно [этому примеру] (https://github.com/phly/psr7examples#direct-output). Оберните любой код, выдающий выходные данные, непосредственно в обратный вызов, передайте его соответствующей реализации StreamInterface и предоставьте его в тело сообщения:</p>
 <pre><code class="language-php">$output = new CallbackStream(function () use ($request) {
     printf(&quot;The requested URI was: %s&lt;br&gt;\n&quot;, $request-&gt;getUri());
     return '';
@@ -889,189 +854,101 @@ return (new Response())
     -&gt;withHeader('Content-Type', 'text/html')
     -&gt;withBody($output);
 </code></pre>
-<h4 id="what-if-i-want-to-use-an-iterator-for-content">What if I want to use an iterator for content?</h4>
-<p>Ruby's Rack implementation uses an iterator-based approach for server-side
-response message bodies. This can be emulated using an HTTP message paradigm via
-an iterator-backed <code>StreamInterface</code> approach, as <a href="https://github.com/phly/psr7examples#iterators-and-generators">detailed in the
-psr7examples repository</a>.</p>
-<h3 id="why-are-streams-mutable">Why are streams mutable?</h3>
-<p>The <code>StreamInterface</code> API includes methods such as <code>write()</code> which can
-change the message content -- which directly contradicts having immutable
-messages.</p>
-<p>The problem that arises is due to the fact that the interface is intended to
-wrap a PHP stream or similar. A write operation therefore will proxy to writing
-to the stream. Even if we made <code>StreamInterface</code> immutable, once the stream
-has been updated, any instance that wraps that stream will also be updated --
-making immutability impossible to enforce.</p>
-<p>Our recommendation is that implementations use read-only streams for
-server-side requests and client-side responses.</p>
-<h3 id="rationale-for-serverrequestinterface">Rationale for ServerRequestInterface</h3>
-<p>The <code>RequestInterface</code> and <code>ResponseInterface</code> have essentially 1:1
-correlations with the request and response messages described in
-<a href="http://www.ietf.org/rfc/rfc7230.txt">RFC 7230</a>. They provide interfaces for
-implementing value objects that correspond to the specific HTTP message types
-they model.</p>
-<p>For server-side applications there are other considerations for
-incoming requests:</p>
+<h4 id="_6">Что делать, если я хочу использовать итератор для контента?</h4>
+<p>Реализация Ruby Rack использует подход на основе итератора для тела ответного сообщения на стороне сервера. Это можно эмулировать с использованием парадигмы HTTP-сообщений с помощью подхода StreamInterface на основе итератора, как <a href="https://github.com/phly/psr7examples#iterators-and-generators">подробно описано в репозитории psr7examples</a>.</p>
+<h3 id="_7">Почему потоки изменяемы?</h3>
+<p>API <code>StreamInterface</code> включает в себя такие методы, как <code>write()</code>, которые могут изменять содержимое сообщения, что прямо противоречит неизменяемым сообщениям.</p>
+<p>Возникающая проблема связана с тем, что интерфейс предназначен для переноса потока PHP или чего-то подобного. Таким образом, операция записи будет проксироваться для записи в поток. Даже если мы сделаем <code>StreamInterface</code> неизменяемым, после обновления потока любой экземпляр, который обертывает этот поток, также будет обновлен, что делает невозможным принудительное соблюдение неизменяемости.</p>
+<p>Наша рекомендация заключается в том, чтобы реализации использовали потоки только для чтения для запросов на стороне сервера и ответов на стороне клиента.</p>
+<h3 id="serverrequestinterface">Обоснование интерфейса ServerRequestInterface</h3>
+<p>RequestInterface и ResponseInterface имеют по существу корреляцию 1:1 с сообщениями запроса и ответа, описанными в <a href="http://www.ietf.org/rfc/rfc7230.txt">RFC 7230</a>. Они предоставляют интерфейсы для реализации объектов значений, соответствующих конкретным типам HTTP-сообщений, которые они моделируют.</p>
+<p>Для серверных приложений существуют и другие аспекты входящих запросов:</p>
 <ul>
-<li>Access to server parameters (potentially derived from the request, but also
-  potentially the result of server configuration, and generally represented
-  via the <code>$_SERVER</code> superglobal; these are part of the PHP Server API (SAPI)).</li>
-<li>Access to the query string arguments (usually encapsulated in PHP via the
-  <code>$_GET</code> superglobal).</li>
-<li>Access to the parsed body (i.e., data deserialized from the incoming request
-  body; in PHP, this is typically the result of POST requests using
-  <code>application/x-www-form-urlencoded</code> content types, and encapsulated in the
-  <code>$_POST</code> superglobal, but for non-POST, non-form-encoded data, could be
-  an array or an object).</li>
-<li>Access to uploaded files (encapsulated in PHP via the <code>$_FILES</code> superglobal).</li>
-<li>Access to cookie values (encapsulated in PHP via the <code>$_COOKIE</code> superglobal).</li>
-<li>Access to attributes derived from the request (usually, but not limited to,
-  those matched against the URL path).</li>
+<li>Доступ к параметрам сервера (потенциально получаемый из запроса, но также потенциально являющийся результатом конфигурации сервера и обычно представленный через суперглобальный объект <code>$_SERVER</code>; они являются частью PHP Server API (SAPI)).</li>
+<li>Доступ к аргументам строки запроса (обычно инкапсулируемым в PHP через суперглобальный объект $_GET).</li>
+<li>Доступ к проанализированному телу (т. е. данным, десериализованным из тела входящего запроса; в PHP это обычно результат POST-запросов с использованием
+  типы контента <code>application/x-www-form-urlencoded</code> и инкапсулированы в суперглобальный объект <code>$_POST</code>, но для данных, отличных от POST, и данных, не закодированных в форме, это может быть массив или объект).</li>
+<li>Доступ к загруженным файлам (инкапсулированный в PHP через суперглобальный объект $_FILES).</li>
+<li>Доступ к значениям файлов cookie (инкапсулированным в PHP через суперглобальный объект $_COOKIE).</li>
+<li>Доступ к атрибутам, полученным из запроса (обычно, помимо прочего, к атрибутам, сопоставленным с URL-путем).</li>
 </ul>
-<p>Uniform access to these parameters increases the viability of interoperability
-between frameworks and libraries, as they can now assume that if a request
-implements <code>ServerRequestInterface</code>, they can get at these values. It also
-solves problems within the PHP language itself:</p>
+<p>Унифицированный доступ к этим параметрам повышает жизнеспособность взаимодействия между платформами и библиотеками, поскольку теперь они могут предполагать, что если запрос реализует ServerRequestInterface, они могут получить эти значения. Он также решает проблемы внутри самого языка PHP:</p>
 <ul>
-<li>Until 5.6.0, <code>php://input</code> was read-once; as such, instantiating multiple
-  request instances from multiple frameworks/libraries could lead to
-  inconsistent state, as the first to access <code>php://input</code> would be the only
-  one to receive the data.</li>
-<li>Unit testing against superglobals (e.g., <code>$_GET</code>, <code>$_FILES</code>, etc.) is
-  difficult and typically brittle. Encapsulating them inside the
-  <code>ServerRequestInterface</code> implementation eases testing considerations.</li>
+<li>До версии 5.6.0 <code>php://input</code> читался один раз; Таким образом, создание нескольких экземпляров запроса из нескольких платформ/библиотек может привести к несогласованному состоянию, поскольку первый, кто получит доступ к <code>php://input</code>, будет единственным, кто получит данные.</li>
+<li>Модульное тестирование суперглобальных переменных (например, <code>$_GET</code>, <code>$_FILES</code> и т. д.) сложно и обычно нестабильно. Инкапсуляция их внутри реализации ServerRequestInterface упрощает тестирование.</li>
 </ul>
-<h3 id="why-parsed-body-in-the-serverrequestinterface">Why "parsed body" in the ServerRequestInterface?</h3>
-<p>Arguments were made to use the terminology "BodyParams", and require the value
-to be an array, with the following rationale:</p>
+<h3 id="serverrequestinterface_1">Почему «разобранное тело» в ServerRequestInterface?</h3>
+<p>Были выдвинуты аргументы для использования терминологии «BodyParams» и требования, чтобы значение было массивом, со следующим обоснованием:</p>
 <ul>
-<li>Consistency with other server-side parameter access.</li>
-<li><code>$_POST</code> is an array, and the 80% use case would target that superglobal.</li>
-<li>A single type makes for a strong contract, simplifying usage.</li>
+<li>Согласованность с доступом к другим параметрам на стороне сервера.</li>
+<li><code>$_POST</code> — это массив, и вариант использования 80% будет нацелен на этот суперглобальный массив.</li>
+<li>Один тип обеспечивает надежный контракт, упрощая использование.</li>
 </ul>
-<p>The main argument is that if the body parameters are an array, developers have
-predictable access to values:</p>
+<p>Основной аргумент заключается в том, что если параметры тела представляют собой массив, разработчики имеют предсказуемый доступ к значениям:</p>
 <pre><code class="language-php">$foo = isset($request-&gt;getBodyParams()['foo'])
     ? $request-&gt;getBodyParams()['foo']
     : null;
 </code></pre>
-<p>The argument for using "parsed body" was made by examining the domain. A message
-body can contain literally anything. While traditional web applications use
-forms and submit data using POST, this is a use case that is quickly being
-challenged in current web development trends, which are often API-centric, and
-thus use alternate request methods (notably PUT and PATCH), as well as
-non-form-encoded content (generally JSON or XML) that <em>can</em> be coerced to arrays
-in many cases, but in many cases also <em>cannot</em> or <em>should not</em>.</p>
-<p>If forcing the property representing the parsed body to be only an array,
-developers then need a shared convention about where to put the results of
-parsing the body. These might include:</p>
+<p>Аргумент в пользу использования «разобранного тела» был выдвинут при исследовании домена. Тело сообщения может содержать буквально что угодно. В то время как традиционные веб-приложения используют формы и отправляют данные с помощью POST, этот вариант использования быстро бросает вызов современным тенденциям веб-разработки, которые часто ориентированы на API и, следовательно, используют альтернативные методы запроса (в частности, PUT и PATCH), а также как контент, не закодированный в форме (обычно JSON или XML), который во многих случаях <em>может</em> быть преобразован в массивы, но во многих случаях также <em>не</em> может_ или <em>не должен</em>.</p>
+<p>Если заставить свойство, представляющее разобранное тело, быть только массивом, разработчикам потребуется общее соглашение о том, куда поместить результаты синтаксического анализа тела. Они могут включать в себя:</p>
 <ul>
-<li>A special key under the body parameters, such as <code>__parsed__</code>.</li>
-<li>A specially named attribute, such as <code>__body__</code>.</li>
+<li>Специальный ключ под параметрами тела, например <code>__parsed__</code>.</li>
+<li>Атрибут со специальным именем, например <code>__body__</code>.</li>
 </ul>
-<p>The end result is that a developer now has to look in multiple locations:</p>
+<p>Конечным результатом является то, что разработчику теперь приходится искать в нескольких местах:</p>
 <pre><code class="language-php">$data = $request-&gt;getBodyParams();
 if (isset($data['__parsed__']) &amp;&amp; is_object($data['__parsed__'])) {
     $data = $data['__parsed__'];
 }
 
-// or:
+// или:
 $data = $request-&gt;getBodyParams();
 if ($request-&gt;hasAttribute('__body__')) {
     $data = $request-&gt;getAttribute('__body__');
 }
 </code></pre>
-<p>The solution presented is to use the terminology "ParsedBody", which implies
-that the values are the results of parsing the message body. This also means
-that the return value <em>will</em> be ambiguous; however, because this is an attribute
-of the domain, this is also expected. As such, usage will become:</p>
+<p>Представленное решение заключается в использовании терминологии «ParsedBody», которая подразумевает, что значения являются результатами анализа тела сообщения. Это также означает, что возвращаемое значение <em>будет</em> неоднозначным; однако, поскольку это атрибут домена, это также ожидается. Таким образом, использование станет:</p>
 <pre><code class="language-php">$data = $request-&gt;getParsedBody();
 if (! $data instanceof \stdClass) {
-    // raise an exception!
+    // Бросаем исключение!
 }
-// otherwise, we have what we expected
+// в остальном мы имеем то, что ожидали
 </code></pre>
-<p>This approach removes the limitations of forcing an array, at the expense of
-ambiguity of return value. Considering that the other suggested solutions —
-pushing the parsed data into a special body parameter key or into an attribute —
-also suffer from ambiguity, the proposed solution is simpler as it does not
-require additions to the interface specification. Ultimately, the ambiguity
-enables the flexibility required when representing the results of parsing the
-body.</p>
-<h3 id="why-is-no-functionality-included-for-retrieving-the-base-path">Why is no functionality included for retrieving the "base path"?</h3>
-<p>Many frameworks provide the ability to get the "base path," usually considered
-the path up to and including the front controller. As an example, if the
-application is served at <code>http://example.com/b2b/index.php</code>, and the current URI
-used to request it is <code>http://example.com/b2b/index.php/customer/register</code>, the
-functionality to retrieve the base path would return <code>/b2b/index.php</code>. This value
-can then be used by routers to strip that path segment prior to attempting a
-match.</p>
-<p>This value is often also then used for URI generation within applications;
-parameters will be passed to the router, which will generate the path, and
-prefix it with the base path in order to return a fully-qualified URI. Other
-tools — typically view helpers, template filters, or template functions — are
-used to resolve a path relative to the base path in order to generate a URI for
-linking to resources such as static assets.</p>
-<p>On examination of several different implementations, we noticed the following:</p>
+<p>Этот подход устраняет ограничения принудительного использования массива за счет неоднозначности возвращаемого значения. Учитывая, что другие предлагаемые решения — помещение разобранных данных в специальный ключ параметра тела или в атрибут — также страдают неоднозначностью, предлагаемое решение проще, поскольку не требует дополнений к спецификации интерфейса. В конечном счете, неоднозначность обеспечивает гибкость, необходимую при представлении результатов анализа тела.</p>
+<h3 id="_8">Почему не включена функция получения «базового пути»?</h3>
+<p>Многие фреймворки предоставляют возможность получить «базовый путь», который обычно считается путем до фронт-контроллера включительно. Например, если приложение обслуживается по адресу http://example.com/b2b/index.php, а текущий URI, используемый для его запроса, — http://example.com/b2b/index.php/customer/register, функция получения базового пути вернет <code>/b2b/index.php</code>. Затем это значение может использоваться маршрутизаторами для удаления этого сегмента пути перед попыткой сопоставления.</p>
+<p>Это значение часто затем используется для генерации URI внутри приложений; параметры будут переданы маршрутизатору, который сгенерирует путь и укажет ему префикс базового пути, чтобы вернуть полный URI. Другие инструменты — обычно помощники представлений, фильтры шаблонов или функции шаблонов — используются для разрешения пути относительно базового пути, чтобы сгенерировать URI для ссылки на ресурсы, такие как статические ресурсы.</p>
+<p>При рассмотрении нескольких различных реализаций мы заметили следующее:</p>
 <ul>
-<li>The logic for determining the base path varies widely between implementations.
-  As an example, compare the <a href="https://github.com/zendframework/zf2/blob/release-2.3.7/library/Zend/Http/PhpEnvironment/Request.php#L477-L575">logic in ZF2</a>
-  to the <a href="https://github.com/symfony/symfony/blob/2.7/src/Symfony/Component/HttpFoundation/Request.php#L1858-L1877">logic in Symfony 2</a>.</li>
-<li>Most implementations appear to allow manual injection of a base path to the
-  router and/or any facilities used for URI generation.</li>
-<li>The primary use cases — routing and URI generation — typically are the only
-  consumers of the functionality; developers usually do not need to be aware
-  of the base path concept as other objects take care of that detail for them.
-  As examples:</li>
-<li>A router will strip off the base path for you during routing; you do not
-    need to pass the modified path to the router.</li>
-<li>View helpers, template filters, etc. typically are injected with a base path
-    prior to invocation. Sometimes this is manually done, though more often it
-    is the result of framework wiring.</li>
-<li>All sources necessary for calculating the base path <em>are already in the
-  <code>RequestInterface</code> instance</em>, via server parameters and the URI instance.</li>
+<li>Логика определения базового пути сильно различается в зависимости от реализации. В качестве примера сравните <a href="https://github.com/zendframework/zf2/blob/release-2.3.7/library/Zend/Http/PhpEnvironment/Request.php#L477-L575">логику в ZF2</a>
+  к <a href="https://github.com/symfony/symfony/blob/2.7/src/Symfony/Component/HttpFoundation/Request.php#L1858-L1877">логике в Symfony 2</a>.</li>
+<li>Большинство реализаций, по-видимому, допускают ручное введение базового пути к маршрутизатору и/или любым средствам, используемым для генерации URI.</li>
+<li>Основные варианты использования — маршрутизация и генерация URI — обычно являются единственными потребителями функциональности; разработчикам обычно не нужно знать концепцию базового пути, поскольку другие объекты позаботятся об этой детали за них.
+  В качестве примеров:</li>
+<li>Маршрутизатор удалит вам базовый путь во время маршрутизации; вам не нужно передавать измененный путь маршрутизатору.</li>
+<li>Помощники представлений, фильтры шаблонов и т. д. обычно вводятся с базовым путем перед вызовом. Иногда это делается вручную, но чаще всего это результат работы фреймворка.</li>
+<li>Все источники, необходимые для расчета базового пути, <em>уже находятся в экземпляре RequestInterface</em> через параметры сервера и экземпляр URI.</li>
 </ul>
-<p>Our stance is that base path detection is framework and/or application
-specific, and the results of detection can be easily injected into objects that
-need it, and/or calculated as needed using utility functions and/or classes from
-the <code>RequestInterface</code> instance itself.</p>
-<h3 id="why-does-getuploadedfiles-return-objects-instead-of-arrays">Why does getUploadedFiles() return objects instead of arrays?</h3>
-<p><code>getUploadedFiles()</code> returns a tree of <code>Psr\Http\Message\UploadedFileInterface</code>
-instances. This is done primarily to simplify specification: instead of
-requiring paragraphs of implementation specification for an array, we specify an
-interface.</p>
-<p>Additionally, the data in an <code>UploadedFileInterface</code> is normalized to work in
-both SAPI and non-SAPI environments. This allows the creation of processes to parse
-the message body manually and assign contents to streams without first writing
-to the filesystem, while still allowing proper handling of file uploads in SAPI
-environments.</p>
-<h3 id="what-about-special-header-values">What about "special" header values?</h3>
-<p>A number of header values contain unique representation requirements which can
-pose problems both for consumption as well as generation; in particular, cookies
-and the <code>Accept</code> header.</p>
-<p>This proposal does not provide any special treatment of any header types. The
-base <code>MessageInterface</code> provides methods for header retrieval and setting, and
-all header values are, in the end, string values.</p>
-<p>Developers are encouraged to write commodity libraries for interacting with
-these header values, either for the purposes of parsing or generation. Users may
-then consume these libraries when needing to interact with those values.
-Examples of this practice already exist in libraries such as
-<a href="https://github.com/willdurand/Negotiation">willdurand/Negotiation</a> and
-<a href="https://github.com/auraphp/Aura.Accept">Aura.Accept</a>. So long as the object
-has functionality for casting the value to a string, these objects can be
-used to populate the headers of an HTTP message.</p>
-<h2 id="6-people">6. People</h2>
-<h3 id="61-editors">6.1 Editor(s)</h3>
+<p>Наша позиция заключается в том, что обнаружение базового пути зависит от платформы и/или приложения, и результаты обнаружения могут быть легко внедрены в объекты, которые в этом нуждаются, и/или рассчитаны по мере необходимости с использованием служебных функций и/или классов из самого экземпляра RequestInterface. .</p>
+<h3 id="getuploadedfiles">Почему getUploadedFiles() возвращает объекты, а не массивы?</h3>
+<p><code>getUploadedFiles()</code> возвращает дерево экземпляров <code>Psr\Http\Message\UploadedFileInterface</code>. Это сделано в первую очередь для упрощения спецификации: вместо того, чтобы требовать параграфы спецификации реализации для массива, мы указываем интерфейс.</p>
+<p>Кроме того, данные в UploadedFileInterface нормализуются для работы как в средах SAPI, так и в средах, отличных от SAPI. Это позволяет создавать процессы для анализа тела сообщения вручную и назначения содержимого потокам без предварительной записи в файловую систему, при этом обеспечивая правильную обработку загрузки файлов в средах SAPI.</p>
+<h3 id="_9">А как насчет «специальных» значений заголовков?</h3>
+<p>Ряд значений заголовков содержат уникальные требования к представлению, которые могут создавать проблемы как для потребления, так и для генерации; в частности, файлы cookie и заголовок Accept.</p>
+<p>Это предложение не предусматривает какой-либо специальной обработки каких-либо типов заголовков. Базовый интерфейс MessageInterface предоставляет методы для получения и установки заголовков, и все значения заголовков в конечном итоге являются строковыми значениями.</p>
+<p>Разработчикам рекомендуется писать стандартные библиотеки для взаимодействия с этими значениями заголовков либо для целей анализа, либо для генерации. Затем пользователи могут использовать эти библиотеки, когда им необходимо взаимодействовать с этими значениями. Примеры такой практики уже существуют в таких библиотеках, как <a href="https://github.com/willdurand/Negotiation">willdurand/Negotiation</a> и
+<a href="https://github.com/auraphp/Aura.Accept">Aura.Accept</a>. Пока объект имеет функцию преобразования значения в строку, эти объекты можно использовать для заполнения заголовков HTTP-сообщения.</p>
+<h2 id="6">6. Люди</h2>
+<h3 id="61">6.1 Редактор(ы)</h3>
 <ul>
 <li>Matthew Weier O'Phinney</li>
 </ul>
-<h3 id="62-sponsors">6.2 Sponsors</h3>
+<h3 id="62">6.2 Спонсоры</h3>
 <ul>
 <li>Paul M. Jones</li>
-<li>Beau Simensen (coordinator)</li>
+<li>Beau Simensen (координатор)</li>
 </ul>
-<h3 id="63-contributors">6.3 Contributors</h3>
+<h3 id="63">6.3 Авторы</h3>
 <ul>
 <li>Michael Dowling</li>
 <li>Larry Garfield</li>
