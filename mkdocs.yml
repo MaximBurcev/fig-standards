@@ -1,6 +1,9 @@
 site_name: 'Рекомендации по стандартам PHP: PSR'
 site_url: 'https://php-psr.ru/'
 theme: material
+plugins:
+    - search
+    - meta-descriptions
 extra_css:
     - //cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css
 extra_javascript:
@@ -18,8 +21,8 @@ nav:
     - PHPDoc PSR-5: proposed/phpdoc.md
     - Общий интерфейс кэширования PSR-6: accepted/PSR-6-cache.md
     - Интерфейсы HTTP-сообщений PSR-7: accepted/PSR-7-http-message.md
+    - Расширенное руководство по стилю кодирования PSR-12: accepted/PSR-12-extended-coding-style-guide.md
     - HTTP-фабрики PSR-17: accepted/PSR-17-http-factory.md
     - HTTP-клиент PSR-18: accepted/PSR-18-http-client.md
-    - Расширенное руководство по стилю кодирования PSR-12: accepted/PSR-12-extended-coding-style-guide.md
     - Теги PHPDoc PSR-19: proposed/phpdoc-tags.md
     - Лицензия: LICENSE.md

@@ -94,10 +94,8 @@
 [//]: # ([psr14]: accepted/PSR-14-event-dispatcher.md)
 [//]: # ([psr15]: accepted/PSR-15-request-handlers.md)
 [//]: # ([psr16]: accepted/PSR-16-simple-cache.md)
-[//]: # ([psr17]: accepted/PSR-17-http-factory.md)
-[//]: # ([psr18]: accepted/PSR-18-http-client.md)
+[psr17]: accepted/PSR-17-http-factory.md
+[psr18]: accepted/PSR-18-http-client.md
 [psr19]: proposed/phpdoc-tags.md
 
 [//]: # ([psr20]: proposed/clock.md)
-
-<!--s_links--><!--check code--><!--/s_links-->

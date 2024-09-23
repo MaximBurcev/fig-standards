@@ -2,267 +2,267 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://php-psr.ru/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/LICENSE/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-0/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-1-basic-coding-standard/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-11-container-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-11-container/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-12-extended-coding-style-guide-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-12-extended-coding-style-guide/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-13-links-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-13-links/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-14-event-dispatcher-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-14-event-dispatcher/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-15-request-handlers-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-15-request-handlers/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-16-simple-cache-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-16-simple-cache/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-17-http-factory-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-17-http-factory/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-18-http-client-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-18-http-client/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-2-coding-style-guide-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-2-coding-style-guide/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-3-logger-interface-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-3-logger-interface/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-4-autoloader-examples/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-4-autoloader-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-4-autoloader/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-6-cache-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-6-cache/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-7-http-message-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/accepted/PSR-7-http-message/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/001-mission-and-structure/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/002-psr-workflow/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/003-per-workflow/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/004-votes/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/005-elections-and-vacancies/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/006-licensing-policies/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/007-psr-amendments/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/008-psr-evolution/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/009-naming-conventions/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/bylaws/100-implementation/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/clock-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/clock/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/phpdoc-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/phpdoc-tags-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/phpdoc-tags/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/phpdoc/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/security-disclosure-publication-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/security-disclosure-publication/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/security-reporting-process-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/security-reporting-process/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/psr-8-hug/PSR-8-hug-meta/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://php-psr.ru/proposed/psr-8-hug/psr-8-hug/</loc>
-         <lastmod>2024-05-29</lastmod>
+         <lastmod>2024-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
