@@ -1,45 +1,34 @@
-Mutually Assured Hug
+Взаимные объятия
 ====================
 
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+Ключевые слова «ОБЯЗАН», «НЕ ДОЛЖЕН», «REQUIRED», «SHALL», «SHALL NOT», «СЛЕДУЕТ»,
+«SHOULD NOT», «RECOMMENDED», «МОЖЕТ» и «OPTIONAL» в данном документе следует
+интерпретировать так, как описано в [RFC 2119](http://tools.ietf.org/html/rfc2119).
 
-## 1. Overview
+## 1. Обзор
 
-This standard establishes a common way for objects to express mutual
-appreciation and support by hugging.  This allows objects to support each other
-in a constructive fashion, furthering cooperation between different PHP projects.
+Данный стандарт устанавливает общий способ для объектов выражать взаимную признательность и поддержку посредством объятий. Это позволяет объектам поддерживать друг друга конструктивным образом, способствуя сотрудничеству между различными PHP-проектами.
 
-## 2. Specification
+## 2. Спецификация
 
-This specification defines two interfaces, \Psr\Hug\Huggable and
-\Psr\Hug\GroupHuggable.
+Данная спецификация определяет два интерфейса: \Psr\Hug\Huggable и \Psr\Hug\GroupHuggable.
 
-### Huggable objects
+### Huggable-объекты (обнимаемые объекты)
 
-1. A Huggable object expresses affection and support for another object by invoking
-its hug() method, passing $this as the first parameter.
+1. Huggable-объект выражает привязанность и поддержку другому объекту, вызывая его метод hug() и передавая $this в качестве первого параметра.
 
-2. An object whose hug() method is invoked MUST hug() the calling object back
-at least once.
+2. Объект, у которого вызван метод hug(), ОБЯЗАН обнять вызывающий объект в ответ как минимум один раз.
 
-3. Two objects that are engaged in a hug MAY continue to hug each other back for
-any number of iterations. However, every huggable object MUST have a termination
-condition that will prevent an infinite loop.  For example, an object MAY be
-configured to only allow up to 3 mutual hugs, after which it will break the hug
-chain and return.
+3. Два объекта, находящихся в процессе объятий, МОГУТ продолжать обнимать друг друга любое количество итераций. Однако каждый huggable-объект ОБЯЗАН иметь условие завершения, которое предотвратит бесконечный цикл. Например, объект МОЖЕТ быть настроен на допущение не более 3 взаимных объятий, после чего он разрывает цепочку объятий и возвращает управление.
 
-4. An object MAY take additional actions, including modifying state, when hugged.
-A common example is to increment an internal happiness or satisfaction counter.
+4. Объект МОЖЕТ предпринимать дополнительные действия, в том числе изменять состояние, при получении объятий. Распространённым примером является увеличение внутреннего счётчика счастья или удовлетворённости.
 
-### GroupHuggable objects
+### GroupHuggable-объекты (объекты групповых объятий)
 
-1. An object may optionally implement GroupHuggable to indicate that it is able
-to support and affirm multiple objects at once.
+1. Объект МОЖЕТ дополнительно реализовывать GroupHuggable, чтобы указать, что он способен поддерживать и одобрять несколько объектов одновременно.
 
-## 3. Interfaces
+## 3. Интерфейсы
 
 ### HuggableInterface
 

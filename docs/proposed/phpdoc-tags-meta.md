@@ -1,75 +1,75 @@
-# PHPDoc Tags Meta Document
+---
+description: "Мета-документ каталога тегов PHPDoc PSR-19. Описывает обоснование и историю формализации де-факто списка тегов документирования PHP-кода."
+---
+
+# Мета-документ тегов PHPDoc
 
 
-## 1. Summary
+## 1. Краткое описание
 
-The purpose of this PSR is to document (in a catalog style) the de facto list of tags historically in use
-in the PHP community.
+Цель данного PSR — задокументировать (в стиле каталога) де-факто список тегов, исторически используемых в PHP-сообществе.
 
-## 2. Why Bother?
+## 2. Зачем это нужно?
 
-We wish to properly standardize the de facto usage of tags as code documentation.
+Мы хотим надлежащим образом стандартизировать де-факто использование тегов как документации к коду.
 
-## 3. Scope
+## 3. Область применения
 
-### 3.1 Goals
+### 3.1 Цели
 
-* Provide a complete technical definition, or schema, of the common tags in PHPDoc notation.
-* Introduce new concepts matching best practices or design patterns in use today.
+* Предоставить полное техническое определение, или схему, стандартных тегов нотации PHPDoc.
+* Ввести новые концепции, соответствующие лучшим практикам или паттернам проектирования, применяемым сегодня.
 
-### 3.2 Non-Goals
+### 3.2 Не входит в область применения
 
-* This PSR does not provide a recommendation on how and when to use the concepts described in this document, so it is
-  not a coding standard.
+* Данный PSR не даёт рекомендаций о том, как и когда использовать описанные в этом документе концепции, поэтому он не является стандартом кодирования.
 
-## 4. Approaches
+## 4. Подходы
 
-### 4.1 Chosen Approach
+### 4.1 Выбранный подход
 
-We have decided to formalize the existing practices, observe non-documented usages (such as Doctrine-style
-annotations), and observe feature requests with Documentation generators (such as phpDocumentor).
+Мы решили формализовать существующие практики, рассмотреть незадокументированные варианты использования (такие как аннотации в стиле Doctrine) и учесть запросы на новые функции генераторов документации (таких как phpDocumentor).
 
-The combination of these should be described in sufficient detail as to reduce the amount of possible interpretation.
+Совокупность перечисленного должна быть описана с достаточной степенью детализации, чтобы снизить количество возможных интерпретаций.
 
-In addition to the above, the authors have taken care to provide for future expansions and tag additions that do not
-affect the Syntax of PHPDoc itself.
+В дополнение к вышесказанному, авторы позаботились о возможности будущих расширений и добавления тегов, которые не затрагивают синтаксис самого PHPDoc.
 
-Pros:
+Преимущества:
 
-* Delivers a machine-parsable and verifiable specification.
-* Well-rounded proposal due to the number of factors considered.
+* Предоставляет машиночитаемую и верифицируемую спецификацию.
+* Взвешенное предложение благодаря учёту большого числа факторов.
 
-Cons:
+Недостатки:
 
-* Technical and verbose.
-* Can only be extended when the syntax is not affected.
+* Технически сложное и многословное.
+* Может быть расширено только при условии, что синтаксис не затрагивается.
 
-## 5. People
+## 5. Участники
 
-### 5.1 Editor
+### 5.1 Редактор
 
  * Chuck Burgess - [PEAR](https://pear.php.net)
 
-### 5.2 Sponsor
+### 5.2 Спонсор
 
  * Michael Cullum
 
-### 5.3 Working group members
+### 5.3 Члены рабочей группы
 
  * Alexey Gopachenko - [PhpStorm](https://www.jetbrains.com/phpstorm)
  * Matthew Brown - [Psalm](https://github.com/vimeo/psalm)
  * Jan Tvrdík - [PHPStan](https://github.com/phpstan/phpstan)
  * Jaap van Otterdijk - [phpDocumentor](https://github.com/phpDocumentor/phpDocumentor2)
 
-## 6. Votes
+## 6. Голосования
 
-* [Entrance Vote](https://groups.google.com/forum/#!topic/php-fig/5Yd0XGd349Q)
-* **Acceptance Vote**: TBD
+* [Вступительное голосование](https://groups.google.com/forum/#!topic/php-fig/5Yd0XGd349Q)
+* **Голосование о принятии**: TBD
 
-## 7. Relevant Links
+## 7. Ссылки по теме
 
-Most of the relevant links are mentioned in the PSR itself as support for individual chapters.
+Большинство соответствующих ссылок упомянуты в самом PSR в качестве обоснования отдельных глав.
 
-_**Note:** Order descending chronologically._
+_**Примечание:** Порядок убывающий хронологический._
 
-* [Original draft](https://github.com/phpDocumentor/phpDocumentor2/commit/0dbdbfa318d197279b414e5c0d1ffb142b31a528#docs/PSR.md)
+* [Исходный черновик](https://github.com/phpDocumentor/phpDocumentor2/commit/0dbdbfa318d197279b414e5c0d1ffb142b31a528#docs/PSR.md)

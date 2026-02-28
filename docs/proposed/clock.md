@@ -1,53 +1,53 @@
-Common Interface for Accessing the Clock
+Общий интерфейс для доступа к часам
 ========================================
 
 
-This document describes a simple interface for reading the system clock.
+Этот документ описывает простой интерфейс для чтения системных часов.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][].
+Ключевые слова «ОБЯЗАН», «НЕ ДОЛЖЕН», «REQUIRED», «SHALL», «SHALL NOT», «СЛЕДУЕТ»,
+«SHOULD NOT», «RECOMMENDED», «МОЖЕТ» и «OPTIONAL» в данном документе следует
+интерпретировать так, как описано в [RFC 2119][].
 
-The final implementations MAY decorate the objects with more
-functionality than the one proposed but they MUST implement the indicated
-interfaces/functionality first.
+Финальные реализации МОГУТ дополнять объекты дополнительной функциональностью
+сверх предложенной, однако они ОБЯЗАНЫ в первую очередь реализовать указанные
+интерфейсы/функциональность.
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-# 1. Specification
+# 1. Спецификация
 
-## 1.1 Introduction
+## 1.1 Введение
 
-Creating a standard way of accessing the clock would allow interopability
-during testing, when testing behavior that has timing based side effects.
-Common ways to get the current time include calling `\time()` or 
-`new DateTimeImmutable('now')`. However, this makes mocking the current time
-impossible in some situations.
+Создание стандартного способа доступа к часам обеспечит совместимость
+при тестировании поведения, которое имеет побочные эффекты, зависящие от времени.
+Распространённые способы получить текущее время включают вызов `\time()` или
+`new DateTimeImmutable('now')`. Однако в некоторых ситуациях это делает
+подмену текущего времени невозможной.
 
-## 1.2 Definitions
+## 1.2 Определения
 
-* **Clock** - The clock is able to read the current time and date.
+* **Часы (Clock)** — часы способны считывать текущее время и дату.
 
-* **Timestamp** - The current time as an integer number of seconds since
-Jan 1, 1970 00:00:00 UTC.
+* **Временная метка (Timestamp)** — текущее время в виде целого числа секунд,
+  прошедших с 1 января 1970 00:00:00 UTC.
 
-### 1.3 Usage
+### 1.3 Использование
 
-There are some common usage patterns, which are outlined below:
+Ниже описаны наиболее распространённые паттерны использования:
 
-**Get the current timestamp**
+**Получение текущей временной метки**
 
-This should be done by using the `getTimestamp()` method on the returned `\DateTimeImmutable` like so:
+Это следует делать с помощью метода `getTimestamp()` на возвращаемом объекте `\DateTimeImmutable`:
 ```php
 $timestamp = $clock->now()->getTimestamp();
 ```
 
-# 2. Interfaces
+# 2. Интерфейсы
 
 ## 2.1 ClockInterface
 
-The clock interface defines the most basic operation to read the current time and date from the clock. 
-It MUST return the time as a `DateTimeImmutable`.
+Интерфейс часов определяет наиболее базовую операцию чтения текущего времени и даты с часов.
+Он ОБЯЗАН возвращать время в виде объекта `DateTimeImmutable`.
 
 ~~~php
 <?php

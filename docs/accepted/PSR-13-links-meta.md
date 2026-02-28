@@ -1,112 +1,140 @@
-# Link Definition Meta Document
+---
+description: "Гипермедиа-ссылки становятся всё более важной частью веба — как в HTML-контексте, так и в различных форматах API. Мета-документ описывает решения стандарта PSR-13."
+---
 
-## 1. Summary
+# Мета-документ определения ссылок
 
-Hypermedia links are becoming an increasingly important part of the web, in both HTML contexts
-and various API format contexts. However, there is no single common hypermedia format, nor
-is there a common way to represent Links between formats.
+## 1. Краткое описание
 
-This specification aims to provide PHP developers with a simple, common way of representing a
-hypermedia link independently of the serialization format that is used. That in turn allows
-a system to serialize a response with hypermedia links into one or more wire formats independently
-of the process of deciding what those links should be.
+Гипермедиа-ссылки становятся всё более важной частью веба — как в контексте HTML,
+так и в различных форматах API. Однако не существует единого общепринятого формата гипермедиа
+и единого способа представления ссылок между форматами.
 
-## 2. Scope
+Данная спецификация ставит целью предоставить PHP-разработчикам простой и универсальный способ
+представления гипермедиа-ссылки независимо от используемого формата сериализации. Это, в свою
+очередь, позволяет системе сериализовать ответ с гипермедиа-ссылками в один или несколько
+проводных форматов независимо от процесса принятия решения о том, какими эти ссылки должны быть.
 
-### 2.1 Goals
+## 2. Область применения
 
-* This specification aims to extract and standardize hypermedia link representation between different
-formats.
+### 2.1 Цели
 
-### 2.2 Non-Goals
+* Данная спецификация ставит целью извлечь и стандартизировать представление гипермедиа-ссылок
+между различными форматами.
 
-* This specification does not seek to standardize or favor any particular hypermedia serialization format.
+### 2.2 Вне области применения
 
-## 3. Design Decisions
+* Данная спецификация не ставит целью стандартизировать или отдавать предпочтение какому-либо
+конкретному формату сериализации гипермедиа.
 
-### Why no mutator methods?
+## 3. Принятые проектные решения
 
-One of the key targets for this specification is PSR-7 Response objects.  Response objects by design must be
-immutable.  Other value-object implementations likely would also require an immutable interface.
+### Почему нет методов-мутаторов?
 
-Additionally, some Link Provider objects may not be value objects but other objects within a given
-domain, which are able to generate Links on the fly, perhaps off of a database result or other underlying
-representation.  In those cases a writeable provider definition would be incompatible.
+Одним из ключевых целевых объектов данной спецификации являются объекты PSR-7 Response. По своей
+конструкции объекты Response обязаны быть неизменяемыми. Другие реализации объектов-значений,
+по всей видимости, также потребуют неизменяемого интерфейса.
 
-Therefore, this specification splits accessor methods and evolvable methods into separate interfaces,
-allowing objects to implement just the read-only or evolvable versions as appropriate to their use case.
+Кроме того, некоторые объекты провайдера ссылок могут не быть объектами-значениями, а
+представлять другие объекты в рамках некоторой предметной области, способные динамически
+генерировать ссылки, например на основе результатов запроса к базе данных или иного нижележащего
+представления. В таких случаях определение записываемого провайдера было бы несовместимо.
 
-### Why is rel on a Link object multi-value?
+Поэтому данная спецификация разделяет методы доступа и расширяемые методы на отдельные интерфейсы,
+позволяя объектам реализовывать лишь ту версию — только для чтения или расширяемую, — которая
+соответствует их варианту использования.
 
-Different hypermedia standards handle multiple links with the same relationship differently. Some have a single
-link that has multiple rel's defined. Others have a single rel entry that then contains multiple links.
+### Почему отношение ссылки является многозначным?
 
-Defining each Link uniquely but allowing it to have multiple rels provides a most-compatible-denominator definition.
-A single LinkInterface object may be serialized to one or more link entries in a given hypermedia format, as
-appropriate.  However, specifying multiple link objects each with a single rel yet the same URI is also legal, and
-a hypermedia format can serialize that as appropriate, too.
+Различные стандарты гипермедиа по-разному обрабатывают несколько ссылок с одним и тем же
+отношением. В одних стандартах используется одна ссылка с несколькими определёнными
+отношениями. В других — одна запись отношения, содержащая несколько ссылок.
 
-### Why is a LinkProviderInterface needed?
+Определение каждой ссылки как уникальной, но с возможностью иметь несколько отношений, обеспечивает
+определение с наибольшей совместимостью. Один объект `LinkInterface` может быть сериализован в одну
+или несколько записей ссылок в данном формате гипермедиа, в зависимости от ситуации. Однако указание
+нескольких объектов ссылок с одним отношением, но одним и тем же URI также допустимо, и формат
+гипермедиа может сериализовать это соответствующим образом.
 
-In many contexts, a set of links will be attached to some other object.  Those objects may be used in situations
-where all that is relevant is their links, or some subset of their links. For example, various different value
-objects may be defined that represent different REST formats such as HAL, JSON-LD, or Atom.  It may be useful
-to extract those links from such an object uniformly for further processing. For instance, next/previous links
-may be extracted from an object and added to a PSR-7 Response object as Link headers.  Alternatively, many links
-would make sense to represent with a "preload" link relationship, which would indicate to an HTTP 2-compatible
-web server that the linked resources should be streamed to a client in anticipation of a subsequent request.
+### Зачем нужен `LinkProviderInterface`?
 
-All of those cases are independent of the payload or encoding of the object. By providing a common interface
-to access such links, we enable generic handling of the links themselves regardless of the value object or
-domain object that is producing them.
+Во многих контекстах набор ссылок прикрепляется к некоторому другому объекту. Эти объекты
+могут использоваться в ситуациях, когда значимы лишь их ссылки или некоторое их подмножество.
+Например, могут быть определены различные объекты-значения, представляющие разные REST-форматы,
+такие как HAL, JSON-LD или Atom. Может оказаться полезным единообразно извлекать ссылки из
+такого объекта для дальнейшей обработки. Например, ссылки «следующий/предыдущий» могут быть
+извлечены из объекта и добавлены в объект PSR-7 Response в качестве заголовков Link. Кроме
+того, многие ссылки имеет смысл представлять с отношением ссылки «preload», что указывало бы
+HTTP/2-совместимому веб-серверу на необходимость передать связанные ресурсы клиенту заранее,
+в ожидании последующего запроса.
 
-## 4. People
+Все эти случаи не зависят от полезной нагрузки или кодировки объекта. Предоставляя общий интерфейс
+для доступа к таким ссылкам, мы обеспечиваем универсальную обработку самих ссылок вне зависимости
+от объекта-значения или доменного объекта, который их предоставляет.
 
-### 4.1 Editor(s)
+## 4. Участники
+
+### 4.1 Редактор(ы)
 
 * Larry Garfield
 
-### 4.2 Sponsors
+### 4.2 Спонсоры
 
-* Matthew Weier O'Phinney (coordinator)
+* Matthew Weier O'Phinney (координатор)
 * Marc Alexander
 
-### 4.3 Contributors
+### 4.3 Участники
 
 * Evert Pot
 
-## 5. Votes
+## 5. Голосование
 
-## 6. Relevant links
+## 6. Релевантные ссылки
 
-* [What's in a link?](http://evertpot.com/whats-in-a-link/) by Evert Pot
-* [FIG Link Working Group List](https://groups.google.com/forum/#!forum/php-fig-link)
+* [What's in a link?](http://evertpot.com/whats-in-a-link/) — Evert Pot
+* [Список рассылки рабочей группы FIG по ссылкам](https://groups.google.com/forum/#!forum/php-fig-link)
 
-## 7. Errata
+## 7. Исправления и уточнения
 
-### 7.1 Type additions
+### 7.1 Добавление типов
 
-The 1.1 release of the `psr/link` package includes scalar parameter types.  The 2.0 release of the package includes return types.  This structure leverages PHP 7.2 covariance support to allow for a gradual upgrade process, but requires PHP 8.0 for type compatibility.
+Версия 1.1 пакета `psr/link` включает скалярные типы параметров. Версия 2.0 пакета включает типы
+возвращаемых значений. Эта структура использует поддержку ковариантности PHP 7.2 для постепенного
+процесса обновления, однако требует PHP 8.0 для полной совместимости типов.
 
-Implementers MAY add return types to their own packages at their discretion, provided that:
+Разработчики реализаций МОГУТ добавлять типы возвращаемых значений в свои пакеты по собственному
+усмотрению при условии, что:
 
-* the return types match those in the 2.0 package.
-* the implementation specifies a minimum PHP version of 8.0.0 or later.
+* типы возвращаемых значений совпадают с типами в пакете версии 2.0;
+* реализация указывает минимальную версию PHP 8.0.0 или выше.
 
-Implementers MAY add parameter types to their own packages in a new major release, either at the same time as adding return types or in a subsequent release, provided that:
+Разработчики реализаций МОГУТ добавлять типы параметров в свои пакеты в новом мажорном релизе —
+одновременно с добавлением типов возвращаемых значений или в последующем релизе — при условии, что:
 
-* the parameter types match those in the 1.1 package.
-* the implementation specifies a minimum PHP version of 8.0.0 or later.
-* the implementation depends on `"psr/link": "^1.1 || ^2.0"` so as to exclude the untyped 1.0 version.
+* типы параметров совпадают с типами в пакете версии 1.1;
+* реализация указывает минимальную версию PHP 8.0.0 или выше;
+* реализация зависит от `"psr/link": "^1.1 || ^2.0"`, чтобы исключить нетипизированную версию 1.0.
 
-Implementers are encouraged but not required to transition their packages toward the 2.0 version of the package at their earliest convenience.
+Разработчикам реализаций рекомендуется, но не требуется при первой возможности перевести свои
+пакеты на версию 2.0 пакета.
 
-### 7.2 Attribute type handling
+### 7.2 Обработка типов атрибутов
 
-The original specification contained an inconsistency regarding array values for attributes.  The text of the specification states in section 1.2 that attribute values (as passed to `EvolvableLinkInterface::withAttribute()`) could be of multiple types, some of which allowed for special handling (such as booleans or arrays).  However, the docblock for that method specified that the `$value` parameter had to be a string, which was incorrect.
+Исходная спецификация содержала несоответствие в отношении значений-массивов для атрибутов.
+В тексте спецификации в разделе 1.2 указывалось, что значения атрибутов (передаваемые в
+`EvolvableLinkInterface::withAttribute()`) могут быть нескольких типов, некоторые из которых
+допускают особую обработку (например, булевы значения или массивы). Однако в docblock этого
+метода было указано, что параметр `$value` должен быть строкой, что являлось некорректным.
 
-To address this issue, the interface has been corrected in later releases to allow `$value` to be of type `string|\Stringable|int|float|bool|array`.  Implementers SHOULD treat a `Stringable` object the same as a `string` parameter.  Implementers MAY serialize `int`, `float`, or `bool` in alternate, type-aware ways for a particular serialization format as appropriate.  Other object types or resources remain disallowed.
+Для устранения данного несоответствия интерфейс был исправлен в более поздних версиях: теперь
+`$value` может быть типа `string|\Stringable|int|float|bool|array`. Разработчики реализаций
+СЛЕДУЕТ обрабатывать объект `Stringable` так же, как параметр типа `string`. Разработчики
+реализаций МОГУТ сериализовывать `int`, `float` или `bool` альтернативными, типо-осознанными
+способами для конкретного формата сериализации, если это уместно. Прочие типы объектов
+и ресурсы по-прежнему недопустимы.
 
-Multiple calls to `withAttribute()` with the same `$name` MUST override previously provided values, as the spec already states.  To provide multiple values to a particular attribute, pass an `array` with the desired values.
+Множественные вызовы `withAttribute()` с одним и тем же `$name` ДОЛЖНЫ перезаписывать ранее
+предоставленные значения, как уже указано в спецификации. Чтобы передать несколько значений
+для конкретного атрибута, следует передать массив с нужными значениями.
 
-All other guidelines and requirements in section 1.2 remain valid.
+Все прочие правила и требования раздела 1.2 остаются в силе.

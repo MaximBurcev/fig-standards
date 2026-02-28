@@ -1,135 +1,141 @@
-# Link definition interfaces
+# Интерфейсы определения ссылок
 
 
 
-Hypermedia links are becoming an increasingly important part of the web, in both HTML contexts
-and various API format contexts. However, there is no single common hypermedia format, nor
-is there a common way to represent links between formats.
+Гипермедиа-ссылки становятся всё более важной частью веба — как в контексте HTML,
+так и в различных форматах API. Однако не существует единого общепринятого формата гипермедиа
+и единого способа представления ссылок между форматами.
 
-This specification aims to provide PHP developers with a simple, common way of representing a
-hypermedia link independently of the serialization format that is used. That in turn allows
-a system to serialize a response with hypermedia links into one or more wire formats independently
-of the process of deciding what those links should be.
+Данная спецификация ставит целью предоставить PHP-разработчикам простой и универсальный способ
+представления гипермедиа-ссылки независимо от используемого формата сериализации. Это, в свою
+очередь, позволяет системе сериализовать ответ с гипермедиа-ссылками в один или несколько
+проводных форматов независимо от процесса принятия решения о том, какими эти ссылки должны быть.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+Ключевые слова «ОБЯЗАН» («MUST»), «НЕ ДОЛЖЕН» («MUST NOT»), «ТРЕБУЕТСЯ» («REQUIRED»),
+«ОБЯЗАН» («SHALL»), «НЕ ОБЯЗАН» («SHALL NOT»), «СЛЕДУЕТ» («SHOULD»),
+«НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»), «МОЖЕТ» («MAY»)
+и «НЕОБЯЗАТЕЛЬНО» («OPTIONAL») в данном документе следует интерпретировать
+так, как описано в [RFC 2119](http://tools.ietf.org/html/rfc2119).
 
-### References
+### Ссылки
 
 - [RFC 2119](http://tools.ietf.org/html/rfc2119)
 - [RFC 4287](https://tools.ietf.org/html/rfc4287)
 - [RFC 5988](https://tools.ietf.org/html/rfc5988)
 - [RFC 6570](https://tools.ietf.org/html/rfc6570)
-- [IANA Link Relations Registry](http://www.iana.org/assignments/link-relations/link-relations.xhtml)
-- [Microformats Relations List](http://microformats.org/wiki/existing-rel-values#HTML5_link_type_extensions)
+- [Реестр отношений ссылок IANA](http://www.iana.org/assignments/link-relations/link-relations.xhtml)
+- [Список отношений Microformats](http://microformats.org/wiki/existing-rel-values#HTML5_link_type_extensions)
 
-## 1. Specification
+## 1. Спецификация
 
-### 1.1 Basic links
+### 1.1 Базовые ссылки
 
-A Hypermedia Link consists of, at minimum:
-- A URI representing the target resource being referenced.
-- A relationship defining how the target resource relates to the source.
+Гипермедиа-ссылка состоит как минимум из:
+- URI, представляющего целевой ресурс, на который делается ссылка.
+- Отношения, определяющего, как целевой ресурс соотносится с источником.
 
-Various other attributes of the Link may exist, depending on the format used. As additional attributes
-are not well-standardized or universal, this specification does not seek to standardize them.
+У ссылки могут существовать и другие атрибуты в зависимости от используемого формата. Поскольку
+дополнительные атрибуты не стандартизированы и не являются универсальными, данная спецификация
+не ставит целью их стандартизацию.
 
-For the purposes of this specification, the following definitions apply.
+В целях настоящей спецификации применяются следующие определения.
 
-*    **Implementing Object** - An object that implements one of the interfaces defined by this
-specification.
+*    **Реализующий объект** — объект, реализующий один из интерфейсов, определённых данной
+спецификацией.
 
-*    **Serializer** - A library or other system that takes one or more Link objects and produces
-a serialized representation of it in some defined format.
+*    **Сериализатор** — библиотека или иная система, которая принимает один или несколько объектов
+ссылок и создаёт их сериализованное представление в некотором определённом формате.
 
-### 1.2 Attributes
+### 1.2 Атрибуты
 
-All links MAY include zero or more additional attributes beyond the URI and relationship.
-There is no formal registry of the values that are allowed here, and validity of values
-is dependent on context and often on a particular serialization format. Commonly supported
-values include 'hreflang', 'title', and 'type'.
+Все ссылки МОГУТ включать ноль или более дополнительных атрибутов помимо URI и отношения.
+Формального реестра допустимых значений не существует, и валидность значений
+зависит от контекста и нередко от конкретного формата сериализации. Часто встречающиеся
+значения — `hreflang`, `title` и `type`.
 
-Serializers MAY omit attributes on a link object if required to do so by the serialization
-format. However, serializers SHOULD encode all provided attributes possible in order to
-allow for user-extension unless prevented by a serialization format's definition.
+Сериализаторы МОГУТ опускать атрибуты объекта ссылки, если этого требует формат сериализации.
+Однако сериализаторы СЛЕДУЕТ кодировать все предоставленные атрибуты там, где это возможно,
+чтобы допускать расширения пользователем, если только определение формата сериализации
+не препятствует этому.
 
-Some attributes (commonly `hreflang`) may appear more than once in their context. Therefore,
-an attribute value MAY be an array of values rather than a simple value. Serializers MAY
-encode that array in whatever format is appropriate for the serialized format (such
-as a space-separated list, comma-separated list, etc.). If a given attribute is not
-allowed to have multiple values in a particular context, serializers MUST use the first
-value provided and ignore all subsequent values.
+Некоторые атрибуты (часто `hreflang`) могут появляться в своём контексте более одного раза.
+Поэтому значение атрибута МОЖЕТ быть массивом значений, а не единственным значением. Сериализаторы
+МОГУТ кодировать такой массив в любом формате, подходящем для данного формата сериализации
+(например, в виде списка, разделённого пробелами, запятыми и т. д.). Если атрибут не допускает
+нескольких значений в конкретном контексте, сериализаторы ДОЛЖНЫ использовать первое
+предоставленное значение и игнорировать все последующие.
 
-If an attribute value is boolean `true`, serializers MAY use abbreviated forms if appropriate
-and supported by a serialization format. For example, HTML permits attributes to
-have no value when the attribute's presence has a boolean meaning. This rule applies
-if and only if the attribute is boolean `true`, not for any other "truthy" value
-in PHP such as integer 1.
+Если значение атрибута является булевым `true`, сериализаторы МОГУТ использовать сокращённые
+формы там, где это уместно и поддерживается форматом сериализации. Например, HTML допускает
+атрибуты без значения, когда само присутствие атрибута имеет булевый смысл. Это правило
+применяется тогда и только тогда, когда атрибут равен булевому `true`, но не для любого другого
+«истинного» значения в PHP, например целого числа 1.
 
-If an attribute value is boolean `false`, serializers SHOULD omit the attribute entirely
-unless doing so changes the semantic meaning of the result. This rule applies if
-and only if the attribute is boolean `false`, not for any other "falsey" value in PHP
-such as integer 0.
+Если значение атрибута является булевым `false`, сериализаторы СЛЕДУЕТ полностью опускать атрибут,
+если только это не изменяет семантического смысла результата. Это правило применяется тогда и
+только тогда, когда атрибут равен булевому `false`, но не для любого другого «ложного» значения
+в PHP, например целого числа 0.
 
-### 1.3 Relationships
+### 1.3 Отношения
 
-Link relationships are defined as strings, and are either a simple keyword in
-case of a publicly defined relationship or an absolute URI in the case of a
-private relationships.
+Отношения ссылок определяются как строки и представляют собой либо простое ключевое слово
+в случае публично определённого отношения, либо абсолютный URI в случае приватного отношения.
 
-In case a simple keyword is used, it SHOULD match one from the IANA registry at:
+Если используется простое ключевое слово, оно СЛЕДУЕТ соответствовать одному из записей реестра
+IANA по адресу:
 
 http://www.iana.org/assignments/link-relations/link-relations.xhtml
 
-Optionally the microformats.org registry MAY be used, but this may not be valid
-in every context:
+Опционально МОЖЕТ использоваться реестр microformats.org, однако это может быть неприемлемо
+в каждом контексте:
 
 http://microformats.org/wiki/existing-rel-values
 
-A relationship that is not defined in one of the above registries or a similar
-public registry is considered "private", that is, specific to a particular
-application or use case. Such relationships MUST use an absolute URI.
+Отношение, не определённое ни в одном из перечисленных реестров или аналогичном публичном реестре,
+считается «приватным», то есть специфичным для конкретного приложения или варианта использования.
+Такие отношения ДОЛЖНЫ использовать абсолютный URI.
 
-## 1.4 Link Templates
+## 1.4 Шаблоны ссылок
 
-[RFC 6570](https://tools.ietf.org/html/rfc6570) defines a format for URI templates, that is,
-a pattern for a URI that is expected to be filled in with values provided by a client
-tool. Some hypermedia formats support templated links while others do not, and may
-have a special way to denote that a link is a template. A Serializer for a format
-that does not support URI Templates MUST ignore any templated Links it encounters.
+[RFC 6570](https://tools.ietf.org/html/rfc6570) определяет формат шаблонов URI, то есть
+шаблон URI, который предполагается заполнить значениями, предоставляемыми клиентским инструментом.
+Некоторые форматы гипермедиа поддерживают шаблонные ссылки, другие — нет и могут иметь особый
+способ обозначения того, что ссылка является шаблоном. Сериализатор для формата, не поддерживающего
+шаблоны URI, ДОЛЖЕН игнорировать любые шаблонные ссылки, с которыми он сталкивается.
 
-## 1.5 Evolvable providers
+## 1.5 Расширяемые провайдеры
 
-In some cases, a Link Provider may need the ability to have additional links
-added to it. In others, a link provider is necessarily read-only, with links
-derived at runtime from some other data source. For that reason, modifiable providers
-are a secondary interface that may optionally be implemented.
+В некоторых случаях провайдер ссылок может нуждаться в возможности добавления к нему
+дополнительных ссылок. В других случаях провайдер ссылок по необходимости является
+доступным только для чтения, а ссылки формируются во время выполнения из какого-либо
+другого источника данных. По этой причине модифицируемые провайдеры выделены в
+дополнительный интерфейс, который может быть реализован опционально.
 
-Additionally, some Link Provider objects, such as PSR-7 Response objects, are
-by design immutable. That means methods to add links to them in-place would be
-incompatible. Therefore, the `EvolvableLinkProviderInterface`'s single method
-requires that a new object be returned, identical to the original but with
-an additional Link object included.
+Кроме того, некоторые объекты провайдера ссылок, например объекты PSR-7 Response, по своей
+конструкции являются неизменяемыми. Это означает, что методы добавления ссылок к ним
+«на месте» были бы несовместимы с этим подходом. Поэтому единственный метод интерфейса
+`EvolvableLinkProviderInterface` требует возврата нового объекта, идентичного оригинальному,
+но с включённым дополнительным объектом ссылки.
 
-## 1.6 Evolvable link objects
+## 1.6 Расширяемые объекты ссылок
 
-Link objects are in most cases value objects. As such, allowing them to evolve
-in the same fashion as PSR-7 value objects is a useful option. For that reason,
-an additional EvolvableLinkInterface is included that provides methods to
-produce new object instances with a single change. The same model is used by PSR-7
-and, thanks to PHP's copy-on-write behavior, is still CPU and memory efficient.
+Объекты ссылок в большинстве случаев являются объектами-значениями. Поэтому возможность их
+изменения по той же схеме, что и объектов-значений PSR-7, является полезной опцией. По этой
+причине предусмотрен дополнительный интерфейс `EvolvableLinkInterface`, предоставляющий методы
+для создания новых экземпляров объекта с одним изменением. Та же модель используется в PSR-7
+и, благодаря механизму copy-on-write в PHP, остаётся эффективной с точки зрения использования
+процессора и памяти.
 
-There is no evolvable method for templated values, however, as the templated value of a
-link is based exclusively on the href value. It MUST NOT be set independently, but
-derived from whether or not the href value is an RFC 6570 link template.
+Метода расширения для шаблонных значений не предусмотрено, поскольку шаблонное значение ссылки
+определяется исключительно значением href. Оно НЕ ДОЛЖНО устанавливаться независимо, а
+должно выводиться из того, является ли значение href шаблоном ссылки RFC 6570.
 
-## 2. Package
+## 2. Пакет
 
-The interfaces and classes described are provided as part of the
-[psr/link](https://packagist.org/packages/psr/link) package.
+Описанные интерфейсы и классы предоставляются в составе пакета
+[psr/link](https://packagist.org/packages/psr/link).
 
-## 3. Interfaces
+## 3. Интерфейсы
 
 ### 3.1 `Psr\Link\LinkInterface`
 
@@ -345,5 +351,5 @@ interface EvolvableLinkProviderInterface extends LinkProviderInterface
 }
 ~~~
 
-Since [psr/link version 1.1](https://packagist.org/packages/psr/link#1.1.0), the above interfaces have been updated to add argument type hints.
-Since [psr/link version 2.0](https://packagist.org/packages/psr/link#2.0.0), the above interfaces have been updated to add return type hints.  References to `array|\Traversable` have been replaced with `iterable`.
+Начиная с [psr/link версии 1.1](https://packagist.org/packages/psr/link#1.1.0), в приведённые интерфейсы были добавлены подсказки типов для аргументов.
+Начиная с [psr/link версии 2.0](https://packagist.org/packages/psr/link#2.0.0), в приведённые интерфейсы были добавлены подсказки типов для возвращаемых значений. Ссылки на `array|\Traversable` заменены на `iterable`.

@@ -6,26 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Мета-документ PSR-10. PSR-10 определяет, как уязвимости безопасности раскрываются публично и какому формату должны следовать такие раскрытия в PHP-проектах.">
+      
       
       
         <link rel="canonical" href="https://php-psr.ru/proposed/security-disclosure-publication-meta/">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>Security disclosure publication meta - Рекомендации по стандартам PHP: PSR</title>
+        <title>Мета-документ раскрытия информации о безопасности - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -39,11 +48,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -52,16 +60,13 @@
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#security-disclosure-meta-document" class="md-skip">
+        <a href="#-" class="md-skip">
           Skip to content
         </a>
       
@@ -80,11 +85,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -96,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Security disclosure publication meta
+              Мета-документ раскрытия информации о безопасности
             
           </span>
         </div>
@@ -104,29 +110,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -137,6 +152,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -161,12 +177,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -176,14 +193,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -191,14 +220,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -206,14 +247,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -221,14 +274,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -236,14 +301,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -251,14 +328,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -266,14 +355,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -281,14 +382,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -296,14 +409,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -311,14 +436,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -326,14 +463,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -341,14 +490,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -356,14 +517,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -371,14 +544,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -411,79 +596,123 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-summary" class="md-nav__link">
-    1. Summary
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Краткое описание
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-why-bother" class="md-nav__link">
-    2. Why Bother?
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Зачем это нужно?
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-scope" class="md-nav__link">
-    3. Scope
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Область применения
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#31-goals" class="md-nav__link">
-    3.1 Goals
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Цели
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#32-non-goals" class="md-nav__link">
-    3.2 Non-Goals
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Не входит в область применения
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-approaches" class="md-nav__link">
-    4. Approaches
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Подходы
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-people" class="md-nav__link">
-    5. People
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Участники
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="5. People">
+    <nav class="md-nav" aria-label="5. Участники">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#51-editor" class="md-nav__link">
-    5.1 Editor
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Редактор
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#52-sponsors" class="md-nav__link">
-    5.2 Sponsors
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Спонсоры
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#53-coordinator" class="md-nav__link">
-    5.3 Coordinator
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Координатор
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#54-contributors" class="md-nav__link">
-    5.4 Contributors
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Участники
+      
+    </span>
   </a>
   
 </li>
@@ -494,15 +723,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-votes" class="md-nav__link">
-    6. Votes
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Голосования
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-relevant-links" class="md-nav__link">
-    7. Relevant Links
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Ссылки по теме
+      
+    </span>
   </a>
   
 </li>
@@ -517,72 +754,64 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="security-disclosure-meta-document">Security Disclosure Meta Document</h1>
-<h2 id="1-summary">1. Summary</h2>
-<p>There are two aspects with dealing with security issues: One is the process
-by which security issues are reported and fixed in projects, the other
-is how the general public is informed about the issues and any remedies
-available. While PSR-9 addresses the former, this PSR, ie. PSR-10, deals with
-the later. So the goal of PSR-10 is to define how security issues are disclosed
-to the public and what format such disclosures should follow. Especially today
-where PHP developers are sharing code across projects more than ever, this PSR
-aims to ease the challenges in keeping an overview of security issues in all
-dependencies and the steps required to address them.</p>
-<h2 id="2-why-bother">2. Why Bother?</h2>
-<p>End users  want to ensure that they stay informed about security issues.
-However they also want to be able to quickly check if they are affected to be
-able to take the necessary steps.</p>
-<p>Upstream users of code will also want to know these details. Furthermore they
-will want to know if its possible for them to be included into possible closed
-discussions before details about a security issue are made public.</p>
-<h2 id="3-scope">3. Scope</h2>
-<h2 id="31-goals">3.1 Goals</h2>
+
+<h1 id="-">Мета-документ раскрытия информации о безопасности</h1>
+<h2 id="1">1. Краткое описание</h2>
+<p>Работа с вопросами безопасности имеет два аспекта: один — это процесс, посредством которого проблемы безопасности сообщаются и устраняются в проектах, другой — то, как широкая общественность информируется о проблемах и доступных способах их устранения. В то время как PSR-9 касается первого, данный PSR, то есть PSR-10, рассматривает второй. Таким образом, цель PSR-10 — определить, как проблемы безопасности раскрываются публично и какому формату должны следовать такие раскрытия. Особенно сегодня, когда PHP-разработчики обмениваются кодом между проектами более активно, чем когда-либо, данный PSR призван упростить задачу отслеживания проблем безопасности во всех зависимостях и шагов, необходимых для их устранения.</p>
+<h2 id="2">2. Зачем это нужно?</h2>
+<p>Конечные пользователи хотят быть уверены, что они остаются в курсе проблем безопасности. Однако они также хотят иметь возможность быстро проверить, затронуты ли они, чтобы предпринять необходимые шаги.</p>
+<p>Вышестоящие потребители кода также будут хотеть знать эти подробности. Кроме того, они захотят знать, возможно ли их включение в возможные закрытые обсуждения до того, как подробности о проблеме безопасности станут публичными.</p>
+<h2 id="3">3. Область применения</h2>
+<h2 id="31">3.1 Цели</h2>
 <ul>
-<li>Means to help in (semi-)automating discovery and fixing of known security
-  issues in projects using the affected code</li>
+<li>Средства для содействия (полу-)автоматизации обнаружения и устранения известных проблем безопасности в проектах, использующих затронутый код</li>
 </ul>
-<h2 id="32-non-goals">3.2 Non-Goals</h2>
+<h2 id="32">3.2 Не входит в область применения</h2>
 <ul>
-<li>Process for how vulnerabilities are reported and fixed</li>
-<li>Methods for reducing security vulnerabilities</li>
+<li>Процесс сообщения и устранения уязвимостей</li>
+<li>Методы снижения уязвимостей безопасности</li>
 </ul>
-<h2 id="4-approaches">4. Approaches</h2>
-<p>A key aspect here is that the information flow should be as structured as
-possible to enable as much automation as possible. For example,
-vulnerabilities should be published in a defined location and in a defined
-format. Inspiration could be taken from <a href="https://github.com/FriendsOfPHP/security-advisories">1</a>.</p>
-<p>That being said, the standard should not rely on any central authority
-above the projects. This is to ensure that no project becomes depend on an
-outside authority for something as sensitive as security related topics.
-However due to defined locations and formats, it will become possible for
-other people to build centralized tools around this information.</p>
-<h2 id="5-people">5. People</h2>
-<h3 id="51-editor">5.1 Editor</h3>
+<h2 id="4">4. Подходы</h2>
+<p>Ключевым аспектом здесь является то, что поток информации должен быть как можно более структурированным, чтобы обеспечить максимально возможную автоматизацию. Например, уязвимости должны публиковаться в определённом месте и в определённом формате. Вдохновение можно почерпнуть из <a href="https://github.com/FriendsOfPHP/security-advisories">1</a>.</p>
+<p>При этом стандарт не должен опираться на какой-либо центральный орган, стоящий выше проектов. Это необходимо для того, чтобы ни один проект не оказался зависим от внешнего органа в столь чувствительной теме, как безопасность. Однако благодаря определённым местам хранения и форматам станет возможным для других людей создавать централизованные инструменты на основе этой информации.</p>
+<h2 id="5">5. Участники</h2>
+<h3 id="51">5.1 Редактор</h3>
 <ul>
 <li>Michael Hess</li>
 </ul>
-<h3 id="52-sponsors">5.2 Sponsors</h3>
+<h3 id="52">5.2 Спонсоры</h3>
 <ul>
 <li>Larry Garfield (Drupal)</li>
 <li>Korvin Szanto (concrete5)</li>
 </ul>
-<h3 id="53-coordinator">5.3 Coordinator</h3>
+<h3 id="53">5.3 Координатор</h3>
 <ul>
 <li>Korvin Szanto (concrete5)</li>
 </ul>
-<h3 id="54-contributors">5.4 Contributors</h3>
+<h3 id="54">5.4 Участники</h3>
 <ul>
 <li>Lukas Kahwe Smith</li>
 </ul>
-<h2 id="6-votes">6. Votes</h2>
-<h2 id="7-relevant-links">7. Relevant Links</h2>
-<p>Initial discussion: https://groups.google.com/d/msg/php-fig/45AIj5bPHJ4/ThERB43j-u8J
-Discussion: https://groups.google.com/forum/#!forum/php-fig-psr-9-discussion</p>
+<h2 id="6">6. Голосования</h2>
+<h2 id="7">7. Ссылки по теме</h2>
+<p>Начальное обсуждение: https://groups.google.com/d/msg/php-fig/45AIj5bPHJ4/ThERB43j-u8J
+Обсуждение: https://groups.google.com/forum/#!forum/php-fig-psr-9-discussion</p>
+
+
+
+
+
+
+
+  
+  
+
 
 
 
@@ -593,6 +822,7 @@ Discussion: https://groups.google.com/forum/#!forum/php-fig-psr-9-discussion</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -620,10 +850,14 @@ Discussion: https://groups.google.com/forum/#!forum/php-fig-psr-9-discussion</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

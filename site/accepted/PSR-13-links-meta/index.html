@@ -6,26 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Гипермедиа-ссылки становятся всё более важной частью веба — как в HTML-контексте, так и в различных форматах API. Мета-документ описывает решения стандарта PSR-13.">
+      
       
       
         <link rel="canonical" href="https://php-psr.ru/accepted/PSR-13-links-meta/">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>Link Definition Meta Document - Рекомендации по стандартам PHP: PSR</title>
+        <title>Мета-документ определения ссылок - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -39,11 +48,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -52,16 +60,13 @@
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#link-definition-meta-document" class="md-skip">
+        <a href="#-" class="md-skip">
           Skip to content
         </a>
       
@@ -80,11 +85,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -96,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Link Definition Meta Document
+              Мета-документ определения ссылок
             
           </span>
         </div>
@@ -104,29 +110,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -137,6 +152,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -161,12 +177,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -176,14 +193,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -191,14 +220,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -206,14 +247,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -221,14 +274,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -236,14 +301,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -251,14 +328,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -266,14 +355,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -281,14 +382,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -296,14 +409,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -311,14 +436,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -326,14 +463,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -341,14 +490,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -356,14 +517,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -371,14 +544,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -411,30 +596,46 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-summary" class="md-nav__link">
-    1. Summary
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Краткое описание
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-scope" class="md-nav__link">
-    2. Scope
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Область применения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Scope">
+    <nav class="md-nav" aria-label="2. Область применения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-goals" class="md-nav__link">
-    2.1 Goals
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Цели
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-non-goals" class="md-nav__link">
-    2.2 Non-Goals
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Вне области применения
+      
+    </span>
   </a>
   
 </li>
@@ -445,30 +646,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-design-decisions" class="md-nav__link">
-    3. Design Decisions
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Принятые проектные решения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="3. Design Decisions">
+    <nav class="md-nav" aria-label="3. Принятые проектные решения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-no-mutator-methods" class="md-nav__link">
-    Why no mutator methods?
+  <a href="#-_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему нет методов-мутаторов?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-is-rel-on-a-link-object-multi-value" class="md-nav__link">
-    Why is rel on a Link object multi-value?
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему отношение ссылки является многозначным?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-is-a-linkproviderinterface-needed" class="md-nav__link">
-    Why is a LinkProviderInterface needed?
+  <a href="#linkproviderinterface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Зачем нужен LinkProviderInterface?
+      
+    </span>
   </a>
   
 </li>
@@ -479,30 +696,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-people" class="md-nav__link">
-    4. People
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Участники
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="4. People">
+    <nav class="md-nav" aria-label="4. Участники">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#41-editors" class="md-nav__link">
-    4.1 Editor(s)
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Редактор(ы)
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#42-sponsors" class="md-nav__link">
-    4.2 Sponsors
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Спонсоры
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#43-contributors" class="md-nav__link">
-    4.3 Contributors
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Участники
+      
+    </span>
   </a>
   
 </li>
@@ -513,37 +746,57 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-votes" class="md-nav__link">
-    5. Votes
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Голосование
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-relevant-links" class="md-nav__link">
-    6. Relevant links
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Релевантные ссылки
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-errata" class="md-nav__link">
-    7. Errata
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Исправления и уточнения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="7. Errata">
+    <nav class="md-nav" aria-label="7. Исправления и уточнения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#71-type-additions" class="md-nav__link">
-    7.1 Type additions
+  <a href="#71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Добавление типов
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#72-attribute-type-handling" class="md-nav__link">
-    7.2 Attribute type handling
+  <a href="#72" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Обработка типов атрибутов
+      
+    </span>
   </a>
   
 </li>
@@ -563,97 +816,133 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="link-definition-meta-document">Link Definition Meta Document</h1>
-<h2 id="1-summary">1. Summary</h2>
-<p>Hypermedia links are becoming an increasingly important part of the web, in both HTML contexts
-and various API format contexts. However, there is no single common hypermedia format, nor
-is there a common way to represent Links between formats.</p>
-<p>This specification aims to provide PHP developers with a simple, common way of representing a
-hypermedia link independently of the serialization format that is used. That in turn allows
-a system to serialize a response with hypermedia links into one or more wire formats independently
-of the process of deciding what those links should be.</p>
-<h2 id="2-scope">2. Scope</h2>
-<h3 id="21-goals">2.1 Goals</h3>
+
+<h1 id="-">Мета-документ определения ссылок</h1>
+<h2 id="1">1. Краткое описание</h2>
+<p>Гипермедиа-ссылки становятся всё более важной частью веба — как в контексте HTML,
+так и в различных форматах API. Однако не существует единого общепринятого формата гипермедиа
+и единого способа представления ссылок между форматами.</p>
+<p>Данная спецификация ставит целью предоставить PHP-разработчикам простой и универсальный способ
+представления гипермедиа-ссылки независимо от используемого формата сериализации. Это, в свою
+очередь, позволяет системе сериализовать ответ с гипермедиа-ссылками в один или несколько
+проводных форматов независимо от процесса принятия решения о том, какими эти ссылки должны быть.</p>
+<h2 id="2">2. Область применения</h2>
+<h3 id="21">2.1 Цели</h3>
 <ul>
-<li>This specification aims to extract and standardize hypermedia link representation between different
-formats.</li>
+<li>Данная спецификация ставит целью извлечь и стандартизировать представление гипермедиа-ссылок
+между различными форматами.</li>
 </ul>
-<h3 id="22-non-goals">2.2 Non-Goals</h3>
+<h3 id="22">2.2 Вне области применения</h3>
 <ul>
-<li>This specification does not seek to standardize or favor any particular hypermedia serialization format.</li>
+<li>Данная спецификация не ставит целью стандартизировать или отдавать предпочтение какому-либо
+конкретному формату сериализации гипермедиа.</li>
 </ul>
-<h2 id="3-design-decisions">3. Design Decisions</h2>
-<h3 id="why-no-mutator-methods">Why no mutator methods?</h3>
-<p>One of the key targets for this specification is PSR-7 Response objects.  Response objects by design must be
-immutable.  Other value-object implementations likely would also require an immutable interface.</p>
-<p>Additionally, some Link Provider objects may not be value objects but other objects within a given
-domain, which are able to generate Links on the fly, perhaps off of a database result or other underlying
-representation.  In those cases a writeable provider definition would be incompatible.</p>
-<p>Therefore, this specification splits accessor methods and evolvable methods into separate interfaces,
-allowing objects to implement just the read-only or evolvable versions as appropriate to their use case.</p>
-<h3 id="why-is-rel-on-a-link-object-multi-value">Why is rel on a Link object multi-value?</h3>
-<p>Different hypermedia standards handle multiple links with the same relationship differently. Some have a single
-link that has multiple rel's defined. Others have a single rel entry that then contains multiple links.</p>
-<p>Defining each Link uniquely but allowing it to have multiple rels provides a most-compatible-denominator definition.
-A single LinkInterface object may be serialized to one or more link entries in a given hypermedia format, as
-appropriate.  However, specifying multiple link objects each with a single rel yet the same URI is also legal, and
-a hypermedia format can serialize that as appropriate, too.</p>
-<h3 id="why-is-a-linkproviderinterface-needed">Why is a LinkProviderInterface needed?</h3>
-<p>In many contexts, a set of links will be attached to some other object.  Those objects may be used in situations
-where all that is relevant is their links, or some subset of their links. For example, various different value
-objects may be defined that represent different REST formats such as HAL, JSON-LD, or Atom.  It may be useful
-to extract those links from such an object uniformly for further processing. For instance, next/previous links
-may be extracted from an object and added to a PSR-7 Response object as Link headers.  Alternatively, many links
-would make sense to represent with a "preload" link relationship, which would indicate to an HTTP 2-compatible
-web server that the linked resources should be streamed to a client in anticipation of a subsequent request.</p>
-<p>All of those cases are independent of the payload or encoding of the object. By providing a common interface
-to access such links, we enable generic handling of the links themselves regardless of the value object or
-domain object that is producing them.</p>
-<h2 id="4-people">4. People</h2>
-<h3 id="41-editors">4.1 Editor(s)</h3>
+<h2 id="3">3. Принятые проектные решения</h2>
+<h3 id="-_1">Почему нет методов-мутаторов?</h3>
+<p>Одним из ключевых целевых объектов данной спецификации являются объекты PSR-7 Response. По своей
+конструкции объекты Response обязаны быть неизменяемыми. Другие реализации объектов-значений,
+по всей видимости, также потребуют неизменяемого интерфейса.</p>
+<p>Кроме того, некоторые объекты провайдера ссылок могут не быть объектами-значениями, а
+представлять другие объекты в рамках некоторой предметной области, способные динамически
+генерировать ссылки, например на основе результатов запроса к базе данных или иного нижележащего
+представления. В таких случаях определение записываемого провайдера было бы несовместимо.</p>
+<p>Поэтому данная спецификация разделяет методы доступа и расширяемые методы на отдельные интерфейсы,
+позволяя объектам реализовывать лишь ту версию — только для чтения или расширяемую, — которая
+соответствует их варианту использования.</p>
+<h3 id="_1">Почему отношение ссылки является многозначным?</h3>
+<p>Различные стандарты гипермедиа по-разному обрабатывают несколько ссылок с одним и тем же
+отношением. В одних стандартах используется одна ссылка с несколькими определёнными
+отношениями. В других — одна запись отношения, содержащая несколько ссылок.</p>
+<p>Определение каждой ссылки как уникальной, но с возможностью иметь несколько отношений, обеспечивает
+определение с наибольшей совместимостью. Один объект <code>LinkInterface</code> может быть сериализован в одну
+или несколько записей ссылок в данном формате гипермедиа, в зависимости от ситуации. Однако указание
+нескольких объектов ссылок с одним отношением, но одним и тем же URI также допустимо, и формат
+гипермедиа может сериализовать это соответствующим образом.</p>
+<h3 id="linkproviderinterface">Зачем нужен <code>LinkProviderInterface</code>?</h3>
+<p>Во многих контекстах набор ссылок прикрепляется к некоторому другому объекту. Эти объекты
+могут использоваться в ситуациях, когда значимы лишь их ссылки или некоторое их подмножество.
+Например, могут быть определены различные объекты-значения, представляющие разные REST-форматы,
+такие как HAL, JSON-LD или Atom. Может оказаться полезным единообразно извлекать ссылки из
+такого объекта для дальнейшей обработки. Например, ссылки «следующий/предыдущий» могут быть
+извлечены из объекта и добавлены в объект PSR-7 Response в качестве заголовков Link. Кроме
+того, многие ссылки имеет смысл представлять с отношением ссылки «preload», что указывало бы
+HTTP/2-совместимому веб-серверу на необходимость передать связанные ресурсы клиенту заранее,
+в ожидании последующего запроса.</p>
+<p>Все эти случаи не зависят от полезной нагрузки или кодировки объекта. Предоставляя общий интерфейс
+для доступа к таким ссылкам, мы обеспечиваем универсальную обработку самих ссылок вне зависимости
+от объекта-значения или доменного объекта, который их предоставляет.</p>
+<h2 id="4">4. Участники</h2>
+<h3 id="41">4.1 Редактор(ы)</h3>
 <ul>
 <li>Larry Garfield</li>
 </ul>
-<h3 id="42-sponsors">4.2 Sponsors</h3>
+<h3 id="42">4.2 Спонсоры</h3>
 <ul>
-<li>Matthew Weier O'Phinney (coordinator)</li>
+<li>Matthew Weier O'Phinney (координатор)</li>
 <li>Marc Alexander</li>
 </ul>
-<h3 id="43-contributors">4.3 Contributors</h3>
+<h3 id="43">4.3 Участники</h3>
 <ul>
 <li>Evert Pot</li>
 </ul>
-<h2 id="5-votes">5. Votes</h2>
-<h2 id="6-relevant-links">6. Relevant links</h2>
+<h2 id="5">5. Голосование</h2>
+<h2 id="6">6. Релевантные ссылки</h2>
 <ul>
-<li><a href="http://evertpot.com/whats-in-a-link/">What's in a link?</a> by Evert Pot</li>
-<li><a href="https://groups.google.com/forum/#!forum/php-fig-link">FIG Link Working Group List</a></li>
+<li><a href="http://evertpot.com/whats-in-a-link/">What's in a link?</a> — Evert Pot</li>
+<li><a href="https://groups.google.com/forum/#!forum/php-fig-link">Список рассылки рабочей группы FIG по ссылкам</a></li>
 </ul>
-<h2 id="7-errata">7. Errata</h2>
-<h3 id="71-type-additions">7.1 Type additions</h3>
-<p>The 1.1 release of the <code>psr/link</code> package includes scalar parameter types.  The 2.0 release of the package includes return types.  This structure leverages PHP 7.2 covariance support to allow for a gradual upgrade process, but requires PHP 8.0 for type compatibility.</p>
-<p>Implementers MAY add return types to their own packages at their discretion, provided that:</p>
+<h2 id="7">7. Исправления и уточнения</h2>
+<h3 id="71">7.1 Добавление типов</h3>
+<p>Версия 1.1 пакета <code>psr/link</code> включает скалярные типы параметров. Версия 2.0 пакета включает типы
+возвращаемых значений. Эта структура использует поддержку ковариантности PHP 7.2 для постепенного
+процесса обновления, однако требует PHP 8.0 для полной совместимости типов.</p>
+<p>Разработчики реализаций МОГУТ добавлять типы возвращаемых значений в свои пакеты по собственному
+усмотрению при условии, что:</p>
 <ul>
-<li>the return types match those in the 2.0 package.</li>
-<li>the implementation specifies a minimum PHP version of 8.0.0 or later.</li>
+<li>типы возвращаемых значений совпадают с типами в пакете версии 2.0;</li>
+<li>реализация указывает минимальную версию PHP 8.0.0 или выше.</li>
 </ul>
-<p>Implementers MAY add parameter types to their own packages in a new major release, either at the same time as adding return types or in a subsequent release, provided that:</p>
+<p>Разработчики реализаций МОГУТ добавлять типы параметров в свои пакеты в новом мажорном релизе —
+одновременно с добавлением типов возвращаемых значений или в последующем релизе — при условии, что:</p>
 <ul>
-<li>the parameter types match those in the 1.1 package.</li>
-<li>the implementation specifies a minimum PHP version of 8.0.0 or later.</li>
-<li>the implementation depends on <code>"psr/link": "^1.1 || ^2.0"</code> so as to exclude the untyped 1.0 version.</li>
+<li>типы параметров совпадают с типами в пакете версии 1.1;</li>
+<li>реализация указывает минимальную версию PHP 8.0.0 или выше;</li>
+<li>реализация зависит от <code>"psr/link": "^1.1 || ^2.0"</code>, чтобы исключить нетипизированную версию 1.0.</li>
 </ul>
-<p>Implementers are encouraged but not required to transition their packages toward the 2.0 version of the package at their earliest convenience.</p>
-<h3 id="72-attribute-type-handling">7.2 Attribute type handling</h3>
-<p>The original specification contained an inconsistency regarding array values for attributes.  The text of the specification states in section 1.2 that attribute values (as passed to <code>EvolvableLinkInterface::withAttribute()</code>) could be of multiple types, some of which allowed for special handling (such as booleans or arrays).  However, the docblock for that method specified that the <code>$value</code> parameter had to be a string, which was incorrect.</p>
-<p>To address this issue, the interface has been corrected in later releases to allow <code>$value</code> to be of type <code>string|\Stringable|int|float|bool|array</code>.  Implementers SHOULD treat a <code>Stringable</code> object the same as a <code>string</code> parameter.  Implementers MAY serialize <code>int</code>, <code>float</code>, or <code>bool</code> in alternate, type-aware ways for a particular serialization format as appropriate.  Other object types or resources remain disallowed.</p>
-<p>Multiple calls to <code>withAttribute()</code> with the same <code>$name</code> MUST override previously provided values, as the spec already states.  To provide multiple values to a particular attribute, pass an <code>array</code> with the desired values.</p>
-<p>All other guidelines and requirements in section 1.2 remain valid.</p>
+<p>Разработчикам реализаций рекомендуется, но не требуется при первой возможности перевести свои
+пакеты на версию 2.0 пакета.</p>
+<h3 id="72">7.2 Обработка типов атрибутов</h3>
+<p>Исходная спецификация содержала несоответствие в отношении значений-массивов для атрибутов.
+В тексте спецификации в разделе 1.2 указывалось, что значения атрибутов (передаваемые в
+<code>EvolvableLinkInterface::withAttribute()</code>) могут быть нескольких типов, некоторые из которых
+допускают особую обработку (например, булевы значения или массивы). Однако в docblock этого
+метода было указано, что параметр <code>$value</code> должен быть строкой, что являлось некорректным.</p>
+<p>Для устранения данного несоответствия интерфейс был исправлен в более поздних версиях: теперь
+<code>$value</code> может быть типа <code>string|\Stringable|int|float|bool|array</code>. Разработчики реализаций
+СЛЕДУЕТ обрабатывать объект <code>Stringable</code> так же, как параметр типа <code>string</code>. Разработчики
+реализаций МОГУТ сериализовывать <code>int</code>, <code>float</code> или <code>bool</code> альтернативными, типо-осознанными
+способами для конкретного формата сериализации, если это уместно. Прочие типы объектов
+и ресурсы по-прежнему недопустимы.</p>
+<p>Множественные вызовы <code>withAttribute()</code> с одним и тем же <code>$name</code> ДОЛЖНЫ перезаписывать ранее
+предоставленные значения, как уже указано в спецификации. Чтобы передать несколько значений
+для конкретного атрибута, следует передать массив с нужными значениями.</p>
+<p>Все прочие правила и требования раздела 1.2 остаются в силе.</p>
+
+
+
+
+
+
+
+  
+  
+
 
 
 
@@ -664,6 +953,7 @@ domain object that is producing them.</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -691,10 +981,14 @@ domain object that is producing them.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

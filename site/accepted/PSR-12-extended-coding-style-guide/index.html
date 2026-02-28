@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Расширенное руководство по стилю кодирования PSR-12 дополняет и заменяет PSR-2, описывая правила форматирования PHP-кода с учётом возможностей современных версий языка.">
+      
       
       
         <link rel="canonical" href="https://php-psr.ru/accepted/PSR-12-extended-coding-style-guide/">
@@ -16,8 +18,12 @@
       
         <link rel="next" href="../PSR-17-http-factory/">
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -25,11 +31,14 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -43,11 +52,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -55,9 +63,6 @@
   
     <body dir="ltr">
   
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -84,11 +89,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -108,29 +114,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -141,6 +156,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -165,12 +181,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -180,14 +197,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -195,14 +224,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -210,14 +251,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -225,14 +278,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -240,14 +305,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -255,14 +332,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -270,14 +359,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -285,14 +386,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -300,14 +413,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -315,11 +440,10 @@
     
       
       
-      
-
   
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
@@ -331,12 +455,38 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Расширенное руководство по стилю кодирования PSR-12
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
       
         
@@ -356,7 +506,11 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    Обзор
+    <span class="md-ellipsis">
+      
+        Обзор
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Обзор">
@@ -364,14 +518,22 @@
         
           <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    Предыдущие языковые версии
+    <span class="md-ellipsis">
+      
+        Предыдущие языковые версии
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    Пример
+    <span class="md-ellipsis">
+      
+        Пример
+      
+    </span>
   </a>
   
 </li>
@@ -383,7 +545,11 @@
       
         <li class="md-nav__item">
   <a href="#2" class="md-nav__link">
-    2. Общие рекомендации
+    <span class="md-ellipsis">
+      
+        2. Общие рекомендации
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="2. Общие рекомендации">
@@ -391,35 +557,55 @@
         
           <li class="md-nav__item">
   <a href="#21" class="md-nav__link">
-    2.1 Базовый стандарт кодирования
+    <span class="md-ellipsis">
+      
+        2.1 Базовый стандарт кодирования
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#22" class="md-nav__link">
-    2.2 Файлы
+    <span class="md-ellipsis">
+      
+        2.2 Файлы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#23" class="md-nav__link">
-    2.3 Строки
+    <span class="md-ellipsis">
+      
+        2.3 Строки
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#24" class="md-nav__link">
-    2.4 Отступы
+    <span class="md-ellipsis">
+      
+        2.4 Отступы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#25" class="md-nav__link">
-    2.5 Ключевые слова и типы
+    <span class="md-ellipsis">
+      
+        2.5 Ключевые слова и типы
+      
+    </span>
   </a>
   
 </li>
@@ -431,14 +617,22 @@
       
         <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
-    3. Операторы объявления, пространство имен и операторы импорта
+    <span class="md-ellipsis">
+      
+        3. Операторы объявления, пространство имен и операторы импорта
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#4" class="md-nav__link">
-    4. Классы, свойства и методы
+    <span class="md-ellipsis">
+      
+        4. Классы, свойства и методы
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="4. Классы, свойства и методы">
@@ -446,49 +640,77 @@
         
           <li class="md-nav__item">
   <a href="#41" class="md-nav__link">
-    4.1 Наследование и реализация
+    <span class="md-ellipsis">
+      
+        4.1 Наследование и реализация
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#42" class="md-nav__link">
-    4.2 Использование трейдов
+    <span class="md-ellipsis">
+      
+        4.2 Использование трейдов
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#43" class="md-nav__link">
-    4.3 Свойства и константы
+    <span class="md-ellipsis">
+      
+        4.3 Свойства и константы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#44" class="md-nav__link">
-    4.4 Методы и функции
+    <span class="md-ellipsis">
+      
+        4.4 Методы и функции
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#45" class="md-nav__link">
-    4.5 Аргументы методов и функций
+    <span class="md-ellipsis">
+      
+        4.5 Аргументы методов и функций
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#46-abstract-final-static" class="md-nav__link">
-    4.6 Ключевые слова abstract, final, и static
+    <span class="md-ellipsis">
+      
+        4.6 Ключевые слова abstract, final, и static
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#47" class="md-nav__link">
-    4.7 Вызовы методов и функций
+    <span class="md-ellipsis">
+      
+        4.7 Вызовы методов и функций
+      
+    </span>
   </a>
   
 </li>
@@ -500,7 +722,11 @@
       
         <li class="md-nav__item">
   <a href="#5" class="md-nav__link">
-    5. Управляющие конструкции
+    <span class="md-ellipsis">
+      
+        5. Управляющие конструкции
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5. Управляющие конструкции">
@@ -508,42 +734,66 @@
         
           <li class="md-nav__item">
   <a href="#51-if-elseif-else" class="md-nav__link">
-    5.1 Конструкции if, elseif, else
+    <span class="md-ellipsis">
+      
+        5.1 Конструкции if, elseif, else
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#52-switch-case" class="md-nav__link">
-    5.2 Конструкции switch, case
+    <span class="md-ellipsis">
+      
+        5.2 Конструкции switch, case
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#53-while-do-while" class="md-nav__link">
-    5.3 Конструкции while, do while
+    <span class="md-ellipsis">
+      
+        5.3 Конструкции while, do while
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#54-for" class="md-nav__link">
-    5.4  Конструкция for
+    <span class="md-ellipsis">
+      
+        5.4 Конструкция for
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#55-foreach" class="md-nav__link">
-    5.5 Конструкция foreach
+    <span class="md-ellipsis">
+      
+        5.5 Конструкция foreach
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#56-try-catch-finally" class="md-nav__link">
-    5.6 Конструкции try, catch, finally
+    <span class="md-ellipsis">
+      
+        5.6 Конструкции try, catch, finally
+      
+    </span>
   </a>
   
 </li>
@@ -555,7 +805,11 @@
       
         <li class="md-nav__item">
   <a href="#6" class="md-nav__link">
-    6. Операторы
+    <span class="md-ellipsis">
+      
+        6. Операторы
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="6. Операторы">
@@ -563,21 +817,33 @@
         
           <li class="md-nav__item">
   <a href="#61" class="md-nav__link">
-    6.1. Унарные операторы
+    <span class="md-ellipsis">
+      
+        6.1. Унарные операторы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#62" class="md-nav__link">
-    6.2. Бинарные операторы
+    <span class="md-ellipsis">
+      
+        6.2. Бинарные операторы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#63" class="md-nav__link">
-    6.3. Тернарные операторы
+    <span class="md-ellipsis">
+      
+        6.3. Тернарные операторы
+      
+    </span>
   </a>
   
 </li>
@@ -589,14 +855,22 @@
       
         <li class="md-nav__item">
   <a href="#7" class="md-nav__link">
-    7. Замыкания
+    <span class="md-ellipsis">
+      
+        7. Замыкания
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#8" class="md-nav__link">
-    8. Анонимные классы
+    <span class="md-ellipsis">
+      
+        8. Анонимные классы
+      
+    </span>
   </a>
   
 </li>
@@ -611,14 +885,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -626,14 +912,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -641,14 +939,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -656,14 +966,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -697,7 +1019,11 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    Обзор
+    <span class="md-ellipsis">
+      
+        Обзор
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Обзор">
@@ -705,14 +1031,22 @@
         
           <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    Предыдущие языковые версии
+    <span class="md-ellipsis">
+      
+        Предыдущие языковые версии
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    Пример
+    <span class="md-ellipsis">
+      
+        Пример
+      
+    </span>
   </a>
   
 </li>
@@ -724,7 +1058,11 @@
       
         <li class="md-nav__item">
   <a href="#2" class="md-nav__link">
-    2. Общие рекомендации
+    <span class="md-ellipsis">
+      
+        2. Общие рекомендации
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="2. Общие рекомендации">
@@ -732,35 +1070,55 @@
         
           <li class="md-nav__item">
   <a href="#21" class="md-nav__link">
-    2.1 Базовый стандарт кодирования
+    <span class="md-ellipsis">
+      
+        2.1 Базовый стандарт кодирования
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#22" class="md-nav__link">
-    2.2 Файлы
+    <span class="md-ellipsis">
+      
+        2.2 Файлы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#23" class="md-nav__link">
-    2.3 Строки
+    <span class="md-ellipsis">
+      
+        2.3 Строки
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#24" class="md-nav__link">
-    2.4 Отступы
+    <span class="md-ellipsis">
+      
+        2.4 Отступы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#25" class="md-nav__link">
-    2.5 Ключевые слова и типы
+    <span class="md-ellipsis">
+      
+        2.5 Ключевые слова и типы
+      
+    </span>
   </a>
   
 </li>
@@ -772,14 +1130,22 @@
       
         <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
-    3. Операторы объявления, пространство имен и операторы импорта
+    <span class="md-ellipsis">
+      
+        3. Операторы объявления, пространство имен и операторы импорта
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#4" class="md-nav__link">
-    4. Классы, свойства и методы
+    <span class="md-ellipsis">
+      
+        4. Классы, свойства и методы
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="4. Классы, свойства и методы">
@@ -787,49 +1153,77 @@
         
           <li class="md-nav__item">
   <a href="#41" class="md-nav__link">
-    4.1 Наследование и реализация
+    <span class="md-ellipsis">
+      
+        4.1 Наследование и реализация
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#42" class="md-nav__link">
-    4.2 Использование трейдов
+    <span class="md-ellipsis">
+      
+        4.2 Использование трейдов
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#43" class="md-nav__link">
-    4.3 Свойства и константы
+    <span class="md-ellipsis">
+      
+        4.3 Свойства и константы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#44" class="md-nav__link">
-    4.4 Методы и функции
+    <span class="md-ellipsis">
+      
+        4.4 Методы и функции
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#45" class="md-nav__link">
-    4.5 Аргументы методов и функций
+    <span class="md-ellipsis">
+      
+        4.5 Аргументы методов и функций
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#46-abstract-final-static" class="md-nav__link">
-    4.6 Ключевые слова abstract, final, и static
+    <span class="md-ellipsis">
+      
+        4.6 Ключевые слова abstract, final, и static
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#47" class="md-nav__link">
-    4.7 Вызовы методов и функций
+    <span class="md-ellipsis">
+      
+        4.7 Вызовы методов и функций
+      
+    </span>
   </a>
   
 </li>
@@ -841,7 +1235,11 @@
       
         <li class="md-nav__item">
   <a href="#5" class="md-nav__link">
-    5. Управляющие конструкции
+    <span class="md-ellipsis">
+      
+        5. Управляющие конструкции
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5. Управляющие конструкции">
@@ -849,42 +1247,66 @@
         
           <li class="md-nav__item">
   <a href="#51-if-elseif-else" class="md-nav__link">
-    5.1 Конструкции if, elseif, else
+    <span class="md-ellipsis">
+      
+        5.1 Конструкции if, elseif, else
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#52-switch-case" class="md-nav__link">
-    5.2 Конструкции switch, case
+    <span class="md-ellipsis">
+      
+        5.2 Конструкции switch, case
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#53-while-do-while" class="md-nav__link">
-    5.3 Конструкции while, do while
+    <span class="md-ellipsis">
+      
+        5.3 Конструкции while, do while
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#54-for" class="md-nav__link">
-    5.4  Конструкция for
+    <span class="md-ellipsis">
+      
+        5.4 Конструкция for
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#55-foreach" class="md-nav__link">
-    5.5 Конструкция foreach
+    <span class="md-ellipsis">
+      
+        5.5 Конструкция foreach
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#56-try-catch-finally" class="md-nav__link">
-    5.6 Конструкции try, catch, finally
+    <span class="md-ellipsis">
+      
+        5.6 Конструкции try, catch, finally
+      
+    </span>
   </a>
   
 </li>
@@ -896,7 +1318,11 @@
       
         <li class="md-nav__item">
   <a href="#6" class="md-nav__link">
-    6. Операторы
+    <span class="md-ellipsis">
+      
+        6. Операторы
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="6. Операторы">
@@ -904,21 +1330,33 @@
         
           <li class="md-nav__item">
   <a href="#61" class="md-nav__link">
-    6.1. Унарные операторы
+    <span class="md-ellipsis">
+      
+        6.1. Унарные операторы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#62" class="md-nav__link">
-    6.2. Бинарные операторы
+    <span class="md-ellipsis">
+      
+        6.2. Бинарные операторы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#63" class="md-nav__link">
-    6.3. Тернарные операторы
+    <span class="md-ellipsis">
+      
+        6.3. Тернарные операторы
+      
+    </span>
   </a>
   
 </li>
@@ -930,14 +1368,22 @@
       
         <li class="md-nav__item">
   <a href="#7" class="md-nav__link">
-    7. Замыкания
+    <span class="md-ellipsis">
+      
+        7. Замыкания
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#8" class="md-nav__link">
-    8. Анонимные классы
+    <span class="md-ellipsis">
+      
+        8. Анонимные классы
+      
+    </span>
   </a>
   
 </li>
@@ -952,9 +1398,11 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
+
 
 
 <h1 id="_1">Расширенное руководство по стилю кодирования</h1>
@@ -1753,11 +2201,22 @@ $instance = new class extends \Foo implements
 
 
 
+
+
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -1785,10 +2244,14 @@ $instance = new class extends \Foo implements
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

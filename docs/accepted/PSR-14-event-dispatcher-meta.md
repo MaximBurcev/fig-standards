@@ -1,88 +1,92 @@
-Event Dispatcher Meta Document
-==============================
+---
+description: "Цель данного документа — описать обоснование и логику, лежащие в основе спецификации диспетчера событий PSR-14."
+---
+
+Мета-документ диспетчера событий
+================================
 
 
 
-## 1. Summary
+## 1. Резюме
 
-The purpose of this document is to describe the rationale and logic behind the Event Dispatcher specification.
+Цель данного документа — описать обоснование и логику, лежащие в основе спецификации Диспетчера событий.
 
-## 2. Why Bother?
+## 2. Зачем это нужно?
 
-Many libraries, components, and frameworks have long supported mechanisms for allowing arbitrary third party code to interact with them.  Most are variations on the classic Observer pattern, often mediated through an intermediary object or service.  Others take a more Aspect-Oriented Programming (AOP) approach.  Nonetheless all have the same basic concept: interrupt program flow at a fixed point to provide information to arbitrary third party libraries with information about the action being performed and allow them to either react or influence the program behavior.
+Многие библиотеки, компоненты и фреймворки уже давно поддерживают механизмы, позволяющие произвольному стороннему коду взаимодействовать с ними. Большинство из них являются вариациями классического паттерна «Наблюдатель» (Observer), зачастую реализованного через промежуточный объект или сервис. Другие придерживаются подхода аспектно-ориентированного программирования (AOP). Тем не менее все они опираются на одну и ту же базовую концепцию: прервать выполнение программы в фиксированной точке, чтобы предоставить произвольным сторонним библиотекам информацию о выполняемом действии и позволить им либо реагировать на него, либо влиять на поведение программы.
 
-This is a well-established model, but a standard mechanism by which libraries do so will allow them to interoperate with more and more varied third party libraries with less effort by both the original developer and extension developers.
+Это хорошо зарекомендовавшая себя модель, однако стандартный механизм для её реализации в библиотеках позволит им взаимодействовать со всё большим числом разнообразных сторонних библиотек с меньшими усилиями как со стороны изначального разработчика, так и со стороны разработчиков расширений.
 
-## 3. Scope
+## 3. Область применения
 
-### 3.1 Goals
+### 3.1 Цели
 
-* Simplify and standardize the process by which libraries and components may expose themselves to extension via "events" so that they may be more easily incorporated into applications and frameworks.
-* Simplify and standardize the process by which libraries and components may register an interest in responding to an Event so that they may be more easily incorporated into arbitrary applications and frameworks.
-* To the extent feasible, ease the process for existing code bases to transition toward this specification.
+* Упростить и стандартизировать процесс, посредством которого библиотеки и компоненты открывают себя для расширения через «события», чтобы их можно было легче встраивать в приложения и фреймворки.
+* Упростить и стандартизировать процесс, посредством которого библиотеки и компоненты регистрируют интерес к реагированию на Событие, чтобы их можно было легче встраивать в произвольные приложения и фреймворки.
+* В той мере, в какой это осуществимо, облегчить существующим кодовым базам переход к данной спецификации.
 
-### 3.2 Non-Goals
+### 3.2 Цели, находящиеся вне области применения
 
-* Asynchronous systems often have a concept of an "event loop" to manage interleaving coroutines.  That is an unrelated matter and explicitly irrelevant to this specification.
-* Storage systems implementing an "Event Source" pattern also have a concept of an "event".  That is unrelated to the Events discussed here and explicitly out of scope.
-* Strict backward compatibility with existing event systems is not a priority and is not expected.
-* While this specification will undoubtedly suggest implementation patterns, it does not seek to define One True Event Dispatcher Implementation, only how callers and Listeners communicate with that Dispatcher.
+* Асинхронные системы часто имеют понятие «цикла событий» (event loop) для управления чередованием корутин. Это не связанная с данной спецификацией тема и явно выходит за её рамки.
+* Системы хранения данных, реализующие паттерн «Источник событий» (Event Source), также оперируют понятием «события». Это не связано с событиями, рассматриваемыми здесь, и явно выходит за рамки данной спецификации.
+* Строгая обратная совместимость с существующими системами событий не является приоритетом и не предполагается.
+* Хотя данная спецификация неизбежно предлагает паттерны реализации, она не стремится определить Единственно Верную Реализацию Диспетчера событий — лишь то, как вызывающий код и Слушатели взаимодействуют с этим Диспетчером.
 
-## 4. Approaches
+## 4. Подходы
 
-### 4.1 Use cases considered
+### 4.1 Рассматриваемые варианты использования
 
-The Working Group identified four possible workflows for event passing, based on use cases seen in the wild in various systems.
+Рабочая группа выделила четыре возможных рабочих процесса передачи событий на основе вариантов использования, встречающихся в реальных системах.
 
-* One-way notification.  ("I did a thing, if you care.")
-* Object enhancement.  ("Here's a thing, please modify it before I do something with it.")
-* Collection.  ("Give me all your things, that I may do something with that list.")
-* Alternative chain.  ("Here's a thing; the first one of you that can handle it do so, then stop.")
+* Одностороннее уведомление. («Я сделал что-то — если тебе интересно, знай».)
+* Обогащение объекта. («Вот объект — измени его, прежде чем я что-то с ним сделаю».)
+* Сбор данных. («Передай мне все свои данные, чтобы я мог что-то с ними сделать».)
+* Альтернативная цепочка. («Вот объект — первый из вас, кто может с ним справиться, пусть сделает это и остановится».)
 
-On further review, the Working Goup determined that:
+При дальнейшем рассмотрении Рабочая группа пришла к выводу, что:
 
-* Collection was a special case of object enhancement (the collection being the object that is enhanced).
-* Alternative chain is similarly a special case of object enhancement, as the signature is identical and the dispatch workflow is nearly identical, albeit with an extra check included.
-* One-way notification is a degenerate case of the others, or can be represented as such.
+* Сбор данных является частным случаем обогащения объекта (коллекция — это и есть объект, который обогащается).
+* Альтернативная цепочка также является частным случаем обогащения объекта, поскольку сигнатура идентична, а рабочий процесс диспетчеризации почти аналогичен, хотя и включает дополнительную проверку.
+* Одностороннее уведомление — вырожденный случай остальных или может быть представлено как таковое.
 
-Although in concept one-way notification can be done asynchronously (including delaying it through a queue), in practice, few explicit implementations of that model exist, providing fewer places from which to draw guidance on details (such as proper error handling).  After much consideration, the Working Group elected not to provide an explicitly separate workflow for one-way notification as it could be adequately represented as a degenerate case of the others.
+Хотя концептуально одностороннее уведомление может выполняться асинхронно (в том числе с задержкой через очередь), на практике существует мало явных реализаций такой модели, что даёт меньше ориентиров для уточнения деталей (например, корректной обработки ошибок). После длительного обсуждения Рабочая группа решила не создавать отдельного рабочего процесса для одностороннего уведомления, поскольку оно вполне может быть представлено как вырожденный случай остальных.
 
-### 4.2 Example applications
+### 4.2 Примеры применения
 
-* Indicating that some change in system configuration or some user action has occurred and allowing other systems to react in ways that do not affect program flow (such as sending an email or logging the action).
-* Passing an object to a series of Listeners to allow it to be modified before it is saved to a persistence system.
-* Passing a collection to a series of Listeners to allow them to register values with it or modify existing values so that the Emitter may act on all of the collected information.
-* Passing some contextual information to a series of Listeners so that all of them may "vote" on what action to take, with the Emitter deciding based on the aggregate information provided.
-* Passing an object to a series of Listeners and allowing any Listener to terminate the process early before other Listeners have completed.
+* Уведомление об изменении конфигурации системы или о действии пользователя с возможностью для других систем реагировать способами, не влияющими на ход выполнения программы (например, отправка электронного письма или запись в журнал).
+* Передача объекта серии Слушателей для изменения перед сохранением в систему хранения данных.
+* Передача коллекции серии Слушателей для регистрации значений или изменения существующих, чтобы Отправитель мог действовать на основе всех собранных данных.
+* Передача контекстной информации серии Слушателей, позволяющей каждому из них «проголосовать» за вариант действия, с последующим принятием решения Отправителем на основе сводной информации.
+* Передача объекта серии Слушателей с возможностью для любого Слушателя досрочно завершить процесс до того, как остальные Слушатели завершат работу.
 
-### 4.3 Immutable events
+### 4.3 Неизменяемые события
 
-Initially the Working Group wished to define all Events as immutable message objects, similar to PSR-7.  However, that proved problematic in all but the one-way notification case.  In the other scenarios, Listeners needed a way to return data to the caller.  In concept, there were three possible avenues:
+Изначально Рабочая группа стремилась определить все события как неизменяемые объекты-сообщения, аналогично PSR-7. Однако это оказалось проблематичным во всех случаях, кроме одностороннего уведомления. В остальных сценариях Слушателям требовался способ возврата данных вызывающей стороне. Концептуально было рассмотрено три возможных подхода:
 
-* Make the Event mutable and modify it in place.
-* Require that Events be evolvable (immutable but with `with*()` methods like PSR-7 and PSR-13) and that Listeners return the Event to pass along.
-* Make the Event immutable, but aggregate and return the return value from each Listener.
+* Сделать Событие изменяемым и изменять его на месте.
+* Требовать, чтобы события были эволюционируемыми (неизменяемыми, но с методами `with*()`, как в PSR-7 и PSR-13), а Слушатели возвращали Событие для передачи дальше.
+* Сделать Событие неизменяемым, но агрегировать и возвращать возвращаемое значение каждого Слушателя.
 
-However, Stoppable Events (the alternative chain case) also needed to have a channel by which to indicate that further Listeners should not be called.  That could be done either by:
+Однако Останавливаемые события (случай альтернативной цепочки) также нуждались в канале для указания на то, что дальнейшие Слушатели не должны вызываться. Это могло быть реализовано одним из способов:
 
-* Modifying the Event (e.g., calling a `stopPropagation()` method)
-* Returning a sentinel value from the Listener (`true` or `false`) to indicate that propagation should terminate.
-* Evolving the Event to be stopped (`withPropagationStopped()`)
+* Изменение Событий (например, вызов метода `stopPropagation()`).
+* Возврат дозорного значения из Слушателя (`true` или `false`) для указания на завершение распространения.
+* Эволюция Событий в остановленное состояние (`withPropagationStopped()`).
 
-Each of these alternatives have drawbacks. The first means that, at least for the purposes of indicating propagation status, Events must be mutable. The second requires that Listeners return a value, at least when they intend to halt event propagation; this could have ramifications with existing libraries, and potential issues in terms of documentation. The third requires that Listeners return the Event or mutated Event in all cases, and would require Dispatchers to test to ensure that the returned value is of the same type as the value passed to the Listener; it effectively puts an onus both on consumers and implementers, thus raising more potential integration issues.
+Каждый из этих вариантов имеет недостатки. Первый означает, что, по крайней мере для указания статуса распространения, события должны быть изменяемыми. Второй требует от Слушателей возвращать значение, по меньшей мере когда они намерены остановить распространение события; это может иметь последствия для существующих библиотек и потенциальные проблемы в плане документирования. Третий требует, чтобы Слушатели всегда возвращали Событие или изменённое Событие, а Диспетчеры — проверяли, является ли возвращаемое значение тем же типом, что и переданное Слушателю; это фактически возлагает бремя как на потребителей, так и на разработчиков реализаций, порождая больше потенциальных проблем при интеграции.
 
-Additionally, a desired feature was the ability to derive whether or not to stop propagation based on values collected from the Listeners.  (For example, to stop when one of them has provided a certain value, or after at least three of them have indicated a "reject this request" flag, or similar.)  While technically possible to implement as an evolvable object, such behavior is intrinsically stateful, so would be highly cumbersome for both implementers and users.
+Кроме того, желаемой возможностью было определение необходимости остановки распространения на основе значений, собранных от Слушателей. (Например, остановиться, когда один из них предоставил определённое значение, или после того, как не менее трёх из них подняли флаг «отклонить запрос», или в иных подобных случаях.) Хотя технически это возможно реализовать с использованием эволюционируемых объектов, такое поведение по своей природе является зависимым от состояния, что делает его крайне неудобным как для разработчиков реализаций, так и для пользователей.
 
-Having Listeners return evolvable Events also posed a challenge.  That pattern is not used by any known implementations in PHP or elsewhere.  It also relies on the Listener to remember to return the Event (additional work for the Listener author) and to not return some other, new object that might not be fully compatible with later Listeners (such as a subclass or superclass of the Event).
+Возврат эволюционируемых событий из Слушателей также представлял трудности. Этот паттерн не используется ни одной известной реализацией ни в PHP, ни где-либо ещё. Кроме того, он возлагает на автора Слушателя обязанность помнить о необходимости вернуть Событие (дополнительная работа) и не возвращать какой-либо другой новый объект, который может оказаться не полностью совместимым с последующими Слушателями (например, подкласс или надкласс Событий).
 
-Immutable Events also rely on the Event author to respect the admonition to be immutable.  Events are, by nature, very loosely designed, and the potential for implementers to ignore that part of the spec, even inadvertently, is high.
+Неизменяемые события также полагаются на то, что автор Событий будет соблюдать принцип неизменяемости. События по своей природе спроектированы весьма вольно, и вероятность того, что разработчики реализаций проигнорируют эту часть спецификации — пусть даже непреднамеренно — весьма высока.
 
-That left two possible options:
+Таким образом, остались два возможных варианта:
 
-* Allow Events to be mutable.
-* Require, but be unable to enforce, immutable Events with a high-ceremony interface, more work for Listener authors, and a higher potential for breakage that may not be detectable at compile time.
+* Разрешить событиям быть изменяемыми.
+* Требовать, не имея возможности обеспечить это принудительно, неизменяемых событий с громоздким интерфейсом, дополнительной работой для авторов Слушателей и более высоким риском ошибок, которые могут быть не обнаружены на этапе компиляции.
 
-By "high-ceremony", we imply that verbose syntax and/or implementations would be required.  In the former case, Listener authors would need to (a) create a new Event instance with the propagation flag toggled, and (b) return the new Event instance so that the Dispatcher could examine it:
+Под «громоздким» подразумевается необходимость применения многословного синтаксиса и/или реализаций. В первом случае авторы Слушателей должны были бы (а) создать новый экземпляр Событий с переключённым флагом распространения и (б) вернуть новый экземпляр Событий, чтобы Диспетчер мог его проверить:
 
 ```php
 function (SomeEvent $event) : SomeEvent
@@ -92,24 +96,24 @@ function (SomeEvent $event) : SomeEvent
 }
 ```
 
-The latter case, Dispatcher implementations, would require checks on the return value:
+В последнем случае, для реализаций Диспетчера, потребовались бы проверки возвращаемого значения:
 
 ```php
 foreach ($provider->getListenersForEvent($event) as $listener) {
     $returnedEvent = $listener($event);
-    
+
     if (! $returnedEvent instanceof $event) {
         // This is an exceptional case!
-        // 
+        //
         // We now have an event of a different type, or perhaps nothing was
         // returned by the listener. An event of a different type might mean:
-        // 
+        //
         // - we need to trigger the new event
         // - we have an event mismatch, and should raise an exception
         // - we should attempt to trigger the remaining listeners anyway
-        // 
+        //
         // In the case of nothing being returned, this could mean any of:
-        // 
+        //
         // - we should continue triggering, using the original event
         // - we should stop triggering, and treat this as a request to
         //   stop propagation
@@ -127,50 +131,50 @@ foreach ($provider->getListenersForEvent($event) as $listener) {
 }
 ```
 
-In both situations, we would be introducing more potential edge cases, with little benefit, and few language-level mechanisms to guide developers to correct implementation.
+В обоих случаях мы вводили бы дополнительные потенциальные граничные условия с незначительной пользой и минимальными языковыми механизмами, направляющими разработчиков к корректной реализации.
 
-Given these options, the Working Group felt mutable Events were the safer alternative.
+С учётом этих вариантов Рабочая группа пришла к выводу, что изменяемые события являются более безопасной альтернативой.
 
-That said, *there is no requirement that an Event be mutable*.  Implementers should provide mutator methods on an Event object *if and only if it is necessary* and appropriate to the use case at hand.
+Тем не менее *не существует требования, чтобы Событие было изменяемым*. Разработчики реализаций должны предоставлять мутирующие методы в объекте Событий *тогда и только тогда, когда это необходимо* и уместно для данного варианта использования.
 
-### 4.4 Listener registration
+### 4.4 Регистрация слушателей
 
-Experimentation during development of the specification determined that there were a wide range of viable, legitimate means by which a Dispatcher could be informed of a Listener.  A Listener:
+Эксперименты в ходе разработки спецификации показали, что существует широкий спектр жизнеспособных и законных способов, которыми Диспетчер может быть уведомлён о Слушателе. Слушатель:
 
-* could be registered explicitly;
-* could be registered explicitly based on reflection of its signature;
-* could be registered with a numeric priority order;
-* could be registered using a before/after mechanism to control ordering more precisely;
-* could be registered from a service container;
-* could use a pre-compile step to generate code;
-* could be based on method names on objects in the Event itself;
-* could be limited to certain situations or contexts based on arbitrarily complex logic (only for certain users, only on certain days, only if certain system settings are present, etc).
+* может быть зарегистрирован явно;
+* может быть зарегистрирован явно на основе рефлексии его сигнатуры;
+* может быть зарегистрирован с числовым приоритетом;
+* может быть зарегистрирован с помощью механизма «до/после» для более точного управления порядком;
+* может быть зарегистрирован из контейнера сервисов;
+* может использовать этап предварительной компиляции для генерации кода;
+* может определяться на основе имён методов объектов в самом Событии;
+* может быть ограничен определёнными ситуациями или контекстами на основе произвольно сложной логики (только для определённых пользователей, только в определённые дни, только при наличии определённых системных настроек и т.д.).
 
-These and other mechanisms all exist in the wild today in PHP, all are valid use cases worth supporting, and few if any can be conveniently represented as a special case of another.  That is, standardizing one way, or even a small set of ways, to inform the system of a Listener turned out to be impractical if not impossible without cutting off many use cases that should be supported.
+Все эти и другие механизмы существуют на практике в PHP-экосистеме, все являются допустимыми вариантами использования, заслуживающими поддержки, и немногие из них могут быть удобно представлены как частный случай другого. То есть стандартизация одного способа или даже небольшого набора способов уведомления системы о Слушателе оказалась непрактичной, если не невозможной, без отсечения множества вариантов использования, которые должны поддерживаться.
 
-The Working Group therefore chose to encapsulate the registration of Listeners behind the `ListenerProviderInterface`.  A Provider object may have an explicit registration mechanism available, or multiple such mechanisms, or none.  It could also be generated code produced by some compile step.  However, that also splits the responsibility of managing the process of dispatching an Event from the process of mapping an Event to Listeners.  That way different implementations may be mixed-and-matched with different Provider mechanisms as needed.
+Поэтому Рабочая группа решила инкапсулировать регистрацию Слушателей за интерфейсом `ListenerProviderInterface`. Объект-Поставщик может иметь доступный явный механизм регистрации, или несколько таких механизмов, или ни одного. Он также может быть сгенерированным кодом, полученным в ходе этапа компиляции. Однако это также разделяет ответственность за управление процессом диспетчеризации Событий и процессом сопоставления Событий со Слушателями. Таким образом, различные реализации могут сочетаться с различными механизмами Поставщиков по мере необходимости.
 
-It is even possible, and potentially advisable, to allow libraries to include their own Providers that get aggregated into a common Provider that aggregates their Listeners to return to the Dispatcher.  That is one possible way to handle arbitrary Listener registration within an arbitrary framework, although the Working Group is clear that is not the only option.
+Вполне возможно, и потенциально целесообразно, позволить библиотекам включать собственных Поставщиков, агрегируемых в общем Поставщике, который объединяет их Слушателей для возврата Диспетчеру. Это один из возможных способов обработки произвольной регистрации Слушателей в произвольном фреймворке, хотя Рабочая группа чётко указывает, что это не единственный вариант.
 
-While combining the Dispatcher and Provider into a single object is a valid and permissible degenerate case, it is NOT RECOMMENDED as it reduces the flexibility of system integrators.  Instead, the Provider SHOULD be composed as a dependent object.
+Хотя объединение Диспетчера и Поставщика в единый объект является допустимым и разрешённым вырожденным случаем, это НЕ РЕКОМЕНДУЕТСЯ, поскольку снижает гибкость системных интеграторов. Вместо этого Поставщик СЛЕДУЕТ реализовывать как зависимый объект.
 
-### 4.5 Deferred listeners
+### 4.5 Отложенные слушатели
 
-The specification requires that the callables returned by a Provider MUST all be invoked (unless propagation is explicitly stopped) before the Dispatcher returns.  However, the specification also explicitly states that Listeners may enqueue Events for later processing rather than taking immediate action.  It is also entirely permissible for a Provider to accept registration of a callable, but then wrap it in another callable before returning it to the Dispatcher.  (In that case, the wrapper is the Listener from the Dispatcher's point of view.)  That allows all of the following behaviors to be legal:
+Спецификация требует, чтобы все вызываемые объекты, возвращённые Поставщиком, ОБЯЗАТЕЛЬНО были вызваны (если распространение явно не остановлено) до того, как Диспетчер вернёт управление. Однако спецификация также прямо указывает, что Слушатели могут ставить события в очередь для последующей обработки, а не выполнять немедленное действие. Также вполне допустимо, чтобы Поставщик принимал регистрацию вызываемого объекта, а затем оборачивал его в другой вызываемый объект перед возвратом Диспетчеру. (В этом случае обёртка является Слушателем с точки зрения Диспетчера.) Это позволяет всем следующим поведениям быть законными:
 
-* Providers return callable Listeners that were provided to them.
-* Providers return callables that create an entry in a queue that will react to the Event with another callable at some later point in time.
-* Listeners may themselves create an entry in a queue that will react to the Event at some later point in time.
-* Listeners or Providers may trigger an asynchronous task, if running in an environment with support for asynchronous behavior (assuming that the result of the asynchronous task is not needed by the Emitter.)
-* Providers may perform such delay or wrapping on Listeners selectively based on arbitrary logic.
+* Поставщики возвращают вызываемые Слушателей, которые были им предоставлены.
+* Поставщики возвращают вызываемые объекты, создающие запись в очереди, которая отреагирует на Событие другим вызываемым объектом в некоторый момент в будущем.
+* Слушатели сами могут создать запись в очереди, которая отреагирует на Событие в некоторый момент в будущем.
+* Слушатели или Поставщики могут инициировать асинхронную задачу, если выполняются в среде с поддержкой асинхронного поведения (при условии, что результат асинхронной задачи не требуется Отправителю).
+* Поставщики могут применять такую задержку или оборачивание к Слушателям избирательно, на основе произвольной логики.
 
-The net result is that Providers and Listeners are responsible for determining when it is safe to defer a response to an Event until some later time.  In that case, the Provider or Listener is explicitly opting out of being able to pass meaningful data back to the Emitter, but the Working Group determined that they were in the best position to know if it was safe to do so.
+В итоге именно Поставщики и Слушатели несут ответственность за определение того, когда безопасно откладывать ответ на Событие до некоторого момента в будущем. В этом случае Поставщик или Слушатель явно отказывается от возможности передавать значимые данные обратно Отправителю, однако Рабочая группа пришла к выводу, что именно они находятся в наилучшем положении для оценки безопасности такого подхода.
 
-While technically a side effect of the design, it is essentially the same approach used by Laravel (as of Laravel 5) and has been proven in the wild.
+Хотя технически это является следствием дизайна, такой подход по существу аналогичен используемому в Laravel (начиная с Laravel 5) и доказал свою состоятельность на практике.
 
-### 4.6 Return values
+### 4.6 Возвращаемые значения
 
-Per the spec, a Dispatcher MUST return the Event passed by the Emitter.  This is specified to provide a more ergonomic experience for users, allowing short-hands similar to the following:
+Согласно спецификации, Диспетчер ОБЯЗАН возвращать Событие, переданное Отправителем. Это требование продиктовано стремлением обеспечить более удобный опыт использования, допускающий сокращения, подобные следующим:
 
 ```php
 $event = $dispatcher->dispatch(new SomeEvent('some context'));
@@ -178,39 +182,39 @@ $event = $dispatcher->dispatch(new SomeEvent('some context'));
 $items = $dispatcher->dispatch(new ItemCollector())->getItems();
 ```
 
-The `EventDispatcher::dispatch()` interface, however, has no return type specified.  That is primarily for backward compatibility with existing implementations to make it easier for them to adopt the new interface.  Additionally, as Events can be any arbitrary object the return type could only have been `object`, which would provide only minimal (albeit non-zero) value, as that type declaration would not provide IDEs with any useful information nor would it effectively enforce that the same Event is returned.  The method return was thus left syntactically untyped.  However, returning the same Event object from `dispatch()` is still a requirement and failure to do so is a violation of the specification.
+Однако интерфейс `EventDispatcher::dispatch()` не имеет указанного возвращаемого типа. Это обусловлено прежде всего обратной совместимостью с существующими реализациями, чтобы им было проще перейти на новый интерфейс. Кроме того, поскольку события могут быть любыми произвольными объектами, возвращаемым типом мог бы быть только `object`, что дало бы лишь минимальную (хотя и ненулевую) пользу: такое объявление типа не предоставило бы IDE никакой полезной информации и не обеспечило бы принудительного возврата того же Событий. Таким образом, возвращаемый тип метода был оставлен синтаксически неуказанным. Тем не менее возврат того же объекта Событий из `dispatch()` по-прежнему является требованием, и его несоблюдение является нарушением спецификации.
 
-## 5. People
+## 5. Участники
 
-The Event Manager Working Group consisted of:
+Рабочая группа по Менеджеру событий состояла из:
 
-### 5.1 Editor
+### 5.1 Редактор
 
 * Larry Garfield
 
-### 5.2 Sponsor
+### 5.2 Спонсор
 
 * Cees-Jan Kiewiet
 
-### 5.3 Working Group Members
+### 5.3 Члены рабочей группы
 
 * Benjamin Mack
 * Elizabeth Smith
 * Ryan Weaver
 * Matthew Weier O'Phinney
 
-## 6. Votes
+## 6. Голосования
 
-* [Entrance vote](https://groups.google.com/d/topic/php-fig/6kQFX-lhuk4/discussion)
-* [Review Period Initiation](https://groups.google.com/d/topic/php-fig/sR4oEQC3Gz8/discussion)
-* [Acceptance](https://groups.google.com/d/topic/php-fig/o4ZSu7vJi2w/discussion)
+* [Вступительное голосование](https://groups.google.com/d/topic/php-fig/6kQFX-lhuk4/discussion)
+* [Инициация периода рецензирования](https://groups.google.com/d/topic/php-fig/sR4oEQC3Gz8/discussion)
+* [Принятие](https://groups.google.com/d/topic/php-fig/o4ZSu7vJi2w/discussion)
 
-## 7. Relevant Links
+## 7. Связанные ссылки
 
-* [Inspiration Mailing List Thread][]
-* [Entrance vote][]
-* [Informal poll on package structure][]
-* [Informal poll on naming structure][]
+* [Тема рассылки с источником идеи][Inspiration Mailing List Thread]
+* [Вступительное голосование][Entrance vote]
+* [Неформальный опрос о структуре пакета][Informal poll on package structure]
+* [Неформальный опрос о структуре именования][Informal poll on naming structure]
 
 [Inspiration Mailing List Thread]: https://groups.google.com/forum/#!topic/php-fig/-EJOStgxAwY
 [Entrance vote]: https://groups.google.com/d/topic/php-fig/6kQFX-lhuk4/discussion

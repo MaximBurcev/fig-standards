@@ -6,10 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="This document describes common interfaces for HTTP server request handlers
-(&quot;request handlers&quot;) and HTTP server middleware components (&quot;middleware&quot;)
-that use HTTP messages as described by PSR-7 or subsequent
-replacement PSRs.">
+        <meta name="description" content="Данный документ описывает общие интерфейсы для обработчиков HTTP-запросов на стороне сервера («обработчики запросов») и компонентов промежуточного программного обеспечения HTTP-сервера («middleware»), использующих HTTP-сообщения, описанные в PSR-7 или последующих заменяющих PSR.">
       
       
       
@@ -17,20 +14,27 @@ replacement PSRs.">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>PSR 15 request handlers - Рекомендации по стандартам PHP: PSR</title>
+        <title>Обработчики HTTP-запросов на стороне сервера - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -44,11 +48,10 @@ replacement PSRs.">
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -57,16 +60,13 @@ replacement PSRs.">
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#http-server-request-handlers" class="md-skip">
+        <a href="#http-" class="md-skip">
           Skip to content
         </a>
       
@@ -85,11 +85,12 @@ replacement PSRs.">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -101,7 +102,7 @@ replacement PSRs.">
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR 15 request handlers
+              Обработчики HTTP-запросов на стороне сервера
             
           </span>
         </div>
@@ -109,29 +110,38 @@ replacement PSRs.">
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -142,6 +152,7 @@ replacement PSRs.">
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -166,12 +177,13 @@ replacement PSRs.">
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -181,14 +193,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -196,14 +220,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -211,14 +247,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -226,14 +274,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -241,14 +301,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -256,14 +328,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -271,14 +355,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -286,14 +382,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -301,14 +409,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -316,14 +436,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -331,14 +463,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -346,14 +490,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -361,14 +517,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -376,14 +544,26 @@ replacement PSRs.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -416,44 +596,68 @@ replacement PSRs.">
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#references" class="md-nav__link">
-    References
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ссылки
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-specification" class="md-nav__link">
-    1. Specification
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Спецификация
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. Specification">
+    <nav class="md-nav" aria-label="1. Спецификация">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#11-request-handlers" class="md-nav__link">
-    1.1 Request Handlers
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Обработчики запросов
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#12-middleware" class="md-nav__link">
-    1.2 Middleware
+    <span class="md-ellipsis">
+      
+        1.2 Middleware
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#13-generating-responses" class="md-nav__link">
-    1.3 Generating Responses
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Формирование ответов
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#14-handling-exceptions" class="md-nav__link">
-    1.4 Handling Exceptions
+  <a href="#14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Обработка исключений
+      
+    </span>
   </a>
   
 </li>
@@ -464,23 +668,35 @@ replacement PSRs.">
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-interfaces" class="md-nav__link">
-    2. Interfaces
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Интерфейсы
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Interfaces">
+    <nav class="md-nav" aria-label="2. Интерфейсы">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#21-psrhttpserverrequesthandlerinterface" class="md-nav__link">
-    2.1 Psr\Http\Server\RequestHandlerInterface
+    <span class="md-ellipsis">
+      
+        2.1 Psr\Http\Server\RequestHandlerInterface
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#22-psrhttpservermiddlewareinterface" class="md-nav__link">
-    2.2 Psr\Http\Server\MiddlewareInterface
+    <span class="md-ellipsis">
+      
+        2.2 Psr\Http\Server\MiddlewareInterface
+      
+    </span>
   </a>
   
 </li>
@@ -500,65 +716,46 @@ replacement PSRs.">
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="http-server-request-handlers">HTTP Server Request Handlers</h1>
-<p>This document describes common interfaces for HTTP server request handlers
-("request handlers") and HTTP server middleware components ("middleware")
-that use HTTP messages as described by <a href="https://www.php-fig.org/psr/psr-7/">PSR-7</a> or subsequent
-replacement PSRs.</p>
-<p>HTTP request handlers are a fundamental part of any web application. Server-side
-code receives a request message, processes it, and produces a response message.
-HTTP middleware is a way to move common request and response processing away from
-the application layer.</p>
-<p>The interfaces described in this document are abstractions for request handlers
-and middleware.</p>
-<p><em>Note: All references to "request handlers" and "middleware" are specific to
-<strong>server request</strong> processing.</em></p>
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
-<h3 id="references">References</h3>
+
+<h1 id="http-">Обработчики HTTP-запросов на стороне сервера</h1>
+<p>Данный документ описывает общие интерфейсы для обработчиков HTTP-запросов на стороне сервера («обработчики запросов») и компонентов промежуточного программного обеспечения HTTP-сервера («middleware»), использующих HTTP-сообщения, описанные в <a href="https://www.php-fig.org/psr/psr-7/">PSR-7</a> или последующих заменяющих PSR.</p>
+<p>Обработчики HTTP-запросов являются фундаментальной частью любого веб-приложения. Серверный код получает сообщение-запрос, обрабатывает его и формирует сообщение-ответ. HTTP middleware — это способ вынести общую обработку запросов и ответов за пределы прикладного уровня.</p>
+<p>Интерфейсы, описанные в данном документе, являются абстракциями для обработчиков запросов и middleware.</p>
+<p><em>Примечание: все ссылки на «обработчики запросов» и «middleware» относятся исключительно к обработке <strong>серверных запросов</strong>.</em></p>
+<p>Ключевые слова «MUST», «MUST NOT», «REQUIRED», «SHALL», «SHALL NOT», «SHOULD», «SHOULD NOT», «RECOMMENDED», «MAY» и «OPTIONAL» в данном документе следует интерпретировать в соответствии с <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h3 id="_1">Ссылки</h3>
 <ul>
 <li><a href="https://www.php-fig.org/psr/psr-7/">PSR-7</a></li>
 <li><a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a></li>
 </ul>
-<h2 id="1-specification">1. Specification</h2>
-<h3 id="11-request-handlers">1.1 Request Handlers</h3>
-<p>A request handler is an individual component that processes a request and
-produces a response, as defined by PSR-7.</p>
-<p>A request handler MAY throw an exception if request conditions prevent it from
-producing a response. The type of exception is not defined.</p>
-<p>Request handlers using this standard MUST implement the following interface:</p>
+<h2 id="1">1. Спецификация</h2>
+<h3 id="11">1.1 Обработчики запросов</h3>
+<p>Обработчик запросов — это отдельный компонент, который обрабатывает запрос и формирует ответ в соответствии с PSR-7.</p>
+<p>Обработчик запросов МОЖЕТ выбрасывать исключение, если условия запроса не позволяют сформировать ответ. Тип исключения не определён.</p>
+<p>Обработчики запросов, использующие данный стандарт, ОБЯЗАНЫ реализовывать следующий интерфейс:</p>
 <ul>
 <li><code>Psr\Http\Server\RequestHandlerInterface</code></li>
 </ul>
 <h3 id="12-middleware">1.2 Middleware</h3>
-<p>A middleware component is an individual component participating, often together
-with other middleware components, in the processing of an incoming request and
-the creation of a resulting response, as defined by PSR-7.</p>
-<p>A middleware component MAY create and return a response without delegating to
-a request handler, if sufficient conditions are met.</p>
-<p>Middleware using this standard MUST implement the following interface:</p>
+<p>Компонент middleware — это отдельный компонент, участвующий, как правило совместно с другими компонентами middleware, в обработке входящего запроса и формировании результирующего ответа в соответствии с PSR-7.</p>
+<p>Компонент middleware МОЖЕТ создавать и возвращать ответ без делегирования обработчику запросов, если для этого выполнены достаточные условия.</p>
+<p>Middleware, использующее данный стандарт, ОБЯЗАНО реализовывать следующий интерфейс:</p>
 <ul>
 <li><code>Psr\Http\Server\MiddlewareInterface</code></li>
 </ul>
-<h3 id="13-generating-responses">1.3 Generating Responses</h3>
-<p>It is RECOMMENDED that any middleware or request handler that generates a response
-will either compose a prototype of a PSR-7 <code>ResponseInterface</code> or a factory capable
-of generating a <code>ResponseInterface</code> instance in order to prevent dependence on a
-specific HTTP message implementation.</p>
-<h3 id="14-handling-exceptions">1.4 Handling Exceptions</h3>
-<p>It is RECOMMENDED that any application using middleware includes a component
-that catches exceptions and converts them into responses. This middleware SHOULD
-be the first component executed and wrap all further processing to ensure that
-a response is always generated.</p>
-<h2 id="2-interfaces">2. Interfaces</h2>
+<h3 id="13">1.3 Формирование ответов</h3>
+<p>РЕКОМЕНДУЕТСЯ, чтобы любой middleware или обработчик запросов, формирующий ответ, содержал либо прототип PSR-7 <code>ResponseInterface</code>, либо фабрику, способную создавать экземпляр <code>ResponseInterface</code>, во избежание зависимости от конкретной реализации HTTP-сообщений.</p>
+<h3 id="14">1.4 Обработка исключений</h3>
+<p>РЕКОМЕНДУЕТСЯ, чтобы любое приложение, использующее middleware, включало компонент, перехватывающий исключения и преобразующий их в ответы. Данный middleware СЛЕДУЕТ выполнять первым и оборачивать всю дальнейшую обработку, чтобы гарантировать формирование ответа в любом случае.</p>
+<h2 id="2">2. Интерфейсы</h2>
 <h3 id="21-psrhttpserverrequesthandlerinterface">2.1 Psr\Http\Server\RequestHandlerInterface</h3>
-<p>The following interface MUST be implemented by request handlers.</p>
+<p>Следующий интерфейс ОБЯЗАН быть реализован обработчиками запросов.</p>
 <pre><code class="language-php">namespace Psr\Http\Server;
 
 use Psr\Http\Message\ResponseInterface;
@@ -581,7 +778,7 @@ interface RequestHandlerInterface
 }
 </code></pre>
 <h3 id="22-psrhttpservermiddlewareinterface">2.2 Psr\Http\Server\MiddlewareInterface</h3>
-<p>The following interface MUST be implemented by compatible middleware components.</p>
+<p>Следующий интерфейс ОБЯЗАН быть реализован совместимыми компонентами middleware.</p>
 <pre><code class="language-php">namespace Psr\Http\Server;
 
 use Psr\Http\Message\ResponseInterface;
@@ -611,11 +808,22 @@ interface MiddlewareInterface
 
 
 
+
+
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -643,10 +851,14 @@ interface MiddlewareInterface
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

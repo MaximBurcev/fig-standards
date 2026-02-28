@@ -1,71 +1,76 @@
-# Container interface
+# Интерфейс контейнера
 
 
 
-This document describes a common interface for dependency injection containers.
+Этот документ описывает общий интерфейс для контейнеров внедрения зависимостей.
 
-The goal set by `ContainerInterface` is to standardize how frameworks and libraries make use of a
-container to obtain objects and parameters (called *entries* in the rest of this document).
+Цель `ContainerInterface` — стандартизировать способ, которым фреймворки и библиотеки используют
+контейнер для получения объектов и параметров (далее в этом документе именуемых *элементами*).
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][].
+Ключевые слова «ДОЛЖЕН» ("MUST"), «НЕ ДОЛЖЕН» ("MUST NOT"), «ТРЕБУЕТСЯ» ("REQUIRED"),
+«НУЖНО» ("SHALL"), «НЕ ПОЗВОЛЯЕТСЯ» ("SHALL NOT"), «СЛЕДУЕТ» ("SHOULD"),
+«НЕ СЛЕДУЕТ» ("SHOULD NOT"), «РЕКОМЕНДУЕТСЯ» ("RECOMMENDED"), «МОЖЕТ» ("MAY")
+и «НЕОБЯЗАТЕЛЬНО» ("OPTIONAL") в этом документе следует понимать так,
+как это описано в [RFC 2119][].
 
-The word `implementor` in this document is to be interpreted as someone
-implementing the `ContainerInterface` in a dependency injection-related library or framework.
-Users of dependency injection containers (DIC) are referred to as `user`.
+Слово `реализующий` в этом документе следует интерпретировать как того,
+кто реализует `ContainerInterface` в библиотеке или фреймворке, связанном с внедрением зависимостей.
+Пользователи контейнеров внедрения зависимостей (DIC) именуются `пользователь`.
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-## 1. Specification
+## 1. Спецификация
 
-### 1.1 Basics
+### 1.1 Основы
 
-#### 1.1.1 Entry identifiers
+#### 1.1.1 Идентификаторы элементов
 
-An entry identifier is any PHP-legal string of at least one character that uniquely identifies an item within a container.  An entry identifier is an opaque string, so callers SHOULD NOT assume that the structure of the string carries any semantic meaning.
+Идентификатор элемента — это любая допустимая в PHP строка длиной не менее одного символа,
+однозначно идентифицирующая элемент внутри контейнера. Идентификатор элемента является
+непрозрачной строкой, поэтому вызывающий код НЕ ДОЛЖЕН предполагать, что структура строки
+несёт какой-либо семантический смысл.
 
-#### 1.1.2 Reading from a container
+#### 1.1.2 Чтение из контейнера
 
-- The `Psr\Container\ContainerInterface` exposes two methods: `get` and `has`.
+- `Psr\Container\ContainerInterface` предоставляет два метода: `get` и `has`.
 
-- `get` takes one mandatory parameter: an entry identifier, which MUST be a string.
-  `get` can return anything (a *mixed* value), or throw a `NotFoundExceptionInterface` if the identifier
-  is not known to the container. Two successive calls to `get` with the same
-  identifier SHOULD return the same value. However, depending on the `implementor`
-  design and/or `user` configuration, different values might be returned, so
-  `user` SHOULD NOT rely on getting the same value on 2 successive calls.
+- `get` принимает один обязательный параметр: идентификатор элемента, который ДОЛЖЕН быть строкой.
+  `get` может возвращать что угодно (*mixed*-значение) или выбрасывать `NotFoundExceptionInterface`,
+  если идентификатор неизвестен контейнеру. Два последовательных вызова `get` с одним и тем же
+  идентификатором СЛЕДУЕТ возвращать одно и то же значение. Однако в зависимости от конструкции
+  `реализующего` и/или конфигурации `пользователя` могут возвращаться разные значения, поэтому
+  `пользователь` НЕ ДОЛЖЕН рассчитывать на получение одного и того же значения при двух последовательных вызовах.
 
-- `has` takes one unique parameter: an entry identifier, which MUST be a string.
-  `has` MUST return `true` if an entry identifier is known to the container and `false` if it is not.
-  If `has($id)` returns false, `get($id)` MUST throw a `NotFoundExceptionInterface`.
+- `has` принимает один параметр: идентификатор элемента, который ДОЛЖЕН быть строкой.
+  `has` ДОЛЖЕН возвращать `true`, если идентификатор элемента известен контейнеру, и `false` — если нет.
+  Если `has($id)` возвращает false, то `get($id)` ДОЛЖЕН выбрасывать `NotFoundExceptionInterface`.
 
-### 1.2 Exceptions
+### 1.2 Исключения
 
-Exceptions directly thrown by the container SHOULD implement the
+Исключения, выбрасываемые непосредственно контейнером, СЛЕДУЕТ реализовывать через
 [`Psr\Container\ContainerExceptionInterface`](#container-exception).
 
-A call to the `get` method with a non-existing id MUST throw a
+Вызов метода `get` с несуществующим идентификатором ДОЛЖЕН выбрасывать
 [`Psr\Container\NotFoundExceptionInterface`](#not-found-exception).
 
-### 1.3 Recommended usage
+### 1.3 Рекомендуемое использование
 
-Users SHOULD NOT pass a container into an object so that the object can retrieve *its own dependencies*.
-This means the container is used as a [Service Locator](https://en.wikipedia.org/wiki/Service_locator_pattern)
-which is a pattern that is generally discouraged.
+Пользователи НЕ ДОЛЖНЫ передавать контейнер в объект, чтобы объект мог извлекать *собственные зависимости*.
+Это означает, что контейнер используется как [Service Locator](https://en.wikipedia.org/wiki/Service_locator_pattern)
+— паттерн, который в целом не рекомендуется.
 
-Please refer to section 4 of the META document for more details.
+Подробнее см. раздел 4 мета-документа.
 
-## 2. Package
+## 2. Пакет
 
-The interfaces and classes described as well as relevant exceptions are provided as part of the
-[psr/container](https://packagist.org/packages/psr/container) package.
+Описанные интерфейсы, классы и соответствующие исключения предоставляются в составе пакета
+[psr/container](https://packagist.org/packages/psr/container).
 
-Packages providing a PSR container implementation should declare that they provide `psr/container-implementation` `1.0.0`.
+Пакеты, предоставляющие реализацию PSR-контейнера, ДОЛЖНЫ объявлять, что они предоставляют `psr/container-implementation` `1.0.0`.
 
-Projects requiring an implementation should require `psr/container-implementation` `1.0.0`.
+Проекты, требующие реализацию, ДОЛЖНЫ указывать зависимость `psr/container-implementation` `1.0.0`.
 
-## 3. Interfaces
+## 3. Интерфейсы
 
 <a name="container-interface"></a>
 ### 3.1. `Psr\Container\ContainerInterface`
@@ -107,12 +112,12 @@ interface ContainerInterface
 ~~~
 
 
-Since [psr/container version 1.1](https://packagist.org/packages/psr/container#1.1.0),
-the above interface has been updated to add argument type hints.
+Начиная с [psr/container версии 1.1](https://packagist.org/packages/psr/container#1.1.0),
+в вышеуказанный интерфейс добавлены подсказки типов для аргументов.
 
-Since [psr/container version 2.0](https://packagist.org/packages/psr/container#2.0.0),
-the above interface has been updated to add return type hints (but only to the
-`has()` method).
+Начиная с [psr/container версии 2.0](https://packagist.org/packages/psr/container#2.0.0),
+в вышеуказанный интерфейс добавлены подсказки типов для возвращаемых значений (но только для метода
+`has()`).
 
 <a name="container-exception"></a>
 ### 3.2. `Psr\Container\ContainerExceptionInterface`

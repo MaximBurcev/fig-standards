@@ -1,74 +1,44 @@
-## Introduction
+---
+description: "PSR-9 определяет процесс, посредством которого исследователи безопасности сообщают проектам об уязвимостях, обеспечивая удобный канал для ответственного раскрытия."
+---
+
+## Введение
 
 
-There are two aspects with dealing with security issues: One is the process
-by which security issues are reported and fixed in projects, the other
-is how the general public is informed about the issues and any remedies
-available. While PSR-10 addresses the later, this PSR, ie. PSR-9, deals with
-the former. So the goal of PSR-9 is to define the process by which security
-researchers and report security vulnerabilities to projects. It is important
-that when security vulnerabilities are found that researchers have an easy
-channel to the projects in question allowing them to disclose the issue to a
-controlled group of people.
+Работа с вопросами безопасности имеет два аспекта: один — это процесс, посредством которого проблемы безопасности сообщаются и устраняются в проектах, другой — то, как широкая общественность информируется о проблемах и доступных способах их устранения. В то время как PSR-10 касается второго, данный PSR, то есть PSR-9, рассматривает первый. Таким образом, цель PSR-9 — определить процесс, посредством которого исследователи безопасности сообщают проектам об уязвимостях. Важно, чтобы при обнаружении уязвимостей исследователи имели удобный канал связи с соответствующими проектами, позволяющий им раскрывать проблему ограниченному кругу людей.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][].
+Ключевые слова «ОБЯЗАН», «НЕ ДОЛЖЕН», «REQUIRED», «SHALL», «SHALL NOT», «СЛЕДУЕТ»,
+«SHOULD NOT», «RECOMMENDED», «МОЖЕТ» и «OPTIONAL» в данном документе следует
+интерпретировать так, как описано в [RFC 2119][].
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-## Goal
+## Цель
 
-The goal of this PSR is to give researchers, project leads, upstream project
-leads and end users a defined and structured process for disclosing security
-vulnerabilities.
+Цель данного PSR — предоставить исследователям, руководителям проектов, вышестоящим руководителям проектов и конечным пользователям определённый и структурированный процесс для раскрытия уязвимостей безопасности.
 
-## Security Disclosure Process Discovery
+## Обнаружение процесса раскрытия информации о безопасности
 
-Every project MUST provide a link to its security disclosure process in
-an obvious place. Ideally this should be on the root page the main domain of
-the given project. This MAY be a sub-domain in case it is a sub-project of a
-larger initiative. The link MAY use the custom link relation
-``php-vuln-reporting``, ie. for example
+Каждый проект ОБЯЗАН предоставить ссылку на свой процесс раскрытия информации о безопасности в очевидном месте. В идеале это должно быть на корневой странице главного домена соответствующего проекта. Это МОЖЕТ быть поддомен в случае, если проект является частью более крупной инициативы. Ссылка МОЖЕТ использовать пользовательское отношение ``php-vuln-reporting``, например:
 ``<link rel="php-vuln-reporting" href="http://example.org/security"/>``.
 
-Projects SHOULD ideally make the location prominent itself
-by either creating a dedicated sub-domain like ``http://security.example.org``
-or by making it a top level directory like ``http://example.org/security``.
-Alternatively projects MAY also simply reference this document, ie. PSR-9.
-By referencing PSR-9 a project basically states that they follow the
-default procedures as noted in the section "Default Procedures" towards
-the end of this document. Projects MUST list the variables noted at the start
-of that section in this reference (ie. project name, project domain, etc.).
-Projects MAY choose to list any part of the procedures that is not a MUST
-which they choose to omit.
+Проектам СЛЕДУЕТ в идеале сделать местоположение заметным, либо создав специальный поддомен наподобие ``http://security.example.org``, либо сделав его каталогом верхнего уровня наподобие ``http://example.org/security``. В качестве альтернативы проекты МОГУТ просто ссылаться на данный документ, то есть PSR-9. Ссылаясь на PSR-9, проект фактически заявляет, что следует процедурам по умолчанию, указанным в разделе «Процедуры по умолчанию» в конце данного документа. Проекты ОБЯЗАНЫ указать переменные, обозначенные в начале этого раздела в данной ссылке (то есть название проекта, домен проекта и т.д.). Проекты МОГУТ перечислить любую часть процедур, не являющуюся ОБЯЗАТЕЛЬНОЙ, которую они решают не включать.
 
-Note that projects MAY not have a dedicated domain. For example a project
-hosted on Github, Bitbucket or other service should still ensure that the
-process is referenced on the landing page, ie. for example
-http://github.com/example/somelib should ensure that the default branch
-has a README file which references the procedures used so that it is
-automatically displayed.
+Обратите внимание, что у проектов МОЖЕТ не быть специального домена. Например, проект, размещённый на Github, Bitbucket или другом сервисе, всё равно должен обеспечить, чтобы процесс был указан на лендинговой странице: например, http://github.com/example/somelib должен убедиться, что ветка по умолчанию содержит файл README, в котором указаны применяемые процедуры, чтобы он отображался автоматически.
 
-If necessary projects MAY have different disclosure process
-for different major version number. In this case one URL MUST be provided
-for each major version. In the case a major version is no longer receiving
-security fixes, instead of an URL a project MAY opt to instead simply
-note that the version is no longer receiving security fixes.
+При необходимости проекты МОГУТ иметь различные процессы раскрытия для разных номеров основных версий. В этом случае ОБЯЗАН быть предоставлен один URL для каждой основной версии. В случае, если основная версия больше не получает исправлений безопасности, вместо URL проект МОЖЕТ просто указать, что версия больше не получает исправлений безопасности.
 
-## Security Disclosure Process
+## Процесс раскрытия информации о безопасности
 
-Every project MUST provide an email address in their security disclosure
-process description as the ``contact email address``. Projects SHALL NOT
-use contact forms.
+Каждый проект ОБЯЗАН указать адрес электронной почты в описании своего процесса раскрытия информации о безопасности в качестве ``контактного адреса электронной почты``. Проекты НЕ ДОЛЖНЫ использовать контактные формы.
 
-**TODO**: Add more things found here https://groups.google.com/d/msg/php-fig-psr-9-discussion/puGV_X0bj_M/Jr_IAS40StsJ?
+**TODO**: Добавить больше вещей, найденных здесь https://groups.google.com/d/msg/php-fig-psr-9-discussion/puGV_X0bj_M/Jr_IAS40StsJ?
 
-## Default Procedures
+## Процедуры по умолчанию
 
-* ``[project name]`` denotes the name on which the project uses to identify itself.
-* ``[project domain]`` denotes the main (sub)domain on which the project relies.
+* ``[project name]`` обозначает название, которое проект использует для самоидентификации.
+* ``[project domain]`` обозначает главный (под)домен, на который опирается проект.
 
-If not specified otherwise, the ``contact email address`` is ``security@[project domain]``.
+Если не указано иное, ``контактный адрес электронной почты`` — это ``security@[project domain]``.
 
-**TODO**: Add more things noted in the previous section
+**TODO**: Добавить больше вещей, упомянутых в предыдущем разделе

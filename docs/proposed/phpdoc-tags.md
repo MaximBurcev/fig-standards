@@ -1,5 +1,8 @@
-PSR-19: PHPDoc tags
-=============
+---
+description: "PSR-19 содержит полный каталог тегов стандарта PHPDoc: @param, @return, @throws, @var, @author и другие теги для документирования PHP-кода."
+---
+
+# PSR-19: PHPDoc tags
 
 ## Оглавление
 

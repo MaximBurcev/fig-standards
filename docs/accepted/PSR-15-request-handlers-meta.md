@@ -1,80 +1,67 @@
-HTTP Server Request Handlers Meta Document
-==========================================
+---
+description: "Цель данного PSR — определить формальные интерфейсы для обработчиков HTTP-запросов на стороне сервера и middleware, совместимых с PSR-7."
+---
+
+Мета-документ: Обработчики HTTP-запросов на стороне сервера
+============================================================
 
 
-## 1. Summary
+## 1. Краткое описание
 
-The purpose of this PSR is to define formal interfaces for HTTP server request
-handlers ("request handlers") and HTTP server request middleware ("middleware")
-that are compatible with HTTP messages as defined in [PSR-7][psr7] or subsequent
-replacement PSRs.
+Цель данного PSR — определить формальные интерфейсы для обработчиков HTTP-запросов на стороне сервера («обработчики запросов») и промежуточного программного обеспечения HTTP-сервера («middleware»), совместимых с HTTP-сообщениями, определёнными в [PSR-7][psr7] или последующих заменяющих PSR.
 
-_Note: All references to "request handlers" and "middleware" are specific to
-**server request** processing._
+_Примечание: все ссылки на «обработчики запросов» и «middleware» относятся исключительно к обработке **серверных запросов**._
 
 [psr7]: https://www.php-fig.org/psr/psr-7/
 
-## 2. Why Bother?
+## 2. Зачем это нужно?
 
-The HTTP messages specification does not contain any reference to request
-handlers or middleware.
+Спецификация HTTP-сообщений не содержит никаких ссылок на обработчики запросов или middleware.
 
-Request handlers are a fundamental part of any web application. The handler is
-the component that receives a request and produces a response. Nearly all code
-that works with HTTP messages will have some kind of request handler.
+Обработчики запросов являются фундаментальной частью любого веб-приложения. Обработчик — это компонент, получающий запрос и формирующий ответ. Практически весь код, работающий с HTTP-сообщениями, содержит какой-либо обработчик запросов.
 
-[Middleware][middleware] has existed for many years in the PHP ecosystem. The
-general concept of reusable middleware was popularized by [StackPHP][stackphp].
-Since the release of HTTP messages as a PSR, many frameworks have adopted
-middleware that use HTTP message interfaces.
+[Middleware][middleware] существует в экосистеме PHP уже много лет. Общая концепция переиспользуемого middleware была популяризована [StackPHP][stackphp]. После появления HTTP-сообщений в виде PSR многие фреймворки внедрили middleware, использующее интерфейсы HTTP-сообщений.
 
-Agreeing on formal request handler and middleware interfaces eliminates several
-problems and has a number of benefits:
+Принятие формальных интерфейсов для обработчиков запросов и middleware устраняет ряд проблем и даёт следующие преимущества:
 
-* Provides a formal standard for developers to commit to.
-* Enables any middleware component to run in any compatible framework.
-* Eliminates duplication of similar interfaces defined by various frameworks.
-* Avoids minor discrepancies in method signatures.
+* Предоставляет разработчикам формальный стандарт.
+* Позволяет любому компоненту middleware работать в любом совместимом фреймворке.
+* Устраняет дублирование схожих интерфейсов, определённых в различных фреймворках.
+* Исключает незначительные расхождения в сигнатурах методов.
 
 [middleware]: https://en.wikipedia.org/wiki/Middleware
 [stackphp]: http://stackphp.com/
 
-## 3. Scope
+## 3. Область применения
 
-### 3.1 Goals
+### 3.1 Цели
 
-* Create a request handler interface that uses HTTP messages.
-* Create a middleware interface that uses HTTP messages.
-* Implement request handler and middleware signatures that are based on
-  best practices.
-* Ensure that request handlers and middleware will be compatible with any
-  implementation of HTTP messages.
+* Создать интерфейс обработчика запросов, использующий HTTP-сообщения.
+* Создать интерфейс middleware, использующий HTTP-сообщения.
+* Реализовать сигнатуры обработчика запросов и middleware, основанные на лучших практиках.
+* Обеспечить совместимость обработчиков запросов и middleware с любой реализацией HTTP-сообщений.
 
-### 3.2 Non-Goals
+### 3.2 Не является целью
 
-* Attempting to define the mechanism by which HTTP responses are created.
-* Attempting to define interfaces for client/asynchronous middleware.
-* Attempting to define how middleware is dispatched.
+* Определение механизма создания HTTP-ответов.
+* Определение интерфейсов для клиентского/асинхронного middleware.
+* Определение способа диспетчеризации middleware.
 
-## 4. Request Handler Approaches
+## 4. Подходы к обработчикам запросов
 
-There are many approaches to request handlers that use HTTP messages. However,
-the general process is the same in all of them:
+Существует множество подходов к обработчикам запросов, использующим HTTP-сообщения. Однако общий процесс одинаков во всех из них:
 
-Given an HTTP request, produce an HTTP response for that request.
+На основе HTTP-запроса сформировать HTTP-ответ для данного запроса.
 
-The internal requirements of that process will vary from framework to framework
-and application to application. This proposal makes no effort to determine what
-that process should be.
+Внутренние требования этого процесса будут варьироваться от фреймворка к фреймворку и от приложения к приложению. Данное предложение не стремится определить, каким должен быть этот процесс.
 
-## 5. Middleware Approaches
+## 5. Подходы к middleware
 
-There are currently two common approaches to middleware that use HTTP messages.
+В настоящее время существуют два распространённых подхода к middleware, использующему HTTP-сообщения.
 
-### 5.1 Double Pass
+### 5.1 Double Pass (двойная передача)
 
-The signature used by most middleware implementations has been mostly the same
-and is based on [Express middleware][express], which is defined as:
+Сигнатура, используемая большинством реализаций middleware, была в основном одинаковой и основана на [Express middleware][express], которое определяется следующим образом:
 
 ```
 fn(request, response, next): response
@@ -82,29 +69,26 @@ fn(request, response, next): response
 
 [express]: http://expressjs.com/en/guide/writing-middleware.html
 
-Based on the middleware implementations already used by frameworks that have
-adopted this signature, the following commonalities are observed:
+На основе реализаций middleware, уже используемых фреймворками, принявшими данную сигнатуру, можно выделить следующие общие черты:
 
-* The middleware is defined as a [callable][php-callable].
-* The middleware is passed 3 arguments during invocation:
-  1. A `ServerRequestInterface` implementation.
-  2. A `ResponseInterface` implementation.
-  3. A `callable` that receives the request and response to delegate to the next middleware.
+* Middleware определяется как [callable][php-callable].
+* При вызове middleware передаётся 3 аргумента:
+  1. Реализация `ServerRequestInterface`.
+  2. Реализация `ResponseInterface`.
+  3. `callable`, принимающий запрос и ответ для делегирования следующему middleware.
 
 [php-callable]: http://php.net/manual/language.types.callable.php
 
-A significant number of projects provide and/or use exactly the same interface.
-This approach is often referred to as "double pass" in reference to both the
-request and response being passed to the middleware.
+Значительное число проектов предоставляет и/или использует один и тот же интерфейс. Данный подход часто называют «double pass» («двойная передача»), поскольку в middleware передаются и запрос, и ответ.
 
-#### 5.1.1 Projects Using Double Pass
+#### 5.1.1 Проекты, использующие Double Pass
 
 * [mindplay/middleman v1](https://github.com/mindplay-dk/middleman/blob/1.0.0/src/MiddlewareInterface.php#L24)
 * [relay/relay v1](https://github.com/relayphp/Relay.Relay/blob/1.0.0/src/MiddlewareInterface.php#L24)
 * [slim/slim v3](https://github.com/slimphp/Slim/blob/3.4.0/Slim/MiddlewareAwareTrait.php#L66-L75)
 * [zendframework/zend-stratigility v1](https://github.com/zendframework/zend-stratigility/blob/1.0.0/src/MiddlewarePipe.php#L69-L79)
 
-#### 5.1.2 Middleware Implementing Double Pass
+#### 5.1.2 Middleware, реализующее Double Pass
 
 * [bitexpert/adroit](https://github.com/bitExpert/adroit)
 * [akrabat/rka-ip-address-middleware](https://github.com/akrabat/rka-ip-address-middleware)
@@ -126,60 +110,50 @@ request and response being passed to the middleware.
 * [php-middleware/request-id](https://github.com/php-middleware/request-id)
 * [relay/middleware](https://github.com/relayphp/Relay.Middleware)
 
-The primary downside of this interface is that the while the interface itself is
-a callable, there is currently no way to strictly type a closure.
+Основным недостатком данного интерфейса является то, что, хотя сам интерфейс и является callable, в настоящее время нет возможности строго типизировать замыкание.
 
 ### 5.2 Single Pass (Lambda)
 
-The other approach to middleware is much closer to [StackPHP][stackphp] style
-and is defined as:
+Другой подход к middleware значительно ближе к стилю [StackPHP][stackphp] и определяется следующим образом:
 
 ```
 fn(request, next): response
 ```
 
-Middleware taking this approach generally has the following commonalities:
+Middleware, использующее данный подход, как правило, имеет следующие общие черты:
 
-* The middleware is defined with a specific interface with a method that takes
-  the request for processing.
-* The middleware is passed 2 arguments during invocation:
-  1. An HTTP request message.
-  2. A request handler to which the middleware can delegate the responsibility
-     of producing an HTTP response message.
+* Middleware определяется с помощью конкретного интерфейса с методом, принимающим запрос для обработки.
+* При вызове middleware передаётся 2 аргумента:
+  1. Сообщение HTTP-запроса.
+  2. Обработчик запросов, которому middleware может делегировать ответственность за формирование HTTP-ответа.
 
-In this form, middleware has no access to a response until one is generated by
-the request handler. Middleware can then modify the response before returning it.
+В данном варианте middleware не имеет доступа к ответу до его формирования обработчиком запросов. После этого middleware МОЖЕТ модифицировать ответ перед его возвратом.
 
-This approach is often referred to as "single pass" or "lambda" in reference to
-only the request being passed to the middleware.
+Данный подход часто называют «single pass» («одиночная передача») или «lambda», поскольку в middleware передаётся только запрос.
 
-#### 5.2.1 Projects Using Single Pass
+#### 5.2.1 Проекты, использующие Single Pass
 
-There are fewer examples of this approach within projects using HTTP messages,
-with one notable exception.
+Примеров данного подхода в проектах, использующих HTTP-сообщения, меньше, за одним заметным исключением.
 
-[Guzzle middleware][guzzle-middleware] is focused on outgoing (client) requests
-and uses this signature:
+[Guzzle middleware][guzzle-middleware] ориентировано на исходящие (клиентские) запросы и использует следующую сигнатуру:
 
 ```php
 function (RequestInterface $request, array $options): ResponseInterface
 ```
 
-#### 5.2.2 Additional Projects Using Single Pass
+#### 5.2.2 Дополнительные проекты, использующие Single Pass
 
-There are also significant projects that predate HTTP messages using this approach.
+Существуют также значимые проекты, появившиеся до HTTP-сообщений, использующие данный подход.
 
-[StackPHP][stackphp] is based on [Symfony HttpKernel][httpkernel] and supports
-middleware with this signature:
+[StackPHP][stackphp] основан на [Symfony HttpKernel][httpkernel] и поддерживает middleware со следующей сигнатурой:
 
 ```php
 function handle(Request $request, $type, $catch): Response
 ```
 
-_Note: While Stack has multiple arguments, a response object is not included._
+_Примечание: хотя Stack имеет несколько аргументов, объект ответа среди них не предусмотрен._
 
-[Laravel middleware][laravel-middleware] uses Symfony components and supports
-middleware with this signature:
+[Laravel middleware][laravel-middleware] использует компоненты Symfony и поддерживает middleware со следующей сигнатурой:
 
 ```php
 function handle(Request $request, callable $next): Response
@@ -189,163 +163,102 @@ function handle(Request $request, callable $next): Response
 [httpkernel]: https://symfony.com/doc/2.0/components/http_kernel/introduction.html
 [laravel-middleware]: https://laravel.com/docs/master/middleware
 
-### 5.3 Comparison of Approaches
+### 5.3 Сравнение подходов
 
-The single pass approach to middleware has been well established in the PHP
-community for many years. This is most evident with the large number of packages
-that are based around StackPHP.
+Подход single pass к middleware давно утвердился в сообществе PHP. Это наглядно демонстрирует большое количество пакетов, основанных на StackPHP.
 
-The double pass approach is much newer but has been almost universally used by
-early adopters of HTTP messages (PSR-7).
+Подход double pass значительно новее, однако он был почти повсеместно принят ранними разработчиками, использующими HTTP-сообщения (PSR-7).
 
-### 5.4 Chosen Approach
+### 5.4 Выбранный подход
 
-Despite the nearly universal adoption of the double-pass approach, there are
-significant issues regarding implementation.
+Несмотря на почти повсеместное распространение подхода double pass, он имеет существенные проблемы реализации.
 
-The most severe is that passing an empty response has no guarantees that the
-response is in a usable state. This is further exacerbated by the fact that a
-middleware may modify the response before passing it for further processing.
+Наиболее серьёзная из них состоит в том, что передача пустого ответа не даёт никаких гарантий, что ответ находится в пригодном для использования состоянии. Ситуацию усугубляет то, что middleware МОЖЕТ модифицировать ответ перед передачей его для дальнейшей обработки.
 
-Further compounding the problem is that there is no way to ensure that the
-response body has not been written to, which can lead to incomplete output or
-error responses being sent with cache headers attached. It is also possible
-to end up with [corrupted body content][rob-allen-filtering] when writing over
-existing body content if the new content is shorter than the original. The most
-effective way to resolve these issues is to always provide a fresh stream when
-modifying the body of a message.
+Дополнительную сложность создаёт невозможность гарантировать, что в тело ответа ничего не было записано, что может привести к неполному выводу или к тому, что ответы об ошибках будут отправлены с прикреплёнными заголовками кэша. Также возможно [повреждение содержимого тела][rob-allen-filtering] при записи поверх существующего содержимого, если новое содержимое короче исходного. Наиболее эффективный способ решения этих проблем — всегда предоставлять новый поток при изменении тела сообщения.
 
 [rob-allen-filtering]: https://akrabat.com/filtering-the-psr-7-body-in-middleware/
 
-Some have argued that passing the response helps ensure dependency inversion.
-While it is true that it helps avoid depending on a specific implementation of
-HTTP messages, the problem can also be resolved by injecting factories into the
-middleware to create HTTP message objects, or by injecting empty message instances.
-With the creation of HTTP Factories in [PSR-17][psr17], a standard approach to
-handling dependency inversion is possible.
+Ряд специалистов утверждал, что передача ответа способствует инверсии зависимостей. Хотя это действительно помогает избежать зависимости от конкретной реализации HTTP-сообщений, данную проблему также можно решить путём внедрения фабрик в middleware для создания объектов HTTP-сообщений или путём внедрения пустых экземпляров сообщений. С появлением HTTP-фабрик в [PSR-17][psr17] стал возможен стандартный подход к решению задачи инверсии зависимостей.
 
 [psr17]: https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory-meta.md
 
-A more subjective, but also important, concern is that existing double-pass
-middleware typically uses the `callable` type hint to refer to middleware.
-This makes strict typing impossible, as there is no assurance that the `callable`
-being passed implements a middleware signature, which reduces runtime safety.
+Более субъективная, но также важная проблема состоит в том, что существующее middleware с подходом double pass, как правило, использует подсказку типа `callable` для ссылки на middleware. Это делает строгую типизацию невозможной, поскольку нет гарантии, что передаваемый `callable` реализует сигнатуру middleware, что снижает безопасность во время выполнения.
 
-**Due to these significant issues, the lambda approach has been chosen for this proposal.**
+**В связи с этими существенными проблемами для данного предложения был выбран подход lambda.**
 
-## 6. Design Decisions
+## 6. Проектные решения
 
-### 6.1 Request Handler Design
+### 6.1 Проектирование обработчика запросов
 
-The `RequestHandlerInterface` defines a single method that accepts a request and
-MUST return a response. The request handler MAY delegate to another handler.
+`RequestHandlerInterface` определяет единственный метод, принимающий запрос и ОБЯЗАННЫЙ возвращать ответ. Обработчик запросов МОЖЕТ делегировать обработку другому обработчику.
 
-#### Why is a server request required?
+#### Почему требуется серверный запрос?
 
-To make it clear that the request handler can only be used in a server side context.
-In an client side context, a [promise][promises] would likely be returned instead
-of a response.
+Чтобы явно указать, что обработчик запросов может использоваться только в серверном контексте. В клиентском контексте вместо ответа, скорее всего, возвращался бы [promise][promises].
 
 [promises]: https://promisesaplus.com/
 
-#### Why the term "handler"?
+#### Почему используется термин «handler» (обработчик)?
 
-The term "handler" means something designated to manage or control. In terms of
-request processing, a request handler is the point where the request must be
-acted upon to create a response.
+Термин «handler» означает нечто, предназначенное для управления или контроля. Применительно к обработке запросов обработчик запросов — это точка, в которой запрос должен быть обработан для формирования ответа.
 
-As opposed to the term "delegate", which was used in a previous version of this
-specification, the internal behavior of this interface is not specified.
-As long as the request handler ultimately produces a response, it is valid.
+В отличие от термина «delegate», который использовался в предыдущей версии данной спецификации, внутреннее поведение данного интерфейса не определяется. До тех пор пока обработчик запросов в конечном счёте формирует ответ, он является корректным.
 
-#### Why doesn't request handler use `__invoke`?
+#### Почему обработчик запросов не использует `__invoke`?
 
-Using `__invoke` is less transparent than using a named method. It also makes
-it easier to call the request handler when it is assigned to a class variable,
-without using `call_user_func` or other less common syntax.
+Использование `__invoke` менее прозрачно, чем применение именованного метода. Кроме того, именованный метод упрощает вызов обработчика запросов, когда он присвоен переменной класса, без использования `call_user_func` или другого менее распространённого синтаксиса.
 
-_See [PHP-FIG discussion of FrameInterface][] for
- additional information._
+_Дополнительную информацию см. в [обсуждении PHP-FIG по FrameInterface][]._
 
-### 6.2 Middleware Design
+### 6.2 Проектирование middleware
 
-The `MiddlewareInterface` defines a single method that accepts an HTTP request
-and a request handler and must return a response. The middleware may:
+`MiddlewareInterface` определяет единственный метод, принимающий HTTP-запрос и обработчик запросов и обязанный возвращать ответ. Middleware МОЖЕТ:
 
-- Evolve the request before passing it to the request handler.
-- Evolve the response received from the request handler before returning it.
-- Create and return a response without passing the request to the request handler,
-  thereby handling the request itself.
+- Преобразовывать запрос перед передачей его обработчику запросов.
+- Преобразовывать ответ, полученный от обработчика запросов, перед его возвратом.
+- Создавать и возвращать ответ без передачи запроса обработчику запросов, тем самым самостоятельно обрабатывая запрос.
 
-When delegating from one middleware to another in a sequence, one approach for
-dispatching systems is to use an intermediary request handler composing the
-middleware sequence as a way to link middleware together. The final or innermost
-middleware will act as a gateway to application code and generate a response
-from its results; alternately, the middleware MAY delegate this responsibility
-to a dedicated request handler.
+При делегировании от одного middleware к другому в цепочке один из подходов для систем диспетчеризации — использование промежуточного обработчика запросов, объединяющего цепочку middleware как способ связывания компонентов middleware. Последний или самый внутренний middleware будет выступать в роли шлюза к коду приложения и формировать ответ на основе его результатов; в качестве альтернативы middleware МОЖЕТ делегировать эту ответственность специализированному обработчику запросов.
 
-#### Why doesn't middleware use `__invoke`?
+#### Почему middleware не использует `__invoke`?
 
-Doing so would conflict with existing middleware that implements the double-pass
-approach and may want to implement the middleware interface for purposes of
-forward compatibility with this specification.
+Это создало бы конфликт с существующим middleware, реализующим подход double pass и желающим реализовать интерфейс middleware в целях прямой совместимости с данной спецификацией.
 
-#### Why the name `process()`?
+#### Почему метод называется `process()`?
 
-We reviewed a number of existing monolithic and middleware frameworks to
-determine what method(s) each defined for processing incoming requests. We found
-the following were commonly used:
+Мы рассмотрели ряд существующих монолитных фреймворков и фреймворков на основе middleware, чтобы определить, какой метод (или методы) каждый из них определяет для обработки входящих запросов. Мы обнаружили, что наиболее распространены следующие варианты:
 
-- `__invoke` (within middleware systems, such as Slim, Expressive, Relay, etc.)
-- `handle` (in particular, software derived from Symfony's [HttpKernel][HttpKernel])
-- `dispatch` (Zend Framework's [DispatchableInterface][DispatchableInterface])
+- `__invoke` (в системах middleware, таких как Slim, Expressive, Relay и др.)
+- `handle` (в частности, в программном обеспечении, производном от Symfony [HttpKernel][HttpKernel])
+- `dispatch` (Zend Framework [DispatchableInterface][DispatchableInterface])
 
 [HttpKernel]: https://symfony.com/doc/current/components/http_kernel.html
 [DispatchableInterface]: https://github.com/zendframework/zend-stdlib/blob/980ce463c29c1a66c33e0eb67961bba895d0e19e/src/DispatchableInterface.php
 
-We chose to allow a forward-compatible approach for such classes to repurpose
-themselves as middleware (or middleware compatible with this specification),
-and thus needed to choose a name not in common usage. As such, we chose
-`process`, to indicate _processing_ a request.
+Мы решили обеспечить прямую совместимость для таких классов, чтобы они могли перепрофилировать себя в middleware (или middleware, совместимое с данной спецификацией), и поэтому нам нужно было выбрать имя, не находящееся в общем употреблении. В результате мы выбрали `process`, указывая тем самым на _обработку_ запроса.
 
-#### Why is a server request required?
+#### Почему требуется серверный запрос?
 
-To make it clear that the middleware can only be used in a synchronous, server
-side context.
+Чтобы явно указать, что middleware может использоваться только в синхронном, серверном контексте.
 
-While not all middleware will need to use the additional methods defined by the
-server request interface, outbound requests are typically processed asynchronously
-and would typically return a [promise][promises] of a response. (This is primarily
-due to the fact that multiple requests can be made in parallel and processed as
-they are returned.) It is outside the scope of this proposal to address the needs
-of asynchronous request/response life cycles.
+Хотя не всем middleware потребуются дополнительные методы, определённые интерфейсом серверного запроса, исходящие запросы, как правило, обрабатываются асинхронно и обычно возвращают [promise][promises] ответа. (Это в первую очередь обусловлено тем, что несколько запросов могут выполняться параллельно и обрабатываться по мере поступления.) Решение задач асинхронного жизненного цикла запрос/ответ выходит за рамки данного предложения.
 
-Attempting to define client middleware would be premature at this point. Any future
-proposal that is focused on client side request processing should have the opportunity
-to define a standard that is specific to the nature of asynchronous middleware.
+Попытка определить клиентское middleware была бы на данном этапе преждевременной. Любое будущее предложение, ориентированное на обработку клиентских запросов, должно иметь возможность определить стандарт, специфичный для природы асинхронного middleware.
 
-_See [PHP-FIG discussion about client vs server side middleware][] for additional information._
+_Дополнительную информацию см. в [обсуждении PHP-FIG о middleware на стороне клиента и сервера][]._
 
-#### What is the role of the request handler?
+#### Какова роль обработчика запросов?
 
-Middleware has the following roles:
+Middleware выполняет следующие роли:
 
-- Producing a response on its own. If specific request conditions are met, the
-  middleware can produce and return a response.
+- Самостоятельное формирование ответа. Если выполнены определённые условия запроса, middleware МОЖЕТ сформировать и вернуть ответ.
 
-- Returning the result of the request handler. In cases where the middleware
-  cannot produce its own response, it can delegate to the request handler to
-  produce one; sometimes this may involve providing a transformed request (e.g.,
-  to inject a request attribute, or the results of parsing the request body).
+- Возврат результата обработчика запросов. В случаях, когда middleware не МОЖЕТ самостоятельно сформировать ответ, оно МОЖЕТ делегировать эту задачу обработчику запросов; иногда это МОЖЕТ предполагать предоставление преобразованного запроса (например, для внедрения атрибута запроса или результатов разбора тела запроса).
 
-- Manipulating and returning the response produced by the request handler. In
-  some cases, the middleware may be interested in manipulating the response
-  the request handler returns (e.g., to gzip the response body, to add CORS
-  headers, etc.). In such cases, the middleware will capture the response
-  returned by the request handler, and return a transformed response on
-  completion.
+- Манипуляция ответом, возвращённым обработчиком запросов, и его возврат. В некоторых случаях middleware МОЖЕТ быть заинтересовано в изменении ответа, возвращённого обработчиком запросов (например, для сжатия тела ответа в gzip, добавления заголовков CORS и т. д.). В таких случаях middleware перехватывает ответ, возвращённый обработчиком запросов, и возвращает преобразованный ответ по завершении.
 
-In these latter two cases, the middleware may have code such as the following:
+В двух последних случаях middleware МОЖЕТ содержать код, подобный следующему:
 
 ```php
 // Straight delegation:
@@ -355,74 +268,54 @@ return $handler->handle($request);
 $response = $handler->handle($request);
 ```
 
-How the handler acts is entirely up to the developer, so long as it produces a
-response.
+Поведение обработчика полностью определяется разработчиком — главное, чтобы в итоге формировался ответ.
 
-In one common scenario, the handler implements a _queue_ or a _stack_ of
-middleware instances internally. In such cases, calling
-`$handler->handle($request)` will advance the internal pointer, pull the
-middleware associated with that pointer, and call it using
-`$middleware->process($request, $this)`. If no more middleware exists, it will
-generally either raise an exception or return a canned response.
+В одном из типичных сценариев обработчик реализует _очередь_ или _стек_ экземпляров middleware внутри себя. В таких случаях вызов `$handler->handle($request)` продвигает внутренний указатель, извлекает middleware, связанное с этим указателем, и вызывает его с помощью `$middleware->process($request, $this)`. Если middleware больше не осталось, обработчик, как правило, либо выбрасывает исключение, либо возвращает заранее заготовленный ответ.
 
-Another possibility is for  _routing middleware_ that matches the incoming
-server request to a specific handler, and then returns the response generated by
-executing that handler. If unable to route to a handler, it would instead
-execute the handler provided to the middleware. (This sort of mechanism can even
-be used in conjunction with middleware queues and stacks.)
+Другая возможность — _routing middleware_ («маршрутизирующее middleware»), которое сопоставляет входящий серверный запрос с конкретным обработчиком и возвращает ответ, сформированный при его выполнении. Если сопоставить запрос с обработчиком не удаётся, вместо этого выполняется обработчик, переданный в middleware. (Данный механизм МОЖЕТ применяться даже совместно с очередями и стеками middleware.)
 
-### 6.3 Example Interface Interactions
+### 6.3 Примеры взаимодействия интерфейсов
 
-The two interfaces, `RequestHandlerInterface` and `MiddlewareInterface`, were
-designed to work in conjunction with one another. Middleware gains flexibility
-when de-coupled from any over-arching application layer, and instead only
-relying on the provided request handler to produce a response.
+Два интерфейса — `RequestHandlerInterface` и `MiddlewareInterface` — были спроектированы для совместной работы. Middleware приобретает гибкость, будучи отделённым от какого-либо объемлющего прикладного уровня и опираясь исключительно на предоставленный обработчик запросов для формирования ответа.
 
-Two approaches to middleware dispatch systems that the Working Group observed
-and/or implemented are demonstrated below. Additionally, examples of re-usable
-middleware are provided to demonstrate how to write middleware that is
-loosely-coupled.
+Ниже продемонстрированы два подхода к системам диспетчеризации middleware, которые рабочая группа наблюдала и/или реализовывала. Кроме того, приведены примеры переиспользуемого middleware, показывающие, как писать слабо связанный middleware.
 
-Please note that these are not suggested as definitive or exclusive approaches
-to defining middleware dispatch systems.
+Обратите внимание: данные подходы не претендуют на роль окончательных или исключительных способов определения систем диспетчеризации middleware.
 
-#### Queue-based request handler
+#### Обработчик запросов на основе очереди
 
-In this approach, a request handler maintains a queue of middleware, and a
-fallback response to return if the queue is exhausted without returning a
-response. When executing the first middleware, the queue passes itself as a
-request handler to the middleware.
+В данном подходе обработчик запросов поддерживает очередь middleware и резервный ответ на случай, если очередь исчерпана без формирования ответа. При выполнении первого middleware очередь передаёт себя в качестве обработчика запросов данному middleware.
 
 ```php
 class QueueRequestHandler implements RequestHandlerInterface
 {
     private $middleware = [];
     private $fallbackHandler;
-    
+
     public function __construct(RequestHandlerInterface $fallbackHandler)
     {
         $this->fallbackHandler = $fallbackHandler;
     }
-    
+
     public function add(MiddlewareInterface $middleware)
     {
         $this->middleware[] = $middleware;
     }
-    
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         // Last middleware in the queue has called on the request handler.
         if (0 === count($this->middleware)) {
             return $this->fallbackHandler->handle($request);
         }
-        
+
         $middleware = array_shift($this->middleware);
         return $middleware->process($request, $this);
     }
 }
 ```
 
-An application bootstrap might then look like this:
+Загрузка приложения в таком случае может выглядеть следующим образом:
 
 ```php
 // Fallback handler:
@@ -439,27 +332,18 @@ $app->add(new RoutingMiddleware());
 $response = $app->handle(ServerRequestFactory::fromGlobals());
 ```
 
-This system has two request handlers: one that will produce a response if the
-last middleware delegates to the request handler, and one for dispatching the
-middleware layers. (In this example, the `RoutingMiddleware` will likely execute
-composed handlers on a successful route match; see more on that below.)
+В данной системе присутствуют два обработчика запросов: один, формирующий ответ, если последнее middleware делегирует обработку обработчику запросов, и один — для диспетчеризации слоёв middleware. (В данном примере `RoutingMiddleware`, скорее всего, будет выполнять скомпонованные обработчики при успешном совпадении маршрута; подробнее об этом ниже.)
 
-This approach has the following benefits:
+Данный подход имеет следующие преимущества:
 
-- Middleware does not need to know anything about any other middleware or how it
-  is composed in the application.
-- The `QueueRequestHandler` is agnostic of the PSR-7 implementation in use.
-- Middleware is executed in the order it is added to the application, making the
-  code explicit.
-- Generation of the "fallback" response is delegated to the application
-  developer. This allows the developer to determine whether that should be a
-  "404 Not Found" condition, a default page, etc.
+- Middleware не обязано знать ни о каком другом middleware или о том, как оно скомпоновано в приложении.
+- `QueueRequestHandler` не зависит от конкретной реализации PSR-7.
+- Middleware выполняется в том порядке, в котором оно добавляется в приложение, что делает код явным.
+- Формирование «резервного» ответа делегируется разработчику приложения. Это позволяет разработчику самостоятельно определить, должно ли это быть условие «404 Not Found», страница по умолчанию или что-то иное.
 
-#### Decoration-based request handler
+#### Обработчик запросов на основе декорирования
 
-In this approach, a request handler implementation decorates both a middleware
-instance and a fallback request handler to pass to it. The application is built
-from the outside-in, passing each request handler "layer" to the next outer one.
+В данном подходе реализация обработчика запросов декорирует как экземпляр middleware, так и резервный обработчик запросов, передаваемый ему. Приложение строится снаружи внутрь, при этом каждый «слой» обработчика запросов передаётся следующему внешнему слою.
 
 ```php
 class DecoratingRequestHandler implements RequestHandlerInterface
@@ -502,42 +386,28 @@ $layer2 = new DecoratingRequestHandler(new AuthorizationMiddleware(), $layer1);
 $response = $layer2->handle(ServerRequestFactory::fromGlobals());
 ```
 
-Similar to the queue-based middleware, request handlers serve two purposes in
-this system:
+Аналогично middleware на основе очереди, обработчики запросов в данной системе выполняют две функции:
 
-- Producing a fallback response if no other layer does.
-- Dispatching middleware.
+- Формирование резервного ответа, если ни один другой слой этого не делает.
+- Диспетчеризация middleware.
 
-#### Reusable Middleware Examples
+#### Примеры переиспользуемого middleware
 
-In the examples above, we have two middleware composed in each. In order for
-these to work in either situation, we need to write them such that they interact
-appropriately.
+В приведённых выше примерах в каждом из них скомпоновано по два middleware. Чтобы они работали в обоих сценариях, необходимо написать их таким образом, чтобы они взаимодействовали корректно.
 
-Implementors of middleware striving for maximum interoperability may want to
-consider the following guidelines:
+Разработчикам middleware, стремящимся к максимальной совместимости, рекомендуется руководствоваться следующими принципами:
 
-- Test the request for a required condition. If it does not satisfy that
-  condition, use a composed prototype response or a composed response factory
-  to generate and return a response.
+- Проверять запрос на соответствие обязательному условию. Если условие не выполнено, использовать скомпонованный прототип ответа или скомпонованную фабрику ответов для формирования и возврата ответа.
 
-- If pre-conditions are met, delegate creation of the response to the provided
-  request handler, optionally providing a "new" request by manipulating the
-  provided request (e.g., `$handler->handle($request->withAttribute('foo',
-  'bar')`).
+- Если предварительные условия выполнены, делегировать создание ответа предоставленному обработчику запросов, при необходимости передавая «новый» запрос путём преобразования предоставленного (например, `$handler->handle($request->withAttribute('foo', 'bar')`).
 
-- Either pass the response returned by the request handler unaltered, or provide
-  a new response by manipulating the one returned (e.g., `return
-  $response->withHeader('X-Foo-Bar', 'baz')`).
+- Либо передавать ответ, возвращённый обработчиком запросов, без изменений, либо предоставлять новый ответ путём манипуляции возвращённым (например, `return $response->withHeader('X-Foo-Bar', 'baz')`).
 
-The `AuthorizationMiddleware` is one that will exercise all three of these guidelines:
+`AuthorizationMiddleware` — это пример, задействующий все три принципа:
 
-- If authorization is required, but the request is not authorized, it will use a
-  composed prototype response to produce an "unauthorized" response.
-- If authorization is not required, it will delegate the request to the handler
-  without changes.
-- If authorization is required and the request is authorized, it will delegate
-  the request to the handler, and sign the response returned based on the request.
+- Если авторизация требуется, но запрос не авторизован, используется скомпонованный прототип ответа для формирования ответа «unauthorized» («не авторизован»).
+- Если авторизация не требуется, запрос делегируется обработчику без изменений.
+- Если авторизация требуется и запрос авторизован, запрос делегируется обработчику, а возвращённый ответ подписывается на основе запроса.
 
 ```php
 class AuthorizationMiddleware implements MiddlewareInterface
@@ -565,16 +435,9 @@ class AuthorizationMiddleware implements MiddlewareInterface
 }
 ```
 
-Note that the middleware is not concerned with how the request handler is
-implemented; it merely uses it to produce a response when pre-conditions have
-been met.
+Обратите внимание: middleware не интересует реализация обработчика запросов — оно лишь использует его для формирования ответа при выполнении предварительных условий.
 
-The `RoutingMiddleware` implementation described below follows a similar
-process: it analyzes the request to see if it matches known routes. In this
-particular implementation, routes map to request handlers, and the middleware
-essentially delegates to them in order to produce a response. However, in the
-case that no route is matched, it will execute the handler passed to it to
-produce the response to return.
+Реализация `RoutingMiddleware`, описанная ниже, следует аналогичному принципу: она анализирует запрос на предмет соответствия известным маршрутам. В данной реализации маршруты сопоставляются с обработчиками запросов, и middleware по существу делегирует им задачу формирования ответа. Однако в случае, когда ни один маршрут не совпадает, выполняется обработчик, переданный в middleware.
 
 ```php
 class RoutingMiddleware implements MiddlewareInterface
@@ -599,40 +462,40 @@ class RoutingMiddleware implements MiddlewareInterface
 }
 ```
 
-## 7. People
+## 7. Участники
 
-This PSR was produced by a FIG Working Group with the following members:
+Данный PSR был подготовлен рабочей группой FIG в следующем составе:
 
-* Matthew Weier O'Phinney (sponsor), <mweierophinney@gmail.com>
-* Woody Gilk (editor), <woody.gilk@gmail.com>
+* Matthew Weier O'Phinney (спонсор), <mweierophinney@gmail.com>
+* Woody Gilk (редактор), <woody.gilk@gmail.com>
 * Glenn Eggleton
 * Matthieu Napoli
 * Oscar Otero
 * Korvin Szanto
 * Stefano Torresi
 
-The working group would also like to acknowledge the contributions of:
+Рабочая группа также выражает признательность за вклад следующим участникам:
 
 * Jason Coward, <jason@opengeek.com>
 * Paul M. Jones, <pmjones88@gmail.com>
 * Rasmus Schultz, <rasmus@mindplay.dk>
 
-## 8. Votes
+## 8. Голосования
 
-* [Working Group Formation](https://groups.google.com/d/msg/php-fig/rPFRTa0NODU/tIU9BZciAgAJ)
-* [Review Period Initiation](https://groups.google.com/d/msg/php-fig/mfTrFinTvEM/PiYvU2S6BAAJ)
-* [Acceptance](https://groups.google.com/d/msg/php-fig/bhQmHt39hJE/ZCYrK_O2AQAJ)
+* [Формирование рабочей группы](https://groups.google.com/d/msg/php-fig/rPFRTa0NODU/tIU9BZciAgAJ)
+* [Начало периода рецензирования](https://groups.google.com/d/msg/php-fig/mfTrFinTvEM/PiYvU2S6BAAJ)
+* [Принятие](https://groups.google.com/d/msg/php-fig/bhQmHt39hJE/ZCYrK_O2AQAJ)
 
-## 9. Relevant Links
+## 9. Полезные ссылки
 
-_**Note:** Order descending chronologically._
+_**Примечание:** порядок — от новых к старым._
 
-* [PHP-FIG mailing list thread][]
-* [The PHP League middleware proposal][]
-* [PHP-FIG discussion of FrameInterface][]
-* [PHP-FIG discussion about client vs server side middleware][]
+* [Тема в списке рассылки PHP-FIG][PHP-FIG mailing list thread]
+* [Предложение по middleware от The PHP League][The PHP League middleware proposal]
+* [Обсуждение PHP-FIG по FrameInterface][PHP-FIG discussion of FrameInterface]
+* [Обсуждение PHP-FIG о middleware на стороне клиента и сервера][PHP-FIG discussion about client vs server side middleware]
 
-## 10. Errata
+## 10. Замечания и исправления
 
 ...
 

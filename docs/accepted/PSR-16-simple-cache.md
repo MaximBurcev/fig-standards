@@ -1,136 +1,129 @@
-Common Interface for Caching Libraries
-======================================
+Общий интерфейс для библиотек кэширования
+==========================================
 
 
-This document describes a simple yet extensible interface for a cache item and
-a cache driver.
+Этот документ описывает простой, но расширяемый интерфейс для элемента кэша и
+драйвера кэша.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][].
+Ключевые слова «ОБЯЗАН» («MUST»), «НЕ ДОЛЖЕН» («MUST NOT»), «ТРЕБУЕТСЯ» («REQUIRED»), «ДОЛЖЕН» («SHALL»), «НЕ ДОЛЖЕН» («SHALL NOT»), «СЛЕДУЕТ» («SHOULD»),
+«НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»), «МОЖЕТ» («MAY») и «ОПЦИОНАЛЬНО» («OPTIONAL») в данном документе
+следует интерпретировать в соответствии с [RFC 2119][].
 
-The final implementations MAY decorate the objects with more
-functionality than the one proposed but they MUST implement the indicated
-interfaces/functionality first.
+Финальные реализации МОГУТ расширять объекты дополнительной
+функциональностью сверх предложенной, но ОБЯЗАНЫ в первую очередь реализовывать указанные
+интерфейсы/функциональность.
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-# 1. Specification
+# 1. Спецификация
 
-## 1.1 Introduction
+## 1.1 Введение
 
-Caching is a common way to improve the performance of any project, making
-caching libraries one of the most common features of many frameworks and
-libraries. Interoperability at this level means libraries can drop their
-own caching implementations and easily rely on the one given to them by the
-framework, or another dedicated cache library.
+Кэширование — распространённый способ повышения производительности любого проекта,
+что делает библиотеки кэширования одним из наиболее востребованных компонентов многих фреймворков и
+библиотек. Совместимость на этом уровне означает, что библиотеки могут отказаться от
+собственных реализаций кэширования и без труда опираться на ту, что предоставляется
+фреймворком или другой специализированной библиотекой кэша.
 
-PSR-6 solves this problem already, but in a rather formal and verbose way for
-what the most simple use cases need. This simpler approach aims to build a
-standardized streamlined interface for common cases. It is independent of
-PSR-6 but has been designed to make compatibility with PSR-6 as straightforward
-as possible.
+PSR-6 уже решает эту задачу, однако делает это достаточно формально и многословно
+применительно к самым простым случаям использования. Данный более простой подход направлен на построение
+стандартизированного упрощённого интерфейса для типовых ситуаций. Он независим от
+PSR-6, но спроектирован так, чтобы обеспечить максимально простую совместимость с PSR-6.
 
-## 1.2 Definitions
+## 1.2 Определения
 
-Definitions for Calling Library, Implementing Library, TTL, Expiration and Key
-are copied from PSR-6 as the same assumptions are true.
+Определения понятий «Вызывающая библиотека», «Реализующая библиотека», TTL, «Срок истечения» и «Ключ»
+скопированы из PSR-6, поскольку те же допущения остаются в силе.
 
-*    **Calling Library** - The library or code that actually needs the cache
-services. This library will utilize caching services that implement this
-standard's interfaces, but will otherwise have no knowledge of the
-implementation of those caching services.
+*    **Вызывающая библиотека** (Calling Library) — библиотека или код, которым фактически нужны
+услуги кэша. Эта библиотека будет использовать сервисы кэширования, реализующие интерфейсы
+данного стандарта, но не будет знать ничего о конкретной реализации этих сервисов кэширования.
 
-*    **Implementing Library** - This library is responsible for implementing
-this standard in order to provide caching services to any Calling Library. The
-Implementing Library MUST provide a class implementing the Psr\SimpleCache\CacheInterface interface.
-Implementing Libraries MUST support at minimum TTL functionality as described
-below with whole-second granularity.
+*    **Реализующая библиотека** (Implementing Library) — эта библиотека отвечает за реализацию
+данного стандарта с целью предоставления сервисов кэширования любой Вызывающей библиотеке.
+Реализующая библиотека ОБЯЗАНА предоставлять класс, реализующий интерфейс `Psr\SimpleCache\CacheInterface`.
+Реализующие библиотеки ОБЯЗАНЫ поддерживать как минимум функциональность TTL, описанную
+ниже, с гранулярностью до целых секунд.
 
-*    **TTL** - The Time To Live (TTL) of an item is the amount of time between
-when that item is stored and it is considered stale. The TTL is normally defined
-by an integer representing time in seconds, or a DateInterval object.
+*    **TTL** — Время жизни (Time To Live, TTL) элемента — это промежуток времени между
+моментом сохранения элемента и моментом, когда он считается устаревшим. TTL обычно задаётся
+целым числом, представляющим время в секундах, или объектом DateInterval.
 
-* **Expiration** - The actual time when an item is set to go stale. This is
-  calculated by adding the TTL to the time when an object is stored.
+* **Срок истечения** (Expiration) — фактический момент времени, когда элемент становится устаревшим. Он
+  вычисляется прибавлением TTL к времени сохранения объекта.
 
-  An item with a 300 second TTL stored at 1:30:00 will have an expiration of 1:35:00.
+  Элемент с TTL 300 секунд, сохранённый в 1:30:00, имеет срок истечения 1:35:00.
 
-  Implementing Libraries MAY expire an item before its requested Expiration Time,
-  but MUST treat an item as expired once its Expiration Time is reached. If a calling
-  library asks for an item to be saved but does not specify an expiration time, or
-  specifies a null expiration time or TTL, an Implementing Library MAY use a configured
-  default duration. If no default duration has been set, the Implementing Library
-  MUST interpret that as a request to cache the item forever, or for as long as the
-  underlying implementation supports.
+  Реализующие библиотеки МОГУТ инвалидировать элемент раньше запрошенного срока истечения,
+  но ОБЯЗАНЫ считать элемент истёкшим, как только наступит его срок истечения. Если вызывающая
+  библиотека запрашивает сохранение элемента без указания срока истечения или с указанием нулевого
+  срока истечения или TTL, Реализующая библиотека МОЖЕТ использовать настроенную
+  продолжительность по умолчанию. Если продолжительность по умолчанию не задана, Реализующая библиотека
+  ОБЯЗАНА интерпретировать это как запрос на хранение элемента в кэше бессрочно или столько,
+  сколько позволяет базовая реализация.
 
-  If a negative or zero TTL is provided, the item MUST be deleted from the cache
-  if it exists, as it is expired already.
+  Если передан отрицательный или нулевой TTL, элемент ОБЯЗАН быть удалён из кэша
+  при его наличии, поскольку он уже является истёкшим.
 
-*    **Key** - A string of at least one character that uniquely identifies a
-cached item. Implementing libraries MUST support keys consisting of the
-characters `A-Z`, `a-z`, `0-9`, `_`, and `.` in any order in UTF-8 encoding and a
-length of up to 64 characters. Implementing libraries MAY support additional
-characters and encodings or longer lengths, but MUST support at least that
-minimum. Libraries are responsible for their own escaping of key strings
-as appropriate, but MUST be able to return the original unmodified key string.
-The following characters are reserved for future extensions and MUST NOT be
-supported by implementing libraries: `{}()/\@:`
+*    **Ключ** (Key) — строка длиной не менее одного символа, однозначно идентифицирующая
+элемент кэша. Реализующие библиотеки ОБЯЗАНЫ поддерживать ключи, состоящие из символов
+`A-Z`, `a-z`, `0-9`, `_` и `.` в любом порядке в кодировке UTF-8, длиной до 64 символов.
+Реализующие библиотеки МОГУТ поддерживать дополнительные символы, кодировки или бо́льшую длину,
+но ОБЯЗАНЫ поддерживать как минимум указанный минимум. Библиотеки сами отвечают за экранирование
+строк ключей в случае необходимости, однако ОБЯЗАНЫ возвращать оригинальную неизменённую строку ключа.
+Следующие символы зарезервированы для будущих расширений и НЕ ДОЛЖНЫ поддерживаться
+реализующими библиотеками: `{}()/\@:`
 
-*    **Cache** - An object that implements the `Psr\SimpleCache\CacheInterface` interface.
+*    **Кэш** (Cache) — объект, реализующий интерфейс `Psr\SimpleCache\CacheInterface`.
 
-*    **Cache Misses** - A cache miss will return null and therefore detecting
-if one stored `null` is not possible. This is the main deviation from PSR-6's
-assumptions.
+*    **Промах кэша** (Cache Misses) — промах кэша возвращает null, поэтому обнаружить факт
+хранения значения `null` невозможно. Это главное отличие от допущений PSR-6.
 
-## 1.3 Cache
+## 1.3 Кэш
 
-Implementations MAY provide a mechanism for a user to specify a default TTL
-if one is not specified for a specific cache item. If no user-specified default
-is provided implementations MUST default to the maximum legal value allowed by
-the underlying implementation. If the underlying implementation does not
-support TTL, the user-specified TTL MUST be silently ignored.
+Реализации МОГУТ предоставлять механизм задания пользователем TTL по умолчанию,
+если он не указан для конкретного элемента кэша. Если пользователь не задал значение по умолчанию,
+реализации ОБЯЗАНЫ использовать максимально допустимое значение, разрешённое базовой реализацией.
+Если базовая реализация не поддерживает TTL, указанный пользователем TTL ОБЯЗАН молча игнорироваться.
 
-## 1.4 Data
+## 1.4 Данные
 
-Implementing libraries MUST support all serializable PHP data types, including:
+Реализующие библиотеки ОБЯЗАНЫ поддерживать все сериализуемые типы данных PHP, в том числе:
 
-*    **Strings** - Character strings of arbitrary size in any PHP-compatible encoding.
-*    **Integers** - All integers of any size supported by PHP, up to 64-bit signed.
-*    **Floats** - All signed floating point values.
-*    **Booleans** - True and False.
-*    **Null** - The null value (although it will not be distinguishable from a
-cache miss when reading it back out).
-*    **Arrays** - Indexed, associative and multidimensional arrays of arbitrary depth.
-*    **Objects** - Any object that supports lossless serialization and
-deserialization such that $o == unserialize(serialize($o)). Objects MAY
-leverage PHP's Serializable interface, `__sleep()` or `__wakeup()` magic methods,
-or similar language functionality if appropriate.
+*    **Строки** (Strings) — символьные строки произвольного размера в любой PHP-совместимой кодировке.
+*    **Целые числа** (Integers) — целые числа любого размера, поддерживаемого PHP, вплоть до 64-битных знаковых.
+*    **Числа с плавающей точкой** (Floats) — все знаковые значения с плавающей точкой.
+*    **Булевы значения** (Booleans) — True и False.
+*    **Null** — значение null (хотя при чтении его невозможно будет отличить от
+промаха кэша).
+*    **Массивы** (Arrays) — индексированные, ассоциативные и многомерные массивы произвольной глубины.
+*    **Объекты** (Objects) — любой объект, поддерживающий сериализацию и десериализацию без потерь,
+то есть такой, что `$o == unserialize(serialize($o))`. Объекты МОГУТ использовать
+интерфейс `Serializable` PHP, магические методы `__sleep()` или `__wakeup()`
+либо аналогичную языковую функциональность, если это уместно.
 
-All data passed into the Implementing Library MUST be returned exactly as
-passed. That includes the variable type. That is, it is an error to return
-(string) 5 if (int) 5 was the value saved. Implementing Libraries MAY use PHP's
-serialize()/unserialize() functions internally but are not required to do so.
-Compatibility with them is simply used as a baseline for acceptable object values.
+Все данные, переданные в Реализующую библиотеку, ОБЯЗАНЫ возвращаться в точно таком же виде,
+включая тип переменной. То есть возвращать `(string) 5` при сохранённом значении `(int) 5` является ошибкой.
+Реализующие библиотеки МОГУТ внутренне использовать функции PHP `serialize()`/`unserialize()`,
+но не обязаны этого делать. Совместимость с ними используется лишь как базовый критерий приемлемых значений объектов.
 
-If it is not possible to return the exact saved value for any reason, implementing
-libraries MUST respond with a cache miss rather than corrupted data.
+Если по какой-либо причине невозможно вернуть точно сохранённое значение,
+реализующие библиотеки ОБЯЗАНЫ вернуть промах кэша, а не повреждённые данные.
 
-# 2. Interfaces
+# 2. Интерфейсы
 
 ## 2.1 CacheInterface
 
-The cache interface defines the most basic operations on a collection of cache-entries, which
-entails basic reading, writing and deleting individual cache items.
+Интерфейс кэша определяет наиболее базовые операции над набором записей кэша, включающие
+базовое чтение, запись и удаление отдельных элементов кэша.
 
-In addition, it has methods for dealing with multiple sets of cache entries such as writing, reading or
-deleting multiple cache entries at a time. This is useful when you have lots of cache reads/writes
-to perform, and lets you perform your operations in a single call to the cache server cutting down latency
-times dramatically.
+Кроме того, он содержит методы для работы с множеством записей кэша одновременно — запись, чтение и
+удаление нескольких элементов за один вызов. Это удобно при большом количестве операций чтения/записи кэша
+и позволяет выполнять их за один вызов к серверу кэша, существенно сокращая задержку.
 
-An instance of CacheInterface corresponds to a single collection of cache items with a single key namespace,
-and is equivalent to a "Pool" in PSR-6. Different CacheInterface instances MAY be backed by the same
-datastore, but MUST be logically independent.
+Экземпляр CacheInterface соответствует единственному набору элементов кэша с единым пространством имён ключей
+и является эквивалентом «Pool» в PSR-6. Разные экземпляры CacheInterface МОГУТ использовать одно и то же
+хранилище данных, но ОБЯЗАНЫ быть логически независимы.
 
 ~~~php
 <?php

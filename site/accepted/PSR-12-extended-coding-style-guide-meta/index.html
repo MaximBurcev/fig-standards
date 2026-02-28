@@ -6,8 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="This document describes the process and discussions that led to the Extended Coding
-Style PSR. Its goal is to explain the reasons behind each decision.">
+        <meta name="description" content="Этот документ описывает процесс и обсуждения, которые привели к созданию PSR расширенного стиля кодирования. Его цель — объяснить причины, лежащие в основе каждого решения.">
       
       
       
@@ -15,20 +14,27 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>PSR 12 extended coding style guide meta - Рекомендации по стандартам PHP: PSR</title>
+        <title>Мета-документ расширенного руководства по стилю кодирования - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -42,11 +48,10 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -55,16 +60,13 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#extended-coding-style-guide-meta-document" class="md-skip">
+        <a href="#-" class="md-skip">
           Skip to content
         </a>
       
@@ -83,11 +85,12 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -99,7 +102,7 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR 12 extended coding style guide meta
+              Мета-документ расширенного руководства по стилю кодирования
             
           </span>
         </div>
@@ -107,29 +110,38 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -140,6 +152,7 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -164,12 +177,13 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -179,14 +193,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -194,14 +220,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -209,14 +247,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -224,14 +274,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -239,14 +301,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -254,14 +328,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -269,14 +355,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -284,14 +382,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -299,14 +409,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -314,14 +436,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -329,14 +463,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -344,14 +490,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -359,14 +517,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -374,14 +544,26 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -415,98 +597,72 @@ Style PSR. Its goal is to explain the reasons behind each decision.">
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="extended-coding-style-guide-meta-document">Extended Coding Style Guide Meta Document</h1>
-<h1 id="1-summary">1. Summary</h1>
-<p>This document describes the process and discussions that led to the Extended Coding
-Style PSR. Its goal is to explain the reasons behind each decision.</p>
-<h1 id="2-why-bother">2. Why Bother?</h1>
-<p>PSR-2 was accepted in 2012 and since then a number of changes have been made to PHP,
-most notably recent changes for PHP 7, which have implications for coding style
-guidelines. Whilst PSR-2 is very comprehensive of PHP functionality that existed at
-the time of writing, new functionality is very open to interpretation. PSR-12 seeks
-to provide a set way that both coding style tools can implement, projects can declare
-adherence to and developers can easily relate on between different projects for these
-coding style reducing cognitive friction.</p>
-<p>PSR-2 was created based upon the common practices of the PHP-FIG projects at the time
-but ultimately this meant it was a compromise of many of the different projects' guidelines.
-The repercussions of projects changing their coding guidelines to align with PSR-2 (Almost
-all projects do align with PSR-1, even if it is not explicitly stated) were seen to be too
-great (losing git history, huge changesets and breaking existing patches/pull requests).</p>
-<p>PSR-2 required adopters to reformat large amounts of existing code which stifled adoption.
-To help alleviate this issue with PSR-12, we have taken a more prescriptive approach and
-defined the standards for new language features as they are released.</p>
-<p>However it is for a lack of wanting to be dictatorial that we will aim to apply PSR-2
-styling, rationale and stances (Described in Section 4, Approaches) in PSR-12 instead of
-establishing new conventions.</p>
-<h1 id="3-scope">3. Scope</h1>
-<h2 id="31-goals">3.1. Goals</h2>
-<p>This PSR shares the same goals as PSR-2.</p>
+
+<h1 id="-">Мета-документ расширенного руководства по стилю кодирования</h1>
+<h1 id="1">1. Краткое описание</h1>
+<p>Этот документ описывает процесс и обсуждения, которые привели к созданию PSR расширенного стиля кодирования. Его цель — объяснить причины, лежащие в основе каждого решения.</p>
+<h1 id="2">2. Зачем это нужно?</h1>
+<p>PSR-2 был принят в 2012 году, и с тех пор в PHP был внесён ряд изменений, в первую очередь недавние изменения для PHP 7, которые влекут за собой последствия для руководящих принципов стиля кодирования. Хотя PSR-2 весьма исчерпывающе охватывает функциональность PHP, существовавшую на момент написания, новая функциональность очень открыта для интерпретации. PSR-12 призван предоставить единый подход, который могут реализовать инструменты стиля кодирования, проекты могут декларировать соответствие ему, а разработчики могут легко ориентироваться между различными проектами, снижая когнитивную нагрузку.</p>
+<p>PSR-2 был создан на основе общих практик проектов PHP-FIG того времени, но в итоге это означало компромисс из руководящих принципов многих различных проектов. Последствия изменения проектами своих руководящих принципов для приведения их в соответствие с PSR-2 (почти все проекты соответствуют PSR-1, даже если это явно не заявлено) были признаны слишком значительными (потеря истории git, огромные наборы изменений и нарушение существующих патчей/запросов на слияние).</p>
+<p>PSR-2 требовал от последователей переформатирования больших объёмов существующего кода, что сдерживало его принятие. Чтобы помочь решить эту проблему в PSR-12, мы применили более директивный подход и определили стандарты для новых языковых возможностей по мере их появления.</p>
+<p>Тем не менее, не желая быть диктаторскими, мы будем стремиться применять стилистику, обоснование и позиции PSR-2 (описанные в Разделе 4, Подходы) в PSR-12 вместо введения новых соглашений.</p>
+<h1 id="3">3. Область применения</h1>
+<h2 id="31">3.1. Цели</h2>
+<p>Данный PSR разделяет те же цели, что и PSR-2.</p>
 <blockquote>
-<p>The intent of this guide is to reduce cognitive friction when scanning code from
-different authors. It does so by enumerating a shared set of rules and expectations
-about how to format PHP code.
-When various authors collaborate across multiple projects, it helps to have one set
-of guidelines to be used among all those projects. Thus, the benefit of this guide is
-not in the rules themselves, but in the sharing of those rules.</p>
+<p>Цель данного руководства — снизить когнитивную нагрузку при изучении кода от
+разных авторов. Это достигается путём перечисления общего набора правил и ожиданий
+относительно форматирования PHP-кода.
+Когда различные авторы сотрудничают в рамках нескольких проектов, полезно иметь единый набор
+руководящих принципов, применяемых во всех этих проектах. Таким образом, преимущество данного
+руководства заключается не в самих правилах, а в их совместном использовании.</p>
 </blockquote>
-<p>This PSR is an extension of PSR-2, and therefore also an extension of PSR-1. The basis of
-PSR-12 is PSR-2 and therefore a list of differences is provided below to assist with migration
-but it should be considered as an independent specification.</p>
-<p>This PSR will include coding style guidelines related to new functionality added to PHP
-after the publication of PSR-2; this includes PHP 5.5, PHP 5.6 and PHP 7.0. This PSR will
-also include clarifications on the text of PSR-2, as described in the PSR-2 Errata.</p>
-<h2 id="32-non-goals">3.2. Non-Goals</h2>
-<p>It is not the intention of this PSR to add entirely new coding style guidelines. PSR-12 will
-also not change anything stipulated in PSR-1 and PSR-2.</p>
-<h1 id="4-approaches">4. Approaches</h1>
-<p>The overarching approach is to attempt to apply existing PSR-2 styling and rationale to
-new functionality as opposed to establishing new conventions.</p>
-<h2 id="41-strict-types-declarations">4.1. Strict Types Declarations</h2>
-<p>There was a discussion about whether or not strict types should be enforced in the standard
-https://github.com/cs-extended/fig-standards/issues/7. All were in agreement we should only
-use a MUST or MUST NOT statement and avoid the use of a SHOULD statement and nobody wanted
-to say that strict types could not be declared. The discussion was whether it should be
-considered a coding style item which should be covered or whether it was out of scope and it
-was decided to be out of scope of a coding style guide.</p>
-<h2 id="42-finally-and-return-types-declaration-spacing">4.2. Finally and Return Types Declaration Spacing</h2>
-<p>Numerous different options were suggested and they can be seen
-<a href="https://gist.github.com/michaelcullum/c025f3870c9ea1dd2668#file-returntypesspacing-php">here for return type declarations</a> or
-<a href="https://gist.github.com/michaelcullum/c025f3870c9ea1dd2668#file-finallyblocks-php">here for finally blocks</a>
-and the current implementation was chosen due to consistency with other parts of the PSR-12
-specification that came from PSR-2.</p>
-<h2 id="43-enforcing-short-form-for-all-type-keywords">4.3. Enforcing short form for all type keywords</h2>
-<p>PHP 7.0 introduced <a href="http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration">scalar types declaration</a>
-which does not support long type aliases. Therefore it makes sense to enforce primary short type forms to be used to
-have uniform syntax and prevent possible confusion.</p>
-<h2 id="44-public-survey">4.4. Public Survey</h2>
-<p>In order to settle things using data, survey was conducted and responses from 142 people
-including 17 project representatives were gathered:</p>
-<h3 id="441-php-fig-representative-results">4.4.1. PHP-FIG Representative Results</h3>
+<p>Данный PSR является расширением PSR-2 и, следовательно, также расширением PSR-1. Основой PSR-12 является PSR-2, поэтому ниже приведён список различий для помощи при миграции, однако его следует рассматривать как самостоятельную спецификацию.</p>
+<p>Данный PSR будет включать руководящие принципы стиля кодирования, связанные с новой функциональностью, добавленной в PHP после публикации PSR-2; это включает PHP 5.5, PHP 5.6 и PHP 7.0. Данный PSR также будет включать разъяснения текста PSR-2, описанные в Errata PSR-2.</p>
+<h2 id="32">3.2. Не входит в область применения</h2>
+<p>Данный PSR не предназначен для введения полностью новых руководящих принципов стиля кодирования. PSR-12 также не изменяет ничего, предписанного в PSR-1 и PSR-2.</p>
+<h1 id="4">4. Подходы</h1>
+<p>Общий подход заключается в попытке применить существующую стилистику и обоснование PSR-2 к новой функциональности, а не вводить новые соглашения.</p>
+<h2 id="41">4.1. Объявление строгих типов</h2>
+<p>Состоялось обсуждение того, следует ли требовать строгие типы в стандарте:
+https://github.com/cs-extended/fig-standards/issues/7. Все согласились, что следует использовать только формулировки ОБЯЗАН или НЕ ДОЛЖЕН, избегая формулировки СЛЕДУЕТ, и никто не хотел запрещать объявление строгих типов. Обсуждалось, следует ли считать это элементом стиля кодирования, который должен быть охвачен, или это выходит за рамки, и было решено, что это выходит за рамки руководства по стилю кодирования.</p>
+<h2 id="42-finally">4.2. Интервалы объявления finally и типов возвращаемых значений</h2>
+<p>Были предложены многочисленные различные варианты, которые можно увидеть
+<a href="https://gist.github.com/michaelcullum/c025f3870c9ea1dd2668#file-returntypesspacing-php">здесь для объявлений типов возвращаемых значений</a> или
+<a href="https://gist.github.com/michaelcullum/c025f3870c9ea1dd2668#file-finallyblocks-php">здесь для блоков finally</a>,
+и текущая реализация была выбрана из-за согласованности с другими частями спецификации PSR-12, взятыми из PSR-2.</p>
+<h2 id="43">4.3. Принудительное использование краткой формы для всех ключевых слов типов</h2>
+<p>PHP 7.0 ввёл <a href="http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration">объявление скалярных типов</a>,
+которое не поддерживает длинные псевдонимы типов. Поэтому имеет смысл принудительно использовать основные краткие формы типов для единообразного синтаксиса и предотвращения возможной путаницы.</p>
+<h2 id="44">4.4. Публичный опрос</h2>
+<p>В целях принятия решений на основе данных был проведён опрос, в котором были собраны ответы от 142 человек, включая 17 представителей проектов:</p>
+<h3 id="441-php-fig">4.4.1. Результаты представителей PHP-FIG</h3>
 <table>
 <thead>
 <tr>
-<th>Representative</th>
-<th>Project</th>
-<th>Compound namespaces with a depth of two or more MUST not be used</th>
-<th>Header statement grouping and ordering</th>
-<th>Declare statements must each be on their own line</th>
-<th>Declare statements in PHP files containing markup</th>
-<th>Declare statements have no spaces: <code>declare(strict_types=1);</code></th>
-<th>Block declare statement formatting</th>
-<th><code>new</code> keyword usage, parenthesis required</th>
-<th>Return type declaration formatting</th>
-<th>Use statement leading slashes disallowed</th>
-<th>Block namespace declaration formatting</th>
-<th>General operator spacing</th>
-<th>Try, Catch, Finally formatting</th>
-<th>Anonymous class declaration formatting</th>
-<th>Keyword casing, only lower case</th>
-<th>Type keywords, short form only</th>
+<th>Представитель</th>
+<th>Проект</th>
+<th>Составные пространства имён с глубиной два и более НЕ ДОЛЖНЫ использоваться</th>
+<th>Группировка и порядок заголовочных операторов</th>
+<th>Операторы declare должны быть каждый на отдельной строке</th>
+<th>Операторы declare в PHP-файлах с разметкой</th>
+<th>Операторы declare без пробелов: <code>declare(strict_types=1);</code></th>
+<th>Форматирование блочного оператора declare</th>
+<th>Использование ключевого слова <code>new</code>, скобки обязательны</th>
+<th>Форматирование объявления типа возвращаемого значения</th>
+<th>Ведущие слеши в операторах use запрещены</th>
+<th>Форматирование блочного объявления пространства имён</th>
+<th>Общие пробелы вокруг операторов</th>
+<th>Форматирование try, catch, finally</th>
+<th>Форматирование анонимного класса</th>
+<th>Регистр ключевых слов, только нижний</th>
+<th>Ключевые слова типов, только краткая форма</th>
 </tr>
 </thead>
 <tbody>
@@ -816,7 +972,7 @@ including 17 project representatives were gathered:</p>
 </tr>
 <tr>
 <td></td>
-<td><strong>Totals</strong>:</td>
+<td><strong>Итого</strong>:</td>
 <td>13/3</td>
 <td>15/1</td>
 <td>15/1</td>
@@ -835,183 +991,186 @@ including 17 project representatives were gathered:</p>
 </tr>
 </tbody>
 </table>
-<h3 id="442-general-non-representative-voters">4.4.2. General non-representative voters</h3>
+<h3 id="442">4.4.2. Общие голосующие (не представители)</h3>
 <table>
 <thead>
 <tr>
-<th>Question</th>
-<th>For</th>
-<th>Against</th>
-<th>Percentage For</th>
+<th>Вопрос</th>
+<th>За</th>
+<th>Против</th>
+<th>Процент за</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Compound namespaces required depth</td>
+<td>Требуемая глубина составных пространств имён</td>
 <td>114</td>
 <td>12</td>
 <td>89.47%</td>
 </tr>
 <tr>
-<td>Header statement grouping and ordering</td>
+<td>Группировка и порядок заголовочных операторов</td>
 <td>113</td>
 <td>13</td>
 <td>88.5%</td>
 </tr>
 <tr>
-<td>Declare statements must each be on their own line</td>
+<td>Операторы declare должны быть каждый на отдельной строке</td>
 <td>120</td>
 <td>6</td>
 <td>95%</td>
 </tr>
 <tr>
-<td>Declare statements in PHP files containing markup</td>
+<td>Операторы declare в PHP-файлах с разметкой</td>
 <td>119</td>
 <td>7</td>
 <td>94.12%</td>
 </tr>
 <tr>
-<td>Declare statements have no spaces</td>
+<td>Операторы declare без пробелов</td>
 <td>116</td>
 <td>10</td>
 <td>91.38%</td>
 </tr>
 <tr>
-<td>Block declare statement formatting</td>
+<td>Форматирование блочного оператора declare</td>
 <td>118</td>
 <td>8</td>
 <td>93.22%</td>
 </tr>
 <tr>
-<td><code>new</code> keyword usage, parenthesis required</td>
+<td>Использование ключевого слова <code>new</code>, скобки обязательны</td>
 <td>116</td>
 <td>10</td>
 <td>91.38%</td>
 </tr>
 <tr>
-<td>Return type declaration formatting</td>
+<td>Форматирование объявления типа возвращаемого значения</td>
 <td>115</td>
 <td>11</td>
 <td>90.43%</td>
 </tr>
 <tr>
-<td>Use statement leading slashes disallowed</td>
+<td>Ведущие слеши в операторах use запрещены</td>
 <td>118</td>
 <td>8</td>
 <td>93.22%</td>
 </tr>
 <tr>
-<td>Block namespace declaration formatting</td>
+<td>Форматирование блочного объявления пространства имён</td>
 <td>120</td>
 <td>6</td>
 <td>95%</td>
 </tr>
 <tr>
-<td>General operator spacing</td>
+<td>Общие пробелы вокруг операторов</td>
 <td>123</td>
 <td>3</td>
 <td>97.56%</td>
 </tr>
 <tr>
-<td>Try, Catch, Finally formatting</td>
+<td>Форматирование try, catch, finally</td>
 <td>124</td>
 <td>2</td>
 <td>98.39%</td>
 </tr>
 <tr>
-<td>Anonymous class declaration formatting</td>
+<td>Форматирование анонимного класса</td>
 <td>117</td>
 <td>9</td>
 <td>92.31%</td>
 </tr>
 <tr>
-<td>Keyword casing, only lower case</td>
+<td>Регистр ключевых слов, только нижний</td>
 <td>124</td>
 <td>2</td>
 <td>98.39%</td>
 </tr>
 <tr>
-<td>Type keywords, short form only</td>
+<td>Ключевые слова типов, только краткая форма</td>
 <td>121</td>
 <td>5</td>
 <td>95.87%</td>
 </tr>
 </tbody>
 </table>
-<h2 id="45-multiline-function-arguments-mixed-with-multiline-return">4.5. Multiline Function Arguments Mixed With Multiline Return</h2>
-<p>A potential readability issue <a href="https://groups.google.com/d/msg/php-fig/ULSL4gqK8GY/cgDELuPOCQAJ">was raised on the mailing list</a>.
-We reviewed options for changes to the specification that could provide better readability and
-the floated option was to require a blank line after the opening bracket of a function if the
-arguments and the return are both multiline. Instead it was pointed out that this specification
-<em>already</em> allows you to decide where you'd like to add blank lines and so we will leave it to
-the implementors to decide.</p>
-<h1 id="5-changelog-from-psr-2">5. Changelog from PSR-2</h1>
-<p>Please note this changelog is not a verbose list of changes from PSR-2 but highlights the most
-notable changes. It should be considered a new specification and therefore you should read the
-specification for a full understanding of its contents.</p>
-<h2 id="51-new-statements">5.1. New Statements</h2>
+<h2 id="45">4.5. Многострочные аргументы функций в сочетании с многострочным возвращаемым значением</h2>
+<p>Потенциальная проблема читаемости <a href="https://groups.google.com/d/msg/php-fig/ULSL4gqK8GY/cgDELuPOCQAJ">была поднята в рассылке</a>. Мы рассмотрели варианты изменений в спецификации, которые могли бы улучшить читаемость, и обсуждавшийся вариант заключался в требовании пустой строки после открывающей скобки функции, если и аргументы, и возвращаемое значение являются многострочными. Вместо этого было указано, что данная спецификация <em>уже</em> позволяет разработчикам самостоятельно решать, где добавлять пустые строки, поэтому мы оставим это на усмотрение реализаторов.</p>
+<h1 id="5-psr-2">5. Журнал изменений относительно PSR-2</h1>
+<p>Обратите внимание, что этот журнал изменений не является подробным списком изменений относительно PSR-2, а лишь освещает наиболее заметные изменения. Его следует рассматривать как новую спецификацию, поэтому для полного понимания содержимого следует прочитать спецификацию.</p>
+<h2 id="51">5.1. Новые положения</h2>
 <ul>
-<li>Lowercase for all keywords - Section 2.5</li>
-<li>Short form for all type keywords - Section 2.5</li>
-<li>Use statement grouping - Section 3</li>
-<li>Use statement blocks - Section 3</li>
-<li>Declare statement/Strict types declaration usage - Section 3</li>
-<li>Parentheses are always required for class instantiation - Section 4</li>
-<li>Typed properties - Section 4.3</li>
-<li>Return type declarations - Section 4.5</li>
-<li>Variadic and reference argument operators - Section 4.5</li>
-<li>Type hints - Section 4.5</li>
-<li>Add finally block - Section 5.6</li>
-<li>Operators - Section 6</li>
-<li>Unary operators - Section 6.1</li>
-<li>Binary operators - Section 6.2</li>
-<li>Ternary operators - Section 6.3</li>
-<li>Anonymous classes - Section 8</li>
+<li>Нижний регистр для всех ключевых слов — Раздел 2.5</li>
+<li>Краткая форма для всех ключевых слов типов — Раздел 2.5</li>
+<li>Группировка операторов use — Раздел 3</li>
+<li>Блоки операторов use — Раздел 3</li>
+<li>Использование оператора declare / объявления строгих типов — Раздел 3</li>
+<li>Скобки всегда обязательны при создании экземпляров классов — Раздел 4</li>
+<li>Типизированные свойства — Раздел 4.3</li>
+<li>Объявления типов возвращаемых значений — Раздел 4.5</li>
+<li>Операторы вариативных и ссылочных аргументов — Раздел 4.5</li>
+<li>Подсказки типов — Раздел 4.5</li>
+<li>Добавление блока finally — Раздел 5.6</li>
+<li>Операторы — Раздел 6</li>
+<li>Унарные операторы — Раздел 6.1</li>
+<li>Бинарные операторы — Раздел 6.2</li>
+<li>Тернарные операторы — Раздел 6.3</li>
+<li>Анонимные классы — Раздел 8</li>
 </ul>
-<h2 id="52-clarifications-and-errata">5.2. Clarifications and Errata</h2>
+<h2 id="52">5.2. Разъяснения и исправления</h2>
 <ul>
-<li>Adjust 'methods' to 'methods and functions' in a number of instances - Throughout</li>
-<li>Adjust references to classes and interfaces to also include traits - Throughout</li>
-<li>StudlyCaps meaning clarified as PascalCase - Section 2.1</li>
-<li>The last line should not be blank but contain an EOL character - Section 2.2</li>
-<li>Blank lines may be added for readability except where explicitly forbidden within the PSR - Section 2.3</li>
-<li>PSR-2 errata statement about multi-line arguments - Section 4</li>
-<li>PSR-2 errata statement about extending multiple interfaces - Section 4</li>
-<li>Forbid blank lines before/after closing/opening braces for classes - Section 4</li>
+<li>Замена «methods» на «methods and functions» в ряде мест — По всему тексту</li>
+<li>Расширение ссылок на классы и интерфейсы с включением трейтов — По всему тексту</li>
+<li>Значение StudlyCaps уточнено как PascalCase — Раздел 2.1</li>
+<li>Последняя строка не должна быть пустой, а должна содержать символ конца строки — Раздел 2.2</li>
+<li>Пустые строки могут быть добавлены для улучшения читаемости, кроме случаев, явно запрещённых в PSR — Раздел 2.3</li>
+<li>Положение errata PSR-2 о многострочных аргументах — Раздел 4</li>
+<li>Положение errata PSR-2 о расширении нескольких интерфейсов — Раздел 4</li>
+<li>Запрет пустых строк перед/после закрывающих/открывающих скобок классов — Раздел 4</li>
 </ul>
-<h1 id="6-people">6. People</h1>
-<h2 id="61-editor">6.1.  Editor:</h2>
+<h1 id="6">6. Участники</h1>
+<h2 id="61">6.1. Редактор:</h2>
 <ul>
 <li>Korvin Szanto</li>
 </ul>
-<h2 id="62-sponsor">6.2. Sponsor:</h2>
+<h2 id="62">6.2. Спонсор:</h2>
 <ul>
 <li>Chris Tankersley</li>
 </ul>
-<h2 id="63-working-group-members">6.3. Working Group Members:</h2>
+<h2 id="63">6.3. Члены рабочей группы:</h2>
 <ul>
 <li>Alessandro Lai</li>
 <li>Alexander Makarov</li>
 <li>Michael Cullum</li>
 <li>Robert Deutz</li>
 </ul>
-<h2 id="64-special-thanks">6.4. Special Thanks</h2>
+<h2 id="64">6.4. Отдельная благодарность</h2>
 <ul>
-<li>Michael Cullum for drafting the original specification</li>
-<li>Alexandar Makarov for coordinating the draft during PHP-FIG 2.0</li>
-<li>Cees-Jan Kiewiet for moral support</li>
+<li>Michael Cullum за составление исходной спецификации</li>
+<li>Alexandar Makarov за координацию черновика во время PHP-FIG 2.0</li>
+<li>Cees-Jan Kiewiet за моральную поддержку</li>
 </ul>
-<h1 id="7-votes">7. Votes</h1>
+<h1 id="7">7. Голосования</h1>
 <ul>
-<li><strong>Entrance Vote:</strong> https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!msg/php-fig/P9atZLOcUBM/_jwkvlYKEAAJ</li>
-<li><strong>Approval Vote:</strong> https://groups.google.com/forum/#!topic/php-fig/1uaeSMaDGbk</li>
+<li><strong>Вступительное голосование:</strong> https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!msg/php-fig/P9atZLOcUBM/_jwkvlYKEAAJ</li>
+<li><strong>Голосование об одобрении:</strong> https://groups.google.com/forum/#!topic/php-fig/1uaeSMaDGbk</li>
 </ul>
-<h1 id="8-relevant-links">8. Relevant Links</h1>
-<p><em><strong>Note:</strong> Order descending chronologically.</em></p>
+<h1 id="8">8. Ссылки по теме</h1>
+<p><em><strong>Примечание:</strong> Порядок убывающий хронологический.</em></p>
 <ul>
-<li><a href="https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!topic/php-fig/wh9avopSR9k">Inspiration Mailing List Thread</a></li>
-<li><a href="https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!topic/php-fig/MkFacLdfGso">Initial Mailing List PSR Proposal Thread</a></li>
+<li><a href="https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!topic/php-fig/wh9avopSR9k">Тема рассылки-вдохновения</a></li>
+<li><a href="https://groups.google.com/forum/?utm_medium=email&amp;utm_source=footer#!topic/php-fig/MkFacLdfGso">Исходная тема рассылки с предложением PSR</a></li>
 </ul>
+
+
+
+
+
+
+
+  
+  
+
 
 
 
@@ -1022,6 +1181,7 @@ specification for a full understanding of its contents.</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -1049,10 +1209,14 @@ specification for a full understanding of its contents.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

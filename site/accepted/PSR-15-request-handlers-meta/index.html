@@ -6,26 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Цель данного PSR — определить формальные интерфейсы для обработчиков HTTP-запросов на стороне сервера и middleware, совместимых с PSR-7.">
+      
       
       
         <link rel="canonical" href="https://php-psr.ru/accepted/PSR-15-request-handlers-meta/">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>PSR 15 request handlers meta - Рекомендации по стандартам PHP: PSR</title>
+        <title>Мета-документ: Обработчики HTTP-запросов на стороне сервера - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -39,11 +48,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -52,16 +60,13 @@
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#http-server-request-handlers-meta-document" class="md-skip">
+        <a href="#-http-" class="md-skip">
           Skip to content
         </a>
       
@@ -80,11 +85,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -96,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR 15 request handlers meta
+              Мета-документ: Обработчики HTTP-запросов на стороне сервера
             
           </span>
         </div>
@@ -104,29 +110,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -137,6 +152,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -161,12 +177,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -176,14 +193,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -191,14 +220,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -206,14 +247,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -221,14 +274,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -236,14 +301,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -251,14 +328,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -266,14 +355,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -281,14 +382,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -296,14 +409,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -311,14 +436,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -326,14 +463,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -341,14 +490,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -356,14 +517,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -371,14 +544,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -411,37 +596,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-summary" class="md-nav__link">
-    1. Summary
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Краткое описание
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-why-bother" class="md-nav__link">
-    2. Why Bother?
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Зачем это нужно?
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-scope" class="md-nav__link">
-    3. Scope
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Область применения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="3. Scope">
+    <nav class="md-nav" aria-label="3. Область применения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#31-goals" class="md-nav__link">
-    3.1 Goals
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Цели
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-non-goals" class="md-nav__link">
-    3.2 Non-Goals
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Не является целью
+      
+    </span>
   </a>
   
 </li>
@@ -452,38 +657,58 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-request-handler-approaches" class="md-nav__link">
-    4. Request Handler Approaches
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Подходы к обработчикам запросов
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-middleware-approaches" class="md-nav__link">
-    5. Middleware Approaches
+  <a href="#5-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Подходы к middleware
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="5. Middleware Approaches">
+    <nav class="md-nav" aria-label="5. Подходы к middleware">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#51-double-pass" class="md-nav__link">
-    5.1 Double Pass
+    <span class="md-ellipsis">
+      
+        5.1 Double Pass (двойная передача)
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="5.1 Double Pass">
+    <nav class="md-nav" aria-label="5.1 Double Pass (двойная передача)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#511-projects-using-double-pass" class="md-nav__link">
-    5.1.1 Projects Using Double Pass
+  <a href="#511-double-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1.1 Проекты, использующие Double Pass
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#512-middleware-implementing-double-pass" class="md-nav__link">
-    5.1.2 Middleware Implementing Double Pass
+  <a href="#512-middleware-double-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1.2 Middleware, реализующее Double Pass
+      
+    </span>
   </a>
   
 </li>
@@ -495,22 +720,34 @@
         
           <li class="md-nav__item">
   <a href="#52-single-pass-lambda" class="md-nav__link">
-    5.2 Single Pass (Lambda)
+    <span class="md-ellipsis">
+      
+        5.2 Single Pass (Lambda)
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.2 Single Pass (Lambda)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#521-projects-using-single-pass" class="md-nav__link">
-    5.2.1 Projects Using Single Pass
+  <a href="#521-single-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2.1 Проекты, использующие Single Pass
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#522-additional-projects-using-single-pass" class="md-nav__link">
-    5.2.2 Additional Projects Using Single Pass
+  <a href="#522-single-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2.2 Дополнительные проекты, использующие Single Pass
+      
+    </span>
   </a>
   
 </li>
@@ -521,15 +758,23 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#53-comparison-of-approaches" class="md-nav__link">
-    5.3 Comparison of Approaches
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Сравнение подходов
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#54-chosen-approach" class="md-nav__link">
-    5.4 Chosen Approach
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Выбранный подход
+      
+    </span>
   </a>
   
 </li>
@@ -540,38 +785,58 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-design-decisions" class="md-nav__link">
-    6. Design Decisions
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Проектные решения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="6. Design Decisions">
+    <nav class="md-nav" aria-label="6. Проектные решения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#61-request-handler-design" class="md-nav__link">
-    6.1 Request Handler Design
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Проектирование обработчика запросов
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="6.1 Request Handler Design">
+    <nav class="md-nav" aria-label="6.1 Проектирование обработчика запросов">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-is-a-server-request-required" class="md-nav__link">
-    Why is a server request required?
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему требуется серверный запрос?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-the-term-handler" class="md-nav__link">
-    Why the term "handler"?
+  <a href="#handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему используется термин «handler» (обработчик)?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-doesnt-request-handler-use-__invoke" class="md-nav__link">
-    Why doesn't request handler use __invoke?
+  <a href="#__invoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему обработчик запросов не использует __invoke?
+      
+    </span>
   </a>
   
 </li>
@@ -582,37 +847,57 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#62-middleware-design" class="md-nav__link">
-    6.2 Middleware Design
+  <a href="#62-middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Проектирование middleware
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="6.2 Middleware Design">
+    <nav class="md-nav" aria-label="6.2 Проектирование middleware">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#why-doesnt-middleware-use-__invoke" class="md-nav__link">
-    Why doesn't middleware use __invoke?
+  <a href="#middleware-__invoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему middleware не использует __invoke?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-the-name-process" class="md-nav__link">
-    Why the name process()?
+  <a href="#process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему метод называется process()?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#why-is-a-server-request-required_1" class="md-nav__link">
-    Why is a server request required?
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Почему требуется серверный запрос?
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#what-is-the-role-of-the-request-handler" class="md-nav__link">
-    What is the role of the request handler?
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Какова роль обработчика запросов?
+      
+    </span>
   </a>
   
 </li>
@@ -623,30 +908,46 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#63-example-interface-interactions" class="md-nav__link">
-    6.3 Example Interface Interactions
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Примеры взаимодействия интерфейсов
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="6.3 Example Interface Interactions">
+    <nav class="md-nav" aria-label="6.3 Примеры взаимодействия интерфейсов">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#queue-based-request-handler" class="md-nav__link">
-    Queue-based request handler
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обработчик запросов на основе очереди
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#decoration-based-request-handler" class="md-nav__link">
-    Decoration-based request handler
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обработчик запросов на основе декорирования
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#reusable-middleware-examples" class="md-nav__link">
-    Reusable Middleware Examples
+  <a href="#middleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры переиспользуемого middleware
+      
+    </span>
   </a>
   
 </li>
@@ -662,29 +963,45 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-people" class="md-nav__link">
-    7. People
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Участники
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-votes" class="md-nav__link">
-    8. Votes
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Голосования
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-relevant-links" class="md-nav__link">
-    9. Relevant Links
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Полезные ссылки
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-errata" class="md-nav__link">
-    10. Errata
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Замечания и исправления
+      
+    </span>
   </a>
   
 </li>
@@ -699,87 +1016,69 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="http-server-request-handlers-meta-document">HTTP Server Request Handlers Meta Document</h1>
-<h2 id="1-summary">1. Summary</h2>
-<p>The purpose of this PSR is to define formal interfaces for HTTP server request
-handlers ("request handlers") and HTTP server request middleware ("middleware")
-that are compatible with HTTP messages as defined in <a href="https://www.php-fig.org/psr/psr-7/">PSR-7</a> or subsequent
-replacement PSRs.</p>
-<p><em>Note: All references to "request handlers" and "middleware" are specific to
-<strong>server request</strong> processing.</em></p>
-<h2 id="2-why-bother">2. Why Bother?</h2>
-<p>The HTTP messages specification does not contain any reference to request
-handlers or middleware.</p>
-<p>Request handlers are a fundamental part of any web application. The handler is
-the component that receives a request and produces a response. Nearly all code
-that works with HTTP messages will have some kind of request handler.</p>
-<p><a href="https://en.wikipedia.org/wiki/Middleware">Middleware</a> has existed for many years in the PHP ecosystem. The
-general concept of reusable middleware was popularized by <a href="http://stackphp.com/">StackPHP</a>.
-Since the release of HTTP messages as a PSR, many frameworks have adopted
-middleware that use HTTP message interfaces.</p>
-<p>Agreeing on formal request handler and middleware interfaces eliminates several
-problems and has a number of benefits:</p>
+
+<h1 id="-http-">Мета-документ: Обработчики HTTP-запросов на стороне сервера</h1>
+<h2 id="1">1. Краткое описание</h2>
+<p>Цель данного PSR — определить формальные интерфейсы для обработчиков HTTP-запросов на стороне сервера («обработчики запросов») и промежуточного программного обеспечения HTTP-сервера («middleware»), совместимых с HTTP-сообщениями, определёнными в <a href="https://www.php-fig.org/psr/psr-7/">PSR-7</a> или последующих заменяющих PSR.</p>
+<p><em>Примечание: все ссылки на «обработчики запросов» и «middleware» относятся исключительно к обработке <strong>серверных запросов</strong>.</em></p>
+<h2 id="2">2. Зачем это нужно?</h2>
+<p>Спецификация HTTP-сообщений не содержит никаких ссылок на обработчики запросов или middleware.</p>
+<p>Обработчики запросов являются фундаментальной частью любого веб-приложения. Обработчик — это компонент, получающий запрос и формирующий ответ. Практически весь код, работающий с HTTP-сообщениями, содержит какой-либо обработчик запросов.</p>
+<p><a href="https://en.wikipedia.org/wiki/Middleware">Middleware</a> существует в экосистеме PHP уже много лет. Общая концепция переиспользуемого middleware была популяризована <a href="http://stackphp.com/">StackPHP</a>. После появления HTTP-сообщений в виде PSR многие фреймворки внедрили middleware, использующее интерфейсы HTTP-сообщений.</p>
+<p>Принятие формальных интерфейсов для обработчиков запросов и middleware устраняет ряд проблем и даёт следующие преимущества:</p>
 <ul>
-<li>Provides a formal standard for developers to commit to.</li>
-<li>Enables any middleware component to run in any compatible framework.</li>
-<li>Eliminates duplication of similar interfaces defined by various frameworks.</li>
-<li>Avoids minor discrepancies in method signatures.</li>
+<li>Предоставляет разработчикам формальный стандарт.</li>
+<li>Позволяет любому компоненту middleware работать в любом совместимом фреймворке.</li>
+<li>Устраняет дублирование схожих интерфейсов, определённых в различных фреймворках.</li>
+<li>Исключает незначительные расхождения в сигнатурах методов.</li>
 </ul>
-<h2 id="3-scope">3. Scope</h2>
-<h3 id="31-goals">3.1 Goals</h3>
+<h2 id="3">3. Область применения</h2>
+<h3 id="31">3.1 Цели</h3>
 <ul>
-<li>Create a request handler interface that uses HTTP messages.</li>
-<li>Create a middleware interface that uses HTTP messages.</li>
-<li>Implement request handler and middleware signatures that are based on
-  best practices.</li>
-<li>Ensure that request handlers and middleware will be compatible with any
-  implementation of HTTP messages.</li>
+<li>Создать интерфейс обработчика запросов, использующий HTTP-сообщения.</li>
+<li>Создать интерфейс middleware, использующий HTTP-сообщения.</li>
+<li>Реализовать сигнатуры обработчика запросов и middleware, основанные на лучших практиках.</li>
+<li>Обеспечить совместимость обработчиков запросов и middleware с любой реализацией HTTP-сообщений.</li>
 </ul>
-<h3 id="32-non-goals">3.2 Non-Goals</h3>
+<h3 id="32">3.2 Не является целью</h3>
 <ul>
-<li>Attempting to define the mechanism by which HTTP responses are created.</li>
-<li>Attempting to define interfaces for client/asynchronous middleware.</li>
-<li>Attempting to define how middleware is dispatched.</li>
+<li>Определение механизма создания HTTP-ответов.</li>
+<li>Определение интерфейсов для клиентского/асинхронного middleware.</li>
+<li>Определение способа диспетчеризации middleware.</li>
 </ul>
-<h2 id="4-request-handler-approaches">4. Request Handler Approaches</h2>
-<p>There are many approaches to request handlers that use HTTP messages. However,
-the general process is the same in all of them:</p>
-<p>Given an HTTP request, produce an HTTP response for that request.</p>
-<p>The internal requirements of that process will vary from framework to framework
-and application to application. This proposal makes no effort to determine what
-that process should be.</p>
-<h2 id="5-middleware-approaches">5. Middleware Approaches</h2>
-<p>There are currently two common approaches to middleware that use HTTP messages.</p>
-<h3 id="51-double-pass">5.1 Double Pass</h3>
-<p>The signature used by most middleware implementations has been mostly the same
-and is based on <a href="http://expressjs.com/en/guide/writing-middleware.html">Express middleware</a>, which is defined as:</p>
+<h2 id="4">4. Подходы к обработчикам запросов</h2>
+<p>Существует множество подходов к обработчикам запросов, использующим HTTP-сообщения. Однако общий процесс одинаков во всех из них:</p>
+<p>На основе HTTP-запроса сформировать HTTP-ответ для данного запроса.</p>
+<p>Внутренние требования этого процесса будут варьироваться от фреймворка к фреймворку и от приложения к приложению. Данное предложение не стремится определить, каким должен быть этот процесс.</p>
+<h2 id="5-middleware">5. Подходы к middleware</h2>
+<p>В настоящее время существуют два распространённых подхода к middleware, использующему HTTP-сообщения.</p>
+<h3 id="51-double-pass">5.1 Double Pass (двойная передача)</h3>
+<p>Сигнатура, используемая большинством реализаций middleware, была в основном одинаковой и основана на <a href="http://expressjs.com/en/guide/writing-middleware.html">Express middleware</a>, которое определяется следующим образом:</p>
 <pre><code>fn(request, response, next): response
 </code></pre>
-<p>Based on the middleware implementations already used by frameworks that have
-adopted this signature, the following commonalities are observed:</p>
+<p>На основе реализаций middleware, уже используемых фреймворками, принявшими данную сигнатуру, можно выделить следующие общие черты:</p>
 <ul>
-<li>The middleware is defined as a <a href="http://php.net/manual/language.types.callable.php">callable</a>.</li>
-<li>The middleware is passed 3 arguments during invocation:</li>
-<li>A <code>ServerRequestInterface</code> implementation.</li>
-<li>A <code>ResponseInterface</code> implementation.</li>
-<li>A <code>callable</code> that receives the request and response to delegate to the next middleware.</li>
+<li>Middleware определяется как <a href="http://php.net/manual/language.types.callable.php">callable</a>.</li>
+<li>При вызове middleware передаётся 3 аргумента:</li>
+<li>Реализация <code>ServerRequestInterface</code>.</li>
+<li>Реализация <code>ResponseInterface</code>.</li>
+<li><code>callable</code>, принимающий запрос и ответ для делегирования следующему middleware.</li>
 </ul>
-<p>A significant number of projects provide and/or use exactly the same interface.
-This approach is often referred to as "double pass" in reference to both the
-request and response being passed to the middleware.</p>
-<h4 id="511-projects-using-double-pass">5.1.1 Projects Using Double Pass</h4>
+<p>Значительное число проектов предоставляет и/или использует один и тот же интерфейс. Данный подход часто называют «double pass» («двойная передача»), поскольку в middleware передаются и запрос, и ответ.</p>
+<h4 id="511-double-pass">5.1.1 Проекты, использующие Double Pass</h4>
 <ul>
 <li><a href="https://github.com/mindplay-dk/middleman/blob/1.0.0/src/MiddlewareInterface.php#L24">mindplay/middleman v1</a></li>
 <li><a href="https://github.com/relayphp/Relay.Relay/blob/1.0.0/src/MiddlewareInterface.php#L24">relay/relay v1</a></li>
 <li><a href="https://github.com/slimphp/Slim/blob/3.4.0/Slim/MiddlewareAwareTrait.php#L66-L75">slim/slim v3</a></li>
 <li><a href="https://github.com/zendframework/zend-stratigility/blob/1.0.0/src/MiddlewarePipe.php#L69-L79">zendframework/zend-stratigility v1</a></li>
 </ul>
-<h4 id="512-middleware-implementing-double-pass">5.1.2 Middleware Implementing Double Pass</h4>
+<h4 id="512-middleware-double-pass">5.1.2 Middleware, реализующее Double Pass</h4>
 <ul>
 <li><a href="https://github.com/bitExpert/adroit">bitexpert/adroit</a></li>
 <li><a href="https://github.com/akrabat/rka-ip-address-middleware">akrabat/rka-ip-address-middleware</a></li>
@@ -801,198 +1100,107 @@ request and response being passed to the middleware.</p>
 <li><a href="https://github.com/php-middleware/request-id">php-middleware/request-id</a></li>
 <li><a href="https://github.com/relayphp/Relay.Middleware">relay/middleware</a></li>
 </ul>
-<p>The primary downside of this interface is that the while the interface itself is
-a callable, there is currently no way to strictly type a closure.</p>
+<p>Основным недостатком данного интерфейса является то, что, хотя сам интерфейс и является callable, в настоящее время нет возможности строго типизировать замыкание.</p>
 <h3 id="52-single-pass-lambda">5.2 Single Pass (Lambda)</h3>
-<p>The other approach to middleware is much closer to <a href="http://stackphp.com/">StackPHP</a> style
-and is defined as:</p>
+<p>Другой подход к middleware значительно ближе к стилю <a href="http://stackphp.com/">StackPHP</a> и определяется следующим образом:</p>
 <pre><code>fn(request, next): response
 </code></pre>
-<p>Middleware taking this approach generally has the following commonalities:</p>
+<p>Middleware, использующее данный подход, как правило, имеет следующие общие черты:</p>
 <ul>
-<li>The middleware is defined with a specific interface with a method that takes
-  the request for processing.</li>
-<li>The middleware is passed 2 arguments during invocation:</li>
-<li>An HTTP request message.</li>
-<li>A request handler to which the middleware can delegate the responsibility
-     of producing an HTTP response message.</li>
+<li>Middleware определяется с помощью конкретного интерфейса с методом, принимающим запрос для обработки.</li>
+<li>При вызове middleware передаётся 2 аргумента:</li>
+<li>Сообщение HTTP-запроса.</li>
+<li>Обработчик запросов, которому middleware может делегировать ответственность за формирование HTTP-ответа.</li>
 </ul>
-<p>In this form, middleware has no access to a response until one is generated by
-the request handler. Middleware can then modify the response before returning it.</p>
-<p>This approach is often referred to as "single pass" or "lambda" in reference to
-only the request being passed to the middleware.</p>
-<h4 id="521-projects-using-single-pass">5.2.1 Projects Using Single Pass</h4>
-<p>There are fewer examples of this approach within projects using HTTP messages,
-with one notable exception.</p>
-<p><a href="http://docs.guzzlephp.org/en/latest/handlers-and-middleware.html">Guzzle middleware</a> is focused on outgoing (client) requests
-and uses this signature:</p>
+<p>В данном варианте middleware не имеет доступа к ответу до его формирования обработчиком запросов. После этого middleware МОЖЕТ модифицировать ответ перед его возвратом.</p>
+<p>Данный подход часто называют «single pass» («одиночная передача») или «lambda», поскольку в middleware передаётся только запрос.</p>
+<h4 id="521-single-pass">5.2.1 Проекты, использующие Single Pass</h4>
+<p>Примеров данного подхода в проектах, использующих HTTP-сообщения, меньше, за одним заметным исключением.</p>
+<p><a href="http://docs.guzzlephp.org/en/latest/handlers-and-middleware.html">Guzzle middleware</a> ориентировано на исходящие (клиентские) запросы и использует следующую сигнатуру:</p>
 <pre><code class="language-php">function (RequestInterface $request, array $options): ResponseInterface
 </code></pre>
-<h4 id="522-additional-projects-using-single-pass">5.2.2 Additional Projects Using Single Pass</h4>
-<p>There are also significant projects that predate HTTP messages using this approach.</p>
-<p><a href="http://stackphp.com/">StackPHP</a> is based on <a href="https://symfony.com/doc/current/components/http_kernel.html">Symfony HttpKernel</a> and supports
-middleware with this signature:</p>
+<h4 id="522-single-pass">5.2.2 Дополнительные проекты, использующие Single Pass</h4>
+<p>Существуют также значимые проекты, появившиеся до HTTP-сообщений, использующие данный подход.</p>
+<p><a href="http://stackphp.com/">StackPHP</a> основан на <a href="https://symfony.com/doc/current/components/http_kernel.html">Symfony HttpKernel</a> и поддерживает middleware со следующей сигнатурой:</p>
 <pre><code class="language-php">function handle(Request $request, $type, $catch): Response
 </code></pre>
-<p><em>Note: While Stack has multiple arguments, a response object is not included.</em></p>
-<p><a href="https://laravel.com/docs/master/middleware">Laravel middleware</a> uses Symfony components and supports
-middleware with this signature:</p>
+<p><em>Примечание: хотя Stack имеет несколько аргументов, объект ответа среди них не предусмотрен.</em></p>
+<p><a href="https://laravel.com/docs/master/middleware">Laravel middleware</a> использует компоненты Symfony и поддерживает middleware со следующей сигнатурой:</p>
 <pre><code class="language-php">function handle(Request $request, callable $next): Response
 </code></pre>
-<h3 id="53-comparison-of-approaches">5.3 Comparison of Approaches</h3>
-<p>The single pass approach to middleware has been well established in the PHP
-community for many years. This is most evident with the large number of packages
-that are based around StackPHP.</p>
-<p>The double pass approach is much newer but has been almost universally used by
-early adopters of HTTP messages (PSR-7).</p>
-<h3 id="54-chosen-approach">5.4 Chosen Approach</h3>
-<p>Despite the nearly universal adoption of the double-pass approach, there are
-significant issues regarding implementation.</p>
-<p>The most severe is that passing an empty response has no guarantees that the
-response is in a usable state. This is further exacerbated by the fact that a
-middleware may modify the response before passing it for further processing.</p>
-<p>Further compounding the problem is that there is no way to ensure that the
-response body has not been written to, which can lead to incomplete output or
-error responses being sent with cache headers attached. It is also possible
-to end up with <a href="https://akrabat.com/filtering-the-psr-7-body-in-middleware/">corrupted body content</a> when writing over
-existing body content if the new content is shorter than the original. The most
-effective way to resolve these issues is to always provide a fresh stream when
-modifying the body of a message.</p>
-<p>Some have argued that passing the response helps ensure dependency inversion.
-While it is true that it helps avoid depending on a specific implementation of
-HTTP messages, the problem can also be resolved by injecting factories into the
-middleware to create HTTP message objects, or by injecting empty message instances.
-With the creation of HTTP Factories in <a href="https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory-meta.md">PSR-17</a>, a standard approach to
-handling dependency inversion is possible.</p>
-<p>A more subjective, but also important, concern is that existing double-pass
-middleware typically uses the <code>callable</code> type hint to refer to middleware.
-This makes strict typing impossible, as there is no assurance that the <code>callable</code>
-being passed implements a middleware signature, which reduces runtime safety.</p>
-<p><strong>Due to these significant issues, the lambda approach has been chosen for this proposal.</strong></p>
-<h2 id="6-design-decisions">6. Design Decisions</h2>
-<h3 id="61-request-handler-design">6.1 Request Handler Design</h3>
-<p>The <code>RequestHandlerInterface</code> defines a single method that accepts a request and
-MUST return a response. The request handler MAY delegate to another handler.</p>
-<h4 id="why-is-a-server-request-required">Why is a server request required?</h4>
-<p>To make it clear that the request handler can only be used in a server side context.
-In an client side context, a <a href="https://promisesaplus.com/">promise</a> would likely be returned instead
-of a response.</p>
-<h4 id="why-the-term-handler">Why the term "handler"?</h4>
-<p>The term "handler" means something designated to manage or control. In terms of
-request processing, a request handler is the point where the request must be
-acted upon to create a response.</p>
-<p>As opposed to the term "delegate", which was used in a previous version of this
-specification, the internal behavior of this interface is not specified.
-As long as the request handler ultimately produces a response, it is valid.</p>
-<h4 id="why-doesnt-request-handler-use-__invoke">Why doesn't request handler use <code>__invoke</code>?</h4>
-<p>Using <code>__invoke</code> is less transparent than using a named method. It also makes
-it easier to call the request handler when it is assigned to a class variable,
-without using <code>call_user_func</code> or other less common syntax.</p>
-<p><em>See <a href="https://groups.google.com/d/msg/php-fig/V12AAcT_SxE/aRXmNnIVCwAJ">PHP-FIG discussion of FrameInterface</a> for
- additional information.</em></p>
-<h3 id="62-middleware-design">6.2 Middleware Design</h3>
-<p>The <code>MiddlewareInterface</code> defines a single method that accepts an HTTP request
-and a request handler and must return a response. The middleware may:</p>
+<h3 id="53">5.3 Сравнение подходов</h3>
+<p>Подход single pass к middleware давно утвердился в сообществе PHP. Это наглядно демонстрирует большое количество пакетов, основанных на StackPHP.</p>
+<p>Подход double pass значительно новее, однако он был почти повсеместно принят ранними разработчиками, использующими HTTP-сообщения (PSR-7).</p>
+<h3 id="54">5.4 Выбранный подход</h3>
+<p>Несмотря на почти повсеместное распространение подхода double pass, он имеет существенные проблемы реализации.</p>
+<p>Наиболее серьёзная из них состоит в том, что передача пустого ответа не даёт никаких гарантий, что ответ находится в пригодном для использования состоянии. Ситуацию усугубляет то, что middleware МОЖЕТ модифицировать ответ перед передачей его для дальнейшей обработки.</p>
+<p>Дополнительную сложность создаёт невозможность гарантировать, что в тело ответа ничего не было записано, что может привести к неполному выводу или к тому, что ответы об ошибках будут отправлены с прикреплёнными заголовками кэша. Также возможно <a href="https://akrabat.com/filtering-the-psr-7-body-in-middleware/">повреждение содержимого тела</a> при записи поверх существующего содержимого, если новое содержимое короче исходного. Наиболее эффективный способ решения этих проблем — всегда предоставлять новый поток при изменении тела сообщения.</p>
+<p>Ряд специалистов утверждал, что передача ответа способствует инверсии зависимостей. Хотя это действительно помогает избежать зависимости от конкретной реализации HTTP-сообщений, данную проблему также можно решить путём внедрения фабрик в middleware для создания объектов HTTP-сообщений или путём внедрения пустых экземпляров сообщений. С появлением HTTP-фабрик в <a href="https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory-meta.md">PSR-17</a> стал возможен стандартный подход к решению задачи инверсии зависимостей.</p>
+<p>Более субъективная, но также важная проблема состоит в том, что существующее middleware с подходом double pass, как правило, использует подсказку типа <code>callable</code> для ссылки на middleware. Это делает строгую типизацию невозможной, поскольку нет гарантии, что передаваемый <code>callable</code> реализует сигнатуру middleware, что снижает безопасность во время выполнения.</p>
+<p><strong>В связи с этими существенными проблемами для данного предложения был выбран подход lambda.</strong></p>
+<h2 id="6">6. Проектные решения</h2>
+<h3 id="61">6.1 Проектирование обработчика запросов</h3>
+<p><code>RequestHandlerInterface</code> определяет единственный метод, принимающий запрос и ОБЯЗАННЫЙ возвращать ответ. Обработчик запросов МОЖЕТ делегировать обработку другому обработчику.</p>
+<h4 id="_1">Почему требуется серверный запрос?</h4>
+<p>Чтобы явно указать, что обработчик запросов может использоваться только в серверном контексте. В клиентском контексте вместо ответа, скорее всего, возвращался бы <a href="https://promisesaplus.com/">promise</a>.</p>
+<h4 id="handler">Почему используется термин «handler» (обработчик)?</h4>
+<p>Термин «handler» означает нечто, предназначенное для управления или контроля. Применительно к обработке запросов обработчик запросов — это точка, в которой запрос должен быть обработан для формирования ответа.</p>
+<p>В отличие от термина «delegate», который использовался в предыдущей версии данной спецификации, внутреннее поведение данного интерфейса не определяется. До тех пор пока обработчик запросов в конечном счёте формирует ответ, он является корректным.</p>
+<h4 id="__invoke">Почему обработчик запросов не использует <code>__invoke</code>?</h4>
+<p>Использование <code>__invoke</code> менее прозрачно, чем применение именованного метода. Кроме того, именованный метод упрощает вызов обработчика запросов, когда он присвоен переменной класса, без использования <code>call_user_func</code> или другого менее распространённого синтаксиса.</p>
+<p><em>Дополнительную информацию см. в [обсуждении PHP-FIG по FrameInterface][].</em></p>
+<h3 id="62-middleware">6.2 Проектирование middleware</h3>
+<p><code>MiddlewareInterface</code> определяет единственный метод, принимающий HTTP-запрос и обработчик запросов и обязанный возвращать ответ. Middleware МОЖЕТ:</p>
 <ul>
-<li>Evolve the request before passing it to the request handler.</li>
-<li>Evolve the response received from the request handler before returning it.</li>
-<li>Create and return a response without passing the request to the request handler,
-  thereby handling the request itself.</li>
+<li>Преобразовывать запрос перед передачей его обработчику запросов.</li>
+<li>Преобразовывать ответ, полученный от обработчика запросов, перед его возвратом.</li>
+<li>Создавать и возвращать ответ без передачи запроса обработчику запросов, тем самым самостоятельно обрабатывая запрос.</li>
 </ul>
-<p>When delegating from one middleware to another in a sequence, one approach for
-dispatching systems is to use an intermediary request handler composing the
-middleware sequence as a way to link middleware together. The final or innermost
-middleware will act as a gateway to application code and generate a response
-from its results; alternately, the middleware MAY delegate this responsibility
-to a dedicated request handler.</p>
-<h4 id="why-doesnt-middleware-use-__invoke">Why doesn't middleware use <code>__invoke</code>?</h4>
-<p>Doing so would conflict with existing middleware that implements the double-pass
-approach and may want to implement the middleware interface for purposes of
-forward compatibility with this specification.</p>
-<h4 id="why-the-name-process">Why the name <code>process()</code>?</h4>
-<p>We reviewed a number of existing monolithic and middleware frameworks to
-determine what method(s) each defined for processing incoming requests. We found
-the following were commonly used:</p>
+<p>При делегировании от одного middleware к другому в цепочке один из подходов для систем диспетчеризации — использование промежуточного обработчика запросов, объединяющего цепочку middleware как способ связывания компонентов middleware. Последний или самый внутренний middleware будет выступать в роли шлюза к коду приложения и формировать ответ на основе его результатов; в качестве альтернативы middleware МОЖЕТ делегировать эту ответственность специализированному обработчику запросов.</p>
+<h4 id="middleware-__invoke">Почему middleware не использует <code>__invoke</code>?</h4>
+<p>Это создало бы конфликт с существующим middleware, реализующим подход double pass и желающим реализовать интерфейс middleware в целях прямой совместимости с данной спецификацией.</p>
+<h4 id="process">Почему метод называется <code>process()</code>?</h4>
+<p>Мы рассмотрели ряд существующих монолитных фреймворков и фреймворков на основе middleware, чтобы определить, какой метод (или методы) каждый из них определяет для обработки входящих запросов. Мы обнаружили, что наиболее распространены следующие варианты:</p>
 <ul>
-<li><code>__invoke</code> (within middleware systems, such as Slim, Expressive, Relay, etc.)</li>
-<li><code>handle</code> (in particular, software derived from Symfony's <a href="https://symfony.com/doc/current/components/http_kernel.html">HttpKernel</a>)</li>
-<li><code>dispatch</code> (Zend Framework's <a href="https://github.com/zendframework/zend-stdlib/blob/980ce463c29c1a66c33e0eb67961bba895d0e19e/src/DispatchableInterface.php">DispatchableInterface</a>)</li>
+<li><code>__invoke</code> (в системах middleware, таких как Slim, Expressive, Relay и др.)</li>
+<li><code>handle</code> (в частности, в программном обеспечении, производном от Symfony <a href="https://symfony.com/doc/current/components/http_kernel.html">HttpKernel</a>)</li>
+<li><code>dispatch</code> (Zend Framework <a href="https://github.com/zendframework/zend-stdlib/blob/980ce463c29c1a66c33e0eb67961bba895d0e19e/src/DispatchableInterface.php">DispatchableInterface</a>)</li>
 </ul>
-<p>We chose to allow a forward-compatible approach for such classes to repurpose
-themselves as middleware (or middleware compatible with this specification),
-and thus needed to choose a name not in common usage. As such, we chose
-<code>process</code>, to indicate <em>processing</em> a request.</p>
-<h4 id="why-is-a-server-request-required_1">Why is a server request required?</h4>
-<p>To make it clear that the middleware can only be used in a synchronous, server
-side context.</p>
-<p>While not all middleware will need to use the additional methods defined by the
-server request interface, outbound requests are typically processed asynchronously
-and would typically return a <a href="https://promisesaplus.com/">promise</a> of a response. (This is primarily
-due to the fact that multiple requests can be made in parallel and processed as
-they are returned.) It is outside the scope of this proposal to address the needs
-of asynchronous request/response life cycles.</p>
-<p>Attempting to define client middleware would be premature at this point. Any future
-proposal that is focused on client side request processing should have the opportunity
-to define a standard that is specific to the nature of asynchronous middleware.</p>
-<p><em>See <a href="https://groups.google.com/d/topic/php-fig/vBk0BRgDe2s/discussion">PHP-FIG discussion about client vs server side middleware</a> for additional information.</em></p>
-<h4 id="what-is-the-role-of-the-request-handler">What is the role of the request handler?</h4>
-<p>Middleware has the following roles:</p>
+<p>Мы решили обеспечить прямую совместимость для таких классов, чтобы они могли перепрофилировать себя в middleware (или middleware, совместимое с данной спецификацией), и поэтому нам нужно было выбрать имя, не находящееся в общем употреблении. В результате мы выбрали <code>process</code>, указывая тем самым на <em>обработку</em> запроса.</p>
+<h4 id="_2">Почему требуется серверный запрос?</h4>
+<p>Чтобы явно указать, что middleware может использоваться только в синхронном, серверном контексте.</p>
+<p>Хотя не всем middleware потребуются дополнительные методы, определённые интерфейсом серверного запроса, исходящие запросы, как правило, обрабатываются асинхронно и обычно возвращают <a href="https://promisesaplus.com/">promise</a> ответа. (Это в первую очередь обусловлено тем, что несколько запросов могут выполняться параллельно и обрабатываться по мере поступления.) Решение задач асинхронного жизненного цикла запрос/ответ выходит за рамки данного предложения.</p>
+<p>Попытка определить клиентское middleware была бы на данном этапе преждевременной. Любое будущее предложение, ориентированное на обработку клиентских запросов, должно иметь возможность определить стандарт, специфичный для природы асинхронного middleware.</p>
+<p><em>Дополнительную информацию см. в [обсуждении PHP-FIG о middleware на стороне клиента и сервера][].</em></p>
+<h4 id="_3">Какова роль обработчика запросов?</h4>
+<p>Middleware выполняет следующие роли:</p>
 <ul>
 <li>
-<p>Producing a response on its own. If specific request conditions are met, the
-  middleware can produce and return a response.</p>
+<p>Самостоятельное формирование ответа. Если выполнены определённые условия запроса, middleware МОЖЕТ сформировать и вернуть ответ.</p>
 </li>
 <li>
-<p>Returning the result of the request handler. In cases where the middleware
-  cannot produce its own response, it can delegate to the request handler to
-  produce one; sometimes this may involve providing a transformed request (e.g.,
-  to inject a request attribute, or the results of parsing the request body).</p>
+<p>Возврат результата обработчика запросов. В случаях, когда middleware не МОЖЕТ самостоятельно сформировать ответ, оно МОЖЕТ делегировать эту задачу обработчику запросов; иногда это МОЖЕТ предполагать предоставление преобразованного запроса (например, для внедрения атрибута запроса или результатов разбора тела запроса).</p>
 </li>
 <li>
-<p>Manipulating and returning the response produced by the request handler. In
-  some cases, the middleware may be interested in manipulating the response
-  the request handler returns (e.g., to gzip the response body, to add CORS
-  headers, etc.). In such cases, the middleware will capture the response
-  returned by the request handler, and return a transformed response on
-  completion.</p>
+<p>Манипуляция ответом, возвращённым обработчиком запросов, и его возврат. В некоторых случаях middleware МОЖЕТ быть заинтересовано в изменении ответа, возвращённого обработчиком запросов (например, для сжатия тела ответа в gzip, добавления заголовков CORS и т. д.). В таких случаях middleware перехватывает ответ, возвращённый обработчиком запросов, и возвращает преобразованный ответ по завершении.</p>
 </li>
 </ul>
-<p>In these latter two cases, the middleware may have code such as the following:</p>
+<p>В двух последних случаях middleware МОЖЕТ содержать код, подобный следующему:</p>
 <pre><code class="language-php">// Straight delegation:
 return $handler-&gt;handle($request);
 
 // Capturing the response to manipulate:
 $response = $handler-&gt;handle($request);
 </code></pre>
-<p>How the handler acts is entirely up to the developer, so long as it produces a
-response.</p>
-<p>In one common scenario, the handler implements a <em>queue</em> or a <em>stack</em> of
-middleware instances internally. In such cases, calling
-<code>$handler-&gt;handle($request)</code> will advance the internal pointer, pull the
-middleware associated with that pointer, and call it using
-<code>$middleware-&gt;process($request, $this)</code>. If no more middleware exists, it will
-generally either raise an exception or return a canned response.</p>
-<p>Another possibility is for  <em>routing middleware</em> that matches the incoming
-server request to a specific handler, and then returns the response generated by
-executing that handler. If unable to route to a handler, it would instead
-execute the handler provided to the middleware. (This sort of mechanism can even
-be used in conjunction with middleware queues and stacks.)</p>
-<h3 id="63-example-interface-interactions">6.3 Example Interface Interactions</h3>
-<p>The two interfaces, <code>RequestHandlerInterface</code> and <code>MiddlewareInterface</code>, were
-designed to work in conjunction with one another. Middleware gains flexibility
-when de-coupled from any over-arching application layer, and instead only
-relying on the provided request handler to produce a response.</p>
-<p>Two approaches to middleware dispatch systems that the Working Group observed
-and/or implemented are demonstrated below. Additionally, examples of re-usable
-middleware are provided to demonstrate how to write middleware that is
-loosely-coupled.</p>
-<p>Please note that these are not suggested as definitive or exclusive approaches
-to defining middleware dispatch systems.</p>
-<h4 id="queue-based-request-handler">Queue-based request handler</h4>
-<p>In this approach, a request handler maintains a queue of middleware, and a
-fallback response to return if the queue is exhausted without returning a
-response. When executing the first middleware, the queue passes itself as a
-request handler to the middleware.</p>
+<p>Поведение обработчика полностью определяется разработчиком — главное, чтобы в итоге формировался ответ.</p>
+<p>В одном из типичных сценариев обработчик реализует <em>очередь</em> или <em>стек</em> экземпляров middleware внутри себя. В таких случаях вызов <code>$handler-&gt;handle($request)</code> продвигает внутренний указатель, извлекает middleware, связанное с этим указателем, и вызывает его с помощью <code>$middleware-&gt;process($request, $this)</code>. Если middleware больше не осталось, обработчик, как правило, либо выбрасывает исключение, либо возвращает заранее заготовленный ответ.</p>
+<p>Другая возможность — <em>routing middleware</em> («маршрутизирующее middleware»), которое сопоставляет входящий серверный запрос с конкретным обработчиком и возвращает ответ, сформированный при его выполнении. Если сопоставить запрос с обработчиком не удаётся, вместо этого выполняется обработчик, переданный в middleware. (Данный механизм МОЖЕТ применяться даже совместно с очередями и стеками middleware.)</p>
+<h3 id="63">6.3 Примеры взаимодействия интерфейсов</h3>
+<p>Два интерфейса — <code>RequestHandlerInterface</code> и <code>MiddlewareInterface</code> — были спроектированы для совместной работы. Middleware приобретает гибкость, будучи отделённым от какого-либо объемлющего прикладного уровня и опираясь исключительно на предоставленный обработчик запросов для формирования ответа.</p>
+<p>Ниже продемонстрированы два подхода к системам диспетчеризации middleware, которые рабочая группа наблюдала и/или реализовывала. Кроме того, приведены примеры переиспользуемого middleware, показывающие, как писать слабо связанный middleware.</p>
+<p>Обратите внимание: данные подходы не претендуют на роль окончательных или исключительных способов определения систем диспетчеризации middleware.</p>
+<h4 id="_4">Обработчик запросов на основе очереди</h4>
+<p>В данном подходе обработчик запросов поддерживает очередь middleware и резервный ответ на случай, если очередь исчерпана без формирования ответа. При выполнении первого middleware очередь передаёт себя в качестве обработчика запросов данному middleware.</p>
 <pre><code class="language-php">class QueueRequestHandler implements RequestHandlerInterface
 {
     private $middleware = [];
@@ -1020,7 +1228,7 @@ request handler to the middleware.</p>
     }
 }
 </code></pre>
-<p>An application bootstrap might then look like this:</p>
+<p>Загрузка приложения в таком случае может выглядеть следующим образом:</p>
 <pre><code class="language-php">// Fallback handler:
 $fallbackHandler = new NotFoundHandler();
 
@@ -1034,25 +1242,16 @@ $app-&gt;add(new RoutingMiddleware());
 // execute it:
 $response = $app-&gt;handle(ServerRequestFactory::fromGlobals());
 </code></pre>
-<p>This system has two request handlers: one that will produce a response if the
-last middleware delegates to the request handler, and one for dispatching the
-middleware layers. (In this example, the <code>RoutingMiddleware</code> will likely execute
-composed handlers on a successful route match; see more on that below.)</p>
-<p>This approach has the following benefits:</p>
+<p>В данной системе присутствуют два обработчика запросов: один, формирующий ответ, если последнее middleware делегирует обработку обработчику запросов, и один — для диспетчеризации слоёв middleware. (В данном примере <code>RoutingMiddleware</code>, скорее всего, будет выполнять скомпонованные обработчики при успешном совпадении маршрута; подробнее об этом ниже.)</p>
+<p>Данный подход имеет следующие преимущества:</p>
 <ul>
-<li>Middleware does not need to know anything about any other middleware or how it
-  is composed in the application.</li>
-<li>The <code>QueueRequestHandler</code> is agnostic of the PSR-7 implementation in use.</li>
-<li>Middleware is executed in the order it is added to the application, making the
-  code explicit.</li>
-<li>Generation of the "fallback" response is delegated to the application
-  developer. This allows the developer to determine whether that should be a
-  "404 Not Found" condition, a default page, etc.</li>
+<li>Middleware не обязано знать ни о каком другом middleware или о том, как оно скомпоновано в приложении.</li>
+<li><code>QueueRequestHandler</code> не зависит от конкретной реализации PSR-7.</li>
+<li>Middleware выполняется в том порядке, в котором оно добавляется в приложение, что делает код явным.</li>
+<li>Формирование «резервного» ответа делегируется разработчику приложения. Это позволяет разработчику самостоятельно определить, должно ли это быть условие «404 Not Found», страница по умолчанию или что-то иное.</li>
 </ul>
-<h4 id="decoration-based-request-handler">Decoration-based request handler</h4>
-<p>In this approach, a request handler implementation decorates both a middleware
-instance and a fallback request handler to pass to it. The application is built
-from the outside-in, passing each request handler "layer" to the next outer one.</p>
+<h4 id="_5">Обработчик запросов на основе декорирования</h4>
+<p>В данном подходе реализация обработчика запросов декорирует как экземпляр middleware, так и резервный обработчик запросов, передаваемый ему. Приложение строится снаружи внутрь, при этом каждый «слой» обработчика запросов передаётся следующему внешнему слою.</p>
 <pre><code class="language-php">class DecoratingRequestHandler implements RequestHandlerInterface
 {
     private $middleware;
@@ -1092,44 +1291,30 @@ $layer2 = new DecoratingRequestHandler(new AuthorizationMiddleware(), $layer1);
 
 $response = $layer2-&gt;handle(ServerRequestFactory::fromGlobals());
 </code></pre>
-<p>Similar to the queue-based middleware, request handlers serve two purposes in
-this system:</p>
+<p>Аналогично middleware на основе очереди, обработчики запросов в данной системе выполняют две функции:</p>
 <ul>
-<li>Producing a fallback response if no other layer does.</li>
-<li>Dispatching middleware.</li>
+<li>Формирование резервного ответа, если ни один другой слой этого не делает.</li>
+<li>Диспетчеризация middleware.</li>
 </ul>
-<h4 id="reusable-middleware-examples">Reusable Middleware Examples</h4>
-<p>In the examples above, we have two middleware composed in each. In order for
-these to work in either situation, we need to write them such that they interact
-appropriately.</p>
-<p>Implementors of middleware striving for maximum interoperability may want to
-consider the following guidelines:</p>
+<h4 id="middleware">Примеры переиспользуемого middleware</h4>
+<p>В приведённых выше примерах в каждом из них скомпоновано по два middleware. Чтобы они работали в обоих сценариях, необходимо написать их таким образом, чтобы они взаимодействовали корректно.</p>
+<p>Разработчикам middleware, стремящимся к максимальной совместимости, рекомендуется руководствоваться следующими принципами:</p>
 <ul>
 <li>
-<p>Test the request for a required condition. If it does not satisfy that
-  condition, use a composed prototype response or a composed response factory
-  to generate and return a response.</p>
+<p>Проверять запрос на соответствие обязательному условию. Если условие не выполнено, использовать скомпонованный прототип ответа или скомпонованную фабрику ответов для формирования и возврата ответа.</p>
 </li>
 <li>
-<p>If pre-conditions are met, delegate creation of the response to the provided
-  request handler, optionally providing a "new" request by manipulating the
-  provided request (e.g., <code>$handler-&gt;handle($request-&gt;withAttribute('foo',
-  'bar')</code>).</p>
+<p>Если предварительные условия выполнены, делегировать создание ответа предоставленному обработчику запросов, при необходимости передавая «новый» запрос путём преобразования предоставленного (например, <code>$handler-&gt;handle($request-&gt;withAttribute('foo', 'bar')</code>).</p>
 </li>
 <li>
-<p>Either pass the response returned by the request handler unaltered, or provide
-  a new response by manipulating the one returned (e.g., <code>return
-  $response-&gt;withHeader('X-Foo-Bar', 'baz')</code>).</p>
+<p>Либо передавать ответ, возвращённый обработчиком запросов, без изменений, либо предоставлять новый ответ путём манипуляции возвращённым (например, <code>return $response-&gt;withHeader('X-Foo-Bar', 'baz')</code>).</p>
 </li>
 </ul>
-<p>The <code>AuthorizationMiddleware</code> is one that will exercise all three of these guidelines:</p>
+<p><code>AuthorizationMiddleware</code> — это пример, задействующий все три принципа:</p>
 <ul>
-<li>If authorization is required, but the request is not authorized, it will use a
-  composed prototype response to produce an "unauthorized" response.</li>
-<li>If authorization is not required, it will delegate the request to the handler
-  without changes.</li>
-<li>If authorization is required and the request is authorized, it will delegate
-  the request to the handler, and sign the response returned based on the request.</li>
+<li>Если авторизация требуется, но запрос не авторизован, используется скомпонованный прототип ответа для формирования ответа «unauthorized» («не авторизован»).</li>
+<li>Если авторизация не требуется, запрос делегируется обработчику без изменений.</li>
+<li>Если авторизация требуется и запрос авторизован, запрос делегируется обработчику, а возвращённый ответ подписывается на основе запроса.</li>
 </ul>
 <pre><code class="language-php">class AuthorizationMiddleware implements MiddlewareInterface
 {
@@ -1155,15 +1340,8 @@ consider the following guidelines:</p>
     }
 }
 </code></pre>
-<p>Note that the middleware is not concerned with how the request handler is
-implemented; it merely uses it to produce a response when pre-conditions have
-been met.</p>
-<p>The <code>RoutingMiddleware</code> implementation described below follows a similar
-process: it analyzes the request to see if it matches known routes. In this
-particular implementation, routes map to request handlers, and the middleware
-essentially delegates to them in order to produce a response. However, in the
-case that no route is matched, it will execute the handler passed to it to
-produce the response to return.</p>
+<p>Обратите внимание: middleware не интересует реализация обработчика запросов — оно лишь использует его для формирования ответа при выполнении предварительных условий.</p>
+<p>Реализация <code>RoutingMiddleware</code>, описанная ниже, следует аналогичному принципу: она анализирует запрос на предмет соответствия известным маршрутам. В данной реализации маршруты сопоставляются с обработчиками запросов, и middleware по существу делегирует им задачу формирования ответа. Однако в случае, когда ни один маршрут не совпадает, выполняется обработчик, переданный в middleware.</p>
 <pre><code class="language-php">class RoutingMiddleware implements MiddlewareInterface
 {
     private $router;
@@ -1185,39 +1363,49 @@ produce the response to return.</p>
     }
 }
 </code></pre>
-<h2 id="7-people">7. People</h2>
-<p>This PSR was produced by a FIG Working Group with the following members:</p>
+<h2 id="7">7. Участники</h2>
+<p>Данный PSR был подготовлен рабочей группой FIG в следующем составе:</p>
 <ul>
-<li>Matthew Weier O'Phinney (sponsor), <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#119;&#101;&#105;&#101;&#114;&#111;&#112;&#104;&#105;&#110;&#110;&#101;&#121;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#109;&#119;&#101;&#105;&#101;&#114;&#111;&#112;&#104;&#105;&#110;&#110;&#101;&#121;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
-<li>Woody Gilk (editor), <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#119;&#111;&#111;&#100;&#121;&#46;&#103;&#105;&#108;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#119;&#111;&#111;&#100;&#121;&#46;&#103;&#105;&#108;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
+<li>Matthew Weier O'Phinney (спонсор), <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#119;&#101;&#105;&#101;&#114;&#111;&#112;&#104;&#105;&#110;&#110;&#101;&#121;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#109;&#119;&#101;&#105;&#101;&#114;&#111;&#112;&#104;&#105;&#110;&#110;&#101;&#121;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
+<li>Woody Gilk (редактор), <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#119;&#111;&#111;&#100;&#121;&#46;&#103;&#105;&#108;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#119;&#111;&#111;&#100;&#121;&#46;&#103;&#105;&#108;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
 <li>Glenn Eggleton</li>
 <li>Matthieu Napoli</li>
 <li>Oscar Otero</li>
 <li>Korvin Szanto</li>
 <li>Stefano Torresi</li>
 </ul>
-<p>The working group would also like to acknowledge the contributions of:</p>
+<p>Рабочая группа также выражает признательность за вклад следующим участникам:</p>
 <ul>
 <li>Jason Coward, <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#106;&#97;&#115;&#111;&#110;&#64;&#111;&#112;&#101;&#110;&#103;&#101;&#101;&#107;&#46;&#99;&#111;&#109;">&#106;&#97;&#115;&#111;&#110;&#64;&#111;&#112;&#101;&#110;&#103;&#101;&#101;&#107;&#46;&#99;&#111;&#109;</a></li>
 <li>Paul M. Jones, <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#112;&#109;&#106;&#111;&#110;&#101;&#115;&#56;&#56;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#112;&#109;&#106;&#111;&#110;&#101;&#115;&#56;&#56;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
 <li>Rasmus Schultz, <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#114;&#97;&#115;&#109;&#117;&#115;&#64;&#109;&#105;&#110;&#100;&#112;&#108;&#97;&#121;&#46;&#100;&#107;">&#114;&#97;&#115;&#109;&#117;&#115;&#64;&#109;&#105;&#110;&#100;&#112;&#108;&#97;&#121;&#46;&#100;&#107;</a></li>
 </ul>
-<h2 id="8-votes">8. Votes</h2>
+<h2 id="8">8. Голосования</h2>
 <ul>
-<li><a href="https://groups.google.com/d/msg/php-fig/rPFRTa0NODU/tIU9BZciAgAJ">Working Group Formation</a></li>
-<li><a href="https://groups.google.com/d/msg/php-fig/mfTrFinTvEM/PiYvU2S6BAAJ">Review Period Initiation</a></li>
-<li><a href="https://groups.google.com/d/msg/php-fig/bhQmHt39hJE/ZCYrK_O2AQAJ">Acceptance</a></li>
+<li><a href="https://groups.google.com/d/msg/php-fig/rPFRTa0NODU/tIU9BZciAgAJ">Формирование рабочей группы</a></li>
+<li><a href="https://groups.google.com/d/msg/php-fig/mfTrFinTvEM/PiYvU2S6BAAJ">Начало периода рецензирования</a></li>
+<li><a href="https://groups.google.com/d/msg/php-fig/bhQmHt39hJE/ZCYrK_O2AQAJ">Принятие</a></li>
 </ul>
-<h2 id="9-relevant-links">9. Relevant Links</h2>
-<p><em><strong>Note:</strong> Order descending chronologically.</em></p>
+<h2 id="9">9. Полезные ссылки</h2>
+<p><em><strong>Примечание:</strong> порядок — от новых к старым.</em></p>
 <ul>
-<li><a href="https://groups.google.com/d/msg/php-fig/vTtGxdIuBX8/NXKieN9vDQAJ">PHP-FIG mailing list thread</a></li>
-<li><a href="https://groups.google.com/d/msg/thephpleague/jyztj-Nz_rw/I4lHVFigAAAJ">The PHP League middleware proposal</a></li>
-<li><a href="https://groups.google.com/d/msg/php-fig/V12AAcT_SxE/aRXmNnIVCwAJ">PHP-FIG discussion of FrameInterface</a></li>
-<li><a href="https://groups.google.com/d/topic/php-fig/vBk0BRgDe2s/discussion">PHP-FIG discussion about client vs server side middleware</a></li>
+<li><a href="https://groups.google.com/d/msg/php-fig/vTtGxdIuBX8/NXKieN9vDQAJ">Тема в списке рассылки PHP-FIG</a></li>
+<li><a href="https://groups.google.com/d/msg/thephpleague/jyztj-Nz_rw/I4lHVFigAAAJ">Предложение по middleware от The PHP League</a></li>
+<li><a href="https://groups.google.com/d/msg/php-fig/V12AAcT_SxE/aRXmNnIVCwAJ">Обсуждение PHP-FIG по FrameInterface</a></li>
+<li><a href="https://groups.google.com/d/topic/php-fig/vBk0BRgDe2s/discussion">Обсуждение PHP-FIG о middleware на стороне клиента и сервера</a></li>
 </ul>
-<h2 id="10-errata">10. Errata</h2>
+<h2 id="10">10. Замечания и исправления</h2>
 <p>...</p>
+
+
+
+
+
+
+
+  
+  
+
 
 
 
@@ -1228,6 +1416,7 @@ produce the response to return.</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -1255,10 +1444,14 @@ produce the response to return.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

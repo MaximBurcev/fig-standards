@@ -1,110 +1,101 @@
-# PHPDoc Meta Document
+---
+description: "Мета-документ стандарта PHPDoc PSR-5. Описывает обоснование формального определения стандарта документирования PHP-кода с помощью PHPDoc-блоков."
+---
+
+# Мета-документ PHPDoc
 
 
-## 1. Summary
+## 1. Краткое описание
 
-The purpose of documentation using PHPDoc is to provide a comprehensive but flexible way to describe a software system
-at the smallest possible level of detail. This type of documentation aids contributors and consumers of your source
-code to, for example, understand what type of information needs to be passed to specific methods, or how to be able to
-consume a class of the project that a consumer want to use.
+Цель документирования с помощью PHPDoc — предоставить исчерпывающий, но гибкий способ описания программной системы на максимально детальном уровне. Такой тип документации помогает участникам разработки и потребителям вашего исходного кода, например, понять, какой тип информации необходимо передавать в конкретные методы, или как использовать класс проекта, который потребитель хочет применить.
 
-By documenting specific elements inside the source code, the documentation for that part of the source code will be less
-susceptible to becoming out of date.
+Документируя конкретные элементы внутри исходного кода, документация для этой части кода будет в меньшей степени подвержена устареванию.
 
-PHPDoc as a notation was first presented in 2000 by Ulf Wendel, is heavily inspired by JavaDoc,
-and is currently in use by a significant percentage of public PHP projects in the field.
+PHPDoc как нотация была впервые представлена в 2000 году Ульфом Венделем, в значительной мере вдохновлена JavaDoc и в настоящее время используется значительной долей публичных PHP-проектов.
 
-## 2. Why Bother?
+## 2. Зачем это нужно?
 
-PHPDocumentor has spearheaded and facilitated the growth of the PHPDoc notation, but with the growing number of other
-tools that use the PHPDoc notation, it is becoming increasingly important to have an official and formal standard
-instead of the de-facto status that is currently provided.
+PHPDocumentor возглавлял и способствовал росту популярности нотации PHPDoc, однако с увеличением числа других инструментов, использующих нотацию PHPDoc, становится всё более важным иметь официальный и формальный стандарт вместо де-факто статуса, который существует на данный момент.
 
-Pros:
+Преимущества:
 
-* Developers (consumers) have a common reference to refer to when confronted with PHPDoc.
-* Projects and their Developers (contributors) have an authoritative reference which they can consult.
-* IDE vendors can standardize the way they use PHPDoc to aid in concerns such as auto-completion and navigation.
-* Projects using the PHPDoc data to complement their functionality, such as Documentation generators or applications
-  using annotations, will have a common language with their consumers.
-* Missing functionality can be described and implemented by aforementioned stakeholders.
+* Разработчики (потребители) имеют общий источник знаний, к которому могут обращаться при работе с PHPDoc.
+* Проекты и их разработчики (участники) имеют авторитетный источник, которым могут руководствоваться.
+* Вендоры IDE могут стандартизировать способ использования PHPDoc для улучшения таких функций, как автодополнение и навигация.
+* Проекты, использующие данные PHPDoc для дополнения своей функциональности, такие как генераторы документации или приложения, использующие аннотации, получат общий язык с их потребителями.
+* Недостающая функциональность может быть описана и реализована упомянутыми заинтересованными сторонами.
 
-Cons:
+Недостатки:
 
-* If there are different uses of elements in the PHPDoc notation, then it is desirable for projects to align with this
-  specification, which will cost effort to introduce.
-* Given the age of the current standard and widespread adoption, it is not possible to introduce significant breaks in
-  backwards compatibility with the current practices without a significant risk of alienating existing users or vendors.
+* Если существуют различные варианты использования элементов нотации PHPDoc, проектам желательно привести их в соответствие с данной спецификацией, что потребует усилий при внедрении.
+* Учитывая возраст текущего стандарта и широкое распространение, невозможно вносить существенные нарушения обратной совместимости с текущими практиками без значительного риска отчуждения существующих пользователей или вендоров.
 
-## 3. Scope
+## 3. Область применения
 
-### 3.1 Goals
+### 3.1 Цели
 
-* Provide a complete technical definition, or schema, of the PHPDoc notation.
-* Introduce new concepts matching best practices or design patterns in use today.
+* Предоставить полное техническое определение, или схему, нотации PHPDoc.
+* Ввести новые концепции, соответствующие лучшим практикам или паттернам проектирования, применяемым сегодня.
 
-### 3.2 Non-Goals
+### 3.2 Не входит в область применения
 
-* This PSR does not provide a recommendation on how and when to use the concepts described in this document, so it is
-  not a coding standard.
+* Данный PSR не даёт рекомендаций о том, как и когда использовать описанные в этом документе концепции, поэтому он не является стандартом кодирования.
 
-## 4. Approaches
+## 4. Подходы
 
-### 4.1 Chosen Approach
+### 4.1 Выбранный подход
 
-We have decided to formalize the existing practices, observe non-documented usages (such as Doctrine-style
-annotations), and observe feature requests with Documentation generators (such as phpDocumentor).
+Мы решили формализовать существующие практики, рассмотреть незадокументированные варианты использования (такие как аннотации в стиле Doctrine) и учесть запросы на новые функции генераторов документации (таких как phpDocumentor).
 
-The combination of these should be described in sufficient detail as to reduce the amount of possible interpretation.
+Совокупность перечисленного должна быть описана с достаточной степенью детализации, чтобы снизить количество возможных интерпретаций.
 
-In addition to the above, the authors have taken care to provide for future expansions and tag additions that do not
-affect the Syntax of PHPDoc itself.
+В дополнение к вышесказанному, авторы позаботились о возможности будущих расширений и добавления тегов, которые не затрагивают синтаксис самого PHPDoc.
 
-Pros:
+Преимущества:
 
-* Delivers a machine-parsable and verifiable specification.
-* Well-rounded proposal due to the number of factors considered.
+* Предоставляет машиночитаемую и верифицируемую спецификацию.
+* Взвешенное предложение благодаря учёту большого числа факторов.
 
-Cons:
+Недостатки:
 
-* Technical and verbose.
-* Can only be extended when the syntax is not affected.
+* Технически сложное и многословное.
+* Может быть расширено только при условии, что синтаксис не затрагивается.
 
-## 5. People
+## 5. Участники
 
-### 5.1 Editor
+### 5.1 Редактор
 
  * Chuck Burgess - [PEAR](https://pear.php.net)
 
-### 5.2 Sponsor
+### 5.2 Спонсор
 
  * Michael Cullum - [PHP-FIG](https://www.php-fig.org/)
 
-### 5.3 Working group members
+### 5.3 Члены рабочей группы
 
  * Alexey Gopachenko - [PhpStorm](https://www.jetbrains.com/phpstorm)
  * Matthew Brown - [Psalm](https://github.com/vimeo/psalm)
  * Jan Tvrdík - [PHPStan](https://github.com/phpstan/phpstan)
  * Jaap van Otterdijk - [phpDocumentor](https://github.com/phpDocumentor/phpDocumentor2)
 
-## 6. Votes
+## 6. Голосования
 
-* [Entrance Vote](https://groups.google.com/forum/#!topic/php-fig/5Yd0XGd349Q)
-* **Acceptance Vote**: TBD
+* [Вступительное голосование](https://groups.google.com/forum/#!topic/php-fig/5Yd0XGd349Q)
+* **Голосование о принятии**: TBD
 
-## 7. Relevant Links
+## 7. Ссылки по теме
 
-Most of the relevant links are mentioned in the PSR itself as support for individual chapters.
+Большинство соответствующих ссылок упомянуты в самом PSR в качестве обоснования отдельных глав.
 
-## 8. Past contributors
+## 8. Прошлые участники
 
-Since this document stems from the work of a lot of people in previous years, we should recognize their effort:
+Поскольку этот документ является результатом работы многих людей в предыдущие годы, следует признать их вклад:
 
- * Mike van Riel (previous Editor)
- * Phil Sturgeon (previous sponsor)
- * Donald Gilbert (previous sponsor)
- * Gary Jones (contributor)
+ * Mike van Riel (предыдущий редактор)
+ * Phil Sturgeon (предыдущий спонсор)
+ * Donald Gilbert (предыдущий спонсор)
+ * Gary Jones (участник)
 
-_**Note:** Order descending chronologically._
+_**Примечание:** Порядок убывающий хронологический._
 
-* [Original draft](https://github.com/phpDocumentor/phpDocumentor2/commit/0dbdbfa318d197279b414e5c0d1ffb142b31a528#docs/PSR.md)
+* [Исходный черновик](https://github.com/phpDocumentor/phpDocumentor2/commit/0dbdbfa318d197279b414e5c0d1ffb142b31a528#docs/PSR.md)

@@ -1,101 +1,101 @@
-Event Dispatcher
-================
+Диспетчер событий
+=================
 
 
 
-Event Dispatching is a common and well-tested mechanism to allow developers to inject logic into an application easily and consistently.
+Диспетчеризация событий — распространённый и хорошо проверенный механизм, позволяющий разработчикам легко и последовательно встраивать логику в приложение.
 
-The goal of this PSR is to establish a common mechanism for event-based extension and collaboration so that libraries and components may be reused more freely between various applications and frameworks.
+Цель данного PSR — установить общий механизм расширения и взаимодействия на основе событий, чтобы библиотеки и компоненты можно было свободнее повторно использовать в различных приложениях и фреймворках.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119][].
+Ключевые слова «ОБЯЗАН» («MUST»), «НЕ ДОЛЖЕН» («MUST NOT»), «ТРЕБУЕТСЯ» («REQUIRED»), «ДОЛЖЕН» («SHALL»), «НЕ ДОЛЖЕН» («SHALL NOT»), «СЛЕДУЕТ» («SHOULD»), «НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»), «МОЖЕТ» («MAY») и «НЕОБЯЗАТЕЛЬНО» («OPTIONAL») в данном документе следует интерпретировать в соответствии с [RFC 2119][].
 
 [RFC 2119]: http://tools.ietf.org/html/rfc2119
 
-## Goal
+## Цель
 
-Having common interfaces for dispatching and handling events allows developers to create libraries that can interact with many frameworks and other libraries in a common fashion.
+Наличие общих интерфейсов для диспетчеризации и обработки событий позволяет разработчикам создавать библиотеки, способные единообразно взаимодействовать со многими фреймворками и другими библиотеками.
 
-Some examples:
+Несколько примеров:
 
-* A security framework that will prevent saving/accessing data when a user doesn't have permission.
-* A common full page caching system.
-* Libraries that extend other libraries, regardless of what framework they are both integrated into.
-* A logging package to track all actions taken within the application
+* Фреймворк безопасности, предотвращающий сохранение или доступ к данным, когда пользователь не имеет соответствующих прав.
+* Общая система полного кэширования страниц.
+* Библиотеки, расширяющие другие библиотеки, вне зависимости от того, в какой фреймворк они интегрированы.
+* Пакет логирования для отслеживания всех действий, выполняемых в приложении.
 
-## Definitions
+## Определения
 
-* **Event** - An Event is a message produced by an *Emitter*.  It may be any arbitrary PHP object.
-* **Listener** - A Listener is any PHP callable that expects to be passed an Event.  Zero or more Listeners may be passed the same Event.  A Listener MAY enqueue some other asynchronous behavior if it so chooses.
-* **Emitter** - An Emitter is any arbitrary code that wishes to dispatch an Event.  This is also known as the "calling code".  It is not represented by any particular data structure but refers to the use case.
-* **Dispatcher** - A Dispatcher is a service object that is given an Event object by an Emitter.  The Dispatcher is responsible for ensuring that the Event is passed to all relevant Listeners, but MUST defer determining the responsible listeners to a Listener Provider.
-* **Listener Provider** - A Listener Provider is responsible for determining what Listeners are relevant for a given Event, but MUST NOT call the Listeners itself.  A Listener Provider may specify zero or more relevant Listeners.
+* **Событие (Event)** — Событие является сообщением, производимым *Отправителем*. Оно может быть любым произвольным PHP-объектом.
+* **Слушатель (Listener)** — Слушатель — это любой PHP-вызываемый объект (callable), ожидающий передачи ему События. Одному и тому же Событию МОЖЕТ быть передано ноль или более Слушателей. Слушатель МОЖЕТ поставить в очередь какое-либо асинхронное поведение по своему усмотрению.
+* **Отправитель (Emitter)** — Отправитель — это любой произвольный код, желающий диспетчеризировать Событие. Также называется «вызывающим кодом». Он не представлен какой-либо конкретной структурой данных, а лишь относится к варианту использования.
+* **Диспетчер (Dispatcher)** — Диспетчер — это объект-сервис, которому Отправитель передаёт объект События. Диспетчер отвечает за то, чтобы Событие было передано всем соответствующим Слушателям, однако ДОЛЖЕН делегировать определение ответственных Слушателей Поставщику слушателей.
+* **Поставщик слушателей (Listener Provider)** — Поставщик слушателей отвечает за определение того, какие Слушатели актуальны для данного События, однако НЕ ДОЛЖЕН вызывать Слушателей самостоятельно. Поставщик слушателей МОЖЕТ указывать ноль или более актуальных Слушателей.
 
-## Events
+## События
 
-Events are objects that act as the unit of communication between an Emitter and appropriate Listeners.
+События — это объекты, выполняющие роль единицы связи между Отправителем и соответствующими Слушателями.
 
-Event objects MAY be mutable should the use case call for Listeners providing information back to the Emitter.  However, if no such bidirectional communication is needed then it is RECOMMENDED that the Event be defined as immutable; i.e., defined such that it lacks mutator methods.
+Объекты событий МОГУТ быть изменяемыми, если вариант использования предполагает передачу информации Слушателями обратно Отправителю. Однако если такая двусторонняя связь не нужна, РЕКОМЕНДУЕТСЯ определять Событие как неизменяемое, то есть без мутирующих методов.
 
-Implementers MUST assume that the same object will be passed to all Listeners.
+Разработчики ОБЯЗАНЫ исходить из того, что один и тот же объект будет передан всем Слушателям.
 
-It is RECOMMENDED, but NOT REQUIRED, that Event objects support lossless serialization and deserialization; `$event == unserialize(serialize($event))` SHOULD hold true.  Objects MAY leverage PHP’s `Serializable` interface, `__sleep()` or `__wakeup()` magic methods, or similar language functionality if appropriate.
+РЕКОМЕНДУЕТСЯ, но НЕ ТРЕБУЕТСЯ, чтобы объекты событий поддерживали сериализацию и десериализацию без потерь; выражение `$event == unserialize(serialize($event))` ДОЛЖНО быть истинным. Объекты МОГУТ использовать интерфейс PHP `Serializable`, магические методы `__sleep()` или `__wakeup()` или аналогичные возможности языка, если это уместно.
 
-## Stoppable Events
+## Останавливаемые события
 
-A **Stoppable Event** is a special case of Event that contains additional ways to prevent further Listeners from being called.  It is indicated by implementing the `StoppableEventInterface`.
+**Останавливаемое событие (Stoppable Event)** — это особый вид События, содержащий дополнительные средства для предотвращения вызова последующих Слушателей. Оно обозначается реализацией интерфейса `StoppableEventInterface`.
 
-An Event that implements `StoppableEventInterface` MUST return `true` from `isPropagationStopped()` when whatever Event it represents has been completed.  It is up to the implementer of the class to determine when that is.  For example, an Event that is asking for a PSR-7 `RequestInterface` object to be matched with a corresponding `ResponseInterface` object could have a `setResponse(ResponseInterface $res)` method for a Listener to call, which causes `isPropagationStopped()` to return `true`.
+Событие, реализующее `StoppableEventInterface`, ОБЯЗАНО возвращать `true` из метода `isPropagationStopped()`, когда всё, что оно представляет, завершено. Реализатор класса сам определяет момент наступления этого условия. Например, Событие, запрашивающее сопоставление объекта `RequestInterface` из PSR-7 с соответствующим объектом `ResponseInterface`, может иметь метод `setResponse(ResponseInterface $res)` для вызова Слушателем, после чего `isPropagationStopped()` начнёт возвращать `true`.
 
-## Listeners
+## Слушатели
 
-A Listener may be any PHP callable.  A Listener MUST have one and only one parameter, which is the Event to which it responds.  Listeners SHOULD type hint that parameter as specifically as is relevant for their use case; that is, a Listener MAY type hint against an interface to indicate it is compatible with any Event type that implements that interface, or to a specific implementation of that interface.
+Слушатель может быть любым PHP-вызываемым объектом (callable). Слушатель ОБЯЗАН иметь ровно один параметр — Событие, на которое он реагирует. Слушателям СЛЕДУЕТ указывать тип этого параметра настолько конкретно, насколько это уместно для их варианта использования; то есть Слушатель МОЖЕТ указать интерфейс в качестве подсказки типа, обозначая совместимость с любым типом Событий, реализующим этот интерфейс, или с конкретной реализацией этого интерфейса.
 
-A Listener SHOULD have a `void` return, and SHOULD type hint that return explicitly.  A Dispatcher MUST ignore return values from Listeners.
+Слушатель ДОЛЖЕН иметь возвращаемый тип `void` и СЛЕДУЕТ явно указывать его. Диспетчер ОБЯЗАН игнорировать возвращаемые значения Слушателей.
 
-A Listener MAY delegate actions to other code. That includes a Listener being a thin wrapper around an object that runs the actual business logic.
+Слушатель МОЖЕТ делегировать действия другому коду. Это включает случай, когда Слушатель является тонкой обёрткой над объектом, выполняющим реальную бизнес-логику.
 
-A Listener MAY enqueue information from the Event for later processing by a secondary process, using cron, a queue server, or similar techniques.  It MAY serialize the Event object itself to do so; however, care should be taken that not all Event objects may be safely serializable. A secondary process MUST assume that any changes it makes to an Event object will NOT propagate to other Listeners.
+Слушатель МОЖЕТ помещать информацию из События в очередь для последующей обработки вторичным процессом с использованием cron, сервера очередей или аналогичных технологий. При этом он МОЖЕТ сериализовать сам объект Событий; однако следует учитывать, что не все объекты событий могут быть безопасно сериализованы. Вторичный процесс ОБЯЗАН исходить из того, что любые внесённые им изменения в объект Событий НЕ будут переданы другим Слушателям.
 
-## Dispatcher
+## Диспетчер
 
-A Dispatcher is a service object implementing `EventDispatcherInterface`.  It is responsible for retrieving Listeners from a Listener Provider for the Event dispatched, and invoking each Listener with that Event.
+Диспетчер — это объект-сервис, реализующий `EventDispatcherInterface`. Он отвечает за получение Слушателей от Поставщика слушателей для диспетчеризируемого События и за вызов каждого Слушателя с этим Событием.
 
-A Dispatcher:
+Диспетчер:
 
-* MUST call Listeners synchronously in the order they are returned from a ListenerProvider.
-* MUST return the same Event object it was passed after it is done invoking Listeners.
-* MUST NOT return to the Emitter until all Listeners have executed.
+* ОБЯЗАН вызывать Слушателей синхронно в порядке, в котором они возвращаются из ListenerProvider.
+* ОБЯЗАН возвращать тот же объект Событий, который был ему передан, после завершения вызова Слушателей.
+* НЕ ДОЛЖЕН возвращать управление Отправителю до тех пор, пока все Слушатели не завершили выполнение.
 
-If passed a Stoppable Event, a Dispatcher
+При получении Останавливаемого события Диспетчер:
 
-* MUST call `isPropagationStopped()` on the Event before each Listener has been called.  If that method returns `true` it MUST return the Event to the Emitter immediately and MUST NOT call any further Listeners.  This implies that if an Event is passed to the Dispatcher that always returns `true` from `isPropagationStopped()`, zero listeners will be called.
+* ОБЯЗАН вызывать `isPropagationStopped()` у Событий перед вызовом каждого Слушателя. Если этот метод возвращает `true`, Диспетчер ОБЯЗАН немедленно вернуть Событие Отправителю и НЕ ДОЛЖЕН вызывать дальнейших Слушателей. Это означает, что если Событию, переданному Диспетчеру, `isPropagationStopped()` всегда возвращает `true`, ни один Слушатель не будет вызван.
 
-A Dispatcher SHOULD assume that any Listener returned to it from a Listener Provider is type-safe.  That is, the Dispatcher SHOULD assume that calling `$listener($event)` will not produce a `TypeError`.
+Диспетчер СЛЕДУЕТ считать, что любой Слушатель, возвращённый ему Поставщиком слушателей, является типобезопасным. То есть Диспетчеру СЛЕДУЕТ предполагать, что вызов `$listener($event)` не приведёт к `TypeError`.
 
 [Promise object]: https://promisesaplus.com/
 
-### Error handling
+### Обработка ошибок
 
-An Exception or Error thrown by a Listener MUST block the execution of any further Listeners.  An Exception or Error thrown by a Listener MUST be allowed to propagate back up to the Emitter.
+Исключение или ошибка, выброшенные Слушателем, ОБЯЗАНЫ блокировать выполнение всех последующих Слушателей. Исключение или ошибка, выброшенные Слушателем, ОБЯЗАНЫ иметь возможность распространяться обратно до Отправителя.
 
-A Dispatcher MAY catch a thrown object to log it, allow additional action to be taken, etc., but then MUST rethrow the original throwable.
+Диспетчер МОЖЕТ перехватить выброшенный объект для его логирования, выполнения дополнительных действий и т.д., однако затем ОБЯЗАН повторно выбросить исходный объект исключения.
 
-## Listener Provider
+## Поставщик слушателей
 
-A Listener Provider is a service object responsible for determining what Listeners are relevant to and should be called for a given Event.  It may determine both what Listeners are relevant and the order in which to return them by whatever means it chooses.  That MAY include:
+Поставщик слушателей — это объект-сервис, отвечающий за определение того, какие Слушатели актуальны для данного Событий и должны быть вызваны. Он может определять как сами актуальные Слушатели, так и порядок их возврата любым удобным способом. Это МОЖЕТ включать:
 
-* Allowing for some form of registration mechanism so that implementers may assign a Listener to an Event in a fixed order.
-* Deriving a list of applicable Listeners through reflection based on the type and implemented interfaces of the Event.
-* Generating a compiled list of Listeners ahead of time that may be consulted at runtime.
-* Implementing some form of access control so that certain Listeners will only be called if the current user has a certain permission.
-* Extracting some information from an object referenced by the Event, such as an Entity, and calling pre-defined lifecycle methods on that object.
-* Delegating its responsibility to one or more other Listener Providers using some arbitrary logic.
+* Предоставление некоего механизма регистрации, позволяющего реализаторам назначать Слушателя Событию в фиксированном порядке.
+* Формирование списка применимых Слушателей через рефлексию на основе типа Событий и реализуемых им интерфейсов.
+* Генерацию заранее скомпилированного списка Слушателей, доступного во время выполнения.
+* Реализацию некоторой формы контроля доступа, при которой определённые Слушатели вызываются только при наличии у текущего пользователя определённых прав.
+* Извлечение информации из объекта, на который ссылается Событие (например, Сущности), и вызов предопределённых методов жизненного цикла этого объекта.
+* Делегирование своих обязанностей одному или нескольким другим Поставщикам слушателей с использованием произвольной логики.
 
-Any combination of the above, or other mechanisms, MAY be used as desired.
+Любая комбинация перечисленного или иных механизмов МОЖЕТ использоваться по усмотрению разработчика.
 
-Listener Providers SHOULD use the class name of an Event to differentiate one event from another.  They MAY also consider any other information on the event as appropriate.
+Поставщикам слушателей СЛЕДУЕТ использовать имя класса Событий для разграничения одного события от другого. Они также МОГУТ учитывать любую другую информацию о событии, если это уместно.
 
-Listener Providers MUST treat parent types identically to the Event's own type when determining listener applicability.  In the following case:
+Поставщики слушателей ОБЯЗАНЫ обрабатывать родительские типы наравне с собственным типом Событий при определении применимости Слушателей. В следующем случае:
 
 ```php
 class A {}
@@ -107,13 +107,13 @@ $b = new B();
 function listener(A $event): void {};
 ```
 
-A Listener Provider MUST treat `listener()` as an applicable listener for `$b`, as it is type compatible, unless some other criteria prevents it from doing so.
+Поставщик слушателей ОБЯЗАН считать `listener()` применимым слушателем для `$b`, поскольку они совместимы по типу, если только иные критерии не препятствуют этому.
 
-## Object composition
+## Композиция объектов
 
-A Dispatcher SHOULD compose a Listener Provider to determine relevant listeners.  It is RECOMMENDED that a Listener Provider be implemented as a distinct object from the Dispatcher but that is NOT REQUIRED.
+Диспетчеру СЛЕДУЕТ включать Поставщика слушателей для определения актуальных Слушателей. РЕКОМЕНДУЕТСЯ реализовывать Поставщика слушателей как отдельный объект от Диспетчера, однако это НЕ ТРЕБУЕТСЯ.
 
-## Interfaces
+## Интерфейсы
 
 ```php
 namespace Psr\EventDispatcher;

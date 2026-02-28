@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="=============">
+        <meta name="description" content="PSR-19 содержит полный каталог тегов стандарта PHPDoc: @param, @return, @throws, @var, @author и другие теги для документирования PHP-кода.">
       
       
       
@@ -18,8 +18,12 @@
       
         <link rel="next" href="../../LICENSE/">
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -27,11 +31,14 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -45,11 +52,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -58,16 +64,13 @@
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#psr-19-phpdoc-tags" class="md-skip">
           Skip to content
         </a>
       
@@ -86,11 +89,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -110,29 +114,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -143,6 +156,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -167,12 +181,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -182,14 +197,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -197,14 +224,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -212,14 +251,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -227,14 +278,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -242,14 +305,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -257,14 +332,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -272,14 +359,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -287,14 +386,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -302,14 +413,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -317,14 +440,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -332,14 +467,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -347,14 +494,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../accepted/PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -362,11 +521,10 @@
     
       
       
-      
-
   
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
@@ -374,14 +532,42 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Теги PHPDoc PSR-19
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
       
         
@@ -389,6 +575,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -399,56 +587,88 @@
       
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    Оглавление
+    <span class="md-ellipsis">
+      
+        Оглавление
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#1" class="md-nav__link">
-    1. Введение
+    <span class="md-ellipsis">
+      
+        1. Введение
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#2" class="md-nav__link">
-    2. Условные обозначения, используемые в этом документе
+    <span class="md-ellipsis">
+      
+        2. Условные обозначения, используемые в этом документе
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
-    3. Определения
+    <span class="md-ellipsis">
+      
+        3. Определения
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#4" class="md-nav__link">
-    4. О наследовании
+    <span class="md-ellipsis">
+      
+        4. О наследовании
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#41-making-inheritance-explicit-using-the-inheritdoc-tag" class="md-nav__link">
-    4.1. Making inheritance explicit using the @inheritDoc tag
+    <span class="md-ellipsis">
+      
+        4.1. Making inheritance explicit using the @inheritDoc tag
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#42-using-the-inheritdoc-inline-tag-to-augment-a-description" class="md-nav__link">
-    4.2. Using the {@inheritDoc} inline tag to augment a Description
+    <span class="md-ellipsis">
+      
+        4.2. Using the {@inheritDoc} inline tag to augment a Description
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#43-element-specific-inherited-parts" class="md-nav__link">
-    4.3. Element-specific inherited parts
+    <span class="md-ellipsis">
+      
+        4.3. Element-specific inherited parts
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="4.3. Element-specific inherited parts">
@@ -456,21 +676,33 @@
         
           <li class="md-nav__item">
   <a href="#431-class-or-interface" class="md-nav__link">
-    4.3.1. Class Or Interface
+    <span class="md-ellipsis">
+      
+        4.3.1. Class Or Interface
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#432-function-or-method" class="md-nav__link">
-    4.3.2. Function Or Method
+    <span class="md-ellipsis">
+      
+        4.3.2. Function Or Method
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#433-constant-or-property" class="md-nav__link">
-    4.3.3. Constant Or Property
+    <span class="md-ellipsis">
+      
+        4.3.3. Constant Or Property
+      
+    </span>
   </a>
   
 </li>
@@ -482,7 +714,11 @@
       
         <li class="md-nav__item">
   <a href="#5-tags" class="md-nav__link">
-    5. Tags
+    <span class="md-ellipsis">
+      
+        5. Tags
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5. Tags">
@@ -490,7 +726,11 @@
         
           <li class="md-nav__item">
   <a href="#51-api" class="md-nav__link">
-    5.1. @api
+    <span class="md-ellipsis">
+      
+        5.1. @api
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.1. @api">
@@ -498,21 +738,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -524,7 +776,11 @@
         
           <li class="md-nav__item">
   <a href="#52-author" class="md-nav__link">
-    5.2. @author
+    <span class="md-ellipsis">
+      
+        5.2. @author
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.2. @author">
@@ -532,21 +788,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_1" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_1" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_1" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -558,7 +826,11 @@
         
           <li class="md-nav__item">
   <a href="#53-copyright" class="md-nav__link">
-    5.3. @copyright
+    <span class="md-ellipsis">
+      
+        5.3. @copyright
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.3. @copyright">
@@ -566,21 +838,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_2" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_2" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_2" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -592,7 +876,11 @@
         
           <li class="md-nav__item">
   <a href="#54-deprecated" class="md-nav__link">
-    5.4. @deprecated
+    <span class="md-ellipsis">
+      
+        5.4. @deprecated
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.4. @deprecated">
@@ -600,21 +888,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_3" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_3" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_3" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -626,7 +926,11 @@
         
           <li class="md-nav__item">
   <a href="#55-generated" class="md-nav__link">
-    5.5. @generated
+    <span class="md-ellipsis">
+      
+        5.5. @generated
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.5. @generated">
@@ -634,21 +938,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_4" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_4" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_4" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -660,7 +976,11 @@
         
           <li class="md-nav__item">
   <a href="#56-internal" class="md-nav__link">
-    5.6. @internal
+    <span class="md-ellipsis">
+      
+        5.6. @internal
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.6. @internal">
@@ -668,21 +988,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_5" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_5" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_5" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -694,7 +1026,11 @@
         
           <li class="md-nav__item">
   <a href="#57-link" class="md-nav__link">
-    5.7. @link
+    <span class="md-ellipsis">
+      
+        5.7. @link
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.7. @link">
@@ -702,21 +1038,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_6" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_6" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_6" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -728,7 +1076,11 @@
         
           <li class="md-nav__item">
   <a href="#58-method" class="md-nav__link">
-    5.8. @method
+    <span class="md-ellipsis">
+      
+        5.8. @method
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.8. @method">
@@ -736,21 +1088,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_7" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_7" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_7" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -762,7 +1126,11 @@
         
           <li class="md-nav__item">
   <a href="#59-package" class="md-nav__link">
-    5.9. @package
+    <span class="md-ellipsis">
+      
+        5.9. @package
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.9. @package">
@@ -770,21 +1138,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_8" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_8" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_8" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -796,7 +1176,11 @@
         
           <li class="md-nav__item">
   <a href="#510-param" class="md-nav__link">
-    5.10. @param
+    <span class="md-ellipsis">
+      
+        5.10. @param
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.10. @param">
@@ -804,21 +1188,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_9" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_9" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_9" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -830,7 +1226,11 @@
         
           <li class="md-nav__item">
   <a href="#511-property" class="md-nav__link">
-    5.11. @property
+    <span class="md-ellipsis">
+      
+        5.11. @property
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.11. @property">
@@ -838,21 +1238,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_10" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_10" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
-    Example
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
   </a>
   
 </li>
@@ -864,7 +1276,11 @@
         
           <li class="md-nav__item">
   <a href="#512-return" class="md-nav__link">
-    5.12. @return
+    <span class="md-ellipsis">
+      
+        5.12. @return
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.12. @return">
@@ -872,21 +1288,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_11" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_11" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_10" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -898,7 +1326,11 @@
         
           <li class="md-nav__item">
   <a href="#513-see" class="md-nav__link">
-    5.13. @see
+    <span class="md-ellipsis">
+      
+        5.13. @see
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.13. @see">
@@ -906,21 +1338,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_12" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_12" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_11" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -932,7 +1376,11 @@
         
           <li class="md-nav__item">
   <a href="#514-since" class="md-nav__link">
-    5.14. @since
+    <span class="md-ellipsis">
+      
+        5.14. @since
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.14. @since">
@@ -940,21 +1388,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_13" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_13" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_12" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -966,7 +1426,11 @@
         
           <li class="md-nav__item">
   <a href="#515-throws" class="md-nav__link">
-    5.15. @throws
+    <span class="md-ellipsis">
+      
+        5.15. @throws
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.15. @throws">
@@ -974,21 +1438,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_14" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_14" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_13" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1000,7 +1476,11 @@
         
           <li class="md-nav__item">
   <a href="#516-todo" class="md-nav__link">
-    5.16. @todo
+    <span class="md-ellipsis">
+      
+        5.16. @todo
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.16. @todo">
@@ -1008,21 +1488,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_15" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_15" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_14" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1034,7 +1526,11 @@
         
           <li class="md-nav__item">
   <a href="#517-uses" class="md-nav__link">
-    5.17. @uses
+    <span class="md-ellipsis">
+      
+        5.17. @uses
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.17. @uses">
@@ -1042,21 +1538,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_16" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_16" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_15" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1068,7 +1576,11 @@
         
           <li class="md-nav__item">
   <a href="#518-var" class="md-nav__link">
-    5.18. @var
+    <span class="md-ellipsis">
+      
+        5.18. @var
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.18. @var">
@@ -1076,21 +1588,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_17" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_17" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_16" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1102,7 +1626,11 @@
         
           <li class="md-nav__item">
   <a href="#519-version" class="md-nav__link">
-    5.19. @version
+    <span class="md-ellipsis">
+      
+        5.19. @version
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.19. @version">
@@ -1110,21 +1638,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_18" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_18" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_17" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1149,14 +1689,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -1179,6 +1731,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1188,56 +1742,88 @@
       
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    Оглавление
+    <span class="md-ellipsis">
+      
+        Оглавление
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#1" class="md-nav__link">
-    1. Введение
+    <span class="md-ellipsis">
+      
+        1. Введение
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#2" class="md-nav__link">
-    2. Условные обозначения, используемые в этом документе
+    <span class="md-ellipsis">
+      
+        2. Условные обозначения, используемые в этом документе
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
-    3. Определения
+    <span class="md-ellipsis">
+      
+        3. Определения
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#4" class="md-nav__link">
-    4. О наследовании
+    <span class="md-ellipsis">
+      
+        4. О наследовании
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#41-making-inheritance-explicit-using-the-inheritdoc-tag" class="md-nav__link">
-    4.1. Making inheritance explicit using the @inheritDoc tag
+    <span class="md-ellipsis">
+      
+        4.1. Making inheritance explicit using the @inheritDoc tag
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#42-using-the-inheritdoc-inline-tag-to-augment-a-description" class="md-nav__link">
-    4.2. Using the {@inheritDoc} inline tag to augment a Description
+    <span class="md-ellipsis">
+      
+        4.2. Using the {@inheritDoc} inline tag to augment a Description
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#43-element-specific-inherited-parts" class="md-nav__link">
-    4.3. Element-specific inherited parts
+    <span class="md-ellipsis">
+      
+        4.3. Element-specific inherited parts
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="4.3. Element-specific inherited parts">
@@ -1245,21 +1831,33 @@
         
           <li class="md-nav__item">
   <a href="#431-class-or-interface" class="md-nav__link">
-    4.3.1. Class Or Interface
+    <span class="md-ellipsis">
+      
+        4.3.1. Class Or Interface
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#432-function-or-method" class="md-nav__link">
-    4.3.2. Function Or Method
+    <span class="md-ellipsis">
+      
+        4.3.2. Function Or Method
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#433-constant-or-property" class="md-nav__link">
-    4.3.3. Constant Or Property
+    <span class="md-ellipsis">
+      
+        4.3.3. Constant Or Property
+      
+    </span>
   </a>
   
 </li>
@@ -1271,7 +1869,11 @@
       
         <li class="md-nav__item">
   <a href="#5-tags" class="md-nav__link">
-    5. Tags
+    <span class="md-ellipsis">
+      
+        5. Tags
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5. Tags">
@@ -1279,7 +1881,11 @@
         
           <li class="md-nav__item">
   <a href="#51-api" class="md-nav__link">
-    5.1. @api
+    <span class="md-ellipsis">
+      
+        5.1. @api
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.1. @api">
@@ -1287,21 +1893,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1313,7 +1931,11 @@
         
           <li class="md-nav__item">
   <a href="#52-author" class="md-nav__link">
-    5.2. @author
+    <span class="md-ellipsis">
+      
+        5.2. @author
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.2. @author">
@@ -1321,21 +1943,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_1" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_1" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_1" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1347,7 +1981,11 @@
         
           <li class="md-nav__item">
   <a href="#53-copyright" class="md-nav__link">
-    5.3. @copyright
+    <span class="md-ellipsis">
+      
+        5.3. @copyright
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.3. @copyright">
@@ -1355,21 +1993,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_2" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_2" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_2" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1381,7 +2031,11 @@
         
           <li class="md-nav__item">
   <a href="#54-deprecated" class="md-nav__link">
-    5.4. @deprecated
+    <span class="md-ellipsis">
+      
+        5.4. @deprecated
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.4. @deprecated">
@@ -1389,21 +2043,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_3" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_3" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_3" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1415,7 +2081,11 @@
         
           <li class="md-nav__item">
   <a href="#55-generated" class="md-nav__link">
-    5.5. @generated
+    <span class="md-ellipsis">
+      
+        5.5. @generated
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.5. @generated">
@@ -1423,21 +2093,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_4" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_4" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_4" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1449,7 +2131,11 @@
         
           <li class="md-nav__item">
   <a href="#56-internal" class="md-nav__link">
-    5.6. @internal
+    <span class="md-ellipsis">
+      
+        5.6. @internal
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.6. @internal">
@@ -1457,21 +2143,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_5" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_5" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_5" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1483,7 +2181,11 @@
         
           <li class="md-nav__item">
   <a href="#57-link" class="md-nav__link">
-    5.7. @link
+    <span class="md-ellipsis">
+      
+        5.7. @link
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.7. @link">
@@ -1491,21 +2193,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_6" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_6" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_6" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1517,7 +2231,11 @@
         
           <li class="md-nav__item">
   <a href="#58-method" class="md-nav__link">
-    5.8. @method
+    <span class="md-ellipsis">
+      
+        5.8. @method
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.8. @method">
@@ -1525,21 +2243,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_7" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_7" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_7" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1551,7 +2281,11 @@
         
           <li class="md-nav__item">
   <a href="#59-package" class="md-nav__link">
-    5.9. @package
+    <span class="md-ellipsis">
+      
+        5.9. @package
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.9. @package">
@@ -1559,21 +2293,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_8" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_8" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_8" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1585,7 +2331,11 @@
         
           <li class="md-nav__item">
   <a href="#510-param" class="md-nav__link">
-    5.10. @param
+    <span class="md-ellipsis">
+      
+        5.10. @param
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.10. @param">
@@ -1593,21 +2343,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_9" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_9" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_9" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1619,7 +2381,11 @@
         
           <li class="md-nav__item">
   <a href="#511-property" class="md-nav__link">
-    5.11. @property
+    <span class="md-ellipsis">
+      
+        5.11. @property
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.11. @property">
@@ -1627,21 +2393,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_10" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_10" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
-    Example
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
   </a>
   
 </li>
@@ -1653,7 +2431,11 @@
         
           <li class="md-nav__item">
   <a href="#512-return" class="md-nav__link">
-    5.12. @return
+    <span class="md-ellipsis">
+      
+        5.12. @return
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.12. @return">
@@ -1661,21 +2443,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_11" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_11" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_10" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1687,7 +2481,11 @@
         
           <li class="md-nav__item">
   <a href="#513-see" class="md-nav__link">
-    5.13. @see
+    <span class="md-ellipsis">
+      
+        5.13. @see
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.13. @see">
@@ -1695,21 +2493,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_12" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_12" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_11" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1721,7 +2531,11 @@
         
           <li class="md-nav__item">
   <a href="#514-since" class="md-nav__link">
-    5.14. @since
+    <span class="md-ellipsis">
+      
+        5.14. @since
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.14. @since">
@@ -1729,21 +2543,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_13" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_13" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_12" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1755,7 +2581,11 @@
         
           <li class="md-nav__item">
   <a href="#515-throws" class="md-nav__link">
-    5.15. @throws
+    <span class="md-ellipsis">
+      
+        5.15. @throws
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.15. @throws">
@@ -1763,21 +2593,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_14" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_14" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_13" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1789,7 +2631,11 @@
         
           <li class="md-nav__item">
   <a href="#516-todo" class="md-nav__link">
-    5.16. @todo
+    <span class="md-ellipsis">
+      
+        5.16. @todo
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.16. @todo">
@@ -1797,21 +2643,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_15" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_15" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_14" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1823,7 +2681,11 @@
         
           <li class="md-nav__item">
   <a href="#517-uses" class="md-nav__link">
-    5.17. @uses
+    <span class="md-ellipsis">
+      
+        5.17. @uses
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.17. @uses">
@@ -1831,21 +2693,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_16" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_16" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_15" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1857,7 +2731,11 @@
         
           <li class="md-nav__item">
   <a href="#518-var" class="md-nav__link">
-    5.18. @var
+    <span class="md-ellipsis">
+      
+        5.18. @var
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.18. @var">
@@ -1865,21 +2743,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_17" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_17" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_16" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1891,7 +2781,11 @@
         
           <li class="md-nav__item">
   <a href="#519-version" class="md-nav__link">
-    5.19. @version
+    <span class="md-ellipsis">
+      
+        5.19. @version
+      
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="5.19. @version">
@@ -1899,21 +2793,33 @@
         
           <li class="md-nav__item">
   <a href="#syntax_18" class="md-nav__link">
-    Syntax
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#description_18" class="md-nav__link">
-    Description
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples_17" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
   </a>
   
 </li>
@@ -1938,14 +2844,14 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-  <h1>Теги PHPDoc PSR-19</h1>
 
-<p>=============</p>
+<h1 id="psr-19-phpdoc-tags">PSR-19: PHPDoc tags</h1>
 <h2 id="_1">Оглавление</h2>
 <ul>
 <li><a href="#1-introduction">1. Введение</a></li>
@@ -2790,11 +3696,22 @@ class Foo
 
 
 
+
+
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -2822,10 +3739,14 @@ class Foo
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

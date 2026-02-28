@@ -1,81 +1,60 @@
-HTTP Server Request Handlers
-============================
+Обработчики HTTP-запросов на стороне сервера
+============================================
 
 
-This document describes common interfaces for HTTP server request handlers
-("request handlers") and HTTP server middleware components ("middleware")
-that use HTTP messages as described by [PSR-7][psr7] or subsequent
-replacement PSRs.
+Данный документ описывает общие интерфейсы для обработчиков HTTP-запросов на стороне сервера («обработчики запросов») и компонентов промежуточного программного обеспечения HTTP-сервера («middleware»), использующих HTTP-сообщения, описанные в [PSR-7][psr7] или последующих заменяющих PSR.
 
-HTTP request handlers are a fundamental part of any web application. Server-side
-code receives a request message, processes it, and produces a response message.
-HTTP middleware is a way to move common request and response processing away from
-the application layer.
+Обработчики HTTP-запросов являются фундаментальной частью любого веб-приложения. Серверный код получает сообщение-запрос, обрабатывает его и формирует сообщение-ответ. HTTP middleware — это способ вынести общую обработку запросов и ответов за пределы прикладного уровня.
 
-The interfaces described in this document are abstractions for request handlers
-and middleware.
+Интерфейсы, описанные в данном документе, являются абстракциями для обработчиков запросов и middleware.
 
-_Note: All references to "request handlers" and "middleware" are specific to
-**server request** processing._
+_Примечание: все ссылки на «обработчики запросов» и «middleware» относятся исключительно к обработке **серверных запросов**._
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC 2119][rfc2119].
+Ключевые слова «MUST», «MUST NOT», «REQUIRED», «SHALL», «SHALL NOT», «SHOULD», «SHOULD NOT», «RECOMMENDED», «MAY» и «OPTIONAL» в данном документе следует интерпретировать в соответствии с [RFC 2119][rfc2119].
 
 [psr7]: https://www.php-fig.org/psr/psr-7/
 [rfc2119]: http://tools.ietf.org/html/rfc2119
 
-### References
+### Ссылки
 
 - [PSR-7][psr7]
 - [RFC 2119][rfc2119]
 
-## 1. Specification
+## 1. Спецификация
 
-### 1.1 Request Handlers
+### 1.1 Обработчики запросов
 
-A request handler is an individual component that processes a request and
-produces a response, as defined by PSR-7.
+Обработчик запросов — это отдельный компонент, который обрабатывает запрос и формирует ответ в соответствии с PSR-7.
 
-A request handler MAY throw an exception if request conditions prevent it from
-producing a response. The type of exception is not defined.
+Обработчик запросов МОЖЕТ выбрасывать исключение, если условия запроса не позволяют сформировать ответ. Тип исключения не определён.
 
-Request handlers using this standard MUST implement the following interface:
+Обработчики запросов, использующие данный стандарт, ОБЯЗАНЫ реализовывать следующий интерфейс:
 
 - `Psr\Http\Server\RequestHandlerInterface`
 
 ### 1.2 Middleware
 
-A middleware component is an individual component participating, often together
-with other middleware components, in the processing of an incoming request and
-the creation of a resulting response, as defined by PSR-7.
+Компонент middleware — это отдельный компонент, участвующий, как правило совместно с другими компонентами middleware, в обработке входящего запроса и формировании результирующего ответа в соответствии с PSR-7.
 
-A middleware component MAY create and return a response without delegating to
-a request handler, if sufficient conditions are met.
+Компонент middleware МОЖЕТ создавать и возвращать ответ без делегирования обработчику запросов, если для этого выполнены достаточные условия.
 
-Middleware using this standard MUST implement the following interface:
+Middleware, использующее данный стандарт, ОБЯЗАНО реализовывать следующий интерфейс:
 
 - `Psr\Http\Server\MiddlewareInterface`
 
-### 1.3 Generating Responses
+### 1.3 Формирование ответов
 
-It is RECOMMENDED that any middleware or request handler that generates a response
-will either compose a prototype of a PSR-7 `ResponseInterface` or a factory capable
-of generating a `ResponseInterface` instance in order to prevent dependence on a
-specific HTTP message implementation.
+РЕКОМЕНДУЕТСЯ, чтобы любой middleware или обработчик запросов, формирующий ответ, содержал либо прототип PSR-7 `ResponseInterface`, либо фабрику, способную создавать экземпляр `ResponseInterface`, во избежание зависимости от конкретной реализации HTTP-сообщений.
 
-### 1.4 Handling Exceptions
+### 1.4 Обработка исключений
 
-It is RECOMMENDED that any application using middleware includes a component
-that catches exceptions and converts them into responses. This middleware SHOULD
-be the first component executed and wrap all further processing to ensure that
-a response is always generated.
+РЕКОМЕНДУЕТСЯ, чтобы любое приложение, использующее middleware, включало компонент, перехватывающий исключения и преобразующий их в ответы. Данный middleware СЛЕДУЕТ выполнять первым и оборачивать всю дальнейшую обработку, чтобы гарантировать формирование ответа в любом случае.
 
-## 2. Interfaces
+## 2. Интерфейсы
 
 ### 2.1 Psr\Http\Server\RequestHandlerInterface
 
-The following interface MUST be implemented by request handlers.
+Следующий интерфейс ОБЯЗАН быть реализован обработчиками запросов.
 
 ```php
 namespace Psr\Http\Server;
@@ -102,7 +81,7 @@ interface RequestHandlerInterface
 
 ### 2.2 Psr\Http\Server\MiddlewareInterface
 
-The following interface MUST be implemented by compatible middleware components.
+Следующий интерфейс ОБЯЗАН быть реализован совместимыми компонентами middleware.
 
 ```php
 namespace Psr\Http\Server;

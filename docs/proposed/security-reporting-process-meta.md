@@ -1,50 +1,37 @@
-Security Disclosure Meta Document
+---
+description: "Мета-документ PSR-9. Описывает обоснование стандарта процесса сообщения об уязвимостях безопасности в PHP-проектах."
+---
+
+Мета-документ раскрытия информации о безопасности
 =================================
 
 
-1. Summary
+1. Краткое описание
 ----------
 
-There are two aspects with dealing with security issues: One is the process
-by which security issues are reported and fixed in projects, the other
-is how the general public is informed about the issues and any remedies
-available. While PSR-10 addresses the later, this PSR, ie. PSR-9, deals with
-the former. So the goal of PSR-9 is to define the process by which security
-researchers and report security vulnerabilities to projects. It is important
-that when security vulnerabilities are found that researchers have an easy
-channel to the projects in question allowing them to disclose the issue to a
-controlled group of people.
+Работа с вопросами безопасности имеет два аспекта: один — это процесс, посредством которого проблемы безопасности сообщаются и устраняются в проектах, другой — то, как широкая общественность информируется о проблемах и доступных способах их устранения. В то время как PSR-10 касается второго, данный PSR, то есть PSR-9, рассматривает первый. Таким образом, цель PSR-9 — определить процесс, посредством которого исследователи безопасности сообщают проектам об уязвимостях. Важно, чтобы при обнаружении уязвимостей исследователи имели удобный канал связи с соответствующими проектами, позволяющий им раскрывать проблему ограниченному кругу людей.
 
-2. Why Bother?
+2. Зачем это нужно?
 --------------
 
-As of right now, there isn't a common standard for most parts of this process.
-That is there isn't a standard where researchers can find out about the
-process for handling security issues for any given project. There is also
-no standard that explains to researchers what they can expect to happen if
-they report a vulnerability. More importantly there is no standard on which
-projects can base the security reporting process that best fits them.
+На данный момент не существует общего стандарта для большинства частей этого процесса. То есть не существует стандарта, по которому исследователи могут узнать о процессе обработки проблем безопасности для любого данного проекта. Также нет стандарта, который объяснял бы исследователям, чего они могут ожидать при сообщении об уязвимости. Что ещё важнее, не существует стандарта, на котором проекты могли бы основывать наиболее подходящий для них процесс сообщения о безопасности.
 
-3. Scope
+3. Область применения
 --------
 
-## 3.1 Goals
+## 3.1 Цели
 
-* A defined process for how vulnerabilities are reported, the process by which
-  these get fixed and finally disclosed to the public
+* Определённый процесс для сообщения об уязвимостях, процесс их устранения и последующего публичного раскрытия
 
-## 3.2 Non-Goals
+## 3.2 Не входит в область применения
 
-* Methods for reducing security vulnerabilities
-* Publication of security issues and fixes (see PSR-10)
+* Методы снижения уязвимостей безопасности
+* Публикация проблем и исправлений безопасности (см. PSR-10)
 
-4. Approaches
+4. Подходы
 -------------
 
-Currently the most viable approach seems to be defining a base line workflow
-for how security vulnerabilities go from discovery to fixing to public
-disclosure. Inspiration could be drawn from this list of security disclosure
-processes in various PHP and non-PHP projects:
+В настоящее время наиболее жизнеспособным подходом представляется определение базового рабочего процесса того, как уязвимости безопасности проходят путь от обнаружения через устранение до публичного раскрытия. Вдохновение можно почерпнуть из этого списка процессов раскрытия информации о безопасности в различных PHP и не-PHP проектах:
 
 * https://symfony.com/security
 * https://framework.zend.com/security
@@ -63,31 +50,31 @@ processes in various PHP and non-PHP projects:
 * https://www.mozilla.org/en-US/about/governance/policies/security-group/bugs/
 * https://www.openbsd.org/security.html
 
-A summary of the differences and similarities can be found here:
+Краткое изложение различий и сходств можно найти здесь:
 https://groups.google.com/d/msg/php-fig-psr-9-discussion/puGV_X0bj_M/Jr_IAS40StsJ
 
-5. People
+5. Участники
 ---------
 
-### 5.1 Editor
+### 5.1 Редактор
 
 * Michael Hess
 
-### 5.2 Sponsors
+### 5.2 Спонсоры
 
 * Larry Garfield (Drupal)
 * Korvin Szanto (concrete5)
 
-### 5.3 Coordinator
+### 5.3 Координатор
 
 * Larry Garfield (Drupal)
 
-### 5.4 Contributors
+### 5.4 Участники
 
 * Lukas Kahwe Smith
 
-6. Votes
+6. Голосования
 --------
 
-7. Relevant Links
+7. Ссылки по теме
 -----------------

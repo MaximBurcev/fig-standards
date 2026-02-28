@@ -1,99 +1,103 @@
-# PSR-16 Meta Document
+---
+description: "Кэширование — распространённый способ повышения производительности любого проекта. Мета-документ PSR-16 описывает обоснование простого интерфейса кэширования."
+---
+
+# Мета-документ PSR-16
 
 
-## 1. Summary
+## 1. Краткое изложение
 
-Caching is a common way to improve the performance of any project, and many
-libraries make use or could make use of it. Interoperability at this level
-means libraries can drop their own caching implementations and easily rely
-on the one given to them by the framework, or another dedicated cache
-library the user picked.
+Кэширование — распространённый способ повышения производительности любого проекта, и многие
+библиотеки используют его или могут использовать. Совместимость на этом уровне
+означает, что библиотеки могут отказаться от собственных реализаций кэширования и без труда
+опираться на ту, что предоставляется фреймворком или другой специализированной библиотекой кэша,
+выбранной пользователем.
 
-## 2. Why Bother?
+## 2. Зачем это нужно?
 
-PSR-6 solves this problem already, but in a rather formal and verbose way for
-what the most simple use cases need. This simpler approach aims to build a
-standardized layer of simplicity on top of the existing PSR-6 interfaces.
+PSR-6 уже решает эту задачу, однако делает это достаточно формально и многословно
+применительно к самым простым случаям использования. Данный более простой подход направлен на построение
+стандартизированного уровня простоты поверх существующих интерфейсов PSR-6.
 
-## 3. Scope
+## 3. Область применения
 
-### 3.1 Goals
+### 3.1 Цели
 
-* A simple interface for cache operations.
-* Basic support for operations on multiple keys for performance (round-trip-time)
-  reasons.
-* Providing an adapter class that turns a PSR-6 implementation into a
-  PSR-Simple-Cache one.
-* It should be possible to expose both caching PSRs from a caching library.
+* Простой интерфейс для операций с кэшем.
+* Базовая поддержка операций над несколькими ключами из соображений производительности
+  (сокращение времени цикла обращения).
+* Предоставление класса-адаптера, превращающего реализацию PSR-6 в
+  реализацию PSR-Simple-Cache.
+* Должна быть возможность предоставлять оба PSR кэширования из одной библиотеки кэша.
 
-### 3.2 Non-Goals
+### 3.2 Вне области применения
 
-* Solving all possible edge cases, PSR-6 does this well already.
+* Решение всех возможных граничных случаев — PSR-6 уже справляется с этим.
 
-## 4. Approaches
+## 4. Подходы
 
-The approach chosen here is very barebones by design, as it is to be used
-only by the most simple cases. It does not have to be implementable by all
-possible cache backends, nor be usable for all usages. It is merely a layer
-of convenience on top of PSR-6.
+Выбранный подход намеренно минималистичен, поскольку предназначен
+исключительно для простейших случаев использования. Он не обязан реализовываться всеми
+возможными бэкендами кэша и не претендует на охват всех сценариев. Это лишь уровень
+удобства поверх PSR-6.
 
-## 5. People
+## 5. Участники
 
-### 5.1 Editor(s)
+### 5.1 Редактор(ы)
 
 * Paul Dragoonis (@dragoonis)
 
-### 5.2 Sponsors
+### 5.2 Спонсоры
 
-* Jordi Boggiano (@seldaek) - Composer (Coordinator)
-* Fabien Potencier (@fabpot) - Symfony
+* Jordi Boggiano (@seldaek) — Composer (координатор)
+* Fabien Potencier (@fabpot) — Symfony
 
-### 5.3 Contributors
+### 5.3 Авторы
 
-For their role in the writing the initial version of this cache PSR:
+За участие в написании первоначальной версии данного PSR кэширования:
 
 * Evert Pot (@evert)
 * Florin Pățan (@dlsniper)
 
-For being an early reviewer
+За роль раннего рецензента:
 
 * Daniel Messenger (@dannym87)
 
-## 6. Votes
+## 6. Голосования
 
-* **Entrance Vote:**  https://groups.google.com/d/topic/php-fig/vyQTKHS6pJ8/discussion
-* **Acceptance Vote:**  https://groups.google.com/d/msg/php-fig/A8e6GvDRGIk/HQBJGEhbDQAJ
+* **Голосование о принятии в работу:**  https://groups.google.com/d/topic/php-fig/vyQTKHS6pJ8/discussion
+* **Голосование об утверждении:**  https://groups.google.com/d/msg/php-fig/A8e6GvDRGIk/HQBJGEhbDQAJ
 
-## 7. Relevant Links
+## 7. Ссылки по теме
 
-* [Survey of existing cache implementations][1], by @dragoonis
+* [Обзор существующих реализаций кэша][1], автор @dragoonis
 
 [1]: https://docs.google.com/spreadsheet/ccc?key=0Ak2JdGialLildEM2UjlOdnA4ekg3R1Bfeng5eGlZc1E#gid=0
 
-## 8. Errata
+## 8. Исправления и дополнения
 
 ### 8.1 Throwable
 
-The 2.0 release of the `psr/simple-cache` package updates `Psr\SimpleCache\CacheException` to extend `\Throwable`.  This is considered a backwards compatible change for implementing libraries as of PHP 7.4.
+Релиз 2.0 пакета `psr/simple-cache` обновляет `Psr\SimpleCache\CacheException` так, чтобы он расширял `\Throwable`. Это считается обратно совместимым изменением для реализующих библиотек, начиная с PHP 7.4.
 
-### 8.2 Type additions
+### 8.2 Добавление типов
 
-The 2.0 release of the `psr/simple-cache` package includes scalar parameter types and increases the minimum PHP version to 8.0.  This is considered a backwards compatible change for implementing libraries as PHP 7.2 introduces covariance for parameters.  Any implementation of 1.0 is compatible with 2.0. For calling libraries, however, this reduces the types that they may pass (as previously any parameter that could be cast to string could be accepted) and as such requires incrementing the major version.
+Релиз 2.0 пакета `psr/simple-cache` включает скалярные типы параметров и повышает минимальную версию PHP до 8.0. Это считается обратно совместимым изменением для реализующих библиотек, поскольку PHP 7.2 вводит ковариантность для параметров. Любая реализация версии 1.0 совместима с версией 2.0. Однако для вызывающих библиотек это сужает допустимые типы передаваемых значений (ранее принимался любой параметр, приводимый к строке), что требует увеличения мажорной версии.
 
-The 3.0 release includes return types.  Return types break backwards compatibility for implementing libraries as PHP does not support return type widening.
+Релиз 3.0 включает возвращаемые типы. Возвращаемые типы нарушают обратную совместимость для реализующих библиотек, поскольку PHP не поддерживает расширение возвращаемых типов.
 
-Implementing libraries **MAY** add return types to their own packages at their discretion, provided that:
+Реализующие библиотеки **МОГУТ** добавлять возвращаемые типы в собственные пакеты по своему усмотрению при условии, что:
 
-* the return types match those in the 3.0 package.
-* the implementation specifies a minimum PHP version of 8.0.0 or later
-* the implementation depends on `"psr/simple-cache": "^2 || ^3"` so as to exclude the untyped 1.0 version.
+* возвращаемые типы соответствуют типам в пакете версии 3.0;
+* реализация указывает минимальную версию PHP 8.0.0 или выше;
+* реализация зависит от `"psr/simple-cache": "^2 || ^3"`, чтобы исключить нетипизированную версию 1.0.
 
-Implementing libraries **MAY** add parameter types to their own package in a new minor release, either at the same time as adding return types or in a subsequent release, provided that:
+Реализующие библиотеки **МОГУТ** добавлять типы параметров в собственный пакет в новом минорном релизе — одновременно с добавлением возвращаемых типов или в последующем релизе — при условии, что:
 
-* the parameter types match or widen those in the 2.0 package
-* the implementation specifies a minimum PHP version of 8.0 if using mixed or union types or later.
-* the implementation depends on `"psr/simple-cache": "^2 || ^3"` so as to exclude the untyped 1.0 version.
+* типы параметров соответствуют или расширяют типы из пакета версии 2.0;
+* реализация указывает минимальную версию PHP 8.0 при использовании смешанных или объединённых типов или выше;
+* реализация зависит от `"psr/simple-cache": "^2 || ^3"`, чтобы исключить нетипизированную версию 1.0.
 
-Implementing libraries are encouraged, but not required to transition their packages toward the 3.0 version of the package at their earliest convenience.
+Реализующим библиотекам рекомендуется, хотя и не требуется, при первой же возможности переходить на версию 3.0 пакета.
 
-Calling libraries are encouraged to ensure they are sending the correct types and to update their requirement to `"psr/simple-cache": "^1 || ^2 || ^3"` at their earliest convenience.
+Вызывающим библиотекам рекомендуется убедиться, что они передают правильные типы, и при первой же возможности обновить зависимость до `"psr/simple-cache": "^1 || ^2 || ^3"`.

@@ -1,77 +1,76 @@
-# Clock Meta Document
+---
+description: "Мета-документ PSR-20 «Часы». Описывает обоснование введения ClockInterface для получения текущего времени в тестируемом и предсказуемом виде."
+---
 
+# Мета-документ Clock
 
-## 1. Summary
+## 1. Краткое описание
 
-Getting the current time in applications is typically achieved using the `time()` or `microtime` functions, or by using a `new \DateTimeImmutable()` class.
+Получение текущего времени в приложениях обычно достигается с помощью функций `time()` или `microtime`, либо через создание объекта `new \DateTimeImmutable()`.
 
-Due to the nature of time progression these methods cannot be used when predictable results are needed, such as during testing.
+В силу природы течения времени эти методы нельзя использовать тогда, когда необходимы предсказуемые результаты, например при тестировании.
 
-This `ClockInterface` aims to provide a standard way to consume time that allows interoperability not only when consuming the "real" time but also when predictable results need to be available. This avoids the need to use PHP extensions for testing or redeclare the `time()` function in a local namespace. 
+Данный `ClockInterface` призван предоставить стандартный способ работы с временем, обеспечивающий совместимость не только при использовании «реального» времени, но и в случаях, когда требуются предсказуемые результаты. Это позволяет избежать необходимости использовать расширения PHP для тестирования или переопределять функцию `time()` в локальном пространстве имён.
 
-## 2. Why Bother?
+## 2. Зачем это нужно?
 
-There are currently a few libraries that provide this functionality, however there is no interopability between these different libraries, as they ship with their own clock interfaces. 
+В настоящее время существует несколько библиотек, предоставляющих данную функциональность, однако совместимости между этими библиотеками нет, поскольку каждая из них поставляется со своим собственным интерфейсом часов.
 
-Symfony provides a package called `symfony/phpunit-bridge` that has a `Symfony\Bridge\PhpUnit\ClockMock` class, which allows mocking PHP's built-in time and date functions, however this does not solve mocking calls to `new \DateTimeImmutable()`. It also does not fully mock time when called from other libraries that rely on the system time.
+Symfony предоставляет пакет `symfony/phpunit-bridge`, в котором есть класс `Symfony\Bridge\PhpUnit\ClockMock`, позволяющий подменять встроенные функции времени и даты PHP, однако это не решает проблему подмены вызовов `new \DateTimeImmutable()`. Также он не полностью подменяет время при вызовах из других библиотек, которые опираются на системное время.
 
-`Carbon\Carbon`, and its fork `Cake\Chronos\Chronos`, do provide mocking via a static `setTestNow()` method, but this provides no isolation and must be called again to stop mocking.
+`Carbon\Carbon` и его форк `Cake\Chronos\Chronos` действительно предоставляют подмену через статический метод `setTestNow()`, но это не обеспечивает изоляции и требует повторного вызова для отключения подмены.
 
-Pros:
+Преимущества:
 
-* Consistent interface to get the current time;
-* Easy to mock the wall clock time for repeatablility.
+* Единообразный интерфейс для получения текущего времени;
+* Простота подмены системного времени для обеспечения воспроизводимости результатов.
 
-Cons:
+Недостатки:
 
-* Extra overhead and developer effort to get the current time, not as simple as
-calling `time()` or `date()`.
+* Дополнительные накладные расходы и усилия разработчика для получения текущего времени — не так просто, как вызов `time()` или `date()`.
 
-## 3. Scope
+## 3. Область применения
 
-### 3.1 Goals
+### 3.1 Цели
 
-* Provide a simple and mockable way to read the current time;
-* Allow interoperability between libraries when reading the clock.
+* Предоставить простой и легко подменяемый способ чтения текущего времени;
+* Обеспечить совместимость между библиотеками при чтении часов.
 
-### 3.2 Non-Goals
+### 3.2 Не входит в область применения
 
-* This PSR does not provide a recommendation on how and when to use the concepts
-  described in this document, so it is not a coding standard;
-* This PSR does not provide a recommendation on how to handle timezones when 
-  retrieving the current time. This is left up to the implementation.
-* This PSR does not handle any scheduling methods like `sleep()` or `wait()` because such methods are not related to retrieving the current time.
+* Данный PSR не даёт рекомендаций о том, как и когда использовать описанные в этом документе концепции, поэтому он не является стандартом кодирования;
+* Данный PSR не даёт рекомендаций о том, как обрабатывать часовые пояса при получении текущего времени. Это остаётся на усмотрение реализации.
+* Данный PSR не охватывает методы планирования, такие как `sleep()` или `wait()`, поскольку такие методы не связаны с получением текущего времени.
 
-## 4. Approaches
+## 4. Подходы
 
-### 4.1 Chosen Approach
+### 4.1 Выбранный подход
 
-We have decided to formalize the existing practices used by several other packages. Some popular packages providing this functionality are: 
+Мы решили формализовать существующие практики, применяемые в нескольких других пакетах. Среди популярных пакетов, предоставляющих данную функциональность:
 
 * [`lcobucci/clock`](https://packagist.org/packages/lcobucci/clock)
 * [`kreait/clock`](https://packagist.org/packages/kreait/clock)
 * [`ergebnis/clock`](https://packagist.org/packages/ergebnis/clock)
 * [`mangoweb/clock`](https://packagist.org/packages/mangoweb/clock)
 
-(This list is not exhaustive!)
+(Список не является исчерпывающим!)
 
-Some of these provide interfaces and some rely on extending a clock class to mock the
-current time.
+Некоторые из них предоставляют интерфейсы, а некоторые используют расширение класса часов для подмены текущего времени.
 
-These implementations all provide a `now()` method which returns a `DateTimeImmutable` object. As the `DateTimeImmutable` object allows retrieving the Unix timestamp, by calling `getTimestamp()` or `format('u.U')`, this interface does not define any special methods to retrieve a Unix timestamp or any other time information that is not available from a `DateTimeImmutable` object. 
+Все эти реализации предоставляют метод `now()`, возвращающий объект `DateTimeImmutable`. Поскольку объект `DateTimeImmutable` позволяет получить Unix-временную метку путём вызова `getTimestamp()` или `format('u.U')`, данный интерфейс не определяет специальных методов для получения Unix-временной метки или любой другой временной информации, которая недоступна через объект `DateTimeImmutable`.
 
-### 4.2 Timezones
+### 4.2 Часовые пояса
 
-Time by now is defined by interaction of electromagnetic radiation with the excited states of certain atoms where the SI defines one second as the duration of 9192631770 cycles of radiation corresponding to the transition between two energy levels of the ground state of the caesium-133 atom at 0K. This means that retrieving the current time will always return the same time, no matter where it is observed. While the timezone defines *where* the time was observed it does not modify the actual "slice" of time.
+Время в настоящее время определяется взаимодействием электромагнитного излучения с возбуждёнными состояниями определённых атомов: СИ определяет одну секунду как продолжительность 9192631770 циклов излучения, соответствующих переходу между двумя уровнями энергии основного состояния атома цезия-133 при 0K. Это означает, что получение текущего времени всегда вернёт одно и то же время, независимо от того, где оно наблюдается. Хотя часовой пояс определяет *место* наблюдения времени, он не изменяет фактический «момент» времени.
 
-This means that for the sake of this PSR the timezone is considered an implementation detail of the interface. 
+Это означает, что в целях настоящего PSR часовой пояс считается деталью реализации интерфейса.
 
-It is up to the implementation to make sure that the timezone is handled according to the business logic of the application. That is either by making sure that a call to `now()` will only return a `DateTimeImmutable` object with a known timezone (implicit contract) or by explicitly changing the timezone to be correct for the application. This can be done by calling `setTimezone()` to create a new `DateTimeImmutable` object with the given timezone. 
+Реализация несёт ответственность за то, чтобы часовой пояс обрабатывался в соответствии с бизнес-логикой приложения. Это достигается либо путём обеспечения того, что вызов `now()` будет возвращать только объект `DateTimeImmutable` с известным часовым поясом (неявный контракт), либо путём явного изменения часового пояса на корректный для приложения. Это можно сделать, вызвав `setTimezone()` для создания нового объекта `DateTimeImmutable` с заданным часовым поясом.
 
-These actions are not defined in this interface.
+Данные действия не определены в этом интерфейсе.
 
 
-### 4.2 Example Implementations
+### 4.2 Примеры реализаций
 
 ```php
 final class SystemClock implements \Psr\Clock\ClockInterface
@@ -99,17 +98,17 @@ final class FrozenClock implements \Psr\Clock\ClockInterface
 
 ```
 
-## 5. People
+## 5. Участники
 
-### 5.1 Editor
+### 5.1 Редактор
 
  * Chris Seufert
 
-### 5.2 Sponsor
+### 5.2 Спонсор
 
  * Chuck Burgess
 
-### 5.3 Working group members
+### 5.3 Члены рабочей группы
 
  * Luís Cobucci
  * Pol Dellaiera
@@ -118,11 +117,11 @@ final class FrozenClock implements \Psr\Clock\ClockInterface
  * Andreas Heigl
  * Andreas Möller
 
-## 6. Votes
+## 6. Голосования
 
-* [Entrance Vote](https://groups.google.com/g/php-fig/c/hIKqd0an-GI)
+* [Вступительное голосование](https://groups.google.com/g/php-fig/c/hIKqd0an-GI)
 
-## 7. Relevant Links
+## 7. Ссылки по теме
 
 * https://github.com/ergebnis/clock/blob/main/src/Clock.php
 * https://github.com/icecave/chrono/blob/master/src/Clock/ClockInterface.php
@@ -132,9 +131,9 @@ final class FrozenClock implements \Psr\Clock\ClockInterface
 * https://github.com/mangoweb-backend/clock/blob/master/src/Clock.php
 * https://martinfowler.com/bliki/ClockWrapper.html
 
-## 8. Past contributors
+## 8. Прошлые участники
 
-This document stems from the work of many people in previous years, we recognize their effort:
+Этот документ является результатом работы многих людей в предыдущие годы, мы признаём их вклад:
 
- * 
-_**Note:** Order descending chronologically._
+ *
+_**Примечание:** Порядок убывающий хронологический._

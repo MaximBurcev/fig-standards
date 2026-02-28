@@ -1,82 +1,86 @@
-# Container Meta Document
+---
+description: "Этот документ описывает процесс и обсуждения, которые привели к созданию PSR для контейнера. Его цель — объяснить причины каждого принятого решения."
+---
+
+# Мета-документ контейнера
 
 
-## 1. Introduction
+## 1. Введение
 
-This document describes the process and discussions that led to the Container PSR.
-Its goal is to explain the reasons behind each decision.
+Этот документ описывает процесс и обсуждения, которые привели к созданию PSR для контейнера.
+Его цель — объяснить причины каждого принятого решения.
 
-## 2. Why bother?
+## 2. Зачем это нужно?
 
-There are dozens of dependency injection containers out there, and these
-DI containers have very different ways to store entries.
+Существуют десятки контейнеров внедрения зависимостей, и эти
+DI-контейнеры имеют очень разные способы хранения элементов.
 
-- Some are based on callbacks (Pimple, Laravel, ...)
-- Others are based on configuration (Symfony, ZF, ...), with various formats
-  (PHP arrays, YAML files, XML files...)
-- Some can leverage factories...
-- Some have a PHP API to build entries (PHP-DI, ZF, Symfony, Mouf...)
-- Some can do auto-wiring (Laravel, PHP-DI, ...)
-- Others can wire entries based on annotations (PHP-DI, JMS Bundle...)
-- Some have a graphical user interface (Mouf...)
-- Some can compile configuration files to PHP classes (Symfony, ZF...)
-- Some can do aliasing...
-- Some can use proxies to provide lazy loading of dependencies...
+- Одни основаны на колбэках (Pimple, Laravel, ...)
+- Другие основаны на конфигурации (Symfony, ZF, ...) в различных форматах
+  (PHP-массивы, YAML-файлы, XML-файлы...)
+- Некоторые могут использовать фабрики...
+- Некоторые имеют PHP API для создания элементов (PHP-DI, ZF, Symfony, Mouf...)
+- Некоторые поддерживают автоматическое связывание (Laravel, PHP-DI, ...)
+- Другие могут связывать элементы на основе аннотаций (PHP-DI, JMS Bundle...)
+- Некоторые имеют графический пользовательский интерфейс (Mouf...)
+- Некоторые могут компилировать конфигурационные файлы в PHP-классы (Symfony, ZF...)
+- Некоторые поддерживают псевдонимы...
+- Некоторые могут использовать прокси для ленивой загрузки зависимостей...
 
-So when you look at the big picture, there is a very large number of ways in
-which the DI problem can be tackled, and therefore a big number of different
-implementations. However, all the DI containers out there are answering the
-same need: they offer a way for the application to retrieve a set of
-configured objects (usually services).
+Таким образом, если смотреть в целом, существует очень большое количество способов
+решения проблемы DI, и, следовательно, большое число различных реализаций. Однако все
+существующие DI-контейнеры отвечают на одну и ту же потребность: они предоставляют
+приложению способ получить набор сконфигурированных объектов (как правило, сервисов).
 
-By standardizing the way entries are fetched from a container, frameworks and
-libraries using the Container PSR could work with any compatible container.
-That would allow end users to choose their own container based on their own preferences.
+Стандартизировав способ получения элементов из контейнера, фреймворки и
+библиотеки, использующие PSR для контейнера, смогут работать с любым совместимым контейнером.
+Это позволит конечным пользователям выбирать контейнер по собственному усмотрению.
 
-## 3. Scope
-### 3.1. Goals
+## 3. Область применения
+### 3.1. Цели
 
-The goal set by the Container PSR is to standardize how frameworks and libraries make use of a
-container to obtain objects and parameters.
+Цель PSR для контейнера — стандартизировать, как фреймворки и библиотеки используют
+контейнер для получения объектов и параметров.
 
-It is important to distinguish the two usages of a container:
+Важно различать два способа использования контейнера:
 
-- configuring entries
-- fetching entries
+- конфигурирование элементов
+- получение элементов
 
-Most of the time, those two sides are not used by the same party.
-While it is often end users who tend to configure entries, it is generally the framework that fetches
-entries to build the application.
+В большинстве случаев эти две стороны использует не одна и та же сторона.
+Хотя конфигурированием элементов, как правило, занимаются конечные пользователи,
+получением элементов для построения приложения обычно занимается фреймворк.
 
-This is why this interface focuses only on how entries can be fetched from a container.
+Именно поэтому данный интерфейс сосредоточен исключительно на том, как элементы
+могут быть получены из контейнера.
 
-### 3.2. Non-goals
+### 3.2. Вне области применения
 
-How entries are set in the container and how they are configured is out of the
-scope of this PSR. This is what makes a container implementation unique. Some
-containers have no configuration at all (they rely on autowiring), others rely
-on PHP code defined via callback, others on configuration files... This standard
-only focuses on how entries are fetched.
+Способ установки элементов в контейнер и их конфигурирование выходят за рамки
+данного PSR. Именно это делает реализацию контейнера уникальной. Одни
+контейнеры вообще не имеют конфигурации (они используют автоматическое связывание), другие
+основаны на PHP-коде, заданном через колбэки, третьи — на конфигурационных файлах... Этот стандарт
+сосредоточен только на способе получения элементов.
 
-Also, naming conventions used for entries are not part of the scope of this
-PSR. Indeed, when you look at naming conventions, there are 2 strategies:
+Кроме того, соглашения об именовании элементов не входят в область применения данного
+PSR. Действительно, если рассматривать соглашения об именовании, существует 2 стратегии:
 
-- the identifier is the class name, or an interface name (used mostly
-  by frameworks with an autowiring capability)
-- the identifier is a common name (closer to a variable name), which is
-  mostly used by frameworks relying on configuration.
+- идентификатор является именем класса или именем интерфейса (используется преимущественно
+  фреймворками с поддержкой автоматического связывания)
+- идентификатор является общим именем (ближе к имени переменной), что
+  преимущественно используется фреймворками, опирающимися на конфигурацию.
 
-Both strategies have their strengths and weaknesses. The goal of this PSR
-is not to choose one convention over the other. Instead, the user can simply
-use aliasing to bridge the gap between 2 containers with different naming strategies.
+Обе стратегии имеют свои сильные и слабые стороны. Цель данного PSR
+не в том, чтобы отдать предпочтение одному соглашению перед другим. Вместо этого пользователь может
+использовать псевдонимы для устранения разрыва между двумя контейнерами с разными стратегиями именования.
 
-## 4. Recommended usage: Container PSR and the Service Locator
+## 4. Рекомендуемое использование: PSR для контейнера и Service Locator
 
-The PSR states that:
+PSR гласит:
 
-> "users SHOULD NOT pass a container into an object, so the object
-> can retrieve *its own dependencies*. Users doing so are using the container as a Service Locator.
-> Service Locator usage is generally discouraged."
+> «пользователи НЕ ДОЛЖНЫ передавать контейнер в объект, чтобы объект
+> мог получать *собственные зависимости*. Пользователи, поступающие таким образом, используют контейнер как Service Locator.
+> Использование Service Locator в целом не рекомендуется.»
 
 ```php
 // This is not OK, you are using the container as a service locator
@@ -99,24 +103,24 @@ class GoodExample
 // You can then use the container to inject the $db object into your $goodExample object.
 ```
 
-In the `BadExample` you should not inject the container because:
+В случае `BadExample` не следует внедрять контейнер, потому что:
 
-- it makes the code **less interoperable**: by injecting the container, you have
-  to use a container compatible with the Container PSR. With the other
-  option, your code can work with ANY container.
-- you are forcing the developer into naming its entry "db". This naming could
-  conflict with another package that has the same expectations for another service.
-- it is harder to test.
-- it is not directly clear from your code that the `BadExample` class will need
-  the "db" service. Dependencies are hidden.
+- это делает код **менее интероперабельным**: внедряя контейнер, вы вынуждены
+  использовать контейнер, совместимый с PSR для контейнера. При другом подходе
+  ваш код может работать с ЛЮБЫМ контейнером.
+- вы вынуждаете разработчика называть элемент «db». Такое имя может
+  конфликтовать с другим пакетом, предъявляющим те же ожидания к другому сервису.
+- это затрудняет тестирование.
+- из кода неочевидно, что класс `BadExample` будет нуждаться
+  в сервисе «db». Зависимости скрыты.
 
-Very often, the `ContainerInterface` will be used by other packages. As a end-user
-PHP developer using a framework, it is unlikely you will ever need to use containers
-or type-hint on the `ContainerInterface` directly.
+Очень часто `ContainerInterface` будет использоваться другими пакетами. Для конечного
+PHP-разработчика, работающего с фреймворком, маловероятно, что ему когда-либо придётся
+использовать контейнеры или объявлять зависимость непосредственно от `ContainerInterface`.
 
-Whether using the Container PSR into your code is considered a good practice or not boils down to
-knowing if the objects you are retrieving are **dependencies** of the object referencing
-the container or not. Here are a few more examples:
+Является ли использование PSR для контейнера в вашем коде хорошей практикой или нет, сводится к
+пониманию того, являются ли получаемые объекты **зависимостями** объекта, обращающегося к
+контейнеру. Вот ещё несколько примеров:
 
 ```php
 class RouterExample
@@ -139,14 +143,14 @@ class RouterExample
 }
 ```
 
-In this example, the router is transforming the URL into a controller entry name,
-then fetches the controller from the container. A controller is not really a
-dependency of the router. As a rule of thumb, if your object is *computing*
-the entry name among a list of entries that can vary, your use case is certainly legitimate.
+В этом примере роутер преобразует URL в имя элемента контроллера,
+а затем получает контроллер из контейнера. Контроллер не является настоящей
+зависимостью роутера. Как правило, если ваш объект *вычисляет*
+имя элемента из списка элементов, которые могут варьироваться, такое использование вполне оправдано.
 
-As an exception, factory objects whose only purpose is to create and return new instances may use
-the service locator pattern. The factory must then implement an interface so that it can itself
-be replaced by another factory using the same interface.
+В виде исключения фабричные объекты, единственная цель которых — создавать и возвращать новые экземпляры, МОГУТ
+использовать паттерн Service Locator. Фабрика ДОЛЖНА реализовывать интерфейс, чтобы её можно было
+заменить другой фабрикой с тем же интерфейсом.
 
 ```php
 // ok: a factory interface + implementation to create an object
@@ -171,23 +175,23 @@ class ExampleFactory implements FactoryInterface
 }
 ```
 
-## 5. History
+## 5. История
 
-Before submitting the Container PSR to the PHP-FIG, the `ContainerInterface` was
-first proposed in a project named [container-interop](https://github.com/container-interop/container-interop/).
-The goal of the project was to provide a test-bed for implementing the `ContainerInterface`,
-and to pave the way for the Container PSR.
+До передачи PSR для контейнера в PHP-FIG, `ContainerInterface` был
+впервые предложен в проекте [container-interop](https://github.com/container-interop/container-interop/).
+Цель проекта состояла в создании полигона для реализации `ContainerInterface`
+и в подготовке почвы для PSR контейнера.
 
-In the rest of this meta document, you will see frequent references to
+В остальной части этого мета-документа вы найдёте частые ссылки на
 `container-interop.`
 
-## 6. Interface name
+## 6. Имя интерфейса
 
-The interface name is the same as the one discussed for `container-interop`
-(only the namespace is changed to match the other PSRs).
-It has been thoroughly discussed on `container-interop` [[4]](#link_naming_discussion) and was decided by a vote [[5]](#link_naming_vote).
+Имя интерфейса совпадает с тем, что обсуждалось для `container-interop`
+(изменено только пространство имён, чтобы соответствовать другим PSR).
+Оно было тщательно обсуждено в `container-interop` [[4]](#link_naming_discussion) и определено голосованием [[5]](#link_naming_vote).
 
-The list of options considered with their respective votes are:
+Список рассмотренных вариантов с результатами голосования:
 
 - `ContainerInterface`: +8
 - `ProviderInterface`: +2
@@ -198,97 +202,97 @@ The list of options considered with their respective votes are:
 - `ObjectStore`: -8
 - `ConsumerInterface`: -9
 
-## 7. Interface methods
+## 7. Методы интерфейса
 
-The choice of which methods the interface would contain was made after a statistical analysis of existing containers. [[6]](#link_statistical_analysis).
+Выбор методов, которые должен содержать интерфейс, был сделан после статистического анализа существующих контейнеров [[6]](#link_statistical_analysis).
 
-The summary of the analysis showed that:
+Краткие итоги анализа показали:
 
-- all containers offer a method to get an entry by its id
-- a large majority name such method `get()`
-- for all containers, the `get()` method has 1 mandatory parameter of type string
-- some containers have an optional additional argument for `get()`, but it doesn't have the same purpose between containers
-- a large majority of the containers offer a method to test if it can return an entry by its id
-- a majority name such method `has()`
-- for all containers offering `has()`, the method has exactly 1 parameter of type string
-- a large majority of the containers throw an exception rather than returning null when an entry is not found in `get()`
-- a large majority of the containers don't implement `ArrayAccess`
+- все контейнеры предоставляют метод для получения элемента по его идентификатору
+- большинство называют такой метод `get()`
+- у всех контейнеров метод `get()` имеет 1 обязательный параметр типа string
+- некоторые контейнеры имеют необязательный дополнительный аргумент у `get()`, но его назначение различается от контейнера к контейнеру
+- большинство контейнеров предоставляют метод для проверки возможности вернуть элемент по его идентификатору
+- большинство называют такой метод `has()`
+- у всех контейнеров, предоставляющих `has()`, метод имеет ровно 1 параметр типа string
+- большинство контейнеров выбрасывают исключение, а не возвращают null, когда элемент не найден в `get()`
+- большинство контейнеров не реализуют `ArrayAccess`
 
-The question of whether to include methods to define entries has been discussed at the very start of the container-interop project [[4]](#link_naming_discussion).
-It has been judged that such methods do not belong in the interface described here because it is out of its scope
-(see the "Goal" section).
+Вопрос о включении методов для определения элементов обсуждался с самого начала проекта container-interop [[4]](#link_naming_discussion).
+Было признано, что такие методы не относятся к описанному здесь интерфейсу, поскольку выходят за его рамки
+(см. раздел «Цели»).
 
-As a result, the `ContainerInterface` contains two methods:
+В результате `ContainerInterface` содержит два метода:
 
-- `get()`, returning anything, with one mandatory string parameter. Should throw an exception if the entry is not found.
-- `has()`, returning a boolean, with one mandatory string parameter.
+- `get()`, возвращающий произвольное значение, с одним обязательным строковым параметром. ДОЛЖЕН выбрасывать исключение, если элемент не найден.
+- `has()`, возвращающий булево значение, с одним обязательным строковым параметром.
 
-### 7.1. Number of parameters in `get()` method
+### 7.1. Количество параметров метода `get()`
 
-While `ContainerInterface` only defines one mandatory parameter in `get()`, it is not incompatible with
-existing containers that have additional optional parameters. PHP allows an implementation to offer more parameters
-as long as they are optional, because the implementation *does* satisfy the interface.
+Хотя `ContainerInterface` определяет только один обязательный параметр в `get()`, это не противоречит
+существующим контейнерам с дополнительными необязательными параметрами. PHP позволяет реализации предлагать
+больше параметров, если они являются необязательными, поскольку такая реализация *действительно* удовлетворяет интерфейсу.
 
-Difference with container-interop: [The container-interop spec](https://github.com/container-interop/container-interop/blob/master/docs/ContainerInterface.md) stated that:
+Отличие от container-interop: [спецификация container-interop](https://github.com/container-interop/container-interop/blob/master/docs/ContainerInterface.md) гласила:
 
-> While `ContainerInterface` only defines one mandatory parameter in `get()`, implementations MAY accept additional optional parameters.
+> Хотя `ContainerInterface` определяет только один обязательный параметр в `get()`, реализации МОГУТ принимать дополнительные необязательные параметры.
 
-This sentence was removed from PSR-11 because:
+Это предложение было исключено из PSR-11, поскольку:
 
-- It is something that stems from OO principles in PHP, so this is not directly related to PSR-11
-- We do not want to encourage implementors to add additional parameters as we recommend coding against the interface and not the implementation
+- это вытекает из принципов ООП в PHP и напрямую не связано с PSR-11
+- мы не хотим поощрять реализующих добавлять дополнительные параметры, так как рекомендуем писать код против интерфейса, а не реализации
 
-However, some implementations have extra optional parameters; that's technically legal. Such implementations are compatible with PSR-11. [[11]](#link_get_optional_parameters)
+Тем не менее, некоторые реализации имеют дополнительные необязательные параметры — это технически допустимо. Такие реализации совместимы с PSR-11. [[11]](#link_get_optional_parameters)
 
-### 7.2. Type of the `$id` parameter
+### 7.2. Тип параметра `$id`
 
-The type of the `$id` parameter in `get()` and `has()` has been discussed in the container-interop project.
+Тип параметра `$id` в методах `get()` и `has()` обсуждался в проекте container-interop.
 
-While `string` is used in all the containers that were analyzed, it was suggested that allowing
-anything (such as objects) could allow containers to offer a more advanced query API.
+Хотя во всех проанализированных контейнерах используется тип `string`, было предложено
+разрешить любой тип (например, объекты), чтобы позволить контейнерам предлагать более расширенный API запросов.
 
-An example given was to use the container as an object builder. The `$id` parameter would then be an
-object that would describe how to create an instance.
+В качестве примера рассматривалось использование контейнера как строителя объектов. Параметр `$id` в этом случае
+был бы объектом, описывающим, как создать экземпляр.
 
-The conclusion of the discussion [[7]](#link_method_and_parameters_details) was that this was beyond the scope of getting entries from a container without
-knowing how the container provided them, and it was more fit for a factory.
+Вывод обсуждения [[7]](#link_method_and_parameters_details) состоял в том, что это выходит за рамки
+получения элементов из контейнера без знания о том, как контейнер их предоставляет, и больше подходит для фабрики.
 
-### 7.3. Exceptions thrown
+### 7.3. Выбрасываемые исключения
 
-This PSR provides 2 interfaces meant to be implemented by container exceptions.
+Данный PSR предоставляет 2 интерфейса, предназначенных для реализации исключениями контейнера.
 
-#### 7.3.1 Base exception
+#### 7.3.1 Базовое исключение
 
-The `Psr\Container\ContainerExceptionInterface` is the base interface. It SHOULD be implemented by custom exceptions thrown directly by the container.
+`Psr\Container\ContainerExceptionInterface` — базовый интерфейс. Его СЛЕДУЕТ реализовывать в пользовательских исключениях, выбрасываемых непосредственно контейнером.
 
-It is expected that any exception that is part of the domain of the container implements the `ContainerExceptionInterface`. A few examples:
+Ожидается, что любое исключение, относящееся к предметной области контейнера, реализует `ContainerExceptionInterface`. Несколько примеров:
 
-- if a container relies on a configuration file and if that configuration file is flawed, the container might throw an `InvalidFileException` implementing the `ContainerExceptionInterface`.
-- if a cyclic dependency is detected between dependencies, the container might throw an `CyclicDependencyException` implementing the `ContainerExceptionInterface`.
+- если контейнер использует конфигурационный файл и этот файл некорректен, контейнер МОЖЕТ выбрасывать `InvalidFileException`, реализующий `ContainerExceptionInterface`.
+- если обнаруживается циклическая зависимость между зависимостями, контейнер МОЖЕТ выбрасывать `CyclicDependencyException`, реализующий `ContainerExceptionInterface`.
 
-However, if the exception is thrown by some code out of the container's scope (for instance an exception thrown while instantiating an entry), the container is not required to wrap this exception in a custom exception implementing the `ContainerExceptionInterface`.
+Однако если исключение выбрасывается кодом вне области контейнера (например, исключение при создании экземпляра элемента), контейнер не обязан оборачивать это исключение в пользовательское исключение, реализующее `ContainerExceptionInterface`.
 
-The usefulness of the base exception interface was questioned: it is not an exception one would typically catch [[8]](#link_base_exception_usefulness).
+Полезность базового интерфейса исключения ставилась под сомнение: это не то исключение, которое обычно перехватывают [[8]](#link_base_exception_usefulness).
 
-However, most PHP-FIG members considered it to be a best practice. Base exception interface are implemented in previous PSRs and several member projects. The base exception interface was therefore kept.
+Тем не менее большинство членов PHP-FIG сочли это лучшей практикой. Базовые интерфейсы исключений реализованы в предыдущих PSR и в нескольких проектах-участниках. Базовый интерфейс исключения был поэтому сохранён.
 
-#### 7.3.2 Not found exception
+#### 7.3.2 Исключение «не найдено»
 
-A call to the `get` method with a non-existing id must throw an exception implementing the `Psr\Container\NotFoundExceptionInterface`.
+Вызов метода `get` с несуществующим идентификатором ДОЛЖЕН выбрасывать исключение, реализующее `Psr\Container\NotFoundExceptionInterface`.
 
-For a given identifier:
+Для заданного идентификатора:
 
-- if the `has` method returns `false`, then the `get` method MUST throw a `Psr\Container\NotFoundExceptionInterface`.
-- if the `has` method returns `true`, this does not mean that the `get` method will succeed and throw no exception. It can even throw a `Psr\Container\NotFoundExceptionInterface` if one of the dependencies of the requested entry is missing.
+- если метод `has` возвращает `false`, то метод `get` ДОЛЖЕН выбрасывать `Psr\Container\NotFoundExceptionInterface`.
+- если метод `has` возвращает `true`, это не означает, что метод `get` завершится успешно и не выбросит исключение. Он даже МОЖЕТ выбросить `Psr\Container\NotFoundExceptionInterface`, если отсутствует одна из зависимостей запрошенного элемента.
 
-Therefore, when a user catches the `Psr\Container\NotFoundExceptionInterface`, it has 2 possible meanings [[9]](#link_not_found_behaviour):
+Таким образом, когда пользователь перехватывает `Psr\Container\NotFoundExceptionInterface`, это МОЖЕТ означать [[9]](#link_not_found_behaviour):
 
-- the requested entry does not exist (bad request)
-- or a dependency of the requested entry does not exist (i.e. the container is misconfigured)
+- запрошенный элемент не существует (неверный запрос)
+- или зависимость запрошенного элемента не существует (т. е. контейнер неправильно сконфигурирован)
 
-The user can however easily make a distinction with a call to `has`.
+Пользователь, однако, может легко разграничить эти случаи с помощью вызова `has`.
 
-In pseudo-code:
+В псевдокоде:
 
 ```php
 if (!$container->has($id)) {
@@ -302,11 +306,12 @@ try {
 }
 ```
 
-## 8. Implementations
+## 8. Реализации
 
-At the time of writing, the following projects already implement and/or consume the `container-interop` version of the interface.
+На момент написания следующие проекты уже реализуют и/или потребляют версию интерфейса из `container-interop`.
 
-### Implementors
+### Реализующие
+
 - [Acclimate](https://github.com/jeremeamia/acclimate-container)
 - [Aura.DI](https://github.com/auraphp/Aura.Di)
 - [dcp-di](https://github.com/estelsmith/dcp-di)
@@ -318,11 +323,13 @@ At the time of writing, the following projects already implement and/or consume 
 - [XStatic](https://github.com/jeremeamia/xstatic)
 - [Zend ServiceManager](https://github.com/zendframework/zend-servicemanager)
 
-### Middleware
+### Промежуточные пакеты
+
 - [Alias-Container](https://github.com/thecodingmachine/alias-container)
 - [Prefixer-Container](https://github.com/thecodingmachine/prefixer-container)
 
-### Consumers
+### Потребители
+
 - [Behat](https://github.com/Behat/Behat)
 - [interop.silex.di](https://github.com/thecodingmachine/interop.silex.di)
 - [mindplay/middleman](https://github.com/mindplay-dk/middleman)
@@ -333,23 +340,23 @@ At the time of writing, the following projects already implement and/or consume 
 - [Splash](http://mouf-php.com/packages/mouf/mvc.splash-common/version/8.0-dev/README.md)
 - [Zend Expressive](https://github.com/zendframework/zend-expressive)
 
-This list is not comprehensive and should be only taken as an example showing that there is considerable interest in the PSR.
+Этот список не является исчерпывающим и приводится лишь как пример, демонстрирующий значительный интерес к данному PSR.
 
-## 9. People
+## 9. Участники
 
-### 9.1 Editors
+### 9.1 Редакторы
 
 * [Matthieu Napoli](https://github.com/mnapoli)
 * [David Négrier](https://github.com/moufmouf)
 
-### 9.2 Sponsors
+### 9.2 Спонсоры
 
-* [Matthew Weier O'Phinney](https://github.com/weierophinney) (Coordinator)
+* [Matthew Weier O'Phinney](https://github.com/weierophinney) (Координатор)
 * [Korvin Szanto](https://github.com/KorvinSzanto)
 
-### 9.3 Contributors
+### 9.3 Участники обсуждений
 
-Are listed here all people that contributed in the discussions or votes (on container-interop and during migration to PSR-11), by alphabetical order:
+Здесь перечислены все люди, принимавшие участие в обсуждениях или голосованиях (в container-interop и в ходе миграции на PSR-11), в алфавитном порядке:
 
 * [Alexandru Pătrănescu](https://github.com/drealecs)
 * [Amy Stephen](https://github.com/AmyStephen)
@@ -367,41 +374,41 @@ Are listed here all people that contributed in the discussions or votes (on cont
 * [Stephan Hochdörfer](https://github.com/shochdoerfer)
 * [Taylor Otwell](https://github.com/taylorotwell)
 
-## 10. Relevant links
+## 10. Ссылки
 
-1. [Discussion about the container PSR and the service locator](https://groups.google.com/forum/#!topic/php-fig/pyTXRvLGpsw)
-1. [Container-interop's `ContainerInterface.php`](https://github.com/container-interop/container-interop/blob/master/src/Interop/Container/ContainerInterface.php)
-1. [List of all issues](https://github.com/container-interop/container-interop/issues?labels=ContainerInterface&milestone=&page=1&state=closed)
-1. <a name="link_naming_discussion"></a>[Discussion about the interface name and container-interop scope](https://github.com/container-interop/container-interop/issues/1)
-1. <a name="link_naming_vote"></a>[Vote for the interface name](https://github.com/container-interop/container-interop/wiki/%231-interface-name:-Vote)
-1. <a name="link_statistical_analysis"></a>[Statistical analysis of existing containers method names](https://gist.github.com/mnapoli/6159681)
-1. <a name="link_method_and_parameters_details"></a>[Discussion about the method names and parameters](https://github.com/container-interop/container-interop/issues/6)
-1. <a name="link_base_exception_usefulness"></a>[Discussion about the usefulness of the base exception](https://groups.google.com/forum/#!topic/php-fig/_vdn5nLuPBI)
-1. <a name="link_not_found_behaviour"></a>[Discussion about the `NotFoundExceptionInterface`](https://groups.google.com/forum/#!topic/php-fig/I1a2Xzv9wN8)
-1. <a name="link_get_optional_parameters"></a>Discussion about get optional parameters [in container-interop](https://github.com/container-interop/container-interop/issues/6) and on the [PHP-FIG mailing list](https://groups.google.com/forum/#!topic/php-fig/zY6FAG4-oz8)
+1. [Обсуждение PSR для контейнера и Service Locator](https://groups.google.com/forum/#!topic/php-fig/pyTXRvLGpsw)
+1. [`ContainerInterface.php` из container-interop](https://github.com/container-interop/container-interop/blob/master/src/Interop/Container/ContainerInterface.php)
+1. [Список всех задач](https://github.com/container-interop/container-interop/issues?labels=ContainerInterface&milestone=&page=1&state=closed)
+1. <a name="link_naming_discussion"></a>[Обсуждение имени интерфейса и области применения container-interop](https://github.com/container-interop/container-interop/issues/1)
+1. <a name="link_naming_vote"></a>[Голосование за имя интерфейса](https://github.com/container-interop/container-interop/wiki/%231-interface-name:-Vote)
+1. <a name="link_statistical_analysis"></a>[Статистический анализ имён методов существующих контейнеров](https://gist.github.com/mnapoli/6159681)
+1. <a name="link_method_and_parameters_details"></a>[Обсуждение имён методов и параметров](https://github.com/container-interop/container-interop/issues/6)
+1. <a name="link_base_exception_usefulness"></a>[Обсуждение полезности базового интерфейса исключения](https://groups.google.com/forum/#!topic/php-fig/_vdn5nLuPBI)
+1. <a name="link_not_found_behaviour"></a>[Обсуждение поведения `NotFoundExceptionInterface`](https://groups.google.com/forum/#!topic/php-fig/I1a2Xzv9wN8)
+1. <a name="link_get_optional_parameters"></a>Обсуждение необязательных параметров get [в container-interop](https://github.com/container-interop/container-interop/issues/6) и в [списке рассылки PHP-FIG](https://groups.google.com/forum/#!topic/php-fig/zY6FAG4-oz8)
 
-## 11. Errata
+## 11. Исправления
 
-## Type additions
+## Добавление типов
 
-The 1.1 release of the `psr/container` package includes scalar parameter types. The
-2.0 release of the package includes return types. This structure leverages PHP
-7.2 covariance support to allow for a gradual upgrade process.
+Версия 1.1 пакета `psr/container` включает скалярные типы параметров. Версия
+2.0 пакета включает типы возвращаемых значений. Данная структура использует поддержку
+ковариантности PHP 7.2, чтобы обеспечить поэтапный процесс обновления.
 
-Implementers MAY add return types to their own packages at their discretion,
-provided that:
+Реализующие МОГУТ добавлять типы возвращаемых значений в собственные пакеты по своему усмотрению
+при условии, что:
 
-- the return types match those in the 2.0 package.
-- the implementation specifies a minimum PHP version of 7.2.0 or later.
+- типы возвращаемых значений совпадают с теми, что указаны в пакете версии 2.0.
+- реализация указывает минимальную версию PHP 7.2.0 или выше.
 
-Implementers MAY add parameter types to their own packages in a new major
-release, either at the same time as adding return types or in a subsequent
-release, provided that:
+Реализующие МОГУТ добавлять типы параметров в собственные пакеты в новом мажорном
+выпуске — одновременно с добавлением типов возвращаемых значений или в последующем
+выпуске — при условии, что:
 
-- the parameter types match those in the 1.1 package.
-- the implementation specifies a minimum PHP version of 7.2.0.
-- the implementation depends on `"psr/container": "^1.1 || ^2.0"` so as to exclude
-  the untyped 1.0 version.
+- типы параметров совпадают с теми, что указаны в пакете версии 1.1.
+- реализация указывает минимальную версию PHP 7.2.0.
+- реализация зависит от `"psr/container": "^1.1 || ^2.0"`, чтобы исключить
+  нетипизированную версию 1.0.
 
-Implementers are encouraged but not required to transition their packages toward
-the 2.0 version of the package at their earliest convenience.
+Реализующим рекомендуется, но не требуется, как можно скорее переходить
+своими пакетами на версию 2.0 пакета.

@@ -6,8 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="This document describes a simple yet extensible interface for a cache item and
-a cache driver.">
+        <meta name="description" content="Этот документ описывает простой, но расширяемый интерфейс для элемента кэша и
+драйвера кэша.">
       
       
       
@@ -15,20 +15,27 @@ a cache driver.">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>PSR 16 simple cache - Рекомендации по стандартам PHP: PSR</title>
+        <title>Общий интерфейс для библиотек кэширования - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -42,11 +49,10 @@ a cache driver.">
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -55,16 +61,13 @@ a cache driver.">
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#common-interface-for-caching-libraries" class="md-skip">
+        <a href="#_1" class="md-skip">
           Skip to content
         </a>
       
@@ -83,11 +86,12 @@ a cache driver.">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -99,7 +103,7 @@ a cache driver.">
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR 16 simple cache
+              Общий интерфейс для библиотек кэширования
             
           </span>
         </div>
@@ -107,29 +111,38 @@ a cache driver.">
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -140,6 +153,7 @@ a cache driver.">
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -164,12 +178,13 @@ a cache driver.">
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -179,14 +194,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -194,14 +221,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -209,14 +248,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -224,14 +275,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -239,14 +302,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -254,14 +329,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -269,14 +356,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -284,14 +383,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -299,14 +410,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -314,14 +437,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -329,14 +464,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -344,14 +491,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -359,14 +518,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -374,14 +545,26 @@ a cache driver.">
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -415,129 +598,124 @@ a cache driver.">
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="common-interface-for-caching-libraries">Common Interface for Caching Libraries</h1>
-<p>This document describes a simple yet extensible interface for a cache item and
-a cache driver.</p>
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
-<p>The final implementations MAY decorate the objects with more
-functionality than the one proposed but they MUST implement the indicated
-interfaces/functionality first.</p>
-<h1 id="1-specification">1. Specification</h1>
-<h2 id="11-introduction">1.1 Introduction</h2>
-<p>Caching is a common way to improve the performance of any project, making
-caching libraries one of the most common features of many frameworks and
-libraries. Interoperability at this level means libraries can drop their
-own caching implementations and easily rely on the one given to them by the
-framework, or another dedicated cache library.</p>
-<p>PSR-6 solves this problem already, but in a rather formal and verbose way for
-what the most simple use cases need. This simpler approach aims to build a
-standardized streamlined interface for common cases. It is independent of
-PSR-6 but has been designed to make compatibility with PSR-6 as straightforward
-as possible.</p>
-<h2 id="12-definitions">1.2 Definitions</h2>
-<p>Definitions for Calling Library, Implementing Library, TTL, Expiration and Key
-are copied from PSR-6 as the same assumptions are true.</p>
+
+<h1 id="_1">Общий интерфейс для библиотек кэширования</h1>
+<p>Этот документ описывает простой, но расширяемый интерфейс для элемента кэша и
+драйвера кэша.</p>
+<p>Ключевые слова «ОБЯЗАН» («MUST»), «НЕ ДОЛЖЕН» («MUST NOT»), «ТРЕБУЕТСЯ» («REQUIRED»), «ДОЛЖЕН» («SHALL»), «НЕ ДОЛЖЕН» («SHALL NOT»), «СЛЕДУЕТ» («SHOULD»),
+«НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»), «МОЖЕТ» («MAY») и «ОПЦИОНАЛЬНО» («OPTIONAL») в данном документе
+следует интерпретировать в соответствии с <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<p>Финальные реализации МОГУТ расширять объекты дополнительной
+функциональностью сверх предложенной, но ОБЯЗАНЫ в первую очередь реализовывать указанные
+интерфейсы/функциональность.</p>
+<h1 id="1">1. Спецификация</h1>
+<h2 id="11">1.1 Введение</h2>
+<p>Кэширование — распространённый способ повышения производительности любого проекта,
+что делает библиотеки кэширования одним из наиболее востребованных компонентов многих фреймворков и
+библиотек. Совместимость на этом уровне означает, что библиотеки могут отказаться от
+собственных реализаций кэширования и без труда опираться на ту, что предоставляется
+фреймворком или другой специализированной библиотекой кэша.</p>
+<p>PSR-6 уже решает эту задачу, однако делает это достаточно формально и многословно
+применительно к самым простым случаям использования. Данный более простой подход направлен на построение
+стандартизированного упрощённого интерфейса для типовых ситуаций. Он независим от
+PSR-6, но спроектирован так, чтобы обеспечить максимально простую совместимость с PSR-6.</p>
+<h2 id="12">1.2 Определения</h2>
+<p>Определения понятий «Вызывающая библиотека», «Реализующая библиотека», TTL, «Срок истечения» и «Ключ»
+скопированы из PSR-6, поскольку те же допущения остаются в силе.</p>
 <ul>
 <li>
-<p><strong>Calling Library</strong> - The library or code that actually needs the cache
-services. This library will utilize caching services that implement this
-standard's interfaces, but will otherwise have no knowledge of the
-implementation of those caching services.</p>
+<p><strong>Вызывающая библиотека</strong> (Calling Library) — библиотека или код, которым фактически нужны
+услуги кэша. Эта библиотека будет использовать сервисы кэширования, реализующие интерфейсы
+данного стандарта, но не будет знать ничего о конкретной реализации этих сервисов кэширования.</p>
 </li>
 <li>
-<p><strong>Implementing Library</strong> - This library is responsible for implementing
-this standard in order to provide caching services to any Calling Library. The
-Implementing Library MUST provide a class implementing the Psr\SimpleCache\CacheInterface interface.
-Implementing Libraries MUST support at minimum TTL functionality as described
-below with whole-second granularity.</p>
+<p><strong>Реализующая библиотека</strong> (Implementing Library) — эта библиотека отвечает за реализацию
+данного стандарта с целью предоставления сервисов кэширования любой Вызывающей библиотеке.
+Реализующая библиотека ОБЯЗАНА предоставлять класс, реализующий интерфейс <code>Psr\SimpleCache\CacheInterface</code>.
+Реализующие библиотеки ОБЯЗАНЫ поддерживать как минимум функциональность TTL, описанную
+ниже, с гранулярностью до целых секунд.</p>
 </li>
 <li>
-<p><strong>TTL</strong> - The Time To Live (TTL) of an item is the amount of time between
-when that item is stored and it is considered stale. The TTL is normally defined
-by an integer representing time in seconds, or a DateInterval object.</p>
+<p><strong>TTL</strong> — Время жизни (Time To Live, TTL) элемента — это промежуток времени между
+моментом сохранения элемента и моментом, когда он считается устаревшим. TTL обычно задаётся
+целым числом, представляющим время в секундах, или объектом DateInterval.</p>
 </li>
 <li>
-<p><strong>Expiration</strong> - The actual time when an item is set to go stale. This is
-  calculated by adding the TTL to the time when an object is stored.</p>
+<p><strong>Срок истечения</strong> (Expiration) — фактический момент времени, когда элемент становится устаревшим. Он
+  вычисляется прибавлением TTL к времени сохранения объекта.</p>
 </li>
 </ul>
-<p>An item with a 300 second TTL stored at 1:30:00 will have an expiration of 1:35:00.</p>
-<p>Implementing Libraries MAY expire an item before its requested Expiration Time,
-  but MUST treat an item as expired once its Expiration Time is reached. If a calling
-  library asks for an item to be saved but does not specify an expiration time, or
-  specifies a null expiration time or TTL, an Implementing Library MAY use a configured
-  default duration. If no default duration has been set, the Implementing Library
-  MUST interpret that as a request to cache the item forever, or for as long as the
-  underlying implementation supports.</p>
-<p>If a negative or zero TTL is provided, the item MUST be deleted from the cache
-  if it exists, as it is expired already.</p>
+<p>Элемент с TTL 300 секунд, сохранённый в 1:30:00, имеет срок истечения 1:35:00.</p>
+<p>Реализующие библиотеки МОГУТ инвалидировать элемент раньше запрошенного срока истечения,
+  но ОБЯЗАНЫ считать элемент истёкшим, как только наступит его срок истечения. Если вызывающая
+  библиотека запрашивает сохранение элемента без указания срока истечения или с указанием нулевого
+  срока истечения или TTL, Реализующая библиотека МОЖЕТ использовать настроенную
+  продолжительность по умолчанию. Если продолжительность по умолчанию не задана, Реализующая библиотека
+  ОБЯЗАНА интерпретировать это как запрос на хранение элемента в кэше бессрочно или столько,
+  сколько позволяет базовая реализация.</p>
+<p>Если передан отрицательный или нулевой TTL, элемент ОБЯЗАН быть удалён из кэша
+  при его наличии, поскольку он уже является истёкшим.</p>
 <ul>
 <li>
-<p><strong>Key</strong> - A string of at least one character that uniquely identifies a
-cached item. Implementing libraries MUST support keys consisting of the
-characters <code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>_</code>, and <code>.</code> in any order in UTF-8 encoding and a
-length of up to 64 characters. Implementing libraries MAY support additional
-characters and encodings or longer lengths, but MUST support at least that
-minimum. Libraries are responsible for their own escaping of key strings
-as appropriate, but MUST be able to return the original unmodified key string.
-The following characters are reserved for future extensions and MUST NOT be
-supported by implementing libraries: <code>{}()/\@:</code></p>
+<p><strong>Ключ</strong> (Key) — строка длиной не менее одного символа, однозначно идентифицирующая
+элемент кэша. Реализующие библиотеки ОБЯЗАНЫ поддерживать ключи, состоящие из символов
+<code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>_</code> и <code>.</code> в любом порядке в кодировке UTF-8, длиной до 64 символов.
+Реализующие библиотеки МОГУТ поддерживать дополнительные символы, кодировки или бо́льшую длину,
+но ОБЯЗАНЫ поддерживать как минимум указанный минимум. Библиотеки сами отвечают за экранирование
+строк ключей в случае необходимости, однако ОБЯЗАНЫ возвращать оригинальную неизменённую строку ключа.
+Следующие символы зарезервированы для будущих расширений и НЕ ДОЛЖНЫ поддерживаться
+реализующими библиотеками: <code>{}()/\@:</code></p>
 </li>
 <li>
-<p><strong>Cache</strong> - An object that implements the <code>Psr\SimpleCache\CacheInterface</code> interface.</p>
+<p><strong>Кэш</strong> (Cache) — объект, реализующий интерфейс <code>Psr\SimpleCache\CacheInterface</code>.</p>
 </li>
 <li>
-<p><strong>Cache Misses</strong> - A cache miss will return null and therefore detecting
-if one stored <code>null</code> is not possible. This is the main deviation from PSR-6's
-assumptions.</p>
+<p><strong>Промах кэша</strong> (Cache Misses) — промах кэша возвращает null, поэтому обнаружить факт
+хранения значения <code>null</code> невозможно. Это главное отличие от допущений PSR-6.</p>
 </li>
 </ul>
-<h2 id="13-cache">1.3 Cache</h2>
-<p>Implementations MAY provide a mechanism for a user to specify a default TTL
-if one is not specified for a specific cache item. If no user-specified default
-is provided implementations MUST default to the maximum legal value allowed by
-the underlying implementation. If the underlying implementation does not
-support TTL, the user-specified TTL MUST be silently ignored.</p>
-<h2 id="14-data">1.4 Data</h2>
-<p>Implementing libraries MUST support all serializable PHP data types, including:</p>
+<h2 id="13">1.3 Кэш</h2>
+<p>Реализации МОГУТ предоставлять механизм задания пользователем TTL по умолчанию,
+если он не указан для конкретного элемента кэша. Если пользователь не задал значение по умолчанию,
+реализации ОБЯЗАНЫ использовать максимально допустимое значение, разрешённое базовой реализацией.
+Если базовая реализация не поддерживает TTL, указанный пользователем TTL ОБЯЗАН молча игнорироваться.</p>
+<h2 id="14">1.4 Данные</h2>
+<p>Реализующие библиотеки ОБЯЗАНЫ поддерживать все сериализуемые типы данных PHP, в том числе:</p>
 <ul>
-<li><strong>Strings</strong> - Character strings of arbitrary size in any PHP-compatible encoding.</li>
-<li><strong>Integers</strong> - All integers of any size supported by PHP, up to 64-bit signed.</li>
-<li><strong>Floats</strong> - All signed floating point values.</li>
-<li><strong>Booleans</strong> - True and False.</li>
-<li><strong>Null</strong> - The null value (although it will not be distinguishable from a
-cache miss when reading it back out).</li>
-<li><strong>Arrays</strong> - Indexed, associative and multidimensional arrays of arbitrary depth.</li>
-<li><strong>Objects</strong> - Any object that supports lossless serialization and
-deserialization such that $o == unserialize(serialize($o)). Objects MAY
-leverage PHP's Serializable interface, <code>__sleep()</code> or <code>__wakeup()</code> magic methods,
-or similar language functionality if appropriate.</li>
+<li><strong>Строки</strong> (Strings) — символьные строки произвольного размера в любой PHP-совместимой кодировке.</li>
+<li><strong>Целые числа</strong> (Integers) — целые числа любого размера, поддерживаемого PHP, вплоть до 64-битных знаковых.</li>
+<li><strong>Числа с плавающей точкой</strong> (Floats) — все знаковые значения с плавающей точкой.</li>
+<li><strong>Булевы значения</strong> (Booleans) — True и False.</li>
+<li><strong>Null</strong> — значение null (хотя при чтении его невозможно будет отличить от
+промаха кэша).</li>
+<li><strong>Массивы</strong> (Arrays) — индексированные, ассоциативные и многомерные массивы произвольной глубины.</li>
+<li><strong>Объекты</strong> (Objects) — любой объект, поддерживающий сериализацию и десериализацию без потерь,
+то есть такой, что <code>$o == unserialize(serialize($o))</code>. Объекты МОГУТ использовать
+интерфейс <code>Serializable</code> PHP, магические методы <code>__sleep()</code> или <code>__wakeup()</code>
+либо аналогичную языковую функциональность, если это уместно.</li>
 </ul>
-<p>All data passed into the Implementing Library MUST be returned exactly as
-passed. That includes the variable type. That is, it is an error to return
-(string) 5 if (int) 5 was the value saved. Implementing Libraries MAY use PHP's
-serialize()/unserialize() functions internally but are not required to do so.
-Compatibility with them is simply used as a baseline for acceptable object values.</p>
-<p>If it is not possible to return the exact saved value for any reason, implementing
-libraries MUST respond with a cache miss rather than corrupted data.</p>
-<h1 id="2-interfaces">2. Interfaces</h1>
+<p>Все данные, переданные в Реализующую библиотеку, ОБЯЗАНЫ возвращаться в точно таком же виде,
+включая тип переменной. То есть возвращать <code>(string) 5</code> при сохранённом значении <code>(int) 5</code> является ошибкой.
+Реализующие библиотеки МОГУТ внутренне использовать функции PHP <code>serialize()</code>/<code>unserialize()</code>,
+но не обязаны этого делать. Совместимость с ними используется лишь как базовый критерий приемлемых значений объектов.</p>
+<p>Если по какой-либо причине невозможно вернуть точно сохранённое значение,
+реализующие библиотеки ОБЯЗАНЫ вернуть промах кэша, а не повреждённые данные.</p>
+<h1 id="2">2. Интерфейсы</h1>
 <h2 id="21-cacheinterface">2.1 CacheInterface</h2>
-<p>The cache interface defines the most basic operations on a collection of cache-entries, which
-entails basic reading, writing and deleting individual cache items.</p>
-<p>In addition, it has methods for dealing with multiple sets of cache entries such as writing, reading or
-deleting multiple cache entries at a time. This is useful when you have lots of cache reads/writes
-to perform, and lets you perform your operations in a single call to the cache server cutting down latency
-times dramatically.</p>
-<p>An instance of CacheInterface corresponds to a single collection of cache items with a single key namespace,
-and is equivalent to a "Pool" in PSR-6. Different CacheInterface instances MAY be backed by the same
-datastore, but MUST be logically independent.</p>
+<p>Интерфейс кэша определяет наиболее базовые операции над набором записей кэша, включающие
+базовое чтение, запись и удаление отдельных элементов кэша.</p>
+<p>Кроме того, он содержит методы для работы с множеством записей кэша одновременно — запись, чтение и
+удаление нескольких элементов за один вызов. Это удобно при большом количестве операций чтения/записи кэша
+и позволяет выполнять их за один вызов к серверу кэша, существенно сокращая задержку.</p>
+<p>Экземпляр CacheInterface соответствует единственному набору элементов кэша с единым пространством имён ключей
+и является эквивалентом «Pool» в PSR-6. Разные экземпляры CacheInterface МОГУТ использовать одно и то же
+хранилище данных, но ОБЯЗАНЫ быть логически независимы.</p>
 <pre><code class="language-php">&lt;?php
 
 namespace Psr\SimpleCache;
@@ -686,11 +864,22 @@ interface InvalidArgumentException extends CacheException
 
 
 
+
+
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -718,10 +907,14 @@ interface InvalidArgumentException extends CacheException
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

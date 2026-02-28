@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Event Dispatching is a common and well-tested mechanism to allow developers to inject logic into an application easily and consistently.">
+        <meta name="description" content="Диспетчеризация событий — распространённый и хорошо проверенный механизм, позволяющий разработчикам легко и последовательно встраивать логику в приложение.">
       
       
       
@@ -14,20 +14,27 @@
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>PSR 14 event dispatcher - Рекомендации по стандартам PHP: PSR</title>
+        <title>Диспетчер событий - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -41,11 +48,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -54,16 +60,13 @@
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#event-dispatcher" class="md-skip">
+        <a href="#_1" class="md-skip">
           Skip to content
         </a>
       
@@ -82,11 +85,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -98,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSR 14 event dispatcher
+              Диспетчер событий
             
           </span>
         </div>
@@ -106,29 +110,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -139,6 +152,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -163,12 +177,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -178,14 +193,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -193,14 +220,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -208,14 +247,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -223,14 +274,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -238,14 +301,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -253,14 +328,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -268,14 +355,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -283,14 +382,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -298,14 +409,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -313,14 +436,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -328,14 +463,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -343,14 +490,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -358,14 +517,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -373,14 +544,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -413,51 +596,79 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#goal" class="md-nav__link">
-    Goal
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Цель
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#definitions" class="md-nav__link">
-    Definitions
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Определения
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#events" class="md-nav__link">
-    Events
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        События
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#stoppable-events" class="md-nav__link">
-    Stoppable Events
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Останавливаемые события
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#listeners" class="md-nav__link">
-    Listeners
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Слушатели
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#dispatcher" class="md-nav__link">
-    Dispatcher
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Диспетчер
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="Dispatcher">
+    <nav class="md-nav" aria-label="Диспетчер">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#error-handling" class="md-nav__link">
-    Error handling
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обработка ошибок
+      
+    </span>
   </a>
   
 </li>
@@ -468,22 +679,34 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#listener-provider" class="md-nav__link">
-    Listener Provider
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Поставщик слушателей
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#object-composition" class="md-nav__link">
-    Object composition
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Композиция объектов
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#interfaces" class="md-nav__link">
-    Interfaces
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интерфейсы
+      
+    </span>
   </a>
   
 </li>
@@ -498,74 +721,76 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="event-dispatcher">Event Dispatcher</h1>
-<p>Event Dispatching is a common and well-tested mechanism to allow developers to inject logic into an application easily and consistently.</p>
-<p>The goal of this PSR is to establish a common mechanism for event-based extension and collaboration so that libraries and components may be reused more freely between various applications and frameworks.</p>
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
-<h2 id="goal">Goal</h2>
-<p>Having common interfaces for dispatching and handling events allows developers to create libraries that can interact with many frameworks and other libraries in a common fashion.</p>
-<p>Some examples:</p>
+
+<h1 id="_1">Диспетчер событий</h1>
+<p>Диспетчеризация событий — распространённый и хорошо проверенный механизм, позволяющий разработчикам легко и последовательно встраивать логику в приложение.</p>
+<p>Цель данного PSR — установить общий механизм расширения и взаимодействия на основе событий, чтобы библиотеки и компоненты можно было свободнее повторно использовать в различных приложениях и фреймворках.</p>
+<p>Ключевые слова «ОБЯЗАН» («MUST»), «НЕ ДОЛЖЕН» («MUST NOT»), «ТРЕБУЕТСЯ» («REQUIRED»), «ДОЛЖЕН» («SHALL»), «НЕ ДОЛЖЕН» («SHALL NOT»), «СЛЕДУЕТ» («SHOULD»), «НЕ СЛЕДУЕТ» («SHOULD NOT»), «РЕКОМЕНДУЕТСЯ» («RECOMMENDED»), «МОЖЕТ» («MAY») и «НЕОБЯЗАТЕЛЬНО» («OPTIONAL») в данном документе следует интерпретировать в соответствии с <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+<h2 id="_2">Цель</h2>
+<p>Наличие общих интерфейсов для диспетчеризации и обработки событий позволяет разработчикам создавать библиотеки, способные единообразно взаимодействовать со многими фреймворками и другими библиотеками.</p>
+<p>Несколько примеров:</p>
 <ul>
-<li>A security framework that will prevent saving/accessing data when a user doesn't have permission.</li>
-<li>A common full page caching system.</li>
-<li>Libraries that extend other libraries, regardless of what framework they are both integrated into.</li>
-<li>A logging package to track all actions taken within the application</li>
+<li>Фреймворк безопасности, предотвращающий сохранение или доступ к данным, когда пользователь не имеет соответствующих прав.</li>
+<li>Общая система полного кэширования страниц.</li>
+<li>Библиотеки, расширяющие другие библиотеки, вне зависимости от того, в какой фреймворк они интегрированы.</li>
+<li>Пакет логирования для отслеживания всех действий, выполняемых в приложении.</li>
 </ul>
-<h2 id="definitions">Definitions</h2>
+<h2 id="_3">Определения</h2>
 <ul>
-<li><strong>Event</strong> - An Event is a message produced by an <em>Emitter</em>.  It may be any arbitrary PHP object.</li>
-<li><strong>Listener</strong> - A Listener is any PHP callable that expects to be passed an Event.  Zero or more Listeners may be passed the same Event.  A Listener MAY enqueue some other asynchronous behavior if it so chooses.</li>
-<li><strong>Emitter</strong> - An Emitter is any arbitrary code that wishes to dispatch an Event.  This is also known as the "calling code".  It is not represented by any particular data structure but refers to the use case.</li>
-<li><strong>Dispatcher</strong> - A Dispatcher is a service object that is given an Event object by an Emitter.  The Dispatcher is responsible for ensuring that the Event is passed to all relevant Listeners, but MUST defer determining the responsible listeners to a Listener Provider.</li>
-<li><strong>Listener Provider</strong> - A Listener Provider is responsible for determining what Listeners are relevant for a given Event, but MUST NOT call the Listeners itself.  A Listener Provider may specify zero or more relevant Listeners.</li>
+<li><strong>Событие (Event)</strong> — Событие является сообщением, производимым <em>Отправителем</em>. Оно может быть любым произвольным PHP-объектом.</li>
+<li><strong>Слушатель (Listener)</strong> — Слушатель — это любой PHP-вызываемый объект (callable), ожидающий передачи ему События. Одному и тому же Событию МОЖЕТ быть передано ноль или более Слушателей. Слушатель МОЖЕТ поставить в очередь какое-либо асинхронное поведение по своему усмотрению.</li>
+<li><strong>Отправитель (Emitter)</strong> — Отправитель — это любой произвольный код, желающий диспетчеризировать Событие. Также называется «вызывающим кодом». Он не представлен какой-либо конкретной структурой данных, а лишь относится к варианту использования.</li>
+<li><strong>Диспетчер (Dispatcher)</strong> — Диспетчер — это объект-сервис, которому Отправитель передаёт объект События. Диспетчер отвечает за то, чтобы Событие было передано всем соответствующим Слушателям, однако ДОЛЖЕН делегировать определение ответственных Слушателей Поставщику слушателей.</li>
+<li><strong>Поставщик слушателей (Listener Provider)</strong> — Поставщик слушателей отвечает за определение того, какие Слушатели актуальны для данного События, однако НЕ ДОЛЖЕН вызывать Слушателей самостоятельно. Поставщик слушателей МОЖЕТ указывать ноль или более актуальных Слушателей.</li>
 </ul>
-<h2 id="events">Events</h2>
-<p>Events are objects that act as the unit of communication between an Emitter and appropriate Listeners.</p>
-<p>Event objects MAY be mutable should the use case call for Listeners providing information back to the Emitter.  However, if no such bidirectional communication is needed then it is RECOMMENDED that the Event be defined as immutable; i.e., defined such that it lacks mutator methods.</p>
-<p>Implementers MUST assume that the same object will be passed to all Listeners.</p>
-<p>It is RECOMMENDED, but NOT REQUIRED, that Event objects support lossless serialization and deserialization; <code>$event == unserialize(serialize($event))</code> SHOULD hold true.  Objects MAY leverage PHP’s <code>Serializable</code> interface, <code>__sleep()</code> or <code>__wakeup()</code> magic methods, or similar language functionality if appropriate.</p>
-<h2 id="stoppable-events">Stoppable Events</h2>
-<p>A <strong>Stoppable Event</strong> is a special case of Event that contains additional ways to prevent further Listeners from being called.  It is indicated by implementing the <code>StoppableEventInterface</code>.</p>
-<p>An Event that implements <code>StoppableEventInterface</code> MUST return <code>true</code> from <code>isPropagationStopped()</code> when whatever Event it represents has been completed.  It is up to the implementer of the class to determine when that is.  For example, an Event that is asking for a PSR-7 <code>RequestInterface</code> object to be matched with a corresponding <code>ResponseInterface</code> object could have a <code>setResponse(ResponseInterface $res)</code> method for a Listener to call, which causes <code>isPropagationStopped()</code> to return <code>true</code>.</p>
-<h2 id="listeners">Listeners</h2>
-<p>A Listener may be any PHP callable.  A Listener MUST have one and only one parameter, which is the Event to which it responds.  Listeners SHOULD type hint that parameter as specifically as is relevant for their use case; that is, a Listener MAY type hint against an interface to indicate it is compatible with any Event type that implements that interface, or to a specific implementation of that interface.</p>
-<p>A Listener SHOULD have a <code>void</code> return, and SHOULD type hint that return explicitly.  A Dispatcher MUST ignore return values from Listeners.</p>
-<p>A Listener MAY delegate actions to other code. That includes a Listener being a thin wrapper around an object that runs the actual business logic.</p>
-<p>A Listener MAY enqueue information from the Event for later processing by a secondary process, using cron, a queue server, or similar techniques.  It MAY serialize the Event object itself to do so; however, care should be taken that not all Event objects may be safely serializable. A secondary process MUST assume that any changes it makes to an Event object will NOT propagate to other Listeners.</p>
-<h2 id="dispatcher">Dispatcher</h2>
-<p>A Dispatcher is a service object implementing <code>EventDispatcherInterface</code>.  It is responsible for retrieving Listeners from a Listener Provider for the Event dispatched, and invoking each Listener with that Event.</p>
-<p>A Dispatcher:</p>
+<h2 id="_4">События</h2>
+<p>События — это объекты, выполняющие роль единицы связи между Отправителем и соответствующими Слушателями.</p>
+<p>Объекты событий МОГУТ быть изменяемыми, если вариант использования предполагает передачу информации Слушателями обратно Отправителю. Однако если такая двусторонняя связь не нужна, РЕКОМЕНДУЕТСЯ определять Событие как неизменяемое, то есть без мутирующих методов.</p>
+<p>Разработчики ОБЯЗАНЫ исходить из того, что один и тот же объект будет передан всем Слушателям.</p>
+<p>РЕКОМЕНДУЕТСЯ, но НЕ ТРЕБУЕТСЯ, чтобы объекты событий поддерживали сериализацию и десериализацию без потерь; выражение <code>$event == unserialize(serialize($event))</code> ДОЛЖНО быть истинным. Объекты МОГУТ использовать интерфейс PHP <code>Serializable</code>, магические методы <code>__sleep()</code> или <code>__wakeup()</code> или аналогичные возможности языка, если это уместно.</p>
+<h2 id="_5">Останавливаемые события</h2>
+<p><strong>Останавливаемое событие (Stoppable Event)</strong> — это особый вид События, содержащий дополнительные средства для предотвращения вызова последующих Слушателей. Оно обозначается реализацией интерфейса <code>StoppableEventInterface</code>.</p>
+<p>Событие, реализующее <code>StoppableEventInterface</code>, ОБЯЗАНО возвращать <code>true</code> из метода <code>isPropagationStopped()</code>, когда всё, что оно представляет, завершено. Реализатор класса сам определяет момент наступления этого условия. Например, Событие, запрашивающее сопоставление объекта <code>RequestInterface</code> из PSR-7 с соответствующим объектом <code>ResponseInterface</code>, может иметь метод <code>setResponse(ResponseInterface $res)</code> для вызова Слушателем, после чего <code>isPropagationStopped()</code> начнёт возвращать <code>true</code>.</p>
+<h2 id="_6">Слушатели</h2>
+<p>Слушатель может быть любым PHP-вызываемым объектом (callable). Слушатель ОБЯЗАН иметь ровно один параметр — Событие, на которое он реагирует. Слушателям СЛЕДУЕТ указывать тип этого параметра настолько конкретно, насколько это уместно для их варианта использования; то есть Слушатель МОЖЕТ указать интерфейс в качестве подсказки типа, обозначая совместимость с любым типом Событий, реализующим этот интерфейс, или с конкретной реализацией этого интерфейса.</p>
+<p>Слушатель ДОЛЖЕН иметь возвращаемый тип <code>void</code> и СЛЕДУЕТ явно указывать его. Диспетчер ОБЯЗАН игнорировать возвращаемые значения Слушателей.</p>
+<p>Слушатель МОЖЕТ делегировать действия другому коду. Это включает случай, когда Слушатель является тонкой обёрткой над объектом, выполняющим реальную бизнес-логику.</p>
+<p>Слушатель МОЖЕТ помещать информацию из События в очередь для последующей обработки вторичным процессом с использованием cron, сервера очередей или аналогичных технологий. При этом он МОЖЕТ сериализовать сам объект Событий; однако следует учитывать, что не все объекты событий могут быть безопасно сериализованы. Вторичный процесс ОБЯЗАН исходить из того, что любые внесённые им изменения в объект Событий НЕ будут переданы другим Слушателям.</p>
+<h2 id="_7">Диспетчер</h2>
+<p>Диспетчер — это объект-сервис, реализующий <code>EventDispatcherInterface</code>. Он отвечает за получение Слушателей от Поставщика слушателей для диспетчеризируемого События и за вызов каждого Слушателя с этим Событием.</p>
+<p>Диспетчер:</p>
 <ul>
-<li>MUST call Listeners synchronously in the order they are returned from a ListenerProvider.</li>
-<li>MUST return the same Event object it was passed after it is done invoking Listeners.</li>
-<li>MUST NOT return to the Emitter until all Listeners have executed.</li>
+<li>ОБЯЗАН вызывать Слушателей синхронно в порядке, в котором они возвращаются из ListenerProvider.</li>
+<li>ОБЯЗАН возвращать тот же объект Событий, который был ему передан, после завершения вызова Слушателей.</li>
+<li>НЕ ДОЛЖЕН возвращать управление Отправителю до тех пор, пока все Слушатели не завершили выполнение.</li>
 </ul>
-<p>If passed a Stoppable Event, a Dispatcher</p>
+<p>При получении Останавливаемого события Диспетчер:</p>
 <ul>
-<li>MUST call <code>isPropagationStopped()</code> on the Event before each Listener has been called.  If that method returns <code>true</code> it MUST return the Event to the Emitter immediately and MUST NOT call any further Listeners.  This implies that if an Event is passed to the Dispatcher that always returns <code>true</code> from <code>isPropagationStopped()</code>, zero listeners will be called.</li>
+<li>ОБЯЗАН вызывать <code>isPropagationStopped()</code> у Событий перед вызовом каждого Слушателя. Если этот метод возвращает <code>true</code>, Диспетчер ОБЯЗАН немедленно вернуть Событие Отправителю и НЕ ДОЛЖЕН вызывать дальнейших Слушателей. Это означает, что если Событию, переданному Диспетчеру, <code>isPropagationStopped()</code> всегда возвращает <code>true</code>, ни один Слушатель не будет вызван.</li>
 </ul>
-<p>A Dispatcher SHOULD assume that any Listener returned to it from a Listener Provider is type-safe.  That is, the Dispatcher SHOULD assume that calling <code>$listener($event)</code> will not produce a <code>TypeError</code>.</p>
-<h3 id="error-handling">Error handling</h3>
-<p>An Exception or Error thrown by a Listener MUST block the execution of any further Listeners.  An Exception or Error thrown by a Listener MUST be allowed to propagate back up to the Emitter.</p>
-<p>A Dispatcher MAY catch a thrown object to log it, allow additional action to be taken, etc., but then MUST rethrow the original throwable.</p>
-<h2 id="listener-provider">Listener Provider</h2>
-<p>A Listener Provider is a service object responsible for determining what Listeners are relevant to and should be called for a given Event.  It may determine both what Listeners are relevant and the order in which to return them by whatever means it chooses.  That MAY include:</p>
+<p>Диспетчер СЛЕДУЕТ считать, что любой Слушатель, возвращённый ему Поставщиком слушателей, является типобезопасным. То есть Диспетчеру СЛЕДУЕТ предполагать, что вызов <code>$listener($event)</code> не приведёт к <code>TypeError</code>.</p>
+<h3 id="_8">Обработка ошибок</h3>
+<p>Исключение или ошибка, выброшенные Слушателем, ОБЯЗАНЫ блокировать выполнение всех последующих Слушателей. Исключение или ошибка, выброшенные Слушателем, ОБЯЗАНЫ иметь возможность распространяться обратно до Отправителя.</p>
+<p>Диспетчер МОЖЕТ перехватить выброшенный объект для его логирования, выполнения дополнительных действий и т.д., однако затем ОБЯЗАН повторно выбросить исходный объект исключения.</p>
+<h2 id="_9">Поставщик слушателей</h2>
+<p>Поставщик слушателей — это объект-сервис, отвечающий за определение того, какие Слушатели актуальны для данного Событий и должны быть вызваны. Он может определять как сами актуальные Слушатели, так и порядок их возврата любым удобным способом. Это МОЖЕТ включать:</p>
 <ul>
-<li>Allowing for some form of registration mechanism so that implementers may assign a Listener to an Event in a fixed order.</li>
-<li>Deriving a list of applicable Listeners through reflection based on the type and implemented interfaces of the Event.</li>
-<li>Generating a compiled list of Listeners ahead of time that may be consulted at runtime.</li>
-<li>Implementing some form of access control so that certain Listeners will only be called if the current user has a certain permission.</li>
-<li>Extracting some information from an object referenced by the Event, such as an Entity, and calling pre-defined lifecycle methods on that object.</li>
-<li>Delegating its responsibility to one or more other Listener Providers using some arbitrary logic.</li>
+<li>Предоставление некоего механизма регистрации, позволяющего реализаторам назначать Слушателя Событию в фиксированном порядке.</li>
+<li>Формирование списка применимых Слушателей через рефлексию на основе типа Событий и реализуемых им интерфейсов.</li>
+<li>Генерацию заранее скомпилированного списка Слушателей, доступного во время выполнения.</li>
+<li>Реализацию некоторой формы контроля доступа, при которой определённые Слушатели вызываются только при наличии у текущего пользователя определённых прав.</li>
+<li>Извлечение информации из объекта, на который ссылается Событие (например, Сущности), и вызов предопределённых методов жизненного цикла этого объекта.</li>
+<li>Делегирование своих обязанностей одному или нескольким другим Поставщикам слушателей с использованием произвольной логики.</li>
 </ul>
-<p>Any combination of the above, or other mechanisms, MAY be used as desired.</p>
-<p>Listener Providers SHOULD use the class name of an Event to differentiate one event from another.  They MAY also consider any other information on the event as appropriate.</p>
-<p>Listener Providers MUST treat parent types identically to the Event's own type when determining listener applicability.  In the following case:</p>
+<p>Любая комбинация перечисленного или иных механизмов МОЖЕТ использоваться по усмотрению разработчика.</p>
+<p>Поставщикам слушателей СЛЕДУЕТ использовать имя класса Событий для разграничения одного события от другого. Они также МОГУТ учитывать любую другую информацию о событии, если это уместно.</p>
+<p>Поставщики слушателей ОБЯЗАНЫ обрабатывать родительские типы наравне с собственным типом Событий при определении применимости Слушателей. В следующем случае:</p>
 <pre><code class="language-php">class A {}
 
 class B extends A {}
@@ -574,10 +799,10 @@ $b = new B();
 
 function listener(A $event): void {};
 </code></pre>
-<p>A Listener Provider MUST treat <code>listener()</code> as an applicable listener for <code>$b</code>, as it is type compatible, unless some other criteria prevents it from doing so.</p>
-<h2 id="object-composition">Object composition</h2>
-<p>A Dispatcher SHOULD compose a Listener Provider to determine relevant listeners.  It is RECOMMENDED that a Listener Provider be implemented as a distinct object from the Dispatcher but that is NOT REQUIRED.</p>
-<h2 id="interfaces">Interfaces</h2>
+<p>Поставщик слушателей ОБЯЗАН считать <code>listener()</code> применимым слушателем для <code>$b</code>, поскольку они совместимы по типу, если только иные критерии не препятствуют этому.</p>
+<h2 id="_10">Композиция объектов</h2>
+<p>Диспетчеру СЛЕДУЕТ включать Поставщика слушателей для определения актуальных Слушателей. РЕКОМЕНДУЕТСЯ реализовывать Поставщика слушателей как отдельный объект от Диспетчера, однако это НЕ ТРЕБУЕТСЯ.</p>
+<h2 id="_11">Интерфейсы</h2>
 <pre><code class="language-php">namespace Psr\EventDispatcher;
 
 /**
@@ -643,11 +868,22 @@ interface StoppableEventInterface
 
 
 
+
+
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -675,10 +911,14 @@ interface StoppableEventInterface
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       

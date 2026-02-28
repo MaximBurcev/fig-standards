@@ -1,85 +1,69 @@
-Security Disclosure Meta Document
+---
+description: "Мета-документ PSR-10. PSR-10 определяет, как уязвимости безопасности раскрываются публично и какому формату должны следовать такие раскрытия в PHP-проектах."
+---
+
+Мета-документ раскрытия информации о безопасности
 =================================
 
 
-1. Summary
+1. Краткое описание
 ----------
 
-There are two aspects with dealing with security issues: One is the process
-by which security issues are reported and fixed in projects, the other
-is how the general public is informed about the issues and any remedies
-available. While PSR-9 addresses the former, this PSR, ie. PSR-10, deals with
-the later. So the goal of PSR-10 is to define how security issues are disclosed
-to the public and what format such disclosures should follow. Especially today
-where PHP developers are sharing code across projects more than ever, this PSR
-aims to ease the challenges in keeping an overview of security issues in all
-dependencies and the steps required to address them.
+Работа с вопросами безопасности имеет два аспекта: один — это процесс, посредством которого проблемы безопасности сообщаются и устраняются в проектах, другой — то, как широкая общественность информируется о проблемах и доступных способах их устранения. В то время как PSR-9 касается первого, данный PSR, то есть PSR-10, рассматривает второй. Таким образом, цель PSR-10 — определить, как проблемы безопасности раскрываются публично и какому формату должны следовать такие раскрытия. Особенно сегодня, когда PHP-разработчики обмениваются кодом между проектами более активно, чем когда-либо, данный PSR призван упростить задачу отслеживания проблем безопасности во всех зависимостях и шагов, необходимых для их устранения.
 
-2. Why Bother?
+2. Зачем это нужно?
 --------------
 
-End users  want to ensure that they stay informed about security issues.
-However they also want to be able to quickly check if they are affected to be
-able to take the necessary steps.
+Конечные пользователи хотят быть уверены, что они остаются в курсе проблем безопасности. Однако они также хотят иметь возможность быстро проверить, затронуты ли они, чтобы предпринять необходимые шаги.
 
-Upstream users of code will also want to know these details. Furthermore they
-will want to know if its possible for them to be included into possible closed
-discussions before details about a security issue are made public.
+Вышестоящие потребители кода также будут хотеть знать эти подробности. Кроме того, они захотят знать, возможно ли их включение в возможные закрытые обсуждения до того, как подробности о проблеме безопасности станут публичными.
 
-3. Scope
+3. Область применения
 --------
 
-## 3.1 Goals
+## 3.1 Цели
 
-* Means to help in (semi-)automating discovery and fixing of known security
-  issues in projects using the affected code
+* Средства для содействия (полу-)автоматизации обнаружения и устранения известных проблем безопасности в проектах, использующих затронутый код
 
-## 3.2 Non-Goals
+## 3.2 Не входит в область применения
 
-* Process for how vulnerabilities are reported and fixed
-* Methods for reducing security vulnerabilities
+* Процесс сообщения и устранения уязвимостей
+* Методы снижения уязвимостей безопасности
 
-4. Approaches
+4. Подходы
 -------------
 
-A key aspect here is that the information flow should be as structured as
-possible to enable as much automation as possible. For example,
-vulnerabilities should be published in a defined location and in a defined
-format. Inspiration could be taken from [1].
+Ключевым аспектом здесь является то, что поток информации должен быть как можно более структурированным, чтобы обеспечить максимально возможную автоматизацию. Например, уязвимости должны публиковаться в определённом месте и в определённом формате. Вдохновение можно почерпнуть из [1].
 
-That being said, the standard should not rely on any central authority
-above the projects. This is to ensure that no project becomes depend on an
-outside authority for something as sensitive as security related topics.
-However due to defined locations and formats, it will become possible for
-other people to build centralized tools around this information.
+При этом стандарт не должен опираться на какой-либо центральный орган, стоящий выше проектов. Это необходимо для того, чтобы ни один проект не оказался зависим от внешнего органа в столь чувствительной теме, как безопасность. Однако благодаря определённым местам хранения и форматам станет возможным для других людей создавать централизованные инструменты на основе этой информации.
 
-5. People
+5. Участники
 ---------
 
-### 5.1 Editor
+### 5.1 Редактор
 
 * Michael Hess
 
-### 5.2 Sponsors
+### 5.2 Спонсоры
 
 * Larry Garfield (Drupal)
 * Korvin Szanto (concrete5)
 
-### 5.3 Coordinator
+### 5.3 Координатор
 
 * Korvin Szanto (concrete5)
 
-### 5.4 Contributors
+### 5.4 Участники
 
 * Lukas Kahwe Smith
 
-6. Votes
+6. Голосования
 --------
 
-7. Relevant Links
+7. Ссылки по теме
 -----------------
 
 [1]: https://github.com/FriendsOfPHP/security-advisories
 
-Initial discussion: https://groups.google.com/d/msg/php-fig/45AIj5bPHJ4/ThERB43j-u8J
-Discussion: https://groups.google.com/forum/#!forum/php-fig-psr-9-discussion
+Начальное обсуждение: https://groups.google.com/d/msg/php-fig/45AIj5bPHJ4/ThERB43j-u8J
+Обсуждение: https://groups.google.com/forum/#!forum/php-fig-psr-9-discussion

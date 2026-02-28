@@ -1,31 +1,33 @@
-PSR-8 Meta Document
+---
+description: "Мета-документ PSR-8 «Интерфейс объятий». Цель — улучшить дружелюбность и дух сотрудничества в PHP-сообществе через стандартизированный интерфейс Huggable."
+---
+
+Мета-документ PSR-8
 ===================
 
 
-1. Summary
+1. Краткое описание
 ----------
 
-The intent of this spec is to improve the overall amicability and cooperative
-spirit of the PHP community through a standardized means of inter-project
-affection and support.
+Цель данной спецификации — улучшить общую дружелюбность и дух сотрудничества в PHP-сообществе посредством стандартизированного средства межпроектной привязанности и поддержки.
 
-2. Votes
+2. Голосования
 --------
 
-- **Entrance Vote:**
-- **Acceptance Vote:**
+- **Вступительное голосование:**
+- **Голосование о принятии:**
 
-3. Errata
+3. Исправления
 ---------
 
-4. People
+4. Участники
 ---------
 
-### 5.1 Editor
+### 5.1 Редактор
 
 - Larry Garfield
 
-### 5.2 Sponsors
+### 5.2 Спонсоры
 
-- Vacant (Coordinator)
-- Vacant
+- Вакантно (координатор)
+- Вакантно

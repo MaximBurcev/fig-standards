@@ -6,26 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Этот документ описывает процесс и обсуждения, которые привели к созданию PSR для контейнера. Его цель — объяснить причины каждого принятого решения.">
+      
       
       
         <link rel="canonical" href="https://php-psr.ru/accepted/PSR-11-container-meta/">
       
       
       
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
-        <title>Container Meta Document - Рекомендации по стандартам PHP: PSR</title>
+        <title>Мета-документ контейнера - Рекомендации по стандартам PHP: PSR</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -39,11 +48,10 @@
     
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
-    
     
     
   </head>
@@ -52,16 +60,13 @@
     <body dir="ltr">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
-    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
-        <a href="#container-meta-document" class="md-skip">
+        <a href="#-" class="md-skip">
           Skip to content
         </a>
       
@@ -80,11 +85,12 @@
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-header__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -96,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Container Meta Document
+              Мета-документ контейнера
             
           </span>
         </div>
@@ -104,29 +110,38 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -137,6 +152,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -161,12 +177,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Рекомендации по стандартам PHP: PSR" class="md-nav__button md-logo" aria-label="Рекомендации по стандартам PHP: PSR" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Рекомендации по стандартам PHP: PSR
@@ -176,14 +193,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Рекомендации по стандартам PHP (PSR)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рекомендации по стандартам PHP (PSR)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -191,14 +220,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-0/" class="md-nav__link">
-        Стандарт автозагрузки PSR-0 (Устарело)
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-0 (Устарело)
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -206,14 +247,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-1-basic-coding-standard/" class="md-nav__link">
-        Основной стандарт кодирования PSR-1
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Основной стандарт кодирования PSR-1
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -221,14 +274,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-2-coding-style-guide/" class="md-nav__link">
-        Руководство по стилю кодирования PSR-2
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по стилю кодирования PSR-2
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -236,14 +301,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-3-logger-interface/" class="md-nav__link">
-        Общий интерфейс логирования PSR-3
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс логирования PSR-3
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -251,14 +328,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-4-autoloader/" class="md-nav__link">
-        Стандарт автозагрузки PSR-4
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Стандарт автозагрузки PSR-4
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -266,14 +355,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc/" class="md-nav__link">
-        PHPDoc PSR-5
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHPDoc PSR-5
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -281,14 +382,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-6-cache/" class="md-nav__link">
-        Общий интерфейс кэширования PSR-6
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Общий интерфейс кэширования PSR-6
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -296,14 +409,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-7-http-message/" class="md-nav__link">
-        Интерфейсы HTTP-сообщений PSR-7
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интерфейсы HTTP-сообщений PSR-7
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -311,14 +436,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-12-extended-coding-style-guide/" class="md-nav__link">
-        Расширенное руководство по стилю кодирования PSR-12
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Расширенное руководство по стилю кодирования PSR-12
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -326,14 +463,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-17-http-factory/" class="md-nav__link">
-        HTTP-фабрики PSR-17
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-фабрики PSR-17
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -341,14 +490,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../PSR-18-http-client/" class="md-nav__link">
-        HTTP-клиент PSR-18
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент PSR-18
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -356,14 +517,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../proposed/phpdoc-tags/" class="md-nav__link">
-        Теги PHPDoc PSR-19
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Теги PHPDoc PSR-19
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -371,14 +544,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../LICENSE/" class="md-nav__link">
-        Лицензия
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Лицензия
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -411,37 +596,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-introduction" class="md-nav__link">
-    1. Introduction
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Введение
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-why-bother" class="md-nav__link">
-    2. Why bother?
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Зачем это нужно?
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-scope" class="md-nav__link">
-    3. Scope
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Область применения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="3. Scope">
+    <nav class="md-nav" aria-label="3. Область применения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#31-goals" class="md-nav__link">
-    3.1. Goals
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Цели
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#32-non-goals" class="md-nav__link">
-    3.2. Non-goals
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Вне области применения
+      
+    </span>
   </a>
   
 </li>
@@ -452,66 +657,102 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-recommended-usage-container-psr-and-the-service-locator" class="md-nav__link">
-    4. Recommended usage: Container PSR and the Service Locator
+  <a href="#4-psr-service-locator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Рекомендуемое использование: PSR для контейнера и Service Locator
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-history" class="md-nav__link">
-    5. History
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. История
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-interface-name" class="md-nav__link">
-    6. Interface name
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Имя интерфейса
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-interface-methods" class="md-nav__link">
-    7. Interface methods
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Методы интерфейса
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="7. Interface methods">
+    <nav class="md-nav" aria-label="7. Методы интерфейса">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#71-number-of-parameters-in-get-method" class="md-nav__link">
-    7.1. Number of parameters in get() method
+  <a href="#71-get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1. Количество параметров метода get()
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#72-type-of-the-id-parameter" class="md-nav__link">
-    7.2. Type of the $id parameter
+  <a href="#72-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2. Тип параметра $id
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#73-exceptions-thrown" class="md-nav__link">
-    7.3. Exceptions thrown
+  <a href="#73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3. Выбрасываемые исключения
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="7.3. Exceptions thrown">
+    <nav class="md-nav" aria-label="7.3. Выбрасываемые исключения">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#731-base-exception" class="md-nav__link">
-    7.3.1 Base exception
+  <a href="#731" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3.1 Базовое исключение
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#732-not-found-exception" class="md-nav__link">
-    7.3.2 Not found exception
+  <a href="#732" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3.2 Исключение «не найдено»
+      
+    </span>
   </a>
   
 </li>
@@ -527,30 +768,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-implementations" class="md-nav__link">
-    8. Implementations
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Реализации
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="8. Implementations">
+    <nav class="md-nav" aria-label="8. Реализации">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#implementors" class="md-nav__link">
-    Implementors
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Реализующие
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#middleware" class="md-nav__link">
-    Middleware
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Промежуточные пакеты
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#consumers" class="md-nav__link">
-    Consumers
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Потребители
+      
+    </span>
   </a>
   
 </li>
@@ -561,30 +818,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-people" class="md-nav__link">
-    9. People
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Участники
+      
+    </span>
   </a>
   
-    <nav class="md-nav" aria-label="9. People">
+    <nav class="md-nav" aria-label="9. Участники">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#91-editors" class="md-nav__link">
-    9.1 Editors
+  <a href="#91" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Редакторы
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#92-sponsors" class="md-nav__link">
-    9.2 Sponsors
+  <a href="#92" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Спонсоры
+      
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#93-contributors" class="md-nav__link">
-    9.3 Contributors
+  <a href="#93" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Участники обсуждений
+      
+    </span>
   </a>
   
 </li>
@@ -595,22 +868,34 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-relevant-links" class="md-nav__link">
-    10. Relevant links
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Ссылки
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-errata" class="md-nav__link">
-    11. Errata
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Исправления
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#type-additions" class="md-nav__link">
-    Type additions
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Добавление типов
+      
+    </span>
   </a>
   
 </li>
@@ -625,75 +910,77 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
 
 
-<h1 id="container-meta-document">Container Meta Document</h1>
-<h2 id="1-introduction">1. Introduction</h2>
-<p>This document describes the process and discussions that led to the Container PSR.
-Its goal is to explain the reasons behind each decision.</p>
-<h2 id="2-why-bother">2. Why bother?</h2>
-<p>There are dozens of dependency injection containers out there, and these
-DI containers have very different ways to store entries.</p>
+
+<h1 id="-">Мета-документ контейнера</h1>
+<h2 id="1">1. Введение</h2>
+<p>Этот документ описывает процесс и обсуждения, которые привели к созданию PSR для контейнера.
+Его цель — объяснить причины каждого принятого решения.</p>
+<h2 id="2">2. Зачем это нужно?</h2>
+<p>Существуют десятки контейнеров внедрения зависимостей, и эти
+DI-контейнеры имеют очень разные способы хранения элементов.</p>
 <ul>
-<li>Some are based on callbacks (Pimple, Laravel, ...)</li>
-<li>Others are based on configuration (Symfony, ZF, ...), with various formats
-  (PHP arrays, YAML files, XML files...)</li>
-<li>Some can leverage factories...</li>
-<li>Some have a PHP API to build entries (PHP-DI, ZF, Symfony, Mouf...)</li>
-<li>Some can do auto-wiring (Laravel, PHP-DI, ...)</li>
-<li>Others can wire entries based on annotations (PHP-DI, JMS Bundle...)</li>
-<li>Some have a graphical user interface (Mouf...)</li>
-<li>Some can compile configuration files to PHP classes (Symfony, ZF...)</li>
-<li>Some can do aliasing...</li>
-<li>Some can use proxies to provide lazy loading of dependencies...</li>
+<li>Одни основаны на колбэках (Pimple, Laravel, ...)</li>
+<li>Другие основаны на конфигурации (Symfony, ZF, ...) в различных форматах
+  (PHP-массивы, YAML-файлы, XML-файлы...)</li>
+<li>Некоторые могут использовать фабрики...</li>
+<li>Некоторые имеют PHP API для создания элементов (PHP-DI, ZF, Symfony, Mouf...)</li>
+<li>Некоторые поддерживают автоматическое связывание (Laravel, PHP-DI, ...)</li>
+<li>Другие могут связывать элементы на основе аннотаций (PHP-DI, JMS Bundle...)</li>
+<li>Некоторые имеют графический пользовательский интерфейс (Mouf...)</li>
+<li>Некоторые могут компилировать конфигурационные файлы в PHP-классы (Symfony, ZF...)</li>
+<li>Некоторые поддерживают псевдонимы...</li>
+<li>Некоторые могут использовать прокси для ленивой загрузки зависимостей...</li>
 </ul>
-<p>So when you look at the big picture, there is a very large number of ways in
-which the DI problem can be tackled, and therefore a big number of different
-implementations. However, all the DI containers out there are answering the
-same need: they offer a way for the application to retrieve a set of
-configured objects (usually services).</p>
-<p>By standardizing the way entries are fetched from a container, frameworks and
-libraries using the Container PSR could work with any compatible container.
-That would allow end users to choose their own container based on their own preferences.</p>
-<h2 id="3-scope">3. Scope</h2>
-<h3 id="31-goals">3.1. Goals</h3>
-<p>The goal set by the Container PSR is to standardize how frameworks and libraries make use of a
-container to obtain objects and parameters.</p>
-<p>It is important to distinguish the two usages of a container:</p>
+<p>Таким образом, если смотреть в целом, существует очень большое количество способов
+решения проблемы DI, и, следовательно, большое число различных реализаций. Однако все
+существующие DI-контейнеры отвечают на одну и ту же потребность: они предоставляют
+приложению способ получить набор сконфигурированных объектов (как правило, сервисов).</p>
+<p>Стандартизировав способ получения элементов из контейнера, фреймворки и
+библиотеки, использующие PSR для контейнера, смогут работать с любым совместимым контейнером.
+Это позволит конечным пользователям выбирать контейнер по собственному усмотрению.</p>
+<h2 id="3">3. Область применения</h2>
+<h3 id="31">3.1. Цели</h3>
+<p>Цель PSR для контейнера — стандартизировать, как фреймворки и библиотеки используют
+контейнер для получения объектов и параметров.</p>
+<p>Важно различать два способа использования контейнера:</p>
 <ul>
-<li>configuring entries</li>
-<li>fetching entries</li>
+<li>конфигурирование элементов</li>
+<li>получение элементов</li>
 </ul>
-<p>Most of the time, those two sides are not used by the same party.
-While it is often end users who tend to configure entries, it is generally the framework that fetches
-entries to build the application.</p>
-<p>This is why this interface focuses only on how entries can be fetched from a container.</p>
-<h3 id="32-non-goals">3.2. Non-goals</h3>
-<p>How entries are set in the container and how they are configured is out of the
-scope of this PSR. This is what makes a container implementation unique. Some
-containers have no configuration at all (they rely on autowiring), others rely
-on PHP code defined via callback, others on configuration files... This standard
-only focuses on how entries are fetched.</p>
-<p>Also, naming conventions used for entries are not part of the scope of this
-PSR. Indeed, when you look at naming conventions, there are 2 strategies:</p>
+<p>В большинстве случаев эти две стороны использует не одна и та же сторона.
+Хотя конфигурированием элементов, как правило, занимаются конечные пользователи,
+получением элементов для построения приложения обычно занимается фреймворк.</p>
+<p>Именно поэтому данный интерфейс сосредоточен исключительно на том, как элементы
+могут быть получены из контейнера.</p>
+<h3 id="32">3.2. Вне области применения</h3>
+<p>Способ установки элементов в контейнер и их конфигурирование выходят за рамки
+данного PSR. Именно это делает реализацию контейнера уникальной. Одни
+контейнеры вообще не имеют конфигурации (они используют автоматическое связывание), другие
+основаны на PHP-коде, заданном через колбэки, третьи — на конфигурационных файлах... Этот стандарт
+сосредоточен только на способе получения элементов.</p>
+<p>Кроме того, соглашения об именовании элементов не входят в область применения данного
+PSR. Действительно, если рассматривать соглашения об именовании, существует 2 стратегии:</p>
 <ul>
-<li>the identifier is the class name, or an interface name (used mostly
-  by frameworks with an autowiring capability)</li>
-<li>the identifier is a common name (closer to a variable name), which is
-  mostly used by frameworks relying on configuration.</li>
+<li>идентификатор является именем класса или именем интерфейса (используется преимущественно
+  фреймворками с поддержкой автоматического связывания)</li>
+<li>идентификатор является общим именем (ближе к имени переменной), что
+  преимущественно используется фреймворками, опирающимися на конфигурацию.</li>
 </ul>
-<p>Both strategies have their strengths and weaknesses. The goal of this PSR
-is not to choose one convention over the other. Instead, the user can simply
-use aliasing to bridge the gap between 2 containers with different naming strategies.</p>
-<h2 id="4-recommended-usage-container-psr-and-the-service-locator">4. Recommended usage: Container PSR and the Service Locator</h2>
-<p>The PSR states that:</p>
+<p>Обе стратегии имеют свои сильные и слабые стороны. Цель данного PSR
+не в том, чтобы отдать предпочтение одному соглашению перед другим. Вместо этого пользователь может
+использовать псевдонимы для устранения разрыва между двумя контейнерами с разными стратегиями именования.</p>
+<h2 id="4-psr-service-locator">4. Рекомендуемое использование: PSR для контейнера и Service Locator</h2>
+<p>PSR гласит:</p>
 <blockquote>
-<p>"users SHOULD NOT pass a container into an object, so the object
-can retrieve <em>its own dependencies</em>. Users doing so are using the container as a Service Locator.
-Service Locator usage is generally discouraged."</p>
+<p>«пользователи НЕ ДОЛЖНЫ передавать контейнер в объект, чтобы объект
+мог получать <em>собственные зависимости</em>. Пользователи, поступающие таким образом, используют контейнер как Service Locator.
+Использование Service Locator в целом не рекомендуется.»</p>
 </blockquote>
 <pre><code class="language-php">// This is not OK, you are using the container as a service locator
 class BadExample
@@ -714,23 +1001,23 @@ class GoodExample
 }
 // You can then use the container to inject the $db object into your $goodExample object.
 </code></pre>
-<p>In the <code>BadExample</code> you should not inject the container because:</p>
+<p>В случае <code>BadExample</code> не следует внедрять контейнер, потому что:</p>
 <ul>
-<li>it makes the code <strong>less interoperable</strong>: by injecting the container, you have
-  to use a container compatible with the Container PSR. With the other
-  option, your code can work with ANY container.</li>
-<li>you are forcing the developer into naming its entry "db". This naming could
-  conflict with another package that has the same expectations for another service.</li>
-<li>it is harder to test.</li>
-<li>it is not directly clear from your code that the <code>BadExample</code> class will need
-  the "db" service. Dependencies are hidden.</li>
+<li>это делает код <strong>менее интероперабельным</strong>: внедряя контейнер, вы вынуждены
+  использовать контейнер, совместимый с PSR для контейнера. При другом подходе
+  ваш код может работать с ЛЮБЫМ контейнером.</li>
+<li>вы вынуждаете разработчика называть элемент «db». Такое имя может
+  конфликтовать с другим пакетом, предъявляющим те же ожидания к другому сервису.</li>
+<li>это затрудняет тестирование.</li>
+<li>из кода неочевидно, что класс <code>BadExample</code> будет нуждаться
+  в сервисе «db». Зависимости скрыты.</li>
 </ul>
-<p>Very often, the <code>ContainerInterface</code> will be used by other packages. As a end-user
-PHP developer using a framework, it is unlikely you will ever need to use containers
-or type-hint on the <code>ContainerInterface</code> directly.</p>
-<p>Whether using the Container PSR into your code is considered a good practice or not boils down to
-knowing if the objects you are retrieving are <strong>dependencies</strong> of the object referencing
-the container or not. Here are a few more examples:</p>
+<p>Очень часто <code>ContainerInterface</code> будет использоваться другими пакетами. Для конечного
+PHP-разработчика, работающего с фреймворком, маловероятно, что ему когда-либо придётся
+использовать контейнеры или объявлять зависимость непосредственно от <code>ContainerInterface</code>.</p>
+<p>Является ли использование PSR для контейнера в вашем коде хорошей практикой или нет, сводится к
+пониманию того, являются ли получаемые объекты <strong>зависимостями</strong> объекта, обращающегося к
+контейнеру. Вот ещё несколько примеров:</p>
 <pre><code class="language-php">class RouterExample
 {
     // ...
@@ -750,13 +1037,13 @@ the container or not. Here are a few more examples:</p>
     }
 }
 </code></pre>
-<p>In this example, the router is transforming the URL into a controller entry name,
-then fetches the controller from the container. A controller is not really a
-dependency of the router. As a rule of thumb, if your object is <em>computing</em>
-the entry name among a list of entries that can vary, your use case is certainly legitimate.</p>
-<p>As an exception, factory objects whose only purpose is to create and return new instances may use
-the service locator pattern. The factory must then implement an interface so that it can itself
-be replaced by another factory using the same interface.</p>
+<p>В этом примере роутер преобразует URL в имя элемента контроллера,
+а затем получает контроллер из контейнера. Контроллер не является настоящей
+зависимостью роутера. Как правило, если ваш объект <em>вычисляет</em>
+имя элемента из списка элементов, которые могут варьироваться, такое использование вполне оправдано.</p>
+<p>В виде исключения фабричные объекты, единственная цель которых — создавать и возвращать новые экземпляры, МОГУТ
+использовать паттерн Service Locator. Фабрика ДОЛЖНА реализовывать интерфейс, чтобы её можно было
+заменить другой фабрикой с тем же интерфейсом.</p>
 <pre><code class="language-php">// ok: a factory interface + implementation to create an object
 interface FactoryInterface
 {
@@ -778,18 +1065,18 @@ class ExampleFactory implements FactoryInterface
     }
 }
 </code></pre>
-<h2 id="5-history">5. History</h2>
-<p>Before submitting the Container PSR to the PHP-FIG, the <code>ContainerInterface</code> was
-first proposed in a project named <a href="https://github.com/container-interop/container-interop/">container-interop</a>.
-The goal of the project was to provide a test-bed for implementing the <code>ContainerInterface</code>,
-and to pave the way for the Container PSR.</p>
-<p>In the rest of this meta document, you will see frequent references to
+<h2 id="5">5. История</h2>
+<p>До передачи PSR для контейнера в PHP-FIG, <code>ContainerInterface</code> был
+впервые предложен в проекте <a href="https://github.com/container-interop/container-interop/">container-interop</a>.
+Цель проекта состояла в создании полигона для реализации <code>ContainerInterface</code>
+и в подготовке почвы для PSR контейнера.</p>
+<p>В остальной части этого мета-документа вы найдёте частые ссылки на
 <code>container-interop.</code></p>
-<h2 id="6-interface-name">6. Interface name</h2>
-<p>The interface name is the same as the one discussed for <code>container-interop</code>
-(only the namespace is changed to match the other PSRs).
-It has been thoroughly discussed on <code>container-interop</code> <a href="#link_naming_discussion">[4]</a> and was decided by a vote <a href="#link_naming_vote">[5]</a>.</p>
-<p>The list of options considered with their respective votes are:</p>
+<h2 id="6">6. Имя интерфейса</h2>
+<p>Имя интерфейса совпадает с тем, что обсуждалось для <code>container-interop</code>
+(изменено только пространство имён, чтобы соответствовать другим PSR).
+Оно было тщательно обсуждено в <code>container-interop</code> <a href="#link_naming_discussion">[4]</a> и определено голосованием <a href="#link_naming_vote">[5]</a>.</p>
+<p>Список рассмотренных вариантов с результатами голосования:</p>
 <ul>
 <li><code>ContainerInterface</code>: +8</li>
 <li><code>ProviderInterface</code>: +2</li>
@@ -800,76 +1087,76 @@ It has been thoroughly discussed on <code>container-interop</code> <a href="#lin
 <li><code>ObjectStore</code>: -8</li>
 <li><code>ConsumerInterface</code>: -9</li>
 </ul>
-<h2 id="7-interface-methods">7. Interface methods</h2>
-<p>The choice of which methods the interface would contain was made after a statistical analysis of existing containers. <a href="#link_statistical_analysis">[6]</a>.</p>
-<p>The summary of the analysis showed that:</p>
+<h2 id="7">7. Методы интерфейса</h2>
+<p>Выбор методов, которые должен содержать интерфейс, был сделан после статистического анализа существующих контейнеров <a href="#link_statistical_analysis">[6]</a>.</p>
+<p>Краткие итоги анализа показали:</p>
 <ul>
-<li>all containers offer a method to get an entry by its id</li>
-<li>a large majority name such method <code>get()</code></li>
-<li>for all containers, the <code>get()</code> method has 1 mandatory parameter of type string</li>
-<li>some containers have an optional additional argument for <code>get()</code>, but it doesn't have the same purpose between containers</li>
-<li>a large majority of the containers offer a method to test if it can return an entry by its id</li>
-<li>a majority name such method <code>has()</code></li>
-<li>for all containers offering <code>has()</code>, the method has exactly 1 parameter of type string</li>
-<li>a large majority of the containers throw an exception rather than returning null when an entry is not found in <code>get()</code></li>
-<li>a large majority of the containers don't implement <code>ArrayAccess</code></li>
+<li>все контейнеры предоставляют метод для получения элемента по его идентификатору</li>
+<li>большинство называют такой метод <code>get()</code></li>
+<li>у всех контейнеров метод <code>get()</code> имеет 1 обязательный параметр типа string</li>
+<li>некоторые контейнеры имеют необязательный дополнительный аргумент у <code>get()</code>, но его назначение различается от контейнера к контейнеру</li>
+<li>большинство контейнеров предоставляют метод для проверки возможности вернуть элемент по его идентификатору</li>
+<li>большинство называют такой метод <code>has()</code></li>
+<li>у всех контейнеров, предоставляющих <code>has()</code>, метод имеет ровно 1 параметр типа string</li>
+<li>большинство контейнеров выбрасывают исключение, а не возвращают null, когда элемент не найден в <code>get()</code></li>
+<li>большинство контейнеров не реализуют <code>ArrayAccess</code></li>
 </ul>
-<p>The question of whether to include methods to define entries has been discussed at the very start of the container-interop project <a href="#link_naming_discussion">[4]</a>.
-It has been judged that such methods do not belong in the interface described here because it is out of its scope
-(see the "Goal" section).</p>
-<p>As a result, the <code>ContainerInterface</code> contains two methods:</p>
+<p>Вопрос о включении методов для определения элементов обсуждался с самого начала проекта container-interop <a href="#link_naming_discussion">[4]</a>.
+Было признано, что такие методы не относятся к описанному здесь интерфейсу, поскольку выходят за его рамки
+(см. раздел «Цели»).</p>
+<p>В результате <code>ContainerInterface</code> содержит два метода:</p>
 <ul>
-<li><code>get()</code>, returning anything, with one mandatory string parameter. Should throw an exception if the entry is not found.</li>
-<li><code>has()</code>, returning a boolean, with one mandatory string parameter.</li>
+<li><code>get()</code>, возвращающий произвольное значение, с одним обязательным строковым параметром. ДОЛЖЕН выбрасывать исключение, если элемент не найден.</li>
+<li><code>has()</code>, возвращающий булево значение, с одним обязательным строковым параметром.</li>
 </ul>
-<h3 id="71-number-of-parameters-in-get-method">7.1. Number of parameters in <code>get()</code> method</h3>
-<p>While <code>ContainerInterface</code> only defines one mandatory parameter in <code>get()</code>, it is not incompatible with
-existing containers that have additional optional parameters. PHP allows an implementation to offer more parameters
-as long as they are optional, because the implementation <em>does</em> satisfy the interface.</p>
-<p>Difference with container-interop: <a href="https://github.com/container-interop/container-interop/blob/master/docs/ContainerInterface.md">The container-interop spec</a> stated that:</p>
+<h3 id="71-get">7.1. Количество параметров метода <code>get()</code></h3>
+<p>Хотя <code>ContainerInterface</code> определяет только один обязательный параметр в <code>get()</code>, это не противоречит
+существующим контейнерам с дополнительными необязательными параметрами. PHP позволяет реализации предлагать
+больше параметров, если они являются необязательными, поскольку такая реализация <em>действительно</em> удовлетворяет интерфейсу.</p>
+<p>Отличие от container-interop: <a href="https://github.com/container-interop/container-interop/blob/master/docs/ContainerInterface.md">спецификация container-interop</a> гласила:</p>
 <blockquote>
-<p>While <code>ContainerInterface</code> only defines one mandatory parameter in <code>get()</code>, implementations MAY accept additional optional parameters.</p>
+<p>Хотя <code>ContainerInterface</code> определяет только один обязательный параметр в <code>get()</code>, реализации МОГУТ принимать дополнительные необязательные параметры.</p>
 </blockquote>
-<p>This sentence was removed from PSR-11 because:</p>
+<p>Это предложение было исключено из PSR-11, поскольку:</p>
 <ul>
-<li>It is something that stems from OO principles in PHP, so this is not directly related to PSR-11</li>
-<li>We do not want to encourage implementors to add additional parameters as we recommend coding against the interface and not the implementation</li>
+<li>это вытекает из принципов ООП в PHP и напрямую не связано с PSR-11</li>
+<li>мы не хотим поощрять реализующих добавлять дополнительные параметры, так как рекомендуем писать код против интерфейса, а не реализации</li>
 </ul>
-<p>However, some implementations have extra optional parameters; that's technically legal. Such implementations are compatible with PSR-11. <a href="#link_get_optional_parameters">[11]</a></p>
-<h3 id="72-type-of-the-id-parameter">7.2. Type of the <code>$id</code> parameter</h3>
-<p>The type of the <code>$id</code> parameter in <code>get()</code> and <code>has()</code> has been discussed in the container-interop project.</p>
-<p>While <code>string</code> is used in all the containers that were analyzed, it was suggested that allowing
-anything (such as objects) could allow containers to offer a more advanced query API.</p>
-<p>An example given was to use the container as an object builder. The <code>$id</code> parameter would then be an
-object that would describe how to create an instance.</p>
-<p>The conclusion of the discussion <a href="#link_method_and_parameters_details">[7]</a> was that this was beyond the scope of getting entries from a container without
-knowing how the container provided them, and it was more fit for a factory.</p>
-<h3 id="73-exceptions-thrown">7.3. Exceptions thrown</h3>
-<p>This PSR provides 2 interfaces meant to be implemented by container exceptions.</p>
-<h4 id="731-base-exception">7.3.1 Base exception</h4>
-<p>The <code>Psr\Container\ContainerExceptionInterface</code> is the base interface. It SHOULD be implemented by custom exceptions thrown directly by the container.</p>
-<p>It is expected that any exception that is part of the domain of the container implements the <code>ContainerExceptionInterface</code>. A few examples:</p>
+<p>Тем не менее, некоторые реализации имеют дополнительные необязательные параметры — это технически допустимо. Такие реализации совместимы с PSR-11. <a href="#link_get_optional_parameters">[11]</a></p>
+<h3 id="72-id">7.2. Тип параметра <code>$id</code></h3>
+<p>Тип параметра <code>$id</code> в методах <code>get()</code> и <code>has()</code> обсуждался в проекте container-interop.</p>
+<p>Хотя во всех проанализированных контейнерах используется тип <code>string</code>, было предложено
+разрешить любой тип (например, объекты), чтобы позволить контейнерам предлагать более расширенный API запросов.</p>
+<p>В качестве примера рассматривалось использование контейнера как строителя объектов. Параметр <code>$id</code> в этом случае
+был бы объектом, описывающим, как создать экземпляр.</p>
+<p>Вывод обсуждения <a href="#link_method_and_parameters_details">[7]</a> состоял в том, что это выходит за рамки
+получения элементов из контейнера без знания о том, как контейнер их предоставляет, и больше подходит для фабрики.</p>
+<h3 id="73">7.3. Выбрасываемые исключения</h3>
+<p>Данный PSR предоставляет 2 интерфейса, предназначенных для реализации исключениями контейнера.</p>
+<h4 id="731">7.3.1 Базовое исключение</h4>
+<p><code>Psr\Container\ContainerExceptionInterface</code> — базовый интерфейс. Его СЛЕДУЕТ реализовывать в пользовательских исключениях, выбрасываемых непосредственно контейнером.</p>
+<p>Ожидается, что любое исключение, относящееся к предметной области контейнера, реализует <code>ContainerExceptionInterface</code>. Несколько примеров:</p>
 <ul>
-<li>if a container relies on a configuration file and if that configuration file is flawed, the container might throw an <code>InvalidFileException</code> implementing the <code>ContainerExceptionInterface</code>.</li>
-<li>if a cyclic dependency is detected between dependencies, the container might throw an <code>CyclicDependencyException</code> implementing the <code>ContainerExceptionInterface</code>.</li>
+<li>если контейнер использует конфигурационный файл и этот файл некорректен, контейнер МОЖЕТ выбрасывать <code>InvalidFileException</code>, реализующий <code>ContainerExceptionInterface</code>.</li>
+<li>если обнаруживается циклическая зависимость между зависимостями, контейнер МОЖЕТ выбрасывать <code>CyclicDependencyException</code>, реализующий <code>ContainerExceptionInterface</code>.</li>
 </ul>
-<p>However, if the exception is thrown by some code out of the container's scope (for instance an exception thrown while instantiating an entry), the container is not required to wrap this exception in a custom exception implementing the <code>ContainerExceptionInterface</code>.</p>
-<p>The usefulness of the base exception interface was questioned: it is not an exception one would typically catch <a href="#link_base_exception_usefulness">[8]</a>.</p>
-<p>However, most PHP-FIG members considered it to be a best practice. Base exception interface are implemented in previous PSRs and several member projects. The base exception interface was therefore kept.</p>
-<h4 id="732-not-found-exception">7.3.2 Not found exception</h4>
-<p>A call to the <code>get</code> method with a non-existing id must throw an exception implementing the <code>Psr\Container\NotFoundExceptionInterface</code>.</p>
-<p>For a given identifier:</p>
+<p>Однако если исключение выбрасывается кодом вне области контейнера (например, исключение при создании экземпляра элемента), контейнер не обязан оборачивать это исключение в пользовательское исключение, реализующее <code>ContainerExceptionInterface</code>.</p>
+<p>Полезность базового интерфейса исключения ставилась под сомнение: это не то исключение, которое обычно перехватывают <a href="#link_base_exception_usefulness">[8]</a>.</p>
+<p>Тем не менее большинство членов PHP-FIG сочли это лучшей практикой. Базовые интерфейсы исключений реализованы в предыдущих PSR и в нескольких проектах-участниках. Базовый интерфейс исключения был поэтому сохранён.</p>
+<h4 id="732">7.3.2 Исключение «не найдено»</h4>
+<p>Вызов метода <code>get</code> с несуществующим идентификатором ДОЛЖЕН выбрасывать исключение, реализующее <code>Psr\Container\NotFoundExceptionInterface</code>.</p>
+<p>Для заданного идентификатора:</p>
 <ul>
-<li>if the <code>has</code> method returns <code>false</code>, then the <code>get</code> method MUST throw a <code>Psr\Container\NotFoundExceptionInterface</code>.</li>
-<li>if the <code>has</code> method returns <code>true</code>, this does not mean that the <code>get</code> method will succeed and throw no exception. It can even throw a <code>Psr\Container\NotFoundExceptionInterface</code> if one of the dependencies of the requested entry is missing.</li>
+<li>если метод <code>has</code> возвращает <code>false</code>, то метод <code>get</code> ДОЛЖЕН выбрасывать <code>Psr\Container\NotFoundExceptionInterface</code>.</li>
+<li>если метод <code>has</code> возвращает <code>true</code>, это не означает, что метод <code>get</code> завершится успешно и не выбросит исключение. Он даже МОЖЕТ выбросить <code>Psr\Container\NotFoundExceptionInterface</code>, если отсутствует одна из зависимостей запрошенного элемента.</li>
 </ul>
-<p>Therefore, when a user catches the <code>Psr\Container\NotFoundExceptionInterface</code>, it has 2 possible meanings <a href="#link_not_found_behaviour">[9]</a>:</p>
+<p>Таким образом, когда пользователь перехватывает <code>Psr\Container\NotFoundExceptionInterface</code>, это МОЖЕТ означать <a href="#link_not_found_behaviour">[9]</a>:</p>
 <ul>
-<li>the requested entry does not exist (bad request)</li>
-<li>or a dependency of the requested entry does not exist (i.e. the container is misconfigured)</li>
+<li>запрошенный элемент не существует (неверный запрос)</li>
+<li>или зависимость запрошенного элемента не существует (т. е. контейнер неправильно сконфигурирован)</li>
 </ul>
-<p>The user can however easily make a distinction with a call to <code>has</code>.</p>
-<p>In pseudo-code:</p>
+<p>Пользователь, однако, может легко разграничить эти случаи с помощью вызова <code>has</code>.</p>
+<p>В псевдокоде:</p>
 <pre><code class="language-php">if (!$container-&gt;has($id)) {
     // The requested instance does not exist
     return;
@@ -880,9 +1167,9 @@ try {
     // Since the requested entry DOES exist, a NotFoundExceptionInterface means that the container is misconfigured and a dependency is missing.
 }
 </code></pre>
-<h2 id="8-implementations">8. Implementations</h2>
-<p>At the time of writing, the following projects already implement and/or consume the <code>container-interop</code> version of the interface.</p>
-<h3 id="implementors">Implementors</h3>
+<h2 id="8">8. Реализации</h2>
+<p>На момент написания следующие проекты уже реализуют и/или потребляют версию интерфейса из <code>container-interop</code>.</p>
+<h3 id="_1">Реализующие</h3>
 <ul>
 <li><a href="https://github.com/jeremeamia/acclimate-container">Acclimate</a></li>
 <li><a href="https://github.com/auraphp/Aura.Di">Aura.DI</a></li>
@@ -895,12 +1182,12 @@ try {
 <li><a href="https://github.com/jeremeamia/xstatic">XStatic</a></li>
 <li><a href="https://github.com/zendframework/zend-servicemanager">Zend ServiceManager</a></li>
 </ul>
-<h3 id="middleware">Middleware</h3>
+<h3 id="_2">Промежуточные пакеты</h3>
 <ul>
 <li><a href="https://github.com/thecodingmachine/alias-container">Alias-Container</a></li>
 <li><a href="https://github.com/thecodingmachine/prefixer-container">Prefixer-Container</a></li>
 </ul>
-<h3 id="consumers">Consumers</h3>
+<h3 id="_3">Потребители</h3>
 <ul>
 <li><a href="https://github.com/Behat/Behat">Behat</a></li>
 <li><a href="https://github.com/thecodingmachine/interop.silex.di">interop.silex.di</a></li>
@@ -912,20 +1199,20 @@ try {
 <li><a href="http://mouf-php.com/packages/mouf/mvc.splash-common/version/8.0-dev/README.md">Splash</a></li>
 <li><a href="https://github.com/zendframework/zend-expressive">Zend Expressive</a></li>
 </ul>
-<p>This list is not comprehensive and should be only taken as an example showing that there is considerable interest in the PSR.</p>
-<h2 id="9-people">9. People</h2>
-<h3 id="91-editors">9.1 Editors</h3>
+<p>Этот список не является исчерпывающим и приводится лишь как пример, демонстрирующий значительный интерес к данному PSR.</p>
+<h2 id="9">9. Участники</h2>
+<h3 id="91">9.1 Редакторы</h3>
 <ul>
 <li><a href="https://github.com/mnapoli">Matthieu Napoli</a></li>
 <li><a href="https://github.com/moufmouf">David Négrier</a></li>
 </ul>
-<h3 id="92-sponsors">9.2 Sponsors</h3>
+<h3 id="92">9.2 Спонсоры</h3>
 <ul>
-<li><a href="https://github.com/weierophinney">Matthew Weier O'Phinney</a> (Coordinator)</li>
+<li><a href="https://github.com/weierophinney">Matthew Weier O'Phinney</a> (Координатор)</li>
 <li><a href="https://github.com/KorvinSzanto">Korvin Szanto</a></li>
 </ul>
-<h3 id="93-contributors">9.3 Contributors</h3>
-<p>Are listed here all people that contributed in the discussions or votes (on container-interop and during migration to PSR-11), by alphabetical order:</p>
+<h3 id="93">9.3 Участники обсуждений</h3>
+<p>Здесь перечислены все люди, принимавшие участие в обсуждениях или голосованиях (в container-interop и в ходе миграции на PSR-11), в алфавитном порядке:</p>
 <ul>
 <li><a href="https://github.com/drealecs">Alexandru Pătrănescu</a></li>
 <li><a href="https://github.com/AmyStephen">Amy Stephen</a></li>
@@ -943,41 +1230,51 @@ try {
 <li><a href="https://github.com/shochdoerfer">Stephan Hochdörfer</a></li>
 <li><a href="https://github.com/taylorotwell">Taylor Otwell</a></li>
 </ul>
-<h2 id="10-relevant-links">10. Relevant links</h2>
+<h2 id="10">10. Ссылки</h2>
 <ol>
-<li><a href="https://groups.google.com/forum/#!topic/php-fig/pyTXRvLGpsw">Discussion about the container PSR and the service locator</a></li>
-<li><a href="https://github.com/container-interop/container-interop/blob/master/src/Interop/Container/ContainerInterface.php">Container-interop's <code>ContainerInterface.php</code></a></li>
-<li><a href="https://github.com/container-interop/container-interop/issues?labels=ContainerInterface&amp;milestone=&amp;page=1&amp;state=closed">List of all issues</a></li>
-<li><a name="link_naming_discussion"></a><a href="https://github.com/container-interop/container-interop/issues/1">Discussion about the interface name and container-interop scope</a></li>
-<li><a name="link_naming_vote"></a><a href="https://github.com/container-interop/container-interop/wiki/%231-interface-name:-Vote">Vote for the interface name</a></li>
-<li><a name="link_statistical_analysis"></a><a href="https://gist.github.com/mnapoli/6159681">Statistical analysis of existing containers method names</a></li>
-<li><a name="link_method_and_parameters_details"></a><a href="https://github.com/container-interop/container-interop/issues/6">Discussion about the method names and parameters</a></li>
-<li><a name="link_base_exception_usefulness"></a><a href="https://groups.google.com/forum/#!topic/php-fig/_vdn5nLuPBI">Discussion about the usefulness of the base exception</a></li>
-<li><a name="link_not_found_behaviour"></a><a href="https://groups.google.com/forum/#!topic/php-fig/I1a2Xzv9wN8">Discussion about the <code>NotFoundExceptionInterface</code></a></li>
-<li><a name="link_get_optional_parameters"></a>Discussion about get optional parameters <a href="https://github.com/container-interop/container-interop/issues/6">in container-interop</a> and on the <a href="https://groups.google.com/forum/#!topic/php-fig/zY6FAG4-oz8">PHP-FIG mailing list</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/php-fig/pyTXRvLGpsw">Обсуждение PSR для контейнера и Service Locator</a></li>
+<li><a href="https://github.com/container-interop/container-interop/blob/master/src/Interop/Container/ContainerInterface.php"><code>ContainerInterface.php</code> из container-interop</a></li>
+<li><a href="https://github.com/container-interop/container-interop/issues?labels=ContainerInterface&amp;milestone=&amp;page=1&amp;state=closed">Список всех задач</a></li>
+<li><a name="link_naming_discussion"></a><a href="https://github.com/container-interop/container-interop/issues/1">Обсуждение имени интерфейса и области применения container-interop</a></li>
+<li><a name="link_naming_vote"></a><a href="https://github.com/container-interop/container-interop/wiki/%231-interface-name:-Vote">Голосование за имя интерфейса</a></li>
+<li><a name="link_statistical_analysis"></a><a href="https://gist.github.com/mnapoli/6159681">Статистический анализ имён методов существующих контейнеров</a></li>
+<li><a name="link_method_and_parameters_details"></a><a href="https://github.com/container-interop/container-interop/issues/6">Обсуждение имён методов и параметров</a></li>
+<li><a name="link_base_exception_usefulness"></a><a href="https://groups.google.com/forum/#!topic/php-fig/_vdn5nLuPBI">Обсуждение полезности базового интерфейса исключения</a></li>
+<li><a name="link_not_found_behaviour"></a><a href="https://groups.google.com/forum/#!topic/php-fig/I1a2Xzv9wN8">Обсуждение поведения <code>NotFoundExceptionInterface</code></a></li>
+<li><a name="link_get_optional_parameters"></a>Обсуждение необязательных параметров get <a href="https://github.com/container-interop/container-interop/issues/6">в container-interop</a> и в <a href="https://groups.google.com/forum/#!topic/php-fig/zY6FAG4-oz8">списке рассылки PHP-FIG</a></li>
 </ol>
-<h2 id="11-errata">11. Errata</h2>
-<h2 id="type-additions">Type additions</h2>
-<p>The 1.1 release of the <code>psr/container</code> package includes scalar parameter types. The
-2.0 release of the package includes return types. This structure leverages PHP
-7.2 covariance support to allow for a gradual upgrade process.</p>
-<p>Implementers MAY add return types to their own packages at their discretion,
-provided that:</p>
+<h2 id="11">11. Исправления</h2>
+<h2 id="_4">Добавление типов</h2>
+<p>Версия 1.1 пакета <code>psr/container</code> включает скалярные типы параметров. Версия
+2.0 пакета включает типы возвращаемых значений. Данная структура использует поддержку
+ковариантности PHP 7.2, чтобы обеспечить поэтапный процесс обновления.</p>
+<p>Реализующие МОГУТ добавлять типы возвращаемых значений в собственные пакеты по своему усмотрению
+при условии, что:</p>
 <ul>
-<li>the return types match those in the 2.0 package.</li>
-<li>the implementation specifies a minimum PHP version of 7.2.0 or later.</li>
+<li>типы возвращаемых значений совпадают с теми, что указаны в пакете версии 2.0.</li>
+<li>реализация указывает минимальную версию PHP 7.2.0 или выше.</li>
 </ul>
-<p>Implementers MAY add parameter types to their own packages in a new major
-release, either at the same time as adding return types or in a subsequent
-release, provided that:</p>
+<p>Реализующие МОГУТ добавлять типы параметров в собственные пакеты в новом мажорном
+выпуске — одновременно с добавлением типов возвращаемых значений или в последующем
+выпуске — при условии, что:</p>
 <ul>
-<li>the parameter types match those in the 1.1 package.</li>
-<li>the implementation specifies a minimum PHP version of 7.2.0.</li>
-<li>the implementation depends on <code>"psr/container": "^1.1 || ^2.0"</code> so as to exclude
-  the untyped 1.0 version.</li>
+<li>типы параметров совпадают с теми, что указаны в пакете версии 1.1.</li>
+<li>реализация указывает минимальную версию PHP 7.2.0.</li>
+<li>реализация зависит от <code>"psr/container": "^1.1 || ^2.0"</code>, чтобы исключить
+  нетипизированную версию 1.0.</li>
 </ul>
-<p>Implementers are encouraged but not required to transition their packages toward
-the 2.0 version of the package at their earliest convenience.</p>
+<p>Реализующим рекомендуется, но не требуется, как можно скорее переходить
+своими пакетами на версию 2.0 пакета.</p>
+
+
+
+
+
+
+
+  
+  
+
 
 
 
@@ -988,6 +1285,7 @@ the 2.0 version of the package at their earliest convenience.</p>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -1015,10 +1313,14 @@ the 2.0 version of the package at their earliest convenience.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       
