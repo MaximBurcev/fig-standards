@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Использование системы сборки PHP &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=38da9290" />
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Сборка PHP" href="build_system/building_php.html" />
+    <link rel="prev" title="Введение" href="introduction.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Использование системы сборки PHP</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="introduction.html">Введение</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="build_system/building_php.html">Сборка PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="php">
+<h1>Использование системы сборки PHP<a class="headerlink" href="#php" title="Link to this heading">¶</a></h1>
+<p>В этой главе мы объясним, как использовать систему сборки PHP для компиляции как самого PHP, так и дополнительных
+расширений. В этой главе пока не рассматривается написание собственных инструкций сборки на autoconf — объясняется
+только то, как использовать инструменты сборки.</p>
+<p>Содержание:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build_system/building_php.html">Сборка PHP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#id4">Почему не использовать пакеты?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#id5">Получение исходного кода</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#id6">Обзор сборки</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#buildconf">Скрипт <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#configure">Скрипт <code class="docutils literal notranslate"><span class="pre">./configure</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#make-make-install"><code class="docutils literal notranslate"><span class="pre">make</span></code> и <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#id7">Запуск набора тестов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_php.html#make-clean">Исправление проблем компиляции и <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_system/building_extensions.html">Сборка расширений PHP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_extensions.html#id1">Загрузка разделяемых расширений</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_extensions.html#pecl">Установка расширений из PECL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_extensions.html#id3">Добавление расширений в дерево исходного кода PHP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_extensions.html#phpize">Сборка расширений с помощью <code class="docutils literal notranslate"><span class="pre">phpize</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_system/building_extensions.html#id4">Вывод информации о расширениях</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="introduction.html">Введение</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="build_system/building_php.html">Сборка PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

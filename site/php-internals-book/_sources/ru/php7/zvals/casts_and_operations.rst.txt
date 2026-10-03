@@ -1,0 +1,208 @@
+Приведения типов и операции
+=============================
+
+Приведения типов
+-----------------
+
+В многих ситуациях вы ожидаете получить zval определённого типа. В этом случае вы можете строго проверить нужный
+тип::
+
+    if (Z_TYPE_P(val) != IS_STRING) {
+        zend_type_error("Expected string");
+        return;
+    }
+
+В качестве альтернативы вы можете выполнить приведение к нужному типу. Есть два способа выполнить приведение типов:
+первый — это фактически изменить тип zval, используя одну из функций ``convert_to_*``::
+
+    convert_to_string(val);
+    // Z_TYPE_P(val) == IS_STRING is guaranteed here.
+
+Похожие функции существуют для всех остальных типов, для которых имеет смысл приведение типа::
+
+    void convert_to_null(zval *op);
+    void convert_to_boolean(zval *op);
+    void convert_to_long(zval *op);
+    void convert_to_double(zval *op);
+    void convert_to_string(zval *op);
+    void convert_to_array(zval *op);
+    void convert_to_object(zval *op);
+
+Кроме того, функция ``convert_scalar_to_number()`` может использоваться для преобразования zval либо в целое число,
+либо в число с плавающей точкой, с той оговоркой, что массивы остаются массивами::
+
+    convert_scalar_to_number(val);
+    switch (Z_TYPE_P(val)) {
+        case IS_LONG:
+            php_printf("Long: " ZEND_LONG_FMT "\n", Z_LVAL_P(val));
+            break;
+        case IS_DOUBLE:
+            php_printf("Long: %H\n", Z_DVAL_P(val));
+            break;
+        case IS_ARRAY:
+            php_printf("Array\n");
+            break;
+        ZEND_EMPTY_SWITCH_DEFAULT_CASE()
+    }
+
+Поскольку ``convert_to_*`` изменяет zval на месте, требуется осторожность для поддержания семантики
+copy-on-write. Распространённая ошибка — писать код наподобие следующего::
+
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), val) {
+        convert_to_string(val);
+        // Use val as string.
+    }
+
+Здесь мы хотим пройти по массиву и обработать все его элементы как строки. Однако, поскольку ``convert_to_string()``
+работает на месте, это означает, что массив на самом деле изменяется. Таким образом, этот код допустим только если
+вы единолично владеете массивом. В противном случае необходимо сначала выполнить отделение (separation)::
+
+    zval *val;
+    SEPARATE_ARRAY(array);
+    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(array), val) {
+        convert_to_string(val);
+        // Use val as string.
+    }
+
+Второй набор API для приведения типов избегает этой проблемы, возвращая преобразованное значение вместо изменения
+типа самого zval. В случаях, когда его можно использовать, это обычно более удобно, более эффективно и более
+безопасно (в отношении copy-on-write). При преобразовании в булевы значения, целые числа и числа с плавающей точкой
+мы просто получаем результат типа ``bool``, ``zend_long`` или ``double``, и этого достаточно::
+
+    bool b = zend_is_true(val);
+    zend_long l = zval_get_long(val);
+    double d = zval_get_double(val);
+
+Для строк мы получаем результат типа ``zend_string *``, который мы должны освободить впоследствии. Если значение
+уже является строкой, это просто увеличит счётчик ссылок. Если это не строка, функция либо вернёт существующую
+интернированную строку, либо выделит новую::
+
+    zend_string *str = zval_get_string(val);
+    // Do something with str.
+    zend_string_release(str);
+
+Для такого временного использования, когда мы не сохраняем долгосрочную ссылку на ``str``, существует
+дополнительный оптимизированный API::
+
+    zend_string *tmp_str;
+    zend_string *str = zval_get_tmp_string(val, &tmp_str);
+    // Do something with str.
+    zend_tmp_string_release(tmp_str);
+
+Этот API работает так же, как ``zval_get_string()``, но избегает увеличения и уменьшения счётчика ссылок в
+обычном случае, когда значение уже является строкой.
+
+Когда речь заходит о преобразованиях в строки в частности, есть ещё одна проблема, которую нужно учитывать:
+методы ``__toString()`` могут выбрасывать исключения (на самом деле, преобразования в int и float тоже могут их
+выбрасывать, но эта проблема обычно игнорируется). Это можно обработать, проверив ``EG(exception)`` после
+преобразования в строку::
+
+    zend_string *str = zval_get_string(val);
+    if (EG(exception)) {
+        // zend_string_release(str) is safe, but not necessary here.
+        return;
+    }
+    zend_string_release(str);
+
+Однако более идиоматичный и эффективный способ обработать эту ситуацию — использовать варианты ``try`` этих функций,
+которые укажут, было ли выброшено исключение, через своё возвращаемое значение::
+
+    if (!try_convert_to_string(val)) {
+        // Exception thrown.
+        return;
+    }
+
+    zend_string *str = zval_try_get_string(val);
+    if (!str) {
+        // Exception thrown.
+        return;
+    }
+    zend_string_release(str);
+
+    zend_string *tmp_str;
+    zend_string *str = zend_try_get_tmp_string(val, &tmp_str);
+    if (!str) {
+        // Exception thrown.
+        return;
+    }
+    zend_tmp_string_release(tmp_str);
+
+Операции
+--------
+
+Пользовательские операции, такие как ``$op1 + $op2``, реализованы внутри через соответствующие функции, такие как
+``add_function()``, которые принимают выходной параметр-результат, за которым следуют входные операнды::
+
+    zval *op1 = /* ... */, *op2 = /* ... */;
+    zval result;
+    if (add_function(&result, op1, op2) == FAILURE) {
+        // Exception thrown.
+        return;
+    }
+    // Do something with result.
+    zval_ptr_dtor(&result);
+
+Следует отметить, что эти функции на практике используются довольно редко, поскольку большая часть кода работает с
+zval конкретных типов, а не оперирует совершенно произвольными значениями. Полный набор функций таков::
+
+    zend_result add_function(zval *result, zval *op1, zval *op2);                 /* $result = $op1 + $op2 */
+    zend_result sub_function(zval *result, zval *op1, zval *op2);                 /* $result = $op1 - $op2 */
+    zend_result mul_function(zval *result, zval *op1, zval *op2);                 /* $result = $op1 * $op2 */
+    zend_result pow_function(zval *result, zval *op1, zval *op2);                 /* $result = $op1 ** $op2 */
+    zend_result div_function(zval *result, zval *op1, zval *op2);                 /* $result = $op1 / $op2 */
+    zend_result mod_function(zval *result, zval *op1, zval *op2);                 /* $result = $op1 % $op2 */
+    zend_result bitwise_or_function(zval *result, zval *op1, zval *op2);          /* $result = $op1 | $op2 */
+    zend_result bitwise_and_function(zval *result, zval *op1, zval *op2);         /* $result = $op1 & $op2 */
+    zend_result bitwise_xor_function(zval *result, zval *op1, zval *op2);         /* $result = $op1 ^ $op2 */
+    zend_result boolean_xor_function(zval *result, zval *op1, zval *op2);         /* $result = $op1 xor $op2 */
+    zend_result shift_left_function(zval *result, zval *op1, zval *op2);          /* $result = $op1 << $op2 */
+    zend_result shift_right_function(zval *result, zval *op1, zval *op2);         /* $result = $op1 >> $op2 */
+    zend_result concat_function(zval *result, zval *op1, zval *op2);              /* $result = $op1 . $op2 */
+
+    zend_result bitwise_not_function(zval *result, zval *op1);                    /* $result = ~$op1 */
+    zend_result boolean_not_function(zval *result, zval *op1);                    /* $result = !$op1 */
+
+    zend_result increment_function(zval *op);                                     /* ++$op */
+    zend_result decrement_function(zval *op);                                     /* --$op */
+
+    zend_result compare_function(zval *result, zval *op1, zval *op2);             /* $result = $op1 <=> $op2 */
+    zend_result is_equal_function(zval *result, zval *op1, zval *op2);            /* $result = $op1 == $op2 */
+    zend_result is_not_equal_function(zval *result, zval *op1, zval *op2);        /* $result = $op1 != $op2 */
+    zend_result is_identical_function(zval *result, zval *op1, zval *op2);        /* $result = $op1 === $op2 */
+    zend_result is_not_identical_function(zval *result, zval *op1, zval *op2);    /* $result = $op1 !== $op2 */
+    zend_result is_smaller_function(zval *result, zval *op1, zval *op2);          /* $result = $op1 < $op2 */
+    zend_result is_smaller_or_equal_function(zval *result, zval *op1, zval *op2); /* $result = $op1 <= $op2 */
+    /* $op1 > $op2 is same as $op2 < $op1 */
+    /* $op1 >= $op2 is same as $op2 <= $op1 */
+
+Для сравнений существуют ещё два варианта, которые возвращают результат сравнения вместо того, чтобы помещать его
+в zval::
+
+    bool zend_is_identical(zval *op1, zval *op2);
+    int zend_compare(zval *op1, zval *op2);
+
+``zend_compare()`` возвращает результат трёхстороннего сравнения, как оператор ``<=>`` в PHP, то есть меньше нуля,
+равно нулю или больше нуля, в зависимости от того, меньше, равен или больше ``op1`` по сравнению с ``op2``.
+
+Наконец, существует ряд вариантов с префиксом ``fast_``. Это оптимизированные реализации, которые ограничивают
+аргументы определёнными типами, либо инлайнят часть реализации и/или реализуют её с помощью встроенного
+ассемблера::
+
+    /* op1 must have type IS_LONG, implementation uses inline assembly. */
+    static zend_always_inline void fast_long_increment_function(zval *op1);
+    static zend_always_inline void fast_long_decrement_function(zval *op1);
+    /* op1 and op2 must have type IS_LONG, implementation uses inline assembly. */
+    static zend_always_inline void fast_long_add_function(zval *result, zval *op1, zval *op2);
+    static zend_always_inline void fast_long_sub_function(zval *result, zval *op1, zval *op2);
+    /* op1, op2 may have any type, but IS_LONG and IS_DOUBLE addition is inlined. */
+    static zend_always_inline zend_result fast_add_function(zval *result, zval *op1, zval *op2);
+    /* op1, op2 may have any type, but IS_LONG, IS_DOUBLE and IS_STRING equality is inlined. */
+    static zend_always_inline bool fast_equal_check_function(zval *op1, zval *op2);
+    /* op1 must have type IS_LONG, op2 can have any type. */
+    static zend_always_inline bool fast_equal_check_long(zval *op1, zval *op2);
+    /* op1 must have type IS_DOUBLE, op2 can have any type. */
+    static zend_always_inline bool fast_equal_check_string(zval *op1, zval *op2);
+    /* op1, op2 may have any type, but part of the implementation is inlined. */
+    static zend_always_inline bool fast_is_identical_function(zval *op1, zval *op2);
+    static zend_always_inline bool fast_is_not_identical_function(zval *op1, zval *op2);

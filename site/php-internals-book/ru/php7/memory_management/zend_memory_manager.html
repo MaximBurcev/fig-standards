@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Менеджер памяти Zend &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Отладка памяти" href="memory_debugging.html" />
+    <link rel="prev" title="Управление памятью" href="../memory_management.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Менеджер памяти Zend</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../memory_management.html">Управление памятью</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="memory_debugging.html">Отладка памяти</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="zend">
+<span id="ru-zend-mm"></span><h1>Менеджер памяти Zend<a class="headerlink" href="#zend" title="Link to this heading">¶</a></h1>
+<p>Менеджер памяти Zend, часто сокращаемый до <em>ZendMM</em> или <em>ZMM</em> — это слой на C, предоставляющий возможности
+выделения и освобождения динамической памяти, <strong>привязанной к запросу</strong>.</p>
+<p>Обратите внимание на “привязанной к запросу” в предыдущем предложении.</p>
+<p>ZendMM — это не просто классическая обёртка над динамическим аллокатором памяти libc, представленным в основном
+парой вызовов API <code class="docutils literal notranslate"><span class="pre">malloc()/free()</span></code>. ZendMM — это про память, привязанную к запросу, которую PHP должен выделять
+при обработке запроса.</p>
+<section id="php">
+<h2>Два основных вида динамических пулов памяти в PHP<a class="headerlink" href="#php" title="Link to this heading">¶</a></h2>
+<p>PHP — это архитектура с разделением состояния (“share-nothing”). Ну, не на 100%. Давайте объясним.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Возможно, вам стоит прочитать <a class="reference internal" href="../extensions_design/php_lifecycle.html"><span class="doc">главу о жизненном цикле PHP</span></a>
+перед тем, как продолжить, — там вы найдёте дополнительную информацию о различных этапах и циклах,
+которые можно выделить в течение жизни PHP.</p>
+</div>
+<p>PHP может обрабатывать несколько сотен или тысяч запросов в рамках одного процесса. По умолчанию PHP забывает всё,
+что он знает о текущем запросе, когда тот завершается.</p>
+<p>“Забывание” означает освобождение любого динамического буфера, выделенного при обработке запроса. Это означает, что
+в процессе обработки запроса нельзя выделять динамическую память с помощью традиционных вызовов libc. Делать это
+совершенно допустимо, но вы рискуете забыть освободить такой буфер.</p>
+<p>ZendMM предоставляет API, замещающий динамический аллокатор libc, копируя его API. При обработке запроса программист
+должен использовать этот API вместо аллокатора libc.</p>
+<p>Например, когда PHP обрабатывает запрос, он будет разбирать PHP-файлы. Это, например, приведёт к объявлению функций
+и классов. Когда компилятор доходит до компиляции PHP-файлов, он выделяет некоторую динамическую память для
+хранения обнаруженных классов и функций. Но в конце запроса PHP забудет об этих данных. По умолчанию PHP забывает
+<em>очень большой объём</em> информации от одного запроса к другому.</p>
+<p>Тем не менее существует довольно редкая информация, которую нужно сохранять между несколькими запросами. Но это
+нечастый случай.</p>
+<p>Что можно оставить неизменным между запросами? Так называемые <strong>постоянные (persistent)</strong> объекты. Ещё раз
+подчеркнём: это редкие случаи. Например, путь к текущему исполняемому файлу PHP не изменится от запроса к запросу.
+Эта информация выделяется навсегда, то есть с помощью традиционного вызова libc <code class="docutils literal notranslate"><span class="pre">malloc()</span></code>.</p>
+<p>Что ещё? Некоторые строки. Например, строка <em>“_SERVER”</em> будет переиспользоваться от запроса к запросу, так как
+каждый запрос создаёт PHP-массив <code class="docutils literal notranslate"><span class="pre">$_SERVER</span></code>. Поэтому сама строка <em>“_SERVER”</em> может быть выделена навсегда,
+поскольку она будет выделена всего один раз.</p>
+<p>Что нужно запомнить:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Существует два вида динамических выделений памяти при программировании ядра PHP или расширений:</dt><dd><ul>
+<li><p>Динамические выделения, привязанные к запросу.</p></li>
+<li><p>Постоянные динамические выделения.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Динамические выделения памяти, привязанные к запросу:</dt><dd><ul>
+<li><p>Должны выполняться только когда PHP обрабатывает запрос (не до, не после).</p></li>
+<li><p>Должны выполняться только с помощью API динамического выделения памяти ZendMM.</p></li>
+<li><p>Очень распространены в дизайне расширений, в среднем 95% ваших динамических выделений будут привязаны к
+запросу.</p></li>
+<li><p>Отслеживаются ZendMM, и вы будете уведомлены об утечках.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Постоянные динамические выделения памяти:</dt><dd><ul>
+<li><p>Не должны выполняться во время обработки PHP запроса (не запрещено, но плохая идея).</p></li>
+<li><p>Не отслеживаются ZendMM, и вы не будете уведомлены об утечках.</p></li>
+<li><p>Должны быть довольно редки в расширении.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Также помните, что весь исходный код PHP основан на таком уровне работы с памятью. Таким образом, многие внутренние
+структуры выделяются с помощью менеджера памяти Zend. У большинства из них есть “постоянный” (persistent) вызов API,
+который при использовании приводит к традиционному выделению через libc.</p>
+<p>Вот пример выделения <a class="reference internal" href="../internal_types/strings/zend_strings.html"><span class="doc">zend_string</span></a>, привязанного к запросу:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="s">"foo"</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>А вот постоянно выделенный вариант:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="s">"foo"</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>То же самое для <a class="reference internal" href="../internal_types/hashtables.html"><span class="doc">HashTable</span></a>. Выделение, привязанное к запросу:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_array</span><span class="w"> </span><span class="n">ar</span><span class="p">;</span>
+<span class="n">zend_hash_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Постоянное выделение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_array</span><span class="w"> </span><span class="n">ar</span><span class="p">;</span>
+<span class="n">zend_hash_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Во всех различных API Zend это всегда одинаково. Обычно нужно передать либо <em>“0”</em> в качестве последнего параметра,
+означающего “я хочу, чтобы эта структура была выделена через ZendMM, то есть привязана к запросу”, либо <em>“1”</em>,
+означающий “я хочу, чтобы эта структура была выделена в обход ZendMM, с помощью традиционного вызова <code class="docutils literal notranslate"><span class="pre">malloc()</span></code>
+из libc”.</p>
+<p>Очевидно, что эти структуры предоставляют API, который помнит, каким образом была выделена структура, чтобы при
+уничтожении использовать правильную функцию освобождения. Поэтому в таком коде:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">zend_hash_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ar</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>API знает, были ли эти структуры выделены с помощью привязанного к запросу выделения или постоянного, и в первом
+случае использует <code class="docutils literal notranslate"><span class="pre">efree()</span></code> для их освобождения, а во втором — libc-функцию <code class="docutils literal notranslate"><span class="pre">free()</span></code>.</p>
+</section>
+<section id="api-zend">
+<h2>API менеджера памяти Zend<a class="headerlink" href="#api-zend" title="Link to this heading">¶</a></h2>
+<p>API находится в файле
+<a class="reference external" href="https://github.com/php/php-src/blob/c3b910370c5c92007c3e3579024490345cb7f9a7/Zend/zend_alloc.h">Zend/zend_alloc.h</a></p>
+<p>Вызовы API — это в основном C-макросы, а не функции, так что будьте готовы к этому, если будете их отлаживать и
+изучать, как они работают. Эти вызовы копируют вызовы libc, обычно добавляя “e” к имени функции; так что вы не
+должны заблудиться, и в этом API не так много всего, что нужно детально разбирать.</p>
+<p>В основном вы будете использовать <code class="docutils literal notranslate"><span class="pre">emalloc(size_t)</span></code> и <code class="docutils literal notranslate"><span class="pre">efree(void</span> <span class="pre">*)</span></code>.</p>
+<p>Также предоставляется <code class="docutils literal notranslate"><span class="pre">ecalloc(size_t</span> <span class="pre">nmemb,</span> <span class="pre">size_t</span> <span class="pre">size)</span></code>, который выделяет <code class="docutils literal notranslate"><span class="pre">nmemb</span></code> элементов отдельного
+размера <code class="docutils literal notranslate"><span class="pre">size</span></code> и обнуляет область. Если вы опытный программист на C, вы должны знать, что по возможности лучше
+использовать <code class="docutils literal notranslate"><span class="pre">ecalloc()</span></code>, а не <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code>, так как <code class="docutils literal notranslate"><span class="pre">ecalloc()</span></code> обнуляет область памяти, что может сильно
+помочь при обнаружении ошибок с указателями. Помните, что <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code> работает в основном как libc-функция
+<code class="docutils literal notranslate"><span class="pre">malloc()</span></code>: она ищет достаточно большую область в разных пулах и возвращает вам наиболее подходящую. Поэтому вам
+может быть выдан переработанный указатель, указывающий на мусор.</p>
+<p>Далее идёт <code class="docutils literal notranslate"><span class="pre">safe_emalloc(size_t</span> <span class="pre">nmemb,</span> <span class="pre">size_t</span> <span class="pre">size,</span> <span class="pre">size_t</span> <span class="pre">offset)</span></code>, который представляет собой
+<code class="docutils literal notranslate"><span class="pre">emalloc(size</span> <span class="pre">*</span> <span class="pre">nmemb</span> <span class="pre">+</span> <span class="pre">offset)</span></code>, но с проверкой переполнения. Этот вызов API следует использовать, если числа,
+которые вы должны предоставить, приходят из ненадёжного источника, например, из пользовательского пространства.</p>
+<p>Что касается работы со строками, <code class="docutils literal notranslate"><span class="pre">estrdup(char</span> <span class="pre">*)</span></code> и <code class="docutils literal notranslate"><span class="pre">estrndup(char</span> <span class="pre">*,</span> <span class="pre">size_t</span> <span class="pre">len)</span></code> позволяют дублировать
+строки или бинарные строки.</p>
+<p>Что бы ни случилось, указатели, возвращённые ZendMM, должны освобождаться с помощью ZendMM, то есть вызовом
+<code class="docutils literal notranslate"><span class="pre">efree()</span></code>, а <strong>не</strong> libc-функцией <code class="docutils literal notranslate"><span class="pre">free()</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Заметка о постоянных выделениях. Постоянные выделения остаются активными между запросами. Традиционно для
+этого используются обычные libc-функции <code class="docutils literal notranslate"><span class="pre">malloc/free</span></code>, но ZendMM предоставляет несколько коротких путей
+к аллокатору libc — “постоянный” (persistent) API. Этот API начинается с буквы <em>“p”</em> и позволяет
+выбирать между выделением через ZendMM или постоянным выделением. Таким образом, <code class="docutils literal notranslate"><span class="pre">pemalloc(size_t,</span> <span class="pre">1)</span></code>
+— это не что иное как <code class="docutils literal notranslate"><span class="pre">malloc()</span></code>, <code class="docutils literal notranslate"><span class="pre">pefree(void</span> <span class="pre">*,</span> <span class="pre">1)</span></code> — это <code class="docutils literal notranslate"><span class="pre">free()</span></code>, а <code class="docutils literal notranslate"><span class="pre">pestrdup(void</span> <span class="pre">*,</span> <span class="pre">1)</span></code> —
+это <code class="docutils literal notranslate"><span class="pre">strdup()</span></code>. Просто для справки.</p>
+</div>
+</section>
+<section id="id1">
+<h2>Средства отладки менеджера памяти Zend<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>ZendMM предоставляет следующие возможности:</p>
+<ul class="simple">
+<li><p>Управление потреблением памяти.</p></li>
+<li><p>Отслеживание утечек памяти и автоматическое освобождение.</p></li>
+<li><p>Ускорение выделений за счёт предварительного выделения буферов известного размера и поддержания “тёплого” кэша
+при освобождении.</p></li>
+</ul>
+<section id="id2">
+<h3>Управление потреблением памяти<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>ZendMM — это слой, стоящий за пользовательской функцией PHP “memory_limit”. Каждый байт, выделенный через слой
+ZendMM, учитывается и суммируется. Когда достигается значение INI-настройки <em>memory_limit</em>, вы знаете, что
+происходит.
+Это также означает, что любое выделение, выполненное через ZendMM, отражается в вызове <code class="docutils literal notranslate"><span class="pre">memory_get_usage()</span></code> из
+пользовательского пространства PHP.</p>
+<p>Как разработчику расширений, это удобно, так как помогает контролировать размер кучи процесса PHP.</p>
+<p>Если возникает ошибка превышения лимита памяти, движок выходит из текущей позиции кода в блок catch и завершает
+работу штатно. Но нет никаких шансов, что он вернётся в то место вашего кода, где произошло превышение лимита. Вы
+должны быть к этому готовы.</p>
+<p>Это означает, что теоретически ZendMM не может вернуть вам NULL-указатель. Если выделение не удаётся на уровне ОС,
+или если выделение вызывает ошибку превышения лимита памяти, код перейдёт в блок catch и не вернётся к вашему
+вызову выделения.</p>
+<p>Если по какой-то причине вам нужно обойти эту защиту, вам нужно использовать традиционный вызов libc, например
+<code class="docutils literal notranslate"><span class="pre">malloc()</span></code>. Однако будьте осторожны и понимайте, что делаете. Может оказаться, что вам нужно выделить много
+памяти, и использование ZendMM могло бы превысить <em>memory_limit</em> PHP. Поэтому используйте другой аллокатор (например,
+libc), но учтите: ваше расширение увеличит размер кучи текущего процесса. Это не будет видно через
+<code class="docutils literal notranslate"><span class="pre">memory_get_usage()</span></code> в PHP, но можно увидеть, анализируя текущую кучу средствами ОС (например, через
+<em>/proc/{pid}/maps</em>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если вам нужно полностью отключить ZendMM, можно запустить PHP с переменной среды <code class="docutils literal notranslate"><span class="pre">USE_ZEND_ALLOC=0</span></code>.
+В этом случае каждый вызов API ZendMM (например, <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code>) будет направлен к вызову libc, и ZendMM
+будет отключён. Это особенно полезно при
+<a class="reference internal" href="memory_debugging.html"><span class="doc">отладке памяти</span></a>.</p>
+</div>
+</section>
+<section id="id3">
+<h3>Отслеживание утечек памяти<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Вспомним основные правила ZendMM: он запускается при старте запроса и затем ожидает, что вы будете вызывать его API,
+когда вам нужна динамическая память во время обработки запроса. Когда текущий запрос завершается, ZendMM
+завершает работу.</p>
+<p>При завершении работы он просматривает все свои активные указатели, и если используется
+<a class="reference internal" href="../build_system/building_php.html"><span class="doc">debug-сборка</span></a> PHP, предупредит вас об утечках памяти.</p>
+<p>Скажем прямо: если в конце текущего запроса ZendMM обнаруживает какие-то активные блоки памяти, это значит, что они
+протекают. В конце запроса в куче ZendMM не должно оставаться ни одного активного блока памяти, так как любой, кто
+что-то выделил, должен был это освободить.</p>
+<p>Если вы забыли освободить блоки, все они будут выведены в <em>stderr</em>. Этот процесс отчётности об утечках памяти
+работает только при следующих условиях:</p>
+<ul class="simple">
+<li><p>Вы используете <a class="reference internal" href="../build_system/building_php.html"><span class="doc">debug-сборку</span></a> PHP.</p></li>
+<li><p>У вас установлено <em>report_memleaks=On</em> в php.ini (значение по умолчанию).</p></li>
+</ul>
+<p>Вот пример простой утечки в расширении:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">PHP_RINIT_FUNCTION</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emalloc</span><span class="p">(</span><span class="mi">128</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>При запуске PHP с активированным этим расширением на debug-сборке в stderr выводится следующее:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[Fri Jun 9 16:04:59 2017]  Script:  '/tmp/foobar.php'
+/path/to/extension/file.c(123) : Freeing 0x00007fffeee65000 (128 bytes), script=/tmp/foobar.php
+=== Total 1 memory leaks detected ===
+</pre></div>
+</div>
+<p>Эти строки генерируются при завершении работы менеджера памяти Zend, то есть в конце каждого обработанного запроса.</p>
+<p>Однако будьте внимательны:</p>
+<ul class="simple">
+<li><p>Очевидно, ZendMM ничего не знает о постоянных выделениях или выделениях, выполненных каким-либо другим способом,
+отличным от использования его самого. Поэтому ZendMM может предупредить вас только о выделениях, о которых он
+знает, а любое традиционное выделение через libc не будет учтено, например.</p></li>
+<li><p>Если PHP завершает работу некорректно (то, что мы называем нечистым завершением работы), ZendMM сообщит о массе
+утечек. Это происходит потому, что при некорректном завершении работы движок использует вызов
+<a class="reference external" href="http://man7.org/linux/man-pages/man3/longjmp.3.html">longjmp()</a> в блок catch, предотвращающий срабатывание
+всего кода, очищающего память. Таким образом, сообщается о множестве утечек. Это особенно происходит после вызова
+функций PHP exit()/die(), или если фатальная ошибка возникает в некоторых критических частях PHP.</p></li>
+<li><p>Если вы используете не-debug сборку PHP, в <em>stderr</em> ничего не выводится, ZendMM “глуп”, но всё равно очистит
+любой выделенный привязанный к запросу буфер, который не был явно освобождён программистом.</p></li>
+</ul>
+<p>Нужно помнить, что отслеживание утечек ZendMM — это приятный бонусный инструмент, но он не заменяет
+<a class="reference internal" href="memory_debugging.html"><span class="doc">настоящий C-отладчик памяти</span></a>.</p>
+</section>
+</section>
+<section id="id4">
+<h2>Жизненный цикл<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>PHP вызывает функцию <code class="docutils literal notranslate"><span class="pre">start_memory_manager()</span></code> на этапе запуска, в частности, когда стартует процесс PHP (например,
+при старте сервиса PHP-FPM, или при запуске CLI-скрипта PHP). Это выделит кучу и первый чанк.</p>
+<p>Во время запроса ZendMM будет выделять чанки по мере необходимости.</p>
+<p>При каждом завершении запроса (на этапе <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN</span></code>) Zend Engine вызывает функцию <code class="docutils literal notranslate"><span class="pre">shutdown_memory_manager()</span></code>
+(которая вызывает функцию <code class="docutils literal notranslate"><span class="pre">zend_mm_shutdown()</span></code>) с булевым аргументом <code class="docutils literal notranslate"><span class="pre">full</span></code>, установленным в <code class="docutils literal notranslate"><span class="pre">false</span></code>. Это
+выполнит очистку для следующего запроса, но не выполнит полное завершение работы менеджера памяти. Например, куча
+не будет освобождена, и среднее количество чанков, использованных в течение текущего запроса, останется активным в
+указателе <code class="docutils literal notranslate"><span class="pre">cached_chunks</span></code> на куче, чтобы быть переиспользованным в следующем запросе.</p>
+<p>На этапе завершения работы модуля (<code class="docutils literal notranslate"><span class="pre">MSHUTDOWN</span></code>) Zend Engine вызывает функцию <code class="docutils literal notranslate"><span class="pre">shutdown_memory_manager()</span></code>
+(которая вызывает функцию <code class="docutils literal notranslate"><span class="pre">zend_mm_shutdown()</span></code>) с булевым аргументом <code class="docutils literal notranslate"><span class="pre">full</span></code>, установленным в <code class="docutils literal notranslate"><span class="pre">true</span></code>, что
+запускает полное завершение работы и освобождает все закэшированные чанки, а также саму кучу.</p>
+</section>
+<section id="zendmm">
+<h2>Внутреннее устройство ZendMM<a class="headerlink" href="#zendmm" title="Link to this heading">¶</a></h2>
+<p>В основе ZendMM лежит структура <code class="docutils literal notranslate"><span class="pre">_zend_mm_heap</span></code> (как определено в <a class="reference external" href="https://github.com/php/php-src/blob/c3b910370c5c92007c3e3579024490345cb7f9a7/Zend/zend_alloc.c#L239">Zend/zend_alloc.c</a>), которая
+создаётся для каждого запроса во время инициализации запроса и хранится в <code class="docutils literal notranslate"><span class="pre">alloc_globals-&gt;mm_heap</span></code>. Эта куча
+также поставляется с первым чанком, выделяемым вместе с ней. Затем чанки подразделяются на страницы. Более мелкие
+выделения хранятся в бинах (bins), которые могут помещаться на одной странице, а некоторые занимают несколько
+страниц.</p>
+<section id="id5">
+<h3>Внутренняя организация памяти<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<section id="heap">
+<h4>Куча (Heap)<a class="headerlink" href="#heap" title="Link to this heading">¶</a></h4>
+<p>Куча, как определено в структуре <code class="docutils literal notranslate"><span class="pre">_zend_mm_heap</span></code>, хранит ссылки на чанки (<code class="docutils literal notranslate"><span class="pre">main_chunk</span></code> и <code class="docutils literal notranslate"><span class="pre">cached_chunks</span></code>, для
+малых и крупных выделений), <code class="docutils literal notranslate"><span class="pre">huge_list</span></code> для огромных выделений (&gt;= 2 МБ), а также на бины (для малых выделений) в
+<code class="docutils literal notranslate"><span class="pre">free_slots[BIN]</span></code>. После инициализации существует только <code class="docutils literal notranslate"><span class="pre">main_chunk</span></code> и, возможно, несколько <code class="docutils literal notranslate"><span class="pre">cached_chunks</span></code>.</p>
+</section>
+<section id="chunks">
+<h4>Чанки (Chunks)<a class="headerlink" href="#chunks" title="Link to this heading">¶</a></h4>
+<p>Каждый чанк имеет размер 2 МБ и состоит из 512 страниц. Первая страница каждого чанка зарезервирована под заголовок
+чанка, как определено в структуре <code class="docutils literal notranslate"><span class="pre">_zend_mm_chunk</span></code> (как определено в <a class="reference external" href="https://github.com/php/php-src/blob/c3b910370c5c92007c3e3579024490345cb7f9a7/Zend/zend_alloc.c#L286">Zend/zend_alloc.c</a>). Чанки
+организованы в связный список с указателями <code class="docutils literal notranslate"><span class="pre">prev</span></code> и <code class="docutils literal notranslate"><span class="pre">next</span></code>.</p>
+<p>Каждый чанк хранит битовую маску в <code class="docutils literal notranslate"><span class="pre">free_map</span></code> (512 бит), где один бит указывает, занята страница или свободна.
+Информация о содержимом страницы хранится в <code class="docutils literal notranslate"><span class="pre">map</span></code>, представляющем собой массив из 512 32-битных целых чисел.
+Каждое из этих чисел используется как битовая маска и хранит метаинформацию об этой странице.</p>
+</section>
+<section id="pages">
+<h4>Страницы (Pages)<a class="headerlink" href="#pages" title="Link to this heading">¶</a></h4>
+<p>Размер страницы составляет 4096 байт, и она может либо содержать бин (для малых выделений), либо быть частью
+крупного выделения. Что находится в ней, можно узнать из карты (map) чанка, к которому принадлежит страница.</p>
+</section>
+<section id="bins">
+<h4>Бины (Bins)<a class="headerlink" href="#bins" title="Link to this heading">¶</a></h4>
+<p>Малые выделения группируются в бины. Размеры бинов заранее определены и представлены в 30 различных вариантах
+(8, 16, 24, 32, … 3072 байта). Бин хранит значения одинакового размера и напрямую связан с кучей.</p>
+<p>Бин может состоять из нескольких страниц. Пример: существует бин, хранящий элементы размером от 257 до 320 байт,
+который занимает 5 страниц и, следовательно, вмещает 64 (из расчёта 4096*5/320) элемента такого размера.</p>
+</section>
+</section>
+<section id="id6">
+<h3>Категории выделений<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<section id="id7">
+<h4>Малые выделения<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
+<p>Выделения размером до 3072 байт включительно организованы в бинах.</p>
+<p>Если бин уже инициализирован, указатель <code class="docutils literal notranslate"><span class="pre">free_slot</span></code> в структуре <code class="docutils literal notranslate"><span class="pre">zend_mm_heap</span></code> — это адрес, который будет
+использован (этот адрес будет возвращён вызовом <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code> и будет увеличен, указывая на следующий свободный
+слот, см. реализацию в <code class="docutils literal notranslate"><span class="pre">zend_mm_alloc_small</span></code>).</p>
+<p>Если бин для этого конкретного размера ещё не инициализирован, он будет создан в функции
+<code class="docutils literal notranslate"><span class="pre">zend_mm_alloc_small_slow</span></code>, и возвращается указатель на первый элемент бина.</p>
+</section>
+<section id="id8">
+<h4>Крупные выделения<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<p>Выделения больше 3072 байт, но достаточно маленькие, чтобы поместиться в чанк (размер чанка 2 МБ минус 4096 байт
+заголовка чанка (первая страница) составляет 2093056 байт), хранятся непосредственно в страницах. Первая страница
+помечается как <code class="docutils literal notranslate"><span class="pre">LRUN</span></code> на карте чанка и также хранит количество выделенных страниц.</p>
+</section>
+<section id="id9">
+<h4>Огромные выделения<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h4>
+<p>Если выделение больше размера чанка минус одна страница (размер чанка 2 МБ минус 4096 байт заголовка чанка (первая
+страница) составляет 2093056 байт), память выделяется с помощью <code class="docutils literal notranslate"><span class="pre">mmap()</span></code> и помещается в связный список
+<code class="docutils literal notranslate"><span class="pre">huge_list</span></code> на куче.</p>
+</section>
+</section>
+</section>
+<section id="id10">
+<h2>Подключение к ZendMM<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<p>Вы можете вызвать функцию <code class="docutils literal notranslate"><span class="pre">zend_mm_set_custom_handlers()</span></code> и передать ей указатели на ваши обработчики <code class="docutils literal notranslate"><span class="pre">malloc</span></code>,
+<code class="docutils literal notranslate"><span class="pre">free</span></code> и <code class="docutils literal notranslate"><span class="pre">realloc</span></code>, а также вашу собственную кучу или текущую кучу, которую можно получить с помощью
+<code class="docutils literal notranslate"><span class="pre">zend_mm_get_heap()</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="nf">my_malloc</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="n">len</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">my_free</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="nf">my_realloc</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">realloc</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_mm_set_custom_handlers</span><span class="p">(</span>
+<span class="w">        </span><span class="n">zend_mm_get_heap</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">my_malloc</span><span class="p">,</span>
+<span class="w">        </span><span class="n">my_free</span><span class="p">,</span>
+<span class="w">        </span><span class="n">my_realloc</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Вы также можете принести свою собственную кучу и внедрить её через <code class="docutils literal notranslate"><span class="pre">zend_mm_set_heap()</span></code>, который возвращает
+указатель на текущую (или старую) кучу. Учтите, что в куче с пользовательскими обработчиками поведение ZendMM будет
+отличаться:</p>
+<ul class="simple">
+<li><p>ZendMM не выполнит очистку во время <code class="docutils literal notranslate"><span class="pre">zend_mm_shutdown()</span></code> (которая вызывается на этапе завершения запроса в PHP),
+что приведёт к утечке памяти, если ваши пользовательские обработчики просто перенаправляют вызовы к внутренним
+функциям ZendMM.</p></li>
+<li><p>Сборщик мусора ZendMM, реализованный в <code class="docutils literal notranslate"><span class="pre">zend_mm_gc()</span></code>, не будет выполнять никаких действий. Это также означает,
+что он не попытается освободить чанки в случае достижения лимита памяти во время выделения в одной из внутренних
+функций ZendMM.</p></li>
+<li><p>Единственный способ обнаружить, что в вашей куче с пользовательскими обработчиками выполняется полное завершение
+работы — это то, что ваша функция <code class="docutils literal notranslate"><span class="pre">free</span></code> будет вызвана с адресом вашей кучи.</p></li>
+<li><p>Нет никакой возможности узнать, когда <code class="docutils literal notranslate"><span class="pre">zend_mm_shutdown()</span></code> будет выполнять завершение запроса.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>Распространённые ошибки<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<p>Вот самые распространённые ошибки при использовании ZendMM и что с ними делать.</p>
+<ol class="arabic simple">
+<li><p>Использование ZendMM, когда вы не обрабатываете запрос.</p></li>
+</ol>
+<p>Получите информацию о
+<a class="reference internal" href="../extensions_design/php_lifecycle.html"><span class="doc">жизненном цикле PHP</span></a>, чтобы понимать в своих расширениях, когда вы
+обрабатываете запрос, а когда нет. Если вы используете ZendMM за пределами запроса (например, в <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>),
+выделение будет молча очищено ZendMM перед обработкой первого запроса, и вы, вероятно, получите use-after-free:
+просто не делайте этого.</p>
+<ol class="arabic simple" start="2">
+<li><p>Переполнение и недополнение буфера.</p></li>
+</ol>
+<p>Используйте <a class="reference internal" href="memory_debugging.html"><span class="doc">отладчик памяти</span></a>. Если вы пишете до или за пределами области памяти,
+возвращённой ZendMM, вы перезапишете критически важные структуры ZendMM и вызовете крэш. Может появиться сообщение
+<em>“zend_mm_heap corrupted”</em>, если ZendMM смог обнаружить эту проблему за вас. Трассировка стека покажет крэш из
+какого-то кода в какой-то код ZendMM. Код ZendMM сам по себе не падает. Если у вас происходит крэш посреди кода
+ZendMM, это с высокой вероятностью означает, что вы где-то напутали с указателем. Включите ваш любимый отладчик
+памяти и найдите виновную часть, чтобы исправить её.</p>
+<ol class="arabic simple" start="3">
+<li><p>Смешивание вызовов API.</p></li>
+</ol>
+<p>Если вы выделяете указатель ZendMM (например, <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code>) и освобождаете его через libc (<code class="docutils literal notranslate"><span class="pre">free()</span></code>), или в
+обратном сценарии — вы получите крэш. Будьте строги. Также если вы передаёте в <code class="docutils literal notranslate"><span class="pre">efree()</span></code> ZendMM какой-либо
+указатель, о котором он не знает — вы получите крэш.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../memory_management.html">Управление памятью</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="memory_debugging.html">Отладка памяти</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

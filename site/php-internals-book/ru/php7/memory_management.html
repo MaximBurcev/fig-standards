@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Управление памятью &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=38da9290" />
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Менеджер памяти Zend" href="memory_management/zend_memory_manager.html" />
+    <link rel="prev" title="Zend-расширения" href="extensions_design/zend_extensions.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Управление памятью</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="extensions_design/zend_extensions.html">Zend-расширения</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="memory_management/zend_memory_manager.html">Менеджер памяти Zend</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Управление памятью<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>Программистам на C обычно приходится управлять памятью вручную. При работе с динамической памятью программист
+выделяет память, когда она нужна, и освобождает её, когда работа закончена. Если не освободить динамическую память,
+возникает «утечка памяти», что может быть как плохо, так и не очень. В случае PHP, поскольку процесс может жить
+практически бесконечно долго, возникновение утечки памяти будет иметь катастрофические последствия. В любом случае
+утечка памяти на самом деле означает плохо и некачественно спроектированные программы, которым нельзя доверять.
+Утечку памяти легко понять. Вы просите ОС зарезервировать для вас часть основной памяти машины, но никогда не
+сообщаете ей, что нужно освободить эту память обратно для использования другими процессами: вы не одни на машине,
+другим процессам тоже нужна память, да и самой ОС тоже.</p>
+<p>Кроме того, в C области памяти имеют чётко заданные границы. Чтение или запись до или после этих границ — очень
+опасная операция. Это почти наверняка приведёт к падению программы, а в худшем случае — к уязвимости, которую можно
+эксплуатировать. В языке C нет никакой магии, подобной автоматически расширяющимся областям памяти. Вы должны явно
+говорить машине (и процессору), что именно вы хотите сделать. Никаких догадок, никакой магии, никакой автоматизации
+какого бы то ни было вида (например, сборки мусора).</p>
+<p>У PHP есть собственная, весьма специфическая модель работы с памятью, и он предоставляет собственный слой над
+традиционным динамическим аллокатором памяти libc. Этот слой называется <strong>Zend Memory Manager</strong>.</p>
+<p>В этой главе объясняется, что такое Zend Memory Manager, как его нужно использовать и что с ним можно/нельзя делать.
+После этого мы вкратце познакомим вас со специфическими инструментами, используемыми в мире C для отладки
+динамической памяти.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>При необходимости получите (желательно основательные) знания о классах выделения памяти в C (статическая
+память в сравнении с динамической), а также об аллокаторе libc.</p>
+</div>
+<p>Содержание:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="memory_management/zend_memory_manager.html">Менеджер памяти Zend</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#php">Два основных вида динамических пулов памяти в PHP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#api-zend">API менеджера памяти Zend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#id1">Средства отладки менеджера памяти Zend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#id4">Жизненный цикл</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#zendmm">Внутреннее устройство ZendMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#id10">Подключение к ZendMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/zend_memory_manager.html#id11">Распространённые ошибки</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="memory_management/memory_debugging.html">Отладка памяти</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/memory_debugging.html#valgrind">Небольшая заметка о valgrind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/memory_debugging.html#id3">Перед началом работы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/memory_debugging.html#zendmm">Отладка ZendMM во время выполнения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/memory_debugging.html#id5">Пример обнаружения утечки памяти</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/memory_debugging.html#id9">Обнаружение переполнения/недополнения буфера</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory_management/memory_debugging.html#id10">Выводы</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="extensions_design/zend_extensions.html">Zend-расширения</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="memory_management/zend_memory_manager.html">Менеджер памяти Zend</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

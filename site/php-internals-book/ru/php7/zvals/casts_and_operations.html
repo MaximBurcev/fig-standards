@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Приведения типов и операции &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Внутренние типы" href="../internal_types.html" />
+    <link rel="prev" title="Ссылки" href="references.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Приведения типов и операции</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="references.html">Ссылки</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../internal_types.html">Внутренние типы</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Приведения типов и операции<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<section id="id2">
+<h2>Приведения типов<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>В многих ситуациях вы ожидаете получить zval определённого типа. В этом случае вы можете строго проверить нужный
+тип:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">IS_STRING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_type_error</span><span class="p">(</span><span class="s">"Expected string"</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>В качестве альтернативы вы можете выполнить приведение к нужному типу. Есть два способа выполнить приведение типов:
+первый — это фактически изменить тип zval, используя одну из функций <code class="docutils literal notranslate"><span class="pre">convert_to_*</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">convert_to_string</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="c1">// Z_TYPE_P(val) == IS_STRING is guaranteed here.</span>
+</pre></div>
+</div>
+<p>Похожие функции существуют для всех остальных типов, для которых имеет смысл приведение типа:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_null</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_boolean</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_long</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_double</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_string</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_array</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">convert_to_object</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Кроме того, функция <code class="docutils literal notranslate"><span class="pre">convert_scalar_to_number()</span></code> может использоваться для преобразования zval либо в целое число,
+либо в число с плавающей точкой, с той оговоркой, что массивы остаются массивами:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">convert_scalar_to_number</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">val</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">IS_LONG</span><span class="p">:</span>
+<span class="w">        </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Long: "</span><span class="w"> </span><span class="n">ZEND_LONG_FMT</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_LVAL_P</span><span class="p">(</span><span class="n">val</span><span class="p">));</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">IS_DOUBLE</span><span class="p">:</span>
+<span class="w">        </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Long: %H</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_DVAL_P</span><span class="p">(</span><span class="n">val</span><span class="p">));</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">IS_ARRAY</span><span class="p">:</span>
+<span class="w">        </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Array</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ZEND_EMPTY_SWITCH_DEFAULT_CASE</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Поскольку <code class="docutils literal notranslate"><span class="pre">convert_to_*</span></code> изменяет zval на месте, требуется осторожность для поддержания семантики
+copy-on-write. Распространённая ошибка — писать код наподобие следующего:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">val</span><span class="p">;</span>
+<span class="n">ZEND_HASH_FOREACH_VAL</span><span class="p">(</span><span class="n">Z_ARRVAL_P</span><span class="p">(</span><span class="n">array</span><span class="p">),</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">convert_to_string</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Use val as string.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Здесь мы хотим пройти по массиву и обработать все его элементы как строки. Однако, поскольку <code class="docutils literal notranslate"><span class="pre">convert_to_string()</span></code>
+работает на месте, это означает, что массив на самом деле изменяется. Таким образом, этот код допустим только если
+вы единолично владеете массивом. В противном случае необходимо сначала выполнить отделение (separation):</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">val</span><span class="p">;</span>
+<span class="n">SEPARATE_ARRAY</span><span class="p">(</span><span class="n">array</span><span class="p">);</span>
+<span class="n">ZEND_HASH_FOREACH_VAL</span><span class="p">(</span><span class="n">Z_ARRVAL_P</span><span class="p">(</span><span class="n">array</span><span class="p">),</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">convert_to_string</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Use val as string.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Второй набор API для приведения типов избегает этой проблемы, возвращая преобразованное значение вместо изменения
+типа самого zval. В случаях, когда его можно использовать, это обычно более удобно, более эффективно и более
+безопасно (в отношении copy-on-write). При преобразовании в булевы значения, целые числа и числа с плавающей точкой
+мы просто получаем результат типа <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">zend_long</span></code> или <code class="docutils literal notranslate"><span class="pre">double</span></code>, и этого достаточно:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_is_true</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="n">zend_long</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_get_long</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_get_double</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Для строк мы получаем результат типа <code class="docutils literal notranslate"><span class="pre">zend_string</span> <span class="pre">*</span></code>, который мы должны освободить впоследствии. Если значение
+уже является строкой, это просто увеличит счётчик ссылок. Если это не строка, функция либо вернёт существующую
+интернированную строку, либо выделит новую:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_get_string</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="c1">// Do something with str.</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Для такого временного использования, когда мы не сохраняем долгосрочную ссылку на <code class="docutils literal notranslate"><span class="pre">str</span></code>, существует
+дополнительный оптимизированный API:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">tmp_str</span><span class="p">;</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_get_tmp_string</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">tmp_str</span><span class="p">);</span>
+<span class="c1">// Do something with str.</span>
+<span class="n">zend_tmp_string_release</span><span class="p">(</span><span class="n">tmp_str</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Этот API работает так же, как <code class="docutils literal notranslate"><span class="pre">zval_get_string()</span></code>, но избегает увеличения и уменьшения счётчика ссылок в
+обычном случае, когда значение уже является строкой.</p>
+<p>Когда речь заходит о преобразованиях в строки в частности, есть ещё одна проблема, которую нужно учитывать:
+методы <code class="docutils literal notranslate"><span class="pre">__toString()</span></code> могут выбрасывать исключения (на самом деле, преобразования в int и float тоже могут их
+выбрасывать, но эта проблема обычно игнорируется). Это можно обработать, проверив <code class="docutils literal notranslate"><span class="pre">EG(exception)</span></code> после
+преобразования в строку:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_get_string</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">EG</span><span class="p">(</span><span class="n">exception</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// zend_string_release(str) is safe, but not necessary here.</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Однако более идиоматичный и эффективный способ обработать эту ситуацию — использовать варианты <code class="docutils literal notranslate"><span class="pre">try</span></code> этих функций,
+которые укажут, было ли выброшено исключение, через своё возвращаемое значение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">try_convert_to_string</span><span class="p">(</span><span class="n">val</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Exception thrown.</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_try_get_string</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Exception thrown.</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">tmp_str</span><span class="p">;</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_try_get_tmp_string</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">tmp_str</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Exception thrown.</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">zend_tmp_string_release</span><span class="p">(</span><span class="n">tmp_str</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Операции<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Пользовательские операции, такие как <code class="docutils literal notranslate"><span class="pre">$op1</span> <span class="pre">+</span> <span class="pre">$op2</span></code>, реализованы внутри через соответствующие функции, такие как
+<code class="docutils literal notranslate"><span class="pre">add_function()</span></code>, которые принимают выходной параметр-результат, за которым следуют входные операнды:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">;</span>
+<span class="n">zval</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">add_function</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Exception thrown.</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// Do something with result.</span>
+<span class="n">zval_ptr_dtor</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Следует отметить, что эти функции на практике используются довольно редко, поскольку большая часть кода работает с
+zval конкретных типов, а не оперирует совершенно произвольными значениями. Полный набор функций таков:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_result</span><span class="w"> </span><span class="nf">add_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* $result = $op1 + $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">sub_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* $result = $op1 - $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">mul_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* $result = $op1 * $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">pow_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* $result = $op1 ** $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">div_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* $result = $op1 / $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">mod_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* $result = $op1 % $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">bitwise_or_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">          </span><span class="cm">/* $result = $op1 | $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">bitwise_and_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">         </span><span class="cm">/* $result = $op1 &amp; $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">bitwise_xor_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">         </span><span class="cm">/* $result = $op1 ^ $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">boolean_xor_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">         </span><span class="cm">/* $result = $op1 xor $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">shift_left_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">          </span><span class="cm">/* $result = $op1 &lt;&lt; $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">shift_right_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">         </span><span class="cm">/* $result = $op1 &gt;&gt; $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">concat_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">              </span><span class="cm">/* $result = $op1 . $op2 */</span>
+
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">bitwise_not_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">);</span><span class="w">                    </span><span class="cm">/* $result = ~$op1 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">boolean_not_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">);</span><span class="w">                    </span><span class="cm">/* $result = !$op1 */</span>
+
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">increment_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span><span class="w">                                     </span><span class="cm">/* ++$op */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">decrement_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">);</span><span class="w">                                     </span><span class="cm">/* --$op */</span>
+
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">compare_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">             </span><span class="cm">/* $result = $op1 &lt;=&gt; $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">is_equal_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">            </span><span class="cm">/* $result = $op1 == $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">is_not_equal_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">        </span><span class="cm">/* $result = $op1 != $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">is_identical_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">        </span><span class="cm">/* $result = $op1 === $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">is_not_identical_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">    </span><span class="cm">/* $result = $op1 !== $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">is_smaller_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w">          </span><span class="cm">/* $result = $op1 &lt; $op2 */</span>
+<span class="n">zend_result</span><span class="w"> </span><span class="nf">is_smaller_or_equal_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span><span class="w"> </span><span class="cm">/* $result = $op1 &lt;= $op2 */</span>
+<span class="cm">/* $op1 &gt; $op2 is same as $op2 &lt; $op1 */</span>
+<span class="cm">/* $op1 &gt;= $op2 is same as $op2 &lt;= $op1 */</span>
+</pre></div>
+</div>
+<p>Для сравнений существуют ещё два варианта, которые возвращают результат сравнения вместо того, чтобы помещать его
+в zval:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="nf">zend_is_identical</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">zend_compare</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">zend_compare()</span></code> возвращает результат трёхстороннего сравнения, как оператор <code class="docutils literal notranslate"><span class="pre">&lt;=&gt;</span></code> в PHP, то есть меньше нуля,
+равно нулю или больше нуля, в зависимости от того, меньше, равен или больше <code class="docutils literal notranslate"><span class="pre">op1</span></code> по сравнению с <code class="docutils literal notranslate"><span class="pre">op2</span></code>.</p>
+<p>Наконец, существует ряд вариантов с префиксом <code class="docutils literal notranslate"><span class="pre">fast_</span></code>. Это оптимизированные реализации, которые ограничивают
+аргументы определёнными типами, либо инлайнят часть реализации и/или реализуют её с помощью встроенного
+ассемблера:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* op1 must have type IS_LONG, implementation uses inline assembly. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">fast_long_increment_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">);</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">fast_long_decrement_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">);</span>
+<span class="cm">/* op1 and op2 must have type IS_LONG, implementation uses inline assembly. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">fast_long_add_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">fast_long_sub_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="cm">/* op1, op2 may have any type, but IS_LONG and IS_DOUBLE addition is inlined. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="n">zend_result</span><span class="w"> </span><span class="n">fast_add_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="cm">/* op1, op2 may have any type, but IS_LONG, IS_DOUBLE and IS_STRING equality is inlined. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">fast_equal_check_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="cm">/* op1 must have type IS_LONG, op2 can have any type. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">fast_equal_check_long</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="cm">/* op1 must have type IS_DOUBLE, op2 can have any type. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">fast_equal_check_string</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="cm">/* op1, op2 may have any type, but part of the implementation is inlined. */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">fast_is_identical_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">fast_is_not_identical_function</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op2</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="references.html">Ссылки</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../internal_types.html">Внутренние типы</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

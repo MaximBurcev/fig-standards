@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Взгляд на расширение PHP и скелет расширения &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Регистрация и использование PHP-функций" href="php_functions.html" />
+    <link rel="prev" title="Изучаем жизненный цикл PHP" href="php_lifecycle.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Взгляд на расширение PHP и скелет расширения</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="php_lifecycle.html">Изучаем жизненный цикл PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="php_functions.html">Регистрация и использование PHP-функций</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="php">
+<h1>Взгляд на расширение PHP и скелет расширения<a class="headerlink" href="#php" title="Link to this heading">¶</a></h1>
+<p>Здесь мы подробно рассмотрим, как выглядит расширение PHP и как сгенерировать скелет с помощью некоторых
+инструментов. Это позволит нам взять код скелета и доработать его, вместо того чтобы создавать каждый необходимый
+элемент вручную с нуля.</p>
+<p>Мы также расскажем, как следует/можно организовать файлы вашего расширения, как движок их загружает, и в целом всё,
+что нужно знать о расширении PHP.</p>
+<section id="id1">
+<h2>Как движок загружает расширения<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Вы помните <a class="reference internal" href="../build_system/building_extensions.html"><span class="doc">главу о сборке расширений PHP</span></a>, так что вы знаете, как
+скомпилировать/собрать и установить его.</p>
+<p>Вы можете собирать <strong>статически скомпилированные</strong> расширения — это расширения, которые являются частью ядра PHP и
+сплавлены с ним. Они представлены не файлами <em>.so</em>, а объектами <em>.o</em>, которые линкуются в итоговый исполняемый файл
+PHP (ELF). Таким образом, такие расширения не могут быть отключены, они являются частью тела кода исполняемого файла
+PHP: они здесь, внутри, что бы вы ни говорили и делали. Некоторые расширения обязаны быть статически собраны, например
+<em>ext/core</em>, <em>ext/standard</em>, <em>ext/spl</em> и <em>ext/mysqlnd</em> (список неполный).</p>
+<p>Список статически скомпилированных расширений можно найти, посмотрев в файл <code class="docutils literal notranslate"><span class="pre">main/internal_functions.c</span></code>, который
+генерируется в процессе компиляции PHP. Этот шаг подробно описан в
+<a class="reference internal" href="../build_system/building_php.html"><span class="doc">главе о сборке PHP</span></a>.</p>
+<p>Кроме того, вы можете собирать <strong>динамически загружаемые</strong> расширения. Это те самые знаменитые файлы <em>extension.so</em>,
+которые появляются на свет в конце процесса отдельной компиляции. Динамически загружаемые расширения дают
+преимущество подключаемости и отключаемости во время выполнения и не требуют перекомпиляции всего PHP для включения
+или отключения. Недостаток в том, что время запуска процесса PHP увеличивается, когда ему нужно загружать файлы .so.
+Но это вопрос миллисекунд, и вы не особо от этого страдаете.</p>
+<p>Другой недостаток динамически загружаемых расширений — порядок их загрузки. Некоторым расширениям может требоваться,
+чтобы перед ними были загружены другие расширения. Хотя это не лучшая практика, мы увидим, что система расширений PHP
+позволяет объявлять зависимости, чтобы управлять таким порядком, но зависимости обычно являются плохой идеей и их
+следует избегать.</p>
+<p>И последнее: статически скомпилированные расширения PHP запускаются раньше динамически собранных. Это означает, что
+их <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> вызывается раньше, чем <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> файлов extensions.so.</p>
+<p>Когда PHP запускается, он быстро переходит к разбору своих различных INI-файлов. Если они присутствуют, в них может
+быть объявлена загрузка расширений с помощью строки вида <em>“extension=some_ext.so”</em>.
+Затем PHP собирает каждое расширение, разобранное из конфигурации INI, и пытается загрузить их в том же порядке, в
+котором они были добавлены в INI-файл, если только некоторые расширения не объявили зависимости (которые в этом
+случае будут загружены раньше).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если вы используете менеджер пакетов операционной системы, вы могли заметить, что пакетировщики обычно
+называют файлы своих расширений с числовым префиксом, например <em>00_ext.ini</em>, <em>01_ext.ini</em> и т.д. Это
+делается, чтобы управлять порядком загрузки расширений. Некоторым редким расширениям требуется конкретный
+порядок запуска. Напомним, что зависимость от загрузки других расширений перед вашим — плохая идея.</p>
+</div>
+<p>Для загрузки расширений используется <a class="reference external" href="https://en.wikipedia.org/wiki/Dynamic_loading">libdl</a> и его функции
+<a class="reference external" href="http://www.unix.com/man-page/All/3lib/libdl/">dlopen()/dlsym()</a>.</p>
+<p>Ищется символ <code class="docutils literal notranslate"><span class="pre">get_module()</span></code> — это означает, что ваше расширение должно экспортировать его, чтобы быть загруженным.
+Обычно это так и есть, поскольку если вы использовали скрипт-скелет (мы рассмотрим его через минуту), то он
+сгенерировал код с использованием макроса <code class="docutils literal notranslate"><span class="pre">ZEND_GET_MODULE(your_ext)</span></code>, который выглядит так:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define ZEND_GET_MODULE(name) \</span>
+<span class="cp">    BEGIN_EXTERN_C()\</span>
+<span class="cp">    ZEND_DLEXPORT zend_module_entry *get_module(void) { return &amp;name##_module_entry; }\</span>
+<span class="cp">    END_EXTERN_C()</span>
+</pre></div>
+</div>
+<p>Как видите, этот макрос при использовании объявляет глобальный символ: функцию get_module(), которая будет вызвана
+движком при попытке загрузить ваше расширение.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Исходный код, который PHP использует для загрузки расширений, расположен в
+<a class="reference external" href="https://github.com/php/php-src/blob/27d681435174433c3a9b0b8325361dfa383be0a6/ext/standard/dl.c#L90">ext/standard/dl.c</a></p>
+</div>
+</section>
+<section id="id2">
+<h2>Что такое расширение PHP?<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Расширение PHP, которое не следует путать с <a class="reference internal" href="zend_extensions.html"><span class="doc">Zend-расширением</span></a>, определяется с помощью
+структуры <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_module_entry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w">                                </span><span class="cm">/*</span>
+<span class="cm">    unsigned int zend_api;                               * STANDARD_MODULE_HEADER</span>
+<span class="cm">    unsigned char zend_debug;                            *</span>
+<span class="cm">    unsigned char zts;                                   */</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_ini_entry</span><span class="w"> </span><span class="o">*</span><span class="n">ini_entry</span><span class="p">;</span><span class="w">            </span><span class="cm">/* Unused */</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_module_dep</span><span class="w"> </span><span class="o">*</span><span class="n">deps</span><span class="p">;</span><span class="w">                </span><span class="cm">/* Module dependencies */</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span><span class="w">                                   </span><span class="cm">/* Module name */</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_function_entry</span><span class="w"> </span><span class="o">*</span><span class="n">functions</span><span class="p">;</span><span class="w">       </span><span class="cm">/* Module published functions */</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">module_startup_func</span><span class="p">)(</span><span class="n">INIT_FUNC_ARGS</span><span class="p">);</span><span class="w">         </span><span class="cm">/*</span>
+<span class="cm">    int (*module_shutdown_func)(SHUTDOWN_FUNC_ARGS);     *</span>
+<span class="cm">    int (*request_startup_func)(INIT_FUNC_ARGS);         * Lifetime functions (hooks)</span>
+<span class="cm">    int (*request_shutdown_func)(SHUTDOWN_FUNC_ARGS);    *</span>
+<span class="cm">    void (*info_func)(ZEND_MODULE_INFO_FUNC_ARGS);       */</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">version</span><span class="p">;</span><span class="w">                                </span><span class="cm">/* Module version */</span>
+
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">globals_size</span><span class="p">;</span><span class="w">                                </span><span class="cm">/*</span>
+<span class="cm">#ifdef ZTS                                               *</span>
+<span class="cm">    ts_rsrc_id* globals_id_ptr;                          *</span>
+<span class="cm">#else                                                    * Globals management</span>
+<span class="cm">    void* globals_ptr;                                   *</span>
+<span class="cm">#endif                                                   *</span>
+<span class="cm">    void (*globals_ctor)(void *global);                  *</span>
+<span class="cm">    void (*globals_dtor)(void *global);                  */</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">post_deactivate_func</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span><span class="w">                   </span><span class="cm">/* Rarely used lifetime hook */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">module_started</span><span class="p">;</span><span class="w">                                  </span><span class="cm">/* Has module been started (internal usage) */</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">type</span><span class="p">;</span><span class="w">                                  </span><span class="cm">/* Module type (internal usage) */</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">handle</span><span class="p">;</span><span class="w">                                        </span><span class="cm">/* dlopen() returned handle */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">module_number</span><span class="p">;</span><span class="w">                                   </span><span class="cm">/* module number among others */</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">build_id</span><span class="p">;</span><span class="w">                                </span><span class="cm">/* build id, part of STANDARD_MODULE_PROPERTIES_EX */</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Первые четыре параметра уже были объяснены в
+<a class="reference internal" href="../build_system/building_extensions.html"><span class="doc">главе о сборке расширений</span></a>. Они обычно заполняются с помощью макроса
+<code class="docutils literal notranslate"><span class="pre">STANDARD_MODULE_HEADER</span></code>.</p>
+<p>Вектор <code class="docutils literal notranslate"><span class="pre">ini_entry</span></code> фактически не используется. Вы <a class="reference internal" href="ini_settings.html"><span class="doc">регистрируете INI-записи</span></a> с помощью
+специальных макросов.</p>
+<p>Затем вы можете объявить зависимости — это означает, что вашему расширению может требоваться загрузка другого
+расширения перед ним, либо оно может объявить конфликт с другими расширениями. Это делается с помощью поля <code class="docutils literal notranslate"><span class="pre">deps</span></code>.
+На практике это используется очень редко, и в целом создавать зависимости между расширениями PHP считается плохой
+практикой.</p>
+<p>После этого вы объявляете <code class="docutils literal notranslate"><span class="pre">name</span></code>. Тут нечего добавить — это имя вашего расширения (которое может отличаться от
+имени его собственного файла <em>.so</em>). Учтите, что имя чувствительно к регистру в большинстве операций, мы советуем
+использовать что-то короткое, в нижнем регистре, без пробелов (чтобы немного облегчить себе жизнь).</p>
+<p>Далее идёт поле <code class="docutils literal notranslate"><span class="pre">functions</span></code>. Это указатель на некоторые функции PHP, которые расширение хочет зарегистрировать в
+движке. Об этом мы говорили <a class="reference internal" href="php_functions.html"><span class="doc">в отдельной главе</span></a>.</p>
+<p>Продолжая, идут 5 хуков жизненного цикла. <a class="reference internal" href="php_lifecycle.html"><span class="doc">Смотрите их отдельную главу</span></a>.</p>
+<p>Ваше расширение может опубликовать номер версии в виде <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code>, используя поле <code class="docutils literal notranslate"><span class="pre">version</span></code>. Это поле считывается
+только как часть информации о вашем расширении — функцией phpinfo() или через Reflection API как
+<code class="docutils literal notranslate"><span class="pre">ReflectionExtension::getVersion()</span></code>.</p>
+<p>Далее мы видим множество полей, связанных с глобальными переменными. Управлению глобальными переменными
+<a class="reference internal" href="globals_management.html"><span class="doc">посвящена отдельная глава</span></a>.</p>
+<p>Наконец, завершающие поля обычно являются частью макроса <code class="docutils literal notranslate"><span class="pre">STANDARD_MODULE_PROPERTIES</span></code>, и вам не нужно
+взаимодействовать с ними вручную. Движок присвоит вам <code class="docutils literal notranslate"><span class="pre">module_number</span></code> для своего внутреннего учёта, а тип
+расширения будет установлен в <code class="docutils literal notranslate"><span class="pre">MODULE_PERSISTENT</span></code>. Он может быть и <code class="docutils literal notranslate"><span class="pre">MODULE_TEMPORARY</span></code>, если бы ваше расширение
+было загружено с помощью пользовательской функции PHP <code class="docutils literal notranslate"><span class="pre">dl()</span></code>, но такой сценарий очень редок, не работает с каждым
+SAPI, и временные расширения обычно создают множество проблем в движке.</p>
+</section>
+<section id="id3">
+<h2>Генерация скелета расширения с помощью скриптов<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Теперь посмотрим, как сгенерировать скелет расширения, чтобы вы могли начать новое расширение с минимальным
+содержимым и структурой, которые не придётся создавать вручную с нуля.</p>
+<p>Скрипт-генератор скелета расположен в
+<a class="reference external" href="https://github.com/php/php-src/blob/27d681435174433c3a9b0b8325361dfa383be0a6/ext/ext_skel">php-src/ext/ext_skel</a>,
+а структура, которую он использует как шаблон, хранится в
+<a class="reference external" href="https://github.com/php/php-src/tree/27d681435174433c3a9b0b8325361dfa383be0a6/ext/skeleton">php-src/ext/skeleton</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Скрипт и структура немного меняются по мере развития версий PHP.</p>
+</div>
+<p>Вы можете изучить эти скрипты, чтобы понять, как они работают, но базовое использование выглядит так:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/tmp
+/tmp&gt;<span class="w"> </span>/path/to/php/ext/ext_skel<span class="w"> </span>--skel<span class="o">=</span>/path/to/php/ext/skeleton<span class="w"> </span>--extname<span class="o">=</span>pib
+<span class="o">[</span><span class="w"> </span>...<span class="w"> </span>generating<span class="w"> </span>...<span class="w"> </span><span class="o">]</span>
+/tmp&gt;<span class="w"> </span>tree<span class="w"> </span>pib/
+pib/
+├──<span class="w"> </span>config.m4
+├──<span class="w"> </span>config.w32
+├──<span class="w"> </span>CREDITS
+├──<span class="w"> </span>EXPERIMENTAL
+├──<span class="w"> </span>php_pib.h
+├──<span class="w"> </span>pib.c
+├──<span class="w"> </span>pib.php
+└──<span class="w"> </span>tests
+<span class="w">    </span>└──<span class="w"> </span><span class="m">001</span>.phpt
+/tmp&gt;
+</pre></div>
+</div>
+<p>Вы видите, что сгенерировалась очень простая и минимальная структура. В главе о сборке расширений вы узнали, что
+файлы вашего расширения, которые нужно компилировать, должны быть объявлены в <em>config.m4</em>. Скелет сгенерировал только
+файл <em>&lt;your-ext-name&gt;.c</em>. В нашем примере расширение называлось <em>“pib”</em>, так что мы получили файл <em>pib.c</em>, и нам
+нужно раскомментировать строку <em>–enable-pib</em> в <em>config.m4</em>, чтобы он компилировался.</p>
+<p>К каждому C-файлу (обычно) прилагается заголовочный файл. Здесь структура такая: <em>php_&lt;your-ext-name&gt;.h</em>, то есть для
+нас <em>php_pib.h</em>. Не меняйте это имя — система сборки ожидает именно такое соглашение об именовании заголовочного
+файла.</p>
+<p>Вы можете видеть, что также была сгенерирована минимальная структура тестов.</p>
+<p>Откроем <em>pib.c</em>. Там всё закомментировано, так что писать придётся не так уж много строк.</p>
+<p>В целом мы видим, что символ модуля, необходимый движку для загрузки нашего расширения, публикуется здесь:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifdef COMPILE_DL_PIB</span>
+<span class="cp">#ifdef ZTS</span>
+<span class="n">ZEND_TSRMLS_CACHE_DEFINE</span><span class="p">()</span>
+<span class="cp">#endif</span>
+<span class="n">ZEND_GET_MODULE</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>Макрос <code class="docutils literal notranslate"><span class="pre">COMPILE_DL_&lt;YOUR-EXT-NAME&gt;</span></code> определяется, если вы передаёте флаг <em>–enable-&lt;my-ext-name&gt;</em> скрипту
+configure. Мы также видим, что в режиме ZTS указатель локального хранилища TSRM определяется как часть макроса
+<code class="docutils literal notranslate"><span class="pre">ZEND_TSRMLS_CACHE_DEFINE()</span></code>.</p>
+<p>После этого больше ничего не остаётся сказать, поскольку всё закомментировано и должно быть вам понятно.</p>
+</section>
+<section id="id4">
+<h2>Новая эра генератора скелета расширения<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Начиная с <a class="reference external" href="https://github.com/php/php-src/commit/f35f45906eac34498c7720326fb9da9fde960871">этого коммита</a> генератор
+скелета расширения приобрёл новый стиль:</p>
+<blockquote>
+<div><p>Теперь он будет работать на Windows без Cygwin и прочих сложностей.
+Он больше не включает способ генерации XML-документации (утилиты PHP-документации уже содержат инструменты для
+этого в svn, в phpdoc/doc-base), и он больше не поддерживает заготовки функций (function stubs).</p>
+</div></blockquote>
+<p>и вот доступные опции:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>php<span class="w"> </span>ext_skel.php<span class="w"> </span>--ext<span class="w"> </span>&lt;name&gt;<span class="w"> </span><span class="o">[</span>--experimental<span class="o">]</span><span class="w"> </span><span class="o">[</span>--author<span class="w"> </span>&lt;name&gt;<span class="o">]</span>
+<span class="w">                 </span><span class="o">[</span>--dir<span class="w"> </span>&lt;path&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--std<span class="o">]</span><span class="w"> </span><span class="o">[</span>--onlyunix<span class="o">]</span>
+<span class="w">                 </span><span class="o">[</span>--onlywindows<span class="o">]</span><span class="w"> </span><span class="o">[</span>--help<span class="o">]</span>
+
+<span class="w">  </span>--ext<span class="w"> </span>&lt;name&gt;<span class="w">              </span>The<span class="w"> </span>name<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>extension<span class="w"> </span>defined<span class="w"> </span>as<span class="w"> </span>&lt;name&gt;
+<span class="w">  </span>--experimental<span class="w">    </span>Passed<span class="w"> </span><span class="k">if</span><span class="w"> </span>this<span class="w"> </span>extension<span class="w"> </span>is<span class="w"> </span>experimental,<span class="w"> </span>this<span class="w"> </span>creates
+<span class="w">                        </span>the<span class="w"> </span>EXPERIMENTAL<span class="w"> </span>file<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>root<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>extension
+<span class="w">  </span>--author<span class="w"> </span>&lt;name&gt;<span class="w">       </span>Your<span class="w"> </span>name,<span class="w"> </span>this<span class="w"> </span>is<span class="w"> </span>used<span class="w"> </span><span class="k">if</span><span class="w"> </span>--header<span class="w"> </span>is<span class="w"> </span>passed<span class="w"> </span>and
+<span class="w">                        </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>CREDITS<span class="w"> </span>file
+<span class="w">  </span>--dir<span class="w"> </span>&lt;path&gt;<span class="w">              </span>Path<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>directory<span class="w"> </span><span class="k">for</span><span class="w"> </span>where<span class="w"> </span>extension<span class="w"> </span>should<span class="w"> </span>be
+<span class="w">                        </span>created.<span class="w"> </span>Defaults<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>directory<span class="w"> </span>of<span class="w"> </span>where<span class="w"> </span>this<span class="w"> </span>script
+<span class="w">                    </span>lives
+<span class="w">  </span>--std<span class="w">                     </span>If<span class="w"> </span>passed,<span class="w"> </span>the<span class="w"> </span>standard<span class="w"> </span>header<span class="w"> </span>and<span class="w"> </span>vim<span class="w"> </span>rules<span class="w"> </span>footer<span class="w"> </span>used
+<span class="w">                    </span><span class="k">in</span><span class="w"> </span>extensions<span class="w"> </span>that<span class="w"> </span>is<span class="w"> </span>included<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>core,<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>used
+<span class="w">  </span>--onlyunix<span class="w">                </span>Only<span class="w"> </span>generate<span class="w"> </span>configure<span class="w"> </span>scripts<span class="w"> </span><span class="k">for</span><span class="w"> </span>Unix
+<span class="w">  </span>--onlywindows<span class="w">             </span>Only<span class="w"> </span>generate<span class="w"> </span>configure<span class="w"> </span>scripts<span class="w"> </span><span class="k">for</span><span class="w"> </span>Windows
+<span class="w">  </span>--help<span class="w">                </span>This<span class="w"> </span><span class="nb">help</span>
+</pre></div>
+</div>
+<p>Новый генератор скелета расширения сгенерирует скелет с тремя фиксированными функциями, вы можете определить любые
+другие функции и изменить конкретное тело как захотите.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Помните, что новый ext_skel больше не поддерживает proto-файлы.</p>
+</div>
+</section>
+<section id="api">
+<h2>Публикация API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h2>
+<p>Если мы откроем заголовочный файл, то увидим такие строки:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifdef PHP_WIN32</span>
+<span class="cp">#   define PHP_PIB_API __declspec(dllexport)</span>
+<span class="cp">#elif defined(__GNUC__) &amp;&amp; __GNUC__ &gt;= 4</span>
+<span class="cp">#   define PHP_PIB_API __attribute__ ((visibility("default")))</span>
+<span class="cp">#else</span>
+<span class="cp">#   define PHP_PIB_API</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>Эти строки определяют макрос с именем <code class="docutils literal notranslate"><span class="pre">PHP_&lt;EXT-NAME&gt;_API</span></code> (для нас <code class="docutils literal notranslate"><span class="pre">PHP_PIB_API</span></code>), который раскрывается в
+<a class="reference external" href="https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes">пользовательский атрибут GCC</a>
+visibility(“default”).</p>
+<p>В C вы можете указать линкеру скрыть все символы итогового объекта. Именно это сделано в PHP для каждого символа, а
+не только для статических (которые по определению не публикуются).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Стандартная строка компиляции PHP указывает компилятору скрывать все символы и не экспортировать их.</p>
+</div>
+<p>После этого вам нужно “раскрыть” символы, которые вы хотите опубликовать в своём расширении, чтобы их можно было
+использовать в других расширениях или других частях итогового файла ELF.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Напомним, что вы можете прочитать опубликованные и скрытые символы ELF с помощью <code class="docutils literal notranslate"><span class="pre">nm</span></code> в Unix.</p>
+</div>
+<p>Мы не можем объяснить эти концепции подробно здесь, возможно, вам помогут такие ссылки:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gcc.gnu.org/wiki/Visibility">https://gcc.gnu.org/wiki/Visibility</a></p></li>
+<li><p><a class="reference external" href="http://www.iecc.com/linker/linker10.html">http://www.iecc.com/linker/linker10.html</a></p></li>
+<li><p><a class="reference external" href="https://www.akkadia.org/drepper/dsohowto.pdf">https://www.akkadia.org/drepper/dsohowto.pdf</a></p></li>
+<li><p><a class="reference external" href="http://www.faqs.org/docs/Linux-HOWTO/Program-Library-HOWTO.html">http://www.faqs.org/docs/Linux-HOWTO/Program-Library-HOWTO.html</a></p></li>
+<li><p><a class="reference external" href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/DynamicLibraries/000-Introduction/Introduction.html">https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/DynamicLibraries/000-Introduction/Introduction.html</a></p></li>
+</ul>
+<p>Итак, в целом, если вы хотите, чтобы какой-то ваш C-символ был публично доступен другим расширениям, вам следует
+объявить его с помощью специального макроса <code class="docutils literal notranslate"><span class="pre">PHP_PIB_API</span></code>. Традиционный сценарий использования — публикация
+символов классов (тип <code class="docutils literal notranslate"><span class="pre">zend_class_entry*</span></code>), чтобы другие расширения могли подключаться к опубликованным вами
+классам и заменять некоторые их обработчики.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Обратите внимание, что это работает только с традиционным PHP. Если вы используете
+<a class="reference internal" href="../build_system/building_php.html"><span class="doc">PHP из дистрибутива Linux</span></a>, такие сборки патчатся, чтобы разрешать
+символы при загрузке, а не лениво, так что этот трюк не работает.</p>
+</div>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="php_lifecycle.html">Изучаем жизненный цикл PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="php_functions.html">Регистрация и использование PHP-функций</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

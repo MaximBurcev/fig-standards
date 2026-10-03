@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Тип Resource: zend_resource &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Хеш-таблицы: zend_array" href="hashtables.html" />
+    <link rel="prev" title="Пользовательские функции printf в PHP" href="strings/printing_functions.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Тип Resource: zend_resource</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="strings/printing_functions.html">Пользовательские функции printf в PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="hashtables.html">Хеш-таблицы: zend_array</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="resource-zend-resource">
+<h1>Тип Resource: zend_resource<a class="headerlink" href="#resource-zend-resource" title="Link to this heading">¶</a></h1>
+<p>Хотя PHP вполне мог бы избавиться от типа “resource”, поскольку пользовательское хранилище объектов позволяет
+строить PHP-представление любого абстрактного вида данных, этот тип resource всё ещё существует в текущей версии
+PHP, и вам может понадобиться с ним работать.</p>
+<p>Если вам нужно создавать ресурсы, мы действительно хотели бы убедить вас этого не делать, а вместо этого использовать
+объекты и их пользовательское управление хранилищем. Объекты — это тип PHP, который может вместить что угодно любого
+типа. Однако по историческим причинам PHP всё ещё знает об этом особом типе “Resource” и до сих пор использует его в
+своём ядре или в некоторых расширениях. Давайте разберёмся с этим типом вместе. Однако будьте осторожны, он
+действительно непонятен и страдает от долгой истории прошлого, так что не удивляйтесь его устройству, особенно при
+чтении исходного кода, посвящённого ему</p>
+<section id="resource">
+<h2>Что такое тип “Resource”?<a class="headerlink" href="#resource" title="Link to this heading">¶</a></h2>
+<p>Достаточно просто, вы уже о нём знаете. Мы говорим вот о чём:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$fp</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">'/proc/cpuinfo'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">);</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span> <span class="cm">/* resource(2) of type (stream) */</span>
+</pre></div>
+</div>
+<p>Внутренне resource привязан к структуре типа <code class="docutils literal notranslate"><span class="pre">zend_resource</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_resource</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">zend_refcounted_h</span><span class="w"> </span><span class="n">gc</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w">               </span><span class="n">handle</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w">               </span><span class="n">type</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">void</span><span class="w">             </span><span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Мы находим здесь традиционный заголовок <code class="docutils literal notranslate"><span class="pre">zend_refcounted_h</span></code>, что означает, что ресурсы подлежат подсчёту ссылок.</p>
+<p><code class="docutils literal notranslate"><span class="pre">handle</span></code> — это целое число, используемое внутренне движком для поиска ресурса во внутренней таблице ресурсов. Оно
+используется как ключ для такой таблицы.</p>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code> используется для группировки ресурсов одного типа вместе. Это связано со способом, которым ресурсы
+уничтожаются, и как они извлекаются обратно по своему handle.</p>
+<p>Наконец, поле <code class="docutils literal notranslate"><span class="pre">ptr</span></code> в <code class="docutils literal notranslate"><span class="pre">zend_resource</span></code> — это ваши абстрактные данные. Напомним, что ресурсы предназначены для
+хранения абстрактных данных, которые не могут вписаться ни в один тип данных, который PHP может представить
+нативно (но объекты могли бы, как мы говорили ранее).</p>
+</section>
+<section id="id1">
+<h2>Типы ресурсов и уничтожение ресурсов<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Ресурсы должны регистрировать деструктор. Когда пользователи используют ресурсы в пользовательском коде PHP, они
+обычно не заботятся о том, чтобы очистить их, когда они больше не используются. Например, нередко можно встретить
+вызов <code class="docutils literal notranslate"><span class="pre">fopen()</span></code> без соответствующего вызова <code class="docutils literal notranslate"><span class="pre">fclose()</span></code>. При использовании языка C это было бы, в лучшем случае,
+плохой идеей, в худшем — катастрофой. Но при использовании высокоуровневого языка, такого как PHP, это упрощает
+жизнь.</p>
+<p>Вы, как внутренний разработчик, должны быть готовы к тому, что пользователь создаст множество ресурсов, которые вы
+позволите ему использовать, не очищая их должным образом и не освобождая память/ресурсы ОС. Поэтому вы должны
+зарегистрировать деструктор, который будет вызываться каждый раз, когда движок собирается уничтожить ресурс этого
+типа.</p>
+<p>Деструкторы группируются по типам, как и сами ресурсы. Вы не будете применять деструктор для ресурса типа
+‘database’ к ресурсу типа ‘file’.</p>
+<p>Также существуют два вида ресурсов, здесь снова различающихся по времени их жизни.</p>
+<ul class="simple">
+<li><p>Классические ресурсы, наиболее часто используемые, не сохраняются между несколькими запросами, их деструктор
+вызывается при завершении запроса.</p></li>
+<li><p>Постоянные ресурсы сохраняются между несколькими запросами и уничтожаются только при завершении процесса PHP.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Вас может заинтересовать глава о <a class="reference internal" href="../extensions_design/php_lifecycle.html"><span class="doc">жизненном цикле PHP</span></a>, которая
+показывает различные этапы, происходящие в течение жизни процесса PHP. Также глава о
+<a class="reference internal" href="../memory_management/zend_memory_manager.html"><span class="doc">Менеджере памяти Zend</span></a> может помочь в понимании концепций
+постоянного и привязанного к запросу выделения памяти.</p>
+</div>
+</section>
+<section id="id2">
+<h2>Работа с ресурсами<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>API, связанный с ресурсами, можно найти в
+<a class="reference external" href="https://github.com/php/php-src/blob/3704947696fe0ee93e025fa85621d297ac7a1e4d/Zend/zend_list.c">zend/zend_list.c</a>.
+Вы можете найти в нём некоторые несоответствия, например, упоминания “списков” вместо “ресурсов”.</p>
+<section id="id3">
+<h3>Создание ресурсов<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Чтобы создать ресурс, сначала нужно зарегистрировать для него деструктор и связать его с именем типа ресурса,
+используя <code class="docutils literal notranslate"><span class="pre">zend_register_list_destructors_ex()</span></code>. Этот вызов вернёт целое число, представляющее тип ресурса,
+который вы регистрируете. Вы должны запомнить это число, потому что оно понадобится вам позже, чтобы получить
+обратно ваш ресурс от пользователя.</p>
+<p>После этого вы можете зарегистрировать новый ресурс, используя <code class="docutils literal notranslate"><span class="pre">zend_register_resource()</span></code>. Эта функция вернёт вам
+<code class="docutils literal notranslate"><span class="pre">zend_resource</span></code>. Давайте вместе рассмотрим простой пример использования:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">res_num</span><span class="p">;</span>
+<span class="kt">FILE</span><span class="w"> </span><span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+<span class="n">zend_resource</span><span class="w"> </span><span class="o">*</span><span class="n">my_res</span><span class="p">;</span>
+<span class="n">zval</span><span class="w"> </span><span class="n">my_val</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">my_res_dtor</span><span class="p">(</span><span class="n">zend_resource</span><span class="w"> </span><span class="o">*</span><span class="n">rsrc</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">fclose</span><span class="p">((</span><span class="kt">FILE</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">rsrc</span><span class="o">-&gt;</span><span class="n">ptr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* module_number should be your PHP extension number here */</span>
+<span class="n">res_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_register_list_destructors_ex</span><span class="p">(</span><span class="n">my_res_dtor</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="s">"my_res"</span><span class="p">,</span><span class="w"> </span><span class="n">module_number</span><span class="p">);</span>
+<span class="n">fp</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">fopen</span><span class="p">(</span><span class="s">"/proc/cpuinfo"</span><span class="p">,</span><span class="w"> </span><span class="s">"r"</span><span class="p">);</span>
+<span class="n">my_res</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">zend_register_resource</span><span class="p">((</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="n">res_num</span><span class="p">);</span>
+
+<span class="n">ZVAL_RES</span><span class="p">(</span><span class="o">&amp;</span><span class="n">my_val</span><span class="p">,</span><span class="w"> </span><span class="n">my_res</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Что мы делаем в коде выше — мы открываем файл с помощью libc-функции <code class="docutils literal notranslate"><span class="pre">fopen()</span></code> и сохраняем возвращённый указатель
+в ресурс. Перед этим мы зарегистрировали деструктор, который при вызове использует libc-функцию <code class="docutils literal notranslate"><span class="pre">fclose()</span></code> на
+указателе. Затем мы регистрируем ресурс в движке и помещаем ресурс в контейнер <code class="docutils literal notranslate"><span class="pre">zval</span></code>, который может быть
+возвращён в пользовательский код.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Главу о zval можно найти <a class="reference internal" href="../zvals.html#ru-zvals"><span class="std std-ref">здесь</span></a>.</p>
+</div>
+<p>Что нужно запомнить — это тип ресурса. Здесь мы регистрируем ресурс типа <em>“my_res”</em>. Это имя типа. Движку на самом
+деле не важно имя типа, важен идентификатор типа — целое число, возвращаемое функцией
+<code class="docutils literal notranslate"><span class="pre">zend_register_list_destructors_ex()</span></code>. Вы должны где-то его запомнить, как мы делаем в переменной <code class="docutils literal notranslate"><span class="pre">res_num</span></code>.</p>
+</section>
+<section id="id4">
+<h3>Получение ресурсов обратно<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Теперь, когда мы зарегистрировали ресурс и поместили его в <code class="docutils literal notranslate"><span class="pre">zval</span></code> для примера, нам нужно научиться получать этот
+ресурс обратно из пользовательского кода. Помните, ресурс хранится внутри <code class="docutils literal notranslate"><span class="pre">zval</span></code>. Внутри ресурса хранится номер
+типа ресурса (в поле <code class="docutils literal notranslate"><span class="pre">type</span></code>). Таким образом, чтобы получить обратно наш ресурс от пользователя, мы должны извлечь
+<code class="docutils literal notranslate"><span class="pre">zend_resource</span></code> из <code class="docutils literal notranslate"><span class="pre">zval</span></code> и вызвать <code class="docutils literal notranslate"><span class="pre">zend_fetch_resource()</span></code>, чтобы получить обратно наш указатель
+<code class="docutils literal notranslate"><span class="pre">FILE</span> <span class="pre">*</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* ... later on ... */</span>
+
+<span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">user_zval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* fetch zval from userland, assume type IS_RESOURCE */</span>
+
+<span class="n">ZEND_ASSERT</span><span class="p">(</span><span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">user_zval</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">IS_RESOURCE</span><span class="p">);</span><span class="w"> </span><span class="cm">/* just a check to be sure */</span>
+
+<span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">FILE</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">zend_fetch_resource</span><span class="p">(</span><span class="n">Z_RESVAL_P</span><span class="p">(</span><span class="n">user_zval</span><span class="p">),</span><span class="w"> </span><span class="s">"my_res"</span><span class="p">,</span><span class="w"> </span><span class="n">res_num</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Как мы говорили: получаем zval от пользователя (типа <code class="docutils literal notranslate"><span class="pre">IS_RESOURCE</span></code>) и извлекаем из него указатель на ресурс,
+вызывая <code class="docutils literal notranslate"><span class="pre">zend_fetch_resource()</span></code>.</p>
+<p>Эта функция проверит, соответствует ли тип ресурса тому типу, который вы передаёте в качестве третьего параметра
+(здесь <code class="docutils literal notranslate"><span class="pre">res_num</span></code>). Если да, она извлекает обратно указатель <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*</span></code> на ресурс, который вам нужен, и мы закончили.
+Если нет, то она выбрасывает предупреждение вида <em>“supplied resource is not a valid {type name} resource”</em>.
+Это может произойти, например, если вы ожидаете ресурс типа “my_res”, а вам передали zval с ресурсом типа “gzip”,
+например, тот, что возвращается функцией PHP <code class="docutils literal notranslate"><span class="pre">gzopen()</span></code>.</p>
+<p>Типы ресурсов — это просто способ для движка смешивать разные виды ресурсов (типа “file”, “gzip” или даже “mysql
+connection”) в одной таблице ресурсов. У типов ресурсов есть имена, чтобы их можно было использовать в сообщениях
+об ошибках или в отладочных выводах (например, в <code class="docutils literal notranslate"><span class="pre">var_dump($my_resource)</span></code>), а также они представлены как целое
+число, используемое внутренне для получения обратно указателя на ресурс и для регистрации деструктора для типа
+ресурса.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Как видите, если бы мы использовали объекты, они представляют типы сами по себе, и не было бы необходимости
+в этом шаге получения ресурса обратно по его идентификатору с проверкой его типа. Объекты —
+самоописывающиеся типы. Но ресурсы всё ещё являются допустимым типом данных в текущей версии PHP.</p>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>Подсчёт ссылок ресурсов<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Как и многие другие типы, <code class="docutils literal notranslate"><span class="pre">zend_resource</span></code> подлежит подсчёту ссылок. Мы можем увидеть его заголовок
+<code class="docutils literal notranslate"><span class="pre">zend_refcounted_h</span></code>. Вот API для работы со подсчётом ссылок, если он вам понадобится (в среднем он вам не должен
+понадобиться):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">zend_list_delete(zend_resource</span> <span class="pre">*res)</span></code> уменьшает счётчик ссылок и уничтожает ресурс, если он падает до нуля</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zend_list_free(zend_resource</span> <span class="pre">*res)</span></code> проверяет, равен ли счётчик ссылок нулю, и уничтожает ресурс, если это так.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zend_list_close(zend_resource</span> <span class="pre">*res)</span></code> вызывает деструктор ресурса независимо от условий</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>Постоянные ресурсы<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Постоянные ресурсы не уничтожаются при завершении запроса. Классический пример использования для этого —
+постоянные соединения с базой данных. Это соединения, которые повторно используются от запроса к запросу (со всеми
+проблемами, которые это принесёт).</p>
+<p>Традиционно вам не следует использовать постоянные ресурсы, так как один запрос будет отличаться от другого.
+Повторное использование одного и того же ресурса действительно нужно тщательно обдумать, прежде чем идти этим путём.</p>
+<p>Чтобы зарегистрировать постоянный ресурс, используйте постоянный деструктор вместо классического. Это делается при
+вызове <code class="docutils literal notranslate"><span class="pre">zend_register_list_destructors_ex()</span></code>, API которой выглядит так:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_register_list_destructors_ex</span><span class="p">(</span><span class="n">rsrc_dtor_func_t</span><span class="w"> </span><span class="n">destructor</span><span class="p">,</span><span class="w"> </span><span class="n">rsrc_dtor_func_t</span><span class="w"> </span><span class="n">persistent_destructor</span><span class="p">,</span>
+<span class="w">                                  </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">type_name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">module_number</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="strings/printing_functions.html">Пользовательские функции printf в PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="hashtables.html">Хеш-таблицы: zend_array</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>
