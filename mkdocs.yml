@@ -91,4 +91,5 @@ nav:
         - Эволюция PSR: bylaws/008-psr-evolution.md
         - Соглашения об именах: bylaws/009-naming-conventions.md
         - Реализация: bylaws/100-implementation.md
+    - PHP Internals Book (рус. перевод): php-internals-book/ru/index.html
     - Лицензия: LICENSE.md
