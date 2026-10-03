@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Сборка PHP &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Сборка расширений PHP" href="building_extensions.html" />
+    <link rel="prev" title="Использование системы сборки PHP" href="../build_system.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Сборка PHP</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../build_system.html">Использование системы сборки PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="building_extensions.html">Сборка расширений PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="php">
+<span id="ru-building-php"></span><h1>Сборка PHP<a class="headerlink" href="#php" title="Link to this heading">¶</a></h1>
+<p>В этой главе объясняется, как скомпилировать PHP таким образом, чтобы это подходило для разработки расширений или
+модификаций ядра. Мы рассмотрим только сборку на Unix-подобных системах. Если вы хотите собрать PHP на Windows,
+взгляните на <a class="reference external" href="https://wiki.php.net/internals/windows/stepbystepbuild_sdk_2">step-by-step build instructions</a> в wiki PHP <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>Эта глава также даёт общее представление о том, как работает система сборки PHP и какие инструменты она использует,
+но подробное описание выходит за рамки этой книги.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Отказ от ответственности: мы не несём ответственности за какой-либо вред здоровью, вызванный попыткой
+скомпилировать PHP на Windows.</p>
+</aside>
+</aside>
+<section id="id4">
+<h2>Почему не использовать пакеты?<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Если вы сейчас используете PHP, вы, вероятно, установили его через менеджер пакетов, с помощью команды вроде
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">php</span></code>. Прежде чем объяснять саму компиляцию, нужно сначала понять, почему необходимо
+выполнять собственную компиляцию и почему нельзя просто использовать готовый пакет. На это есть несколько причин:</p>
+<p>Во-первых, готовый пакет содержит только итоговые бинарные файлы, но не содержит других вещей, необходимых для
+компиляции расширений, например заголовочных файлов. Это легко исправить, установив пакет для разработки, который
+обычно называется <code class="docutils literal notranslate"><span class="pre">php-dev</span></code>. Для упрощения отладки с помощью valgrind или gdb можно дополнительно установить
+debug-символы, которые обычно доступны в виде ещё одного пакета — <code class="docutils literal notranslate"><span class="pre">php-dbg</span></code>.</p>
+<p>Но даже если вы установите заголовочные файлы и debug-символы, вы всё равно будете работать с release-сборкой PHP.
+Это означает, что она собрана с высоким уровнем оптимизации, что может сильно затруднить отладку. Кроме того, в
+release-сборках не включены assertions и не генерируются предупреждения об утечках памяти. Также готовые пакеты не
+включают потокобезопасность, которая может быть полезна, чтобы убедиться, что ваше расширение собирается в
+потокобезопасной конфигурации.</p>
+<p>Другая проблема в том, что почти все дистрибутивы применяют к PHP дополнительные патчи. В некоторых случаях эти
+патчи содержат лишь незначительные изменения, связанные с конфигурацией, но некоторые дистрибутивы используют
+весьма инвазивные патчи, такие как Suhosin. Известно, что некоторые из этих патчей вызывают несовместимость с
+низкоуровневыми расширениями, такими как opcache.</p>
+<p>PHP предоставляет поддержку только для программного обеспечения, предоставленного на <a class="reference external" href="http://www.php.net">php.net</a>, а не для версий,
+изменённых дистрибутивами. Если вы хотите сообщить об ошибках, отправить патчи или воспользоваться нашими каналами
+помощи по написанию расширений, вам всегда следует работать с официальной версией PHP. Когда в этой книге мы
+говорим «PHP», мы всегда имеем в виду официально поддерживаемую версию.</p>
+</section>
+<section id="id5">
+<h2>Получение исходного кода<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Прежде чем собрать PHP, вам нужно получить его исходный код. Это можно сделать двумя способами: либо скачать архив
+с <a class="reference external" href="http://www.php.net/downloads.php">PHP’s download page</a>, либо клонировать git-репозиторий с <a class="reference external" href="http://www.github.com/php/php-src">Github</a>.</p>
+<p>Процесс сборки немного отличается в обоих случаях: git-репозиторий не содержит в комплекте скрипт <code class="docutils literal notranslate"><span class="pre">configure</span></code>,
+поэтому вам нужно будет сгенерировать его с помощью скрипта <code class="docutils literal notranslate"><span class="pre">buildconf</span></code>, который использует autoconf. Кроме того,
+git-репозиторий не содержит заранее сгенерированных лексера и парсера, поэтому вам также потребуется установить
+re2c и bison.</p>
+<p>Мы рекомендуем получать исходный код из git, поскольку это даёт простой способ поддерживать вашу установку в
+актуальном состоянии и пробовать свой код с разными версиями. Git-чекаут также требуется, если вы хотите отправлять
+патчи или pull request’ы для PHP.</p>
+<p>Чтобы клонировать репозиторий, выполните следующие команды в своей оболочке:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~&gt;<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/php/php-src.git
+~&gt;<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>php-src
+<span class="c1"># by default you will be on the master branch, which is the current</span>
+<span class="c1"># development version. You can check out a stable branch instead:</span>
+~/php-src&gt;<span class="w"> </span>git<span class="w"> </span>checkout<span class="w"> </span>PHP-8.1
+</pre></div>
+</div>
+<p>Если у вас возникли проблемы с git-чекаутом, посмотрите <a class="reference external" href="https://wiki.php.net/vcs/gitfaq">Git FAQ</a> в wiki PHP. Git FAQ также объясняет, как
+настроить git, если вы хотите вносить вклад в сам PHP. Кроме того, он содержит инструкции по настройке нескольких
+рабочих директорий для разных версий PHP. Это может быть очень полезно, если вам нужно тестировать свои расширения
+или изменения на нескольких версиях и конфигурациях PHP.</p>
+<p>Перед тем как продолжить, вам также следует установить несколько базовых зависимостей для сборки с помощью
+менеджера пакетов (первые три, вероятно, у вас уже установлены по умолчанию):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gcc</span></code> и <code class="docutils literal notranslate"><span class="pre">g++</span></code> или другой набор инструментов компилятора.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libc-dev</span></code>, который предоставляет стандартную библиотеку C, включая заголовочные файлы.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span></code> — инструмент управления сборкой, который использует PHP.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">autoconf</span></code>, который используется для генерации скрипта <code class="docutils literal notranslate"><span class="pre">configure</span></code>.</p>
+<ul>
+<li><p>2.59 или выше (для PHP 7.0-7.1)</p></li>
+<li><p>2.64 или выше (для PHP 7.2)</p></li>
+<li><p>2.68 или выше (для PHP 7.3 и выше)</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">libtool</span></code>, который помогает управлять разделяемыми библиотеками.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bison</span></code>, который используется для генерации парсера PHP.</p>
+<ul>
+<li><p>2.4 или выше (для PHP 7.0-7.3)</p></li>
+<li><p>3.0 или выше (для PHP 7.4 и выше)</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">re2c</span></code>, который используется для генерации лексера PHP.</p>
+<ul>
+<li><p>Опционален для PHP &lt;= 7.3.</p></li>
+<li><p>0.13.4 или выше (для PHP 7.4 и выше)</p></li>
+</ul>
+</li>
+</ul>
+<p>В Debian/Ubuntu все эти пакеты можно установить следующей командой:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>build-essential<span class="w"> </span>autoconf<span class="w"> </span>libtool<span class="w"> </span>bison<span class="w"> </span>re2c<span class="w"> </span>pkg-config
+</pre></div>
+</div>
+<p>В зависимости от расширений, которые вы включите на этапе <code class="docutils literal notranslate"><span class="pre">./configure</span></code>, PHP потребуется ряд дополнительных
+библиотек. При их установке проверьте, есть ли версия пакета с окончанием <code class="docutils literal notranslate"><span class="pre">-dev</span></code> или <code class="docutils literal notranslate"><span class="pre">-devel</span></code>, и устанавливайте
+именно её. Пакеты без <code class="docutils literal notranslate"><span class="pre">dev</span></code> обычно не содержат необходимых заголовочных файлов. Например, стандартная сборка PHP
+потребует libxml и libsqlite3, которые можно установить через пакеты <code class="docutils literal notranslate"><span class="pre">libxml2-dev</span></code> и <code class="docutils literal notranslate"><span class="pre">libsqlite3-dev</span></code>.</p>
+</section>
+<section id="id6">
+<h2>Обзор сборки<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Прежде чем подробнее рассмотреть, что делает каждый отдельный шаг сборки, вот команды, которые нужно выполнить для
+«стандартной» сборки PHP:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>./buildconf<span class="w">     </span><span class="c1"># only necessary if building from git</span>
+~/php-src&gt;<span class="w"> </span>./configure
+~/php-src&gt;<span class="w"> </span>make<span class="w"> </span>-jN
+</pre></div>
+</div>
+<p>Для быстрой сборки замените <code class="docutils literal notranslate"><span class="pre">N</span></code> на количество доступных ядер CPU (чтобы узнать это количество, можно выполнить
+<code class="docutils literal notranslate"><span class="pre">nproc</span></code>).</p>
+<p>По умолчанию PHP собирает бинарные файлы для SAPI CLI и CGI, которые будут расположены в <code class="docutils literal notranslate"><span class="pre">sapi/cli/php</span></code> и
+<code class="docutils literal notranslate"><span class="pre">sapi/cgi/php-cgi</span></code> соответственно. Чтобы проверить, что всё прошло успешно, попробуйте выполнить
+<code class="docutils literal notranslate"><span class="pre">sapi/cli/php</span> <span class="pre">-v</span></code>.</p>
+<p>Кроме того, вы можете выполнить <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">make</span> <span class="pre">install</span></code>, чтобы установить PHP в <code class="docutils literal notranslate"><span class="pre">/usr/local</span></code>. Целевую директорию
+можно изменить, указав <code class="docutils literal notranslate"><span class="pre">--prefix</span></code> на этапе конфигурирования:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>./configure<span class="w"> </span>--prefix<span class="o">=</span><span class="nv">$HOME</span>/myphp
+~/php-src&gt;<span class="w"> </span>make<span class="w"> </span>-jN
+~/php-src&gt;<span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+<p>Здесь <code class="docutils literal notranslate"><span class="pre">$HOME/myphp</span></code> — это место установки, которое будет использоваться на этапе <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>. Обратите
+внимание, что установка PHP не обязательна, но может быть удобна, если вы хотите использовать свою сборку PHP вне
+разработки расширений.</p>
+<p>А теперь подробнее рассмотрим отдельные шаги сборки!</p>
+</section>
+<section id="buildconf">
+<h2>Скрипт <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code><a class="headerlink" href="#buildconf" title="Link to this heading">¶</a></h2>
+<p>Если вы собираете из git-репозитория, первым делом нужно выполнить скрипт <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code>. Этот скрипт делает
+немногим больше, чем вызов makefile’а <code class="docutils literal notranslate"><span class="pre">build/build.mk</span></code>, который в свою очередь вызывает <code class="docutils literal notranslate"><span class="pre">build/build2.mk</span></code>.</p>
+<p>Основная задача этих makefile’ов — запустить <code class="docutils literal notranslate"><span class="pre">autoconf</span></code> для генерации скрипта <code class="docutils literal notranslate"><span class="pre">./configure</span></code> и <code class="docutils literal notranslate"><span class="pre">autoheader</span></code> для
+генерации шаблона <code class="docutils literal notranslate"><span class="pre">main/php_config.h.in</span></code>. Этот последний файл будет использован configure для генерации итогового
+заголовочного файла конфигурации <code class="docutils literal notranslate"><span class="pre">main/php_config.h</span></code>.</p>
+<p>Обе утилиты получают результаты из файла <code class="docutils literal notranslate"><span class="pre">configure.ac</span></code> (который определяет большую часть процесса сборки PHP),
+файла <code class="docutils literal notranslate"><span class="pre">build/php.m4</span></code> (который определяет большое количество специфичных для PHP M4-макросов) и файлов
+<code class="docutils literal notranslate"><span class="pre">config.m4</span></code> отдельных расширений и SAPI (а также из ряда других
+<a class="reference external" href="http://www.gnu.org/software/m4/m4.html">m4-файлов</a>).</p>
+<p>Хорошая новость в том, что написание расширений или даже модификация ядра не потребуют активного взаимодействия с
+системой сборки. В дальнейшем вам придётся писать небольшие файлы <code class="docutils literal notranslate"><span class="pre">config.m4</span></code>, но обычно они используют лишь
+два-три высокоуровневых макроса, предоставляемых <code class="docutils literal notranslate"><span class="pre">build/php.m4</span></code>. Поэтому здесь мы не будем углубляться в
+подробности.</p>
+<p>У скрипта <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code> есть только две опции: <code class="docutils literal notranslate"><span class="pre">--debug</span></code> отключает подавление предупреждений при вызове
+autoconf и autoheader. Если вы не планируете работать над системой сборки, эта опция вряд ли вас заинтересует.</p>
+<p>Вторая опция — <code class="docutils literal notranslate"><span class="pre">--force</span></code>, которая позволяет выполнять <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code> в release-пакетах (например, если вы
+скачали упакованный исходный код и хотите сгенерировать новый <code class="docutils literal notranslate"><span class="pre">./configure</span></code>), а также дополнительно очищает кеши
+конфигурации <code class="docutils literal notranslate"><span class="pre">config.cache</span></code> и <code class="docutils literal notranslate"><span class="pre">autom4te.cache/</span></code>.</p>
+<p>Если вы обновляете свой git-репозиторий с помощью <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> (или другой команды) и получаете странные ошибки на
+этапе <code class="docutils literal notranslate"><span class="pre">make</span></code>, это обычно означает, что что-то изменилось в конфигурации сборки, и вам нужно повторно выполнить
+<code class="docutils literal notranslate"><span class="pre">./buildconf</span></code>.</p>
+</section>
+<section id="configure">
+<h2>Скрипт <code class="docutils literal notranslate"><span class="pre">./configure</span></code><a class="headerlink" href="#configure" title="Link to this heading">¶</a></h2>
+<p>После генерации скрипта <code class="docutils literal notranslate"><span class="pre">./configure</span></code> вы можете использовать его для настройки своей сборки PHP. Все
+поддерживаемые опции можно вывести с помощью <code class="docutils literal notranslate"><span class="pre">--help</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>./configure<span class="w"> </span>--help<span class="w"> </span><span class="p">|</span><span class="w"> </span>less
+</pre></div>
+</div>
+<p>В первой части справки перечислены различные общие опции, поддерживаемые всеми скриптами конфигурации на основе
+autoconf. Одна из них — уже упомянутая <code class="docutils literal notranslate"><span class="pre">--prefix=DIR</span></code>, которая меняет директорию установки, используемую
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>. Другая полезная опция — <code class="docutils literal notranslate"><span class="pre">-C</span></code>, которая кеширует результаты различных тестов в файле
+<code class="docutils literal notranslate"><span class="pre">config.cache</span></code> и ускоряет последующие вызовы <code class="docutils literal notranslate"><span class="pre">./configure</span></code>. Использование этой опции имеет смысл только тогда,
+когда у вас уже есть работающая сборка и вы хотите быстро переключаться между разными конфигурациями.</p>
+<p>Помимо общих опций autoconf, есть также множество настроек, специфичных для PHP. Например, вы можете выбрать, какие
+расширения и SAPI должны компилироваться, с помощью переключателей <code class="docutils literal notranslate"><span class="pre">--enable-NAME</span></code> и <code class="docutils literal notranslate"><span class="pre">--disable-NAME</span></code>. Если
+расширение или SAPI имеет внешние зависимости, вместо этого нужно использовать <code class="docutils literal notranslate"><span class="pre">--with-NAME</span></code> и <code class="docutils literal notranslate"><span class="pre">--without-NAME</span></code>.</p>
+<p>Если библиотека, необходимая для <code class="docutils literal notranslate"><span class="pre">NAME</span></code>, не находится в стандартном месте (например, потому что вы скомпилировали
+её сами), некоторые расширения позволяют указать её расположение с помощью <code class="docutils literal notranslate"><span class="pre">--with-NAME=DIR</span></code>. Однако начиная с
+PHP 7.4 большинство расширений вместо этого используют <code class="docutils literal notranslate"><span class="pre">pkg-config</span></code>, и в этом случае передача директории в
+<code class="docutils literal notranslate"><span class="pre">--with</span></code> не даёт эффекта. В этом случае нужно добавить библиотеку в <code class="docutils literal notranslate"><span class="pre">PKG_CONFIG_PATH</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PKG_CONFIG_PATH</span><span class="o">=</span>/path/to/library/lib/pkgconfig:<span class="nv">$PKG_CONFIG_PATH</span>
+</pre></div>
+</div>
+<p>По умолчанию PHP собирает SAPI CLI и CGI, а также ряд расширений. Узнать, какие расширения содержит ваш бинарный
+файл PHP, можно с помощью опции <code class="docutils literal notranslate"><span class="pre">-m</span></code>. Для стандартной сборки PHP 7.0 результат будет выглядеть так:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>~/php-src&gt; sapi/cli/php -m
+[PHP Modules]
+Core
+ctype
+date
+dom
+fileinfo
+filter
+hash
+iconv
+json
+libxml
+pcre
+PDO
+pdo_sqlite
+Phar
+posix
+Reflection
+session
+SimpleXML
+SPL
+sqlite3
+standard
+tokenizer
+xml
+xmlreader
+xmlwriter
+</pre></div>
+</div>
+<p>Если теперь вы хотите прекратить компилировать SAPI CGI, а также расширения <em>tokenizer</em> и <em>sqlite3</em>, и вместо этого
+включить <em>opcache</em> и <em>gmp</em>, соответствующая команда configure будет такой:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>./configure<span class="w"> </span>--disable-cgi<span class="w"> </span>--disable-tokenizer<span class="w"> </span>--without-sqlite3<span class="w"> </span><span class="se">\</span>
+<span class="w">                       </span>--enable-opcache<span class="w"> </span>--with-gmp
+</pre></div>
+</div>
+<p>По умолчанию большинство расширений компилируются статически, то есть становятся частью итогового бинарного файла.
+Только расширение opcache является общим (shared) по умолчанию, то есть генерирует разделяемый объект
+<code class="docutils literal notranslate"><span class="pre">opcache.so</span></code> в директории <code class="docutils literal notranslate"><span class="pre">modules/</span></code>. Вы также можете компилировать другие расширения в разделяемые объекты,
+указав <code class="docutils literal notranslate"><span class="pre">--enable-NAME=shared</span></code> или <code class="docutils literal notranslate"><span class="pre">--with-NAME=shared</span></code> (но это поддерживают не все расширения). О том, как
+использовать разделяемые расширения, мы поговорим в следующем разделе.</p>
+<p>Чтобы узнать, какой переключатель нужно использовать и включено ли расширение по умолчанию, посмотрите
+<code class="docutils literal notranslate"><span class="pre">./configure</span> <span class="pre">--help</span></code>. Если переключатель — <code class="docutils literal notranslate"><span class="pre">--enable-NAME</span></code> или <code class="docutils literal notranslate"><span class="pre">--with-NAME</span></code>, это означает, что расширение не
+компилируется по умолчанию и должно быть явно включено. <code class="docutils literal notranslate"><span class="pre">--disable-NAME</span></code> или <code class="docutils literal notranslate"><span class="pre">--without-NAME</span></code>, напротив,
+указывают на расширение, которое компилируется по умолчанию, но может быть явно отключено.</p>
+<p>Некоторые расширения компилируются всегда и не могут быть отключены. Чтобы создать сборку, содержащую минимальное
+количество расширений, используйте опцию <code class="docutils literal notranslate"><span class="pre">--disable-all</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>./configure<span class="w"> </span>--disable-all<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>-jN
+~/php-src&gt;<span class="w"> </span>sapi/cli/php<span class="w"> </span>-m
+<span class="o">[</span>PHP<span class="w"> </span>Modules<span class="o">]</span>
+Core
+date
+<span class="nb">hash</span>
+json
+pcre
+Reflection
+SPL
+standard
+</pre></div>
+</div>
+<p>Опция <code class="docutils literal notranslate"><span class="pre">--disable-all</span></code> очень полезна, если вам нужна быстрая сборка и не требуется много функциональности
+(например, при реализации изменений в языке). Для максимально компактной сборки можно дополнительно указать
+переключатель <code class="docutils literal notranslate"><span class="pre">--disable-cgi</span></code>, чтобы генерировался только бинарный файл CLI.</p>
+<p>Есть ещё три переключателя, которые обычно следует указывать при разработке расширений или работе над PHP:</p>
+<p><code class="docutils literal notranslate"><span class="pre">--enable-debug</span></code> включает режим отладки, который даёт несколько эффектов: компиляция будет выполняться с <code class="docutils literal notranslate"><span class="pre">-g</span></code>
+для генерации debug-символов, а также с самым низким уровнем оптимизации <code class="docutils literal notranslate"><span class="pre">-O0</span></code>. Это сделает PHP значительно
+медленнее, но сделает отладку инструментами вроде <code class="docutils literal notranslate"><span class="pre">gdb</span></code> более предсказуемой. Кроме того, режим отладки определяет
+макрос <code class="docutils literal notranslate"><span class="pre">ZEND_DEBUG</span></code>, который включает использование assertions и различные вспомогательные средства отладки в
+движке. В частности, будут сообщаться утечки памяти, а также некорректное использование некоторых структур данных.
+Включить debug-assertions без отключения оптимизаций можно, используя вместо этого <code class="docutils literal notranslate"><span class="pre">--enable-debug-assertions</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--enable-zts</span></code> (или <code class="docutils literal notranslate"><span class="pre">--enable-maintainer-zts</span></code> до PHP 8.0) включает потокобезопасность. Этот переключатель
+определяет макрос <code class="docutils literal notranslate"><span class="pre">ZTS</span></code>, который в свою очередь включает весь механизм TSRM (thread-safe resource manager),
+используемый PHP. Начиная с PHP 7 постоянное включение этого переключателя гораздо менее важно, чем в предыдущих
+версиях. Важнее всего убедиться, что вы включили весь необходимый шаблонный код. Если вам нужна дополнительная
+информация о потокобезопасности и управлении глобальной памятью в PHP, прочитайте <a class="reference internal" href="../extensions_design/globals_management.html"><span class="doc">главу об управлении
+глобальными переменными</span></a></p>
+<p><code class="docutils literal notranslate"><span class="pre">--enable-werror</span></code> (начиная с PHP 7.4) включает флаг компилятора <code class="docutils literal notranslate"><span class="pre">-Werror</span></code>, который превращает предупреждения
+компилятора в ошибки. Включение этого флага гарантирует, что сборка PHP останется без предупреждений. Однако
+генерируемые предупреждения зависят от используемого компилятора, его версии и опций оптимизации, поэтому некоторые
+компиляторы могут быть несовместимы с этой опцией.</p>
+<p>С другой стороны, не следует использовать опцию <code class="docutils literal notranslate"><span class="pre">--enable-debug</span></code>, если вы хотите провести замеры производительности
+своего кода. <code class="docutils literal notranslate"><span class="pre">--enable-zts</span></code> также может негативно повлиять на производительность во время выполнения.</p>
+<p>Обратите внимание, что <code class="docutils literal notranslate"><span class="pre">--enable-debug</span></code> и <code class="docutils literal notranslate"><span class="pre">--enable-zts</span></code> изменяют ABI бинарного файла PHP, например, добавляя
+дополнительные аргументы к функциям. Поэтому разделяемые расширения, скомпилированные в режиме отладки,
+несовместимы с бинарным файлом PHP, собранным в release-режиме. Аналогично, потокобезопасное расширение (ZTS)
+несовместимо со сборкой PHP, не поддерживающей потокобезопасность (NTS).</p>
+<p>Из-за несовместимости ABI <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> (и установка через PECL) размещает разделяемые расширения в разных
+директориях в зависимости от этих опций:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">$PREFIX/lib/php/extensions/no-debug-non-zts-API_NO</span></code> для release-сборок без ZTS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$PREFIX/lib/php/extensions/debug-non-zts-API_NO</span></code> для debug-сборок без ZTS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$PREFIX/lib/php/extensions/no-debug-zts-API_NO</span></code> для release-сборок с ZTS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$PREFIX/lib/php/extensions/debug-zts-API_NO</span></code> для debug-сборок с ZTS</p></li>
+</ul>
+<p>Заглушка <code class="docutils literal notranslate"><span class="pre">API_NO</span></code> выше относится к <code class="docutils literal notranslate"><span class="pre">ZEND_MODULE_API_NO</span></code> и представляет собой просто дату вроде <code class="docutils literal notranslate"><span class="pre">20100525</span></code>,
+которая используется для внутреннего версионирования API.</p>
+<p>Для большинства целей описанных выше переключателей конфигурации должно быть достаточно, но, конечно,
+<code class="docutils literal notranslate"><span class="pre">./configure</span></code> предоставляет гораздо больше опций, описанных в справке.</p>
+<p>Помимо передачи опций в configure, можно также указать ряд переменных окружения. Некоторые из наиболее важных
+документированы в конце вывода справки configure (<code class="docutils literal notranslate"><span class="pre">./configure</span> <span class="pre">--help</span> <span class="pre">|</span> <span class="pre">tail</span> <span class="pre">-25</span></code>).</p>
+<p>Например, вы можете использовать <code class="docutils literal notranslate"><span class="pre">CC</span></code>, чтобы задать другой компилятор, и <code class="docutils literal notranslate"><span class="pre">CFLAGS</span></code>, чтобы изменить используемые
+флаги компиляции:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>./configure<span class="w"> </span>--disable-all<span class="w"> </span><span class="nv">CC</span><span class="o">=</span>clang<span class="w"> </span><span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">"-O3 -march=native"</span>
+</pre></div>
+</div>
+<p>В такой конфигурации сборка будет использовать clang (вместо gcc) и очень высокий уровень оптимизации
+(<code class="docutils literal notranslate"><span class="pre">-O3</span> <span class="pre">-march=native</span></code>).</p>
+<p>Опция, особенно полезная для разработки — <code class="docutils literal notranslate"><span class="pre">-fsanitize</span></code>, которая позволяет обнаруживать повреждение памяти и
+неопределённое поведение во время выполнения:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">"-fsanitize=address -fsanitize=undefined"</span>
+</pre></div>
+</div>
+<p>Эти опции надёжно работают только начиная с PHP 7.4 и значительно замедляют сгенерированный бинарный файл PHP.</p>
+</section>
+<section id="make-make-install">
+<h2><code class="docutils literal notranslate"><span class="pre">make</span></code> и <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code><a class="headerlink" href="#make-make-install" title="Link to this heading">¶</a></h2>
+<p>После того как всё настроено, можно использовать <code class="docutils literal notranslate"><span class="pre">make</span></code> для выполнения непосредственной компиляции:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>make<span class="w"> </span>-jN<span class="w">    </span><span class="c1"># where N is the number of cores</span>
+</pre></div>
+</div>
+<p>Основным результатом этой операции будут бинарные файлы PHP для включённых SAPI (по умолчанию <code class="docutils literal notranslate"><span class="pre">sapi/cli/php</span></code> и
+<code class="docutils literal notranslate"><span class="pre">sapi/cgi/php-cgi</span></code>), а также разделяемые расширения в директории <code class="docutils literal notranslate"><span class="pre">modules/</span></code>.</p>
+<p>Теперь вы можете выполнить <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>, чтобы установить PHP в <code class="docutils literal notranslate"><span class="pre">/usr/local</span></code> (по умолчанию) или в любую
+директорию, указанную с помощью переключателя configure <code class="docutils literal notranslate"><span class="pre">--prefix</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> делает немногим больше, чем копирует ряд файлов в новое место. Если при конфигурировании вы
+указали <code class="docutils literal notranslate"><span class="pre">--with-pear</span></code>, также будет скачан и установлен PEAR. Вот итоговое дерево стандартной сборки PHP:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; tree -L 3 -F ~/myphp
+
+/home/myuser/myphp
+|-- bin
+|   |-- pear*
+|   |-- peardev*
+|   |-- pecl*
+|   |-- phar -&gt; /home/myuser/myphp/bin/phar.phar*
+|   |-- phar.phar*
+|   |-- php*
+|   |-- php-cgi*
+|   |-- php-config*
+|   `-- phpize*
+|-- etc
+|   `-- pear.conf
+|-- include
+|   `-- php
+|       |-- ext/
+|       |-- include/
+|       |-- main/
+|       |-- sapi/
+|       |-- TSRM/
+|       `-- Zend/
+|-- lib
+|   `-- php
+|       |-- Archive/
+|       |-- build/
+|       |-- Console/
+|       |-- data/
+|       |-- doc/
+|       |-- OS/
+|       |-- PEAR/
+|       |-- PEAR5.php
+|       |-- pearcmd.php
+|       |-- PEAR.php
+|       |-- peclcmd.php
+|       |-- Structures/
+|       |-- System.php
+|       |-- test/
+|       `-- XML/
+`-- php
+    `-- man
+        `-- man1/
+</pre></div>
+</div>
+<p>Краткий обзор структуры директорий:</p>
+<ul class="simple">
+<li><p><em>bin/</em> содержит бинарные файлы SAPI (<code class="docutils literal notranslate"><span class="pre">php</span></code> и <code class="docutils literal notranslate"><span class="pre">php-cgi</span></code>), а также скрипты <code class="docutils literal notranslate"><span class="pre">phpize</span></code> и <code class="docutils literal notranslate"><span class="pre">php-config</span></code>. Здесь же
+находятся различные скрипты PEAR/PECL.</p></li>
+<li><p><em>etc/</em> содержит конфигурацию. Обратите внимание, что директория <em>php.ini</em> по умолчанию находится <strong>не</strong> здесь.</p></li>
+<li><p><em>include/php</em> содержит заголовочные файлы, необходимые для сборки дополнительных расширений или встраивания PHP
+в собственное программное обеспечение.</p></li>
+<li><p><em>lib/php</em> содержит файлы PEAR. Директория <em>lib/php/build</em> включает файлы, необходимые для сборки расширений,
+например файл <code class="docutils literal notranslate"><span class="pre">php.m4</span></code>, содержащий M4-макросы PHP. Если бы мы скомпилировали какие-либо разделяемые расширения,
+эти файлы находились бы в подкаталоге <em>lib/php/extensions</em>.</p></li>
+<li><p><em>php/man</em>, как можно догадаться, содержит man-страницы для команды <code class="docutils literal notranslate"><span class="pre">php</span></code>.</p></li>
+</ul>
+<p>Как уже упоминалось, расположение <em>php.ini</em> по умолчанию — не <em>etc/</em>. Узнать это расположение можно с помощью опции
+<code class="docutils literal notranslate"><span class="pre">--ini</span></code> бинарного файла PHP:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>~/myphp/bin&gt; ./php --ini
+Configuration File (php.ini) Path: /home/myuser/myphp/lib
+Loaded Configuration File:         (none)
+Scan for additional .ini files in: (none)
+Additional .ini files parsed:      (none)
+</pre></div>
+</div>
+<p>Как видите, директория <em>php.ini</em> по умолчанию — это <code class="docutils literal notranslate"><span class="pre">$PREFIX/lib</span></code> (libdir), а не <code class="docutils literal notranslate"><span class="pre">$PREFIX/etc</span></code> (sysconfdir).
+Расположение <em>php.ini</em> по умолчанию можно изменить с помощью опции configure <code class="docutils literal notranslate"><span class="pre">--with-config-file-path=PATH</span></code>.</p>
+<p>Также обратите внимание, что <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> не создаёт ini-файл. Если вы хотите использовать файл <em>php.ini</em>,
+создать его — ваша ответственность. Например, вы можете скопировать конфигурацию для разработки по умолчанию:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>~/myphp/bin&gt; cp ~/php-src/php.ini-development ~/myphp/lib/php.ini
+~/myphp/bin&gt; ./php --ini
+Configuration File (php.ini) Path: /home/myuser/myphp/lib
+Loaded Configuration File:         /home/myuser/myphp/lib/php.ini
+Scan for additional .ini files in: (none)
+Additional .ini files parsed:      (none)
+</pre></div>
+</div>
+<p>Помимо бинарных файлов PHP директория <em>bin/</em> также содержит два важных скрипта: <code class="docutils literal notranslate"><span class="pre">phpize</span></code> и <code class="docutils literal notranslate"><span class="pre">php-config</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">phpize</span></code> — это эквивалент <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code> для расширений. Он копирует различные файлы из <em>lib/php/build</em> и
+вызывает autoconf/autoheader. Подробнее об этом инструменте вы узнаете в следующем разделе.</p>
+<p><code class="docutils literal notranslate"><span class="pre">php-config</span></code> предоставляет информацию о конфигурации сборки PHP. Попробуйте:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>~/myphp/bin&gt; ./php-config
+Usage: ./php-config [OPTION]
+Options:
+  --prefix            [/home/myuser/myphp]
+  --includes          [-I/home/myuser/myphp/include/php -I/home/myuser/myphp/include/php/main -I/home/myuser/myphp/include/php/TSRM -I/home/myuser/myphp/include/php/Zend -I/home/myuser/myphp/include/php/ext -I/home/myuser/myphp/include/php/ext/date/lib]
+  --ldflags           [ -L/usr/lib/i386-linux-gnu]
+  --libs              [-lcrypt   -lresolv -lcrypt -lrt -lrt -lm -ldl -lnsl  -lxml2 -lxml2 -lxml2 -lcrypt -lxml2 -lxml2 -lxml2 -lcrypt ]
+  --extension-dir     [/home/myuser/myphp/lib/php/extensions/debug-zts-20100525]
+  --include-dir       [/home/myuser/myphp/include/php]
+  --man-dir           [/home/myuser/myphp/php/man]
+  --php-binary        [/home/myuser/myphp/bin/php]
+  --php-sapis         [ cli cgi]
+  --configure-options [--prefix=/home/myuser/myphp --enable-debug --enable-maintainer-zts]
+  --version           [5.4.16-dev]
+  --vernum            [50416]
+</pre></div>
+</div>
+<p>Этот скрипт похож на скрипт <code class="docutils literal notranslate"><span class="pre">pkg-config</span></code>, используемый дистрибутивами Linux. Он вызывается во время процесса
+сборки расширения для получения информации об опциях компилятора и путях. Вы также можете использовать его, чтобы
+быстро получить информацию о своей сборке, например опции configure или директорию расширений по умолчанию. Эта
+информация также предоставляется <code class="docutils literal notranslate"><span class="pre">./php</span> <span class="pre">-i</span></code> (phpinfo), но <code class="docutils literal notranslate"><span class="pre">php-config</span></code> предоставляет её в более простой форме
+(которую легко использовать автоматизированным инструментам).</p>
+</section>
+<section id="id7">
+<h2>Запуск набора тестов<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>Если команда <code class="docutils literal notranslate"><span class="pre">make</span></code> завершается успешно, она выводит сообщение, побуждающее выполнить <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Build complete.
+Don't forget to run 'make test'
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> запускает бинарный файл PHP CLI на нашем наборе тестов, который расположен в различных директориях
+<em>tests/</em> дерева исходного кода PHP. Поскольку стандартная сборка проверяется на более чем 10000 тестах (меньше для
+минимальной сборки, больше при включении дополнительных расширений), это может занять несколько минут.</p>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> внутри вызывает файл <code class="docutils literal notranslate"><span class="pre">run-tests.php</span></code> с помощью вашего бинарного файла CLI. Для большего
+контроля рекомендуется вызывать <code class="docutils literal notranslate"><span class="pre">run-tests.php</span></code> напрямую. Например, это позволит включить параллельный запуск
+тестов:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>sapi/cli/php<span class="w"> </span>run-tests.php<span class="w"> </span>-jN
+</pre></div>
+</div>
+<p>Параллелизм тестов доступен только начиная с PHP 7.4. В более ранних версиях PHP параллелизм недоступен, и
+необходимо дополнительно передать опцию <code class="docutils literal notranslate"><span class="pre">-P</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>sapi/cli/php<span class="w"> </span>run-tests.php<span class="w"> </span>-P
+</pre></div>
+</div>
+<p>Вместо запуска всего набора тестов можно также ограничиться определёнными директориями, передав их как аргументы в
+<code class="docutils literal notranslate"><span class="pre">run-tests.php</span></code>. Например, чтобы протестировать только движок Zend, расширение reflection и функции для
+массивов:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>sapi/cli/php<span class="w"> </span>run-tests.php<span class="w"> </span>-jN<span class="w"> </span>Zend/<span class="w"> </span>ext/reflection/<span class="w"> </span>ext/standard/tests/array/
+</pre></div>
+</div>
+<p>Это очень полезно, поскольку позволяет быстро запускать только те части набора тестов, которые относятся к вашим
+изменениям. Например, если вы вносите изменения в язык, вас, вероятно, не интересуют тесты расширений, и вы хотите
+только убедиться, что движок Zend продолжает работать корректно.</p>
+<p>Вы можете выполнить <code class="docutils literal notranslate"><span class="pre">sapi/cli/php</span> <span class="pre">run-tests.php</span> <span class="pre">--help</span></code>, чтобы увидеть полный список опций, принимаемых тестовым
+раннером. Некоторые особенно полезные опции:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">php.ini</span></code> можно использовать, чтобы указать файл php.ini для использования.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">foo=bar</span></code> можно использовать, чтобы задать опции ini.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m</span></code> запускает тесты под valgrind для обнаружения ошибок памяти. Обратите внимание, что это крайне медленно.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--asan</span></code> следует устанавливать при компиляции PHP с <code class="docutils literal notranslate"><span class="pre">-fsanitize=address</span></code>. Вместе они приблизительно
+эквивалентны запуску под valgrind, но с гораздо лучшей производительностью.</p></li>
+</ul>
+</div></blockquote>
+<p>Вам не нужно явно использовать <code class="docutils literal notranslate"><span class="pre">run-tests.php</span></code> для передачи опций или ограничения директорий. Вместо этого можно
+использовать переменную <code class="docutils literal notranslate"><span class="pre">TESTS</span></code>, чтобы передать дополнительные аргументы через <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code>. Например, эквивалент
+предыдущей команды будет таким:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>make<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="nv">TESTS</span><span class="o">=</span><span class="s2">"-jN Zend/ ext/reflection/ ext/standard/tests/array/"</span>
+</pre></div>
+</div>
+<p>Позже мы подробнее рассмотрим систему <code class="docutils literal notranslate"><span class="pre">run-tests.php</span></code>, в частности также поговорим о том, как писать собственные
+тесты и как отлаживать падения тестов. <a class="reference internal" href="../../../tests/introduction.html"><span class="doc">См. отдельную главу о тестах</span></a>.</p>
+</section>
+<section id="make-clean">
+<h2>Исправление проблем компиляции и <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code><a class="headerlink" href="#make-clean" title="Link to this heading">¶</a></h2>
+<p>Как вы, возможно, знаете, <code class="docutils literal notranslate"><span class="pre">make</span></code> выполняет инкрементальную сборку, то есть перекомпилирует не все файлы, а только
+те файлы <code class="docutils literal notranslate"><span class="pre">.c</span></code>, которые изменились с момента последнего запуска. Это отличный способ сократить время сборки, но он
+не всегда работает хорошо: например, если вы изменяете структуру в заголовочном файле, <code class="docutils literal notranslate"><span class="pre">make</span></code> автоматически не
+перекомпилирует все файлы <code class="docutils literal notranslate"><span class="pre">.c</span></code>, использующие этот заголовок, что приводит к неработающей сборке.</p>
+<p>Если вы получаете странные ошибки при выполнении <code class="docutils literal notranslate"><span class="pre">make</span></code> или итоговый бинарный файл не работает (например, если
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> приводит к краху до запуска первого теста), попробуйте выполнить <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code>. Это удалит все
+скомпилированные объекты, тем самым заставив следующий вызов <code class="docutils literal notranslate"><span class="pre">make</span></code> выполнить полную сборку. (Вы можете
+использовать <code class="docutils literal notranslate"><span class="pre">ccache</span></code>, чтобы снизить стоимость пересборок.)</p>
+<p>Иногда вам также нужно выполнять <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code> после изменения опций <code class="docutils literal notranslate"><span class="pre">./configure</span></code>. Если вы только включаете
+дополнительные расширения, инкрементальная сборка должна быть безопасна, но изменение других опций может потребовать
+полной пересборки.</p>
+<p>Другой источник проблем компиляции — изменение файлов <code class="docutils literal notranslate"><span class="pre">config.m4</span></code> или других файлов, входящих в систему сборки
+PHP. Если такой файл изменяется, необходимо повторно выполнить скрипты <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code> и <code class="docutils literal notranslate"><span class="pre">./configure</span></code>. Если вы
+вносите изменение сами, вы, вероятно, вспомните о необходимости выполнить команду, но если это происходит в рамках
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> (или другой команды обновления), проблема может быть не так очевидна.</p>
+<p>Если вы столкнулись с какими-либо странными проблемами компиляции, которые не решаются <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code>, велика
+вероятность, что выполнение <code class="docutils literal notranslate"><span class="pre">./buildconf</span></code> решит проблему. Чтобы не набирать заново предыдущие опции
+<code class="docutils literal notranslate"><span class="pre">./configure</span></code>, вы можете воспользоваться скриптом <code class="docutils literal notranslate"><span class="pre">./config.nice</span></code> (который содержит ваш последний вызов
+<code class="docutils literal notranslate"><span class="pre">./configure</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/php-src&gt;<span class="w"> </span>make<span class="w"> </span>clean
+~/php-src&gt;<span class="w"> </span>./buildconf<span class="w"> </span>--force
+~/php-src&gt;<span class="w"> </span>./config.nice
+~/php-src&gt;<span class="w"> </span>make<span class="w"> </span>-jN
+</pre></div>
+</div>
+<p>Последний скрипт очистки, который предоставляет PHP — <code class="docutils literal notranslate"><span class="pre">./vcsclean</span></code>. Он работает только если вы получили исходный
+код через git. По сути он сводится к вызову <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clean</span> <span class="pre">-X</span> <span class="pre">-f</span> <span class="pre">-d</span></code>, который удалит все неотслеживаемые файлы и
+директории, игнорируемые git. Используйте его с осторожностью.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../build_system.html">Использование системы сборки PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="building_extensions.html">Сборка расширений PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

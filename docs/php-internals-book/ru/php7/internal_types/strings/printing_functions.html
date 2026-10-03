@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Пользовательские функции printf в PHP &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=38da9290" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Тип Resource: zend_resource" href="../zend_resources.html" />
+    <link rel="prev" title="API smart_str" href="smart_str.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Пользовательские функции printf в PHP</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="smart_str.html">API smart_str</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../zend_resources.html">Тип Resource: zend_resource</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="printf-php">
+<h1>Пользовательские функции printf в PHP<a class="headerlink" href="#printf-php" title="Link to this heading">¶</a></h1>
+<p>Вы все знаете <code class="docutils literal notranslate"><span class="pre">printf()</span></code> из libc и его семейство. Эта глава подробно расскажет о многочисленных клонах, которые
+объявляет и использует PHP, об их цели, зачем их использовать и когда.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Документация libc по <code class="docutils literal notranslate"><span class="pre">printf()</span></code> и похожим функциям
+<a class="reference external" href="https://www.gnu.org/software/libc/manual/html_node/Formatted-Output-Functions.html">находится здесь</a></p>
+</div>
+<p>Вы знаете, что эти функции полезны, но иногда не предоставляют достаточной функциональности.
+Также вы знаете, что
+<a class="reference external" href="https://www.gnu.org/software/libc/manual/html_node/Customizing-Printf.html">добавление форматных строк</a> в
+семейство <code class="docutils literal notranslate"><span class="pre">printf()</span></code> — задача нетривиальная, непортируемая и небезопасная.</p>
+<p>PHP добавляет свои собственные функции, подобные printf, чтобы заменить функции libc и использовать их для
+внутренней разработки. Они в основном добавят новые форматы, будут работать с <a class="reference internal" href="zend_strings.html"><span class="doc">zend_string</span></a>
+вместо <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code> и так далее… Давайте рассмотрим их вместе.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Вы должны освоить стандартные форматы <code class="docutils literal notranslate"><span class="pre">printf()</span></code> из libc. Прочитайте
+<a class="reference external" href="http://www.cplusplus.com/reference/cstdio/printf/">их документацию здесь</a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Эти функции добавлены <strong>для замены</strong> функций libc, это означает, что если вы используете, например,
+<code class="docutils literal notranslate"><span class="pre">sprintf()</span></code>, это не приведёт к вызову <code class="docutils literal notranslate"><span class="pre">sprintf()</span></code> из libc, а к замене PHP. За исключением
+традиционного <code class="docutils literal notranslate"><span class="pre">printf()</span></code>, всё остальное заменено.</p>
+</div>
+<section id="id4">
+<h2>Традиционное использование<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Прежде всего, вам не следует использовать <code class="docutils literal notranslate"><span class="pre">sprintf()</span></code>, так как эта функция не выполняет никаких проверок и
+допускает множество ошибок переполнения буфера. Пожалуйста, старайтесь избегать её использования.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Пожалуйста, старайтесь максимально избегать использования <code class="docutils literal notranslate"><span class="pre">sprintf()</span></code>.</p>
+</div>
+<p>Далее у вас есть выбор.</p>
+<section id="id5">
+<h3>Вы знаете размер результирующего буфера<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>Если вы знаете размер своего буфера, <code class="docutils literal notranslate"><span class="pre">snprintf()</span></code> или <code class="docutils literal notranslate"><span class="pre">slprintf()</span></code> сделают эту работу за вас. Есть разница в том,
+что возвращают эти функции, но не в том, что они делают.</p>
+<p>Обе они печатают согласно переданным форматам, и обе завершают ваш буфер байтом <code class="docutils literal notranslate"><span class="pre">NUL</span></code> <em>‘\0’</em>, что бы ни
+случилось. Однако <code class="docutils literal notranslate"><span class="pre">snprintf()</span></code> возвращает количество символов, которые могли бы быть использованы, тогда как
+<code class="docutils literal notranslate"><span class="pre">slprintf()</span></code> возвращает количество символов, которые были фактически использованы, таким образом позволяя
+обнаружить слишком маленькие буферы и обрезание строки. Это не считая финального <em>‘\0’</em>.</p>
+<p>Вот пример, чтобы вы полностью поняли:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="w"> </span><span class="n">foo</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w"> </span><span class="cm">/* 8-char large buffer */</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">str</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Hello world"</span><span class="p">;</span><span class="w"> </span><span class="cm">/* 12 chars including \0 in count */</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">snprintf</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span><span class="w"> </span><span class="s">"%s"</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="cm">/* r = 11 here even if only 7 printable chars were written in foo */</span>
+
+<span class="cm">/* foo value is now 'H' 'e' 'l' 'l' 'o' ' ' 'w' '\0' */</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">snprintf()</span></code> — не очень хорошая функция для использования, так как она не позволяет обнаружить возможное
+обрезание строки. Как видно из примера выше, “Hello world\0” не помещается в восьмибайтный буфер, это очевидно, но
+<code class="docutils literal notranslate"><span class="pre">snprintf()</span></code> всё равно возвращает вам 11, что является <code class="docutils literal notranslate"><span class="pre">strlen(&quot;Hello</span> <span class="pre">world\0&quot;)</span></code>. У вас нет способа обнаружить,
+что строка была обрезана.</p>
+<p>Вот <code class="docutils literal notranslate"><span class="pre">slprintf()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">char</span><span class="w"> </span><span class="n">foo</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span><span class="w"> </span><span class="cm">/* 8-char large buffer */</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">str</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Hello world"</span><span class="p">;</span><span class="w"> </span><span class="cm">/* 12 chars including \0 in count */</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slprintf</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span><span class="w"> </span><span class="s">"%s"</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="cm">/* r = 7 here , because 7 printable chars were written in foo */</span>
+
+<span class="cm">/* foo value is now 'H' 'e' 'l' 'l' 'o' ' ' 'w' '\0' */</span>
+</pre></div>
+</div>
+<p>С <code class="docutils literal notranslate"><span class="pre">slprintf()</span></code> результирующий буфер <code class="docutils literal notranslate"><span class="pre">foo</span></code> содержит абсолютно ту же строку, но возвращаемое значение теперь 7.
+7 меньше, чем 11 символов строки <em>“Hello world”</em>, таким образом вы можете обнаружить, что она была обрезана:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">slprintf</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span><span class="w"> </span><span class="s">"%s"</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* A string truncation occurred */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Запомните:</p>
+<ul class="simple">
+<li><p>Эти две функции всегда завершают строку <code class="docutils literal notranslate"><span class="pre">NUL</span></code>, независимо от обрезания. Результирующие строки, таким образом,
+являются безопасными C-строками.</p></li>
+<li><p>Только <code class="docutils literal notranslate"><span class="pre">slprintf()</span></code> позволяет обнаружить обрезание строки.</p></li>
+</ul>
+<p>Эти две функции определены в
+<a class="reference external" href="https://github.com/php/php-src/blob/648be8600ff89e1b0e4a4ad25cebad42b53bed6d/main/snprintf.c">main/snprintf.c</a></p>
+</section>
+<section id="id6">
+<h3>Вы не знаете размер своего буфера<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p>Теперь, если вы не знаете размер результирующего буфера, вам нужен динамически выделенный буфер, и тогда вы
+воспользуетесь <code class="docutils literal notranslate"><span class="pre">spprintf()</span></code>. Помните, что <strong>вам придётся самостоятельно освобождать</strong> буфер!</p>
+<p>Вот пример:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;time.h&gt;</span>
+
+<span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="kt">time_t</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">"Here is the date: %s"</span><span class="p">,</span><span class="w"> </span><span class="n">asctime</span><span class="p">(</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">timestamp</span><span class="p">)));</span>
+
+<span class="cm">/* now use result that contains something like "Here is the date: Thu Jun 15 19:12:51 2017\n" */</span>
+
+<span class="n">efree</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">spprintf()</span></code> возвращает количество символов, которые были выведены в результирующий буфер, не считая финального
+<em>‘\0’</em>, следовательно, вы знаете количество байт, которые были выделены для вас (минус один).</p>
+<p>Обратите внимание, что выделение памяти выполняется с помощью ZendMM (выделение в рамках запроса), и поэтому
+должно использоваться как часть запроса и освобождаться с помощью <code class="docutils literal notranslate"><span class="pre">efree()</span></code>, а не <code class="docutils literal notranslate"><span class="pre">free()</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="../../memory_management/zend_memory_manager.html"><span class="doc">Глава о менеджере памяти Zend</span></a> (ZendMM) подробно
+рассказывает о том, как динамическая память выделяется в PHP.</p>
+</div>
+<p>Если вы хотите ограничить размер буфера, передайте этот предел в качестве второго аргумента, если вы передадите
+<em>0</em>, это означает неограниченный размер:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;time.h&gt;</span>
+
+<span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="kt">time_t</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="cm">/* Do not print more than 10 bytes || allocate more than 11 bytes */</span>
+<span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"Here is the date: %s"</span><span class="p">,</span><span class="w"> </span><span class="n">asctime</span><span class="p">(</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">timestamp</span><span class="p">)));</span>
+
+<span class="cm">/* r == 10 here, and 11 bytes were allocated into result */</span>
+
+<span class="n">efree</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Когда это возможно, старайтесь не использовать динамическое выделение памяти. Это влияет на
+производительность. Если у вас есть выбор, используйте статически выделенный на стеке буфер.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">spprintf()</span></code> описана в
+<a class="reference external" href="https://github.com/php/php-src/blob/648be8600ff89e1b0e4a4ad25cebad42b53bed6d/main/spprintf.c">main/spprintf.c</a>.</p>
+</section>
+<section id="printf">
+<h3>А что насчёт printf()?<a class="headerlink" href="#printf" title="Link to this heading">¶</a></h3>
+<p>Если вам нужно вызвать <code class="docutils literal notranslate"><span class="pre">printf()</span></code>, то есть напечатать форматированный вывод в поток вывода, используйте
+<code class="docutils literal notranslate"><span class="pre">php_printf()</span></code>. Эта функция внутренне использует <code class="docutils literal notranslate"><span class="pre">spprintf()</span></code> и, таким образом, выполняет динамическое
+выделение памяти, которое сама же освобождает сразу после отправки его в вывод SAPI, то есть stdout в случае CLI,
+или буфер вывода (например, буфер CGI) для других SAPI.</p>
+</section>
+<section id="id7">
+<h3>Специальные форматы printf в PHP<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<p>Помните, что PHP заменяет большинство функций <code class="docutils literal notranslate"><span class="pre">printf()</span></code> из libc своими собственными, собственного дизайна. Вы
+можете посмотреть на API разбора аргументов, который легко понять, <a class="reference external" href="https://github.com/php/php-src/blob/509f5097ab0b578adc311c720afcea8de266aadd/main/spprintf.c#L203">прочитав исходный код</a>.</p>
+<p>Это означает, что алгоритм разбора аргументов был полностью переписан и может отличаться от того, к чему вы привыкли
+в libc. Например, локаль libc в большинстве случаев не учитывается.</p>
+<p>Могут использоваться специальные форматы, такие как <em>“%I64”</em>, чтобы явно вывести int64, или <em>“%I32”</em>.
+Вы также можете использовать <em>“%Z”</em>, чтобы сделать zval печатаемым (согласно правилам приведения PHP к строке), это
+отличное дополнение.</p>
+<p>Форматировщик также распознает бесконечные числа и выведет “INF”, или “NAN” для не-числа.</p>
+<p>Если вы ошибётесь и попросите форматировщик вывести указатель <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, где libc точно рухнет, PHP вернёт строку
+<em>“(null)”</em> в качестве результата.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если в printf вы видите появляющееся магическое <em>“(null)”</em>, это означает, что вы передали указатель NULL
+одной из функций семейства printf в PHP.</p>
+</div>
+</section>
+<section id="printf-zend-string">
+<h3>Вывод с помощью printf() в zend_string<a class="headerlink" href="#printf-zend-string" title="Link to this heading">¶</a></h3>
+<p>Поскольку <a class="reference internal" href="zend_strings.html"><span class="doc">zend_string</span></a> — очень распространённая структура в исходном коде PHP, вам может
+понадобиться выполнить <code class="docutils literal notranslate"><span class="pre">printf()</span></code> в <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> вместо традиционного C <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code>. Для этого используйте
+<code class="docutils literal notranslate"><span class="pre">strpprintf()</span></code>.</p>
+<p>API выглядит так: <code class="docutils literal notranslate"><span class="pre">zend_string</span> <span class="pre">*strpprintf(size_t</span> <span class="pre">max_len,</span> <span class="pre">const</span> <span class="pre">char</span> <span class="pre">*format,</span> <span class="pre">...)</span></code>, это означает, что вам
+возвращается <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>, а не количество напечатанных символов, как вы могли бы ожидать. Вы можете ограничить
+это число, однако, используя первый параметр (передайте 0, чтобы означать бесконечность); и вы должны помнить, что
+<code class="docutils literal notranslate"><span class="pre">zend_string</span></code> будет выделен с помощью менеджера памяти Zend и, таким образом, привязан к текущему запросу.</p>
+<p>Очевидно, что API форматирования общий с тем, что мы видели выше.</p>
+<p>Вот краткий пример:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">;</span>
+
+<span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strpprintf</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">"You are using PHP %s"</span><span class="p">,</span><span class="w"> </span><span class="n">PHP_VERSION</span><span class="p">);</span>
+
+<span class="cm">/* Do something with result */</span>
+
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="api-zend">
+<h3>Замечание об API <code class="docutils literal notranslate"><span class="pre">zend_</span></code><a class="headerlink" href="#api-zend" title="Link to this heading">¶</a></h3>
+<p>Вы можете встретить функции <code class="docutils literal notranslate"><span class="pre">zend_spprintf()</span></code> или <code class="docutils literal notranslate"><span class="pre">zend_strpprintf()</span></code>. Это точно такие же функции, как
+те, что мы видели выше.</p>
+<p>Они просто существуют как часть разделения между движком Zend и ядром PHP, деталь, которая для нас не важна, так
+как в исходном коде всё смешано вместе.</p>
+</section>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="smart_str.html">API smart_str</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../zend_resources.html">Тип Resource: zend_resource</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

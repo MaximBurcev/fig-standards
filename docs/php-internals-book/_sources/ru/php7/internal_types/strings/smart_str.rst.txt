@@ -1,0 +1,118 @@
+API smart_str
+=============
+
+Это может показаться странным, но язык C предлагает практически ничего для работы со строками (построение,
+конкатенация, уменьшение, расширение, преобразование и т.д...). C — это низкоуровневый язык общего назначения,
+который можно использовать для построения API, решающих более специфичные задачи, такие как построение строк.
+
+.. note:: Очевидно, вы все поняли, что мы говорим о строках ASCII, то есть о байтах. Unicode здесь ни при чём.
+
+``smart_str`` в PHP — это API, который поможет вам строить строки и особенно конкатенировать фрагменты байтов в
+строки. Этот API располагается рядом со :doc:`специальными printf()-API PHP<printing_functions>` и
+:doc:`zend_string <zend_strings>`, чтобы помочь в управлении строками.
+
+smart_str против smart_string
+******************************
+
+Вот две структуры::
+
+    typedef struct {
+        char *c;
+        size_t len;
+        size_t a;
+    } smart_string;
+
+    typedef struct {
+        zend_string *s;
+        size_t a;
+    } smart_str;
+
+Как видите, одна будет работать с традиционными C-строками (как ``char*/size_t``), а другая будет использовать
+специфичную для PHP структуру ``zend_string``.
+
+Мы рассмотрим подробнее вторую: ``smart_str``, которая работает с :doc:`zend_strings <zend_strings>`. Оба API
+совершенно одинаковы, просто заметьте, что один (тот, который мы рассмотрим здесь) начинается с ``smart_str_**()``,
+а другой — с ``smart_string_***()``. Не путайте их!
+
+API ``smart_str`` подробно описан в `Zend/zend_smart_str.h
+<https://github.com/php/php-src/blob/509f5097ab0b578adc311c720afcea8de266aadd/Zend/zend_smart_str.h>`_ (а также в
+соответствующем .c файле).
+
+.. warning:: ``smart_str`` не следует путать с ``smart_string``.
+
+Базовое использование API
+**************************
+
+Пока всё хорошо, этот API действительно легко использовать. Вы в основном выделяете ``smart_str`` на стеке и
+передаёте указатель на него функциям API ``smart_str_***()``, которые управляют встроенным ``zend_string`` за вас.
+Вы строите свою строку, используете её, а затем освобождаете. Ничего особенно сложного тут нет, правда?
+
+Встроенный ``zend_string`` будет выделен либо
+:doc:`постоянно, либо в рамках запроса <../../memory_management/zend_memory_manager>`, это зависит от последнего
+расширенного параметра API, который вы используете::
+
+    smart_str my_str = {0};
+
+    smart_str_appends(&my_str, "Hello, you are using PHP version ");
+    smart_str_appends(&my_str, PHP_VERSION);
+
+    smart_str_appendc(&my_str, '\n');
+
+    smart_str_appends(&my_str, "You are using ");
+    smart_str_append_unsigned(&my_str, zend_hash_num_elements(CG(function_table)));
+    smart_str_appends(&my_str, " PHP functions");
+
+    smart_str_0(&my_str);
+
+    /* Use my_str now */
+    PHPWRITE(ZSTR_VAL(my_str.s), ZSTR_LEN(my_str.s));
+
+    /* Don't forget to release/free it */
+    smart_str_free(&my_str);
+
+Мы также можем использовать встроенный ``zend_string`` независимо от ``smart_str``::
+
+    smart_str my_str = {0};
+
+    smart_str_appends(&my_str, "Hello, you are using PHP version ");
+    smart_str_appends(&my_str, PHP_VERSION);
+
+    zend_string *str = smart_str_extract(my_str);
+    RETURN_STR(str);
+
+    /* We must not free my_str in this case */
+
+``smart_str_extract()`` возвращает предварительно выделенную пустую строку, если ``smart_str.s`` равно ``NULL``.
+В противном случае она добавляет завершающий байт *NUL* и обрезает выделенную память до размера строки.
+
+Здесь мы использовали простой API, расширенный заканчивается на ``_ex()`` и позволяет указать, нужно ли вам
+постоянное или привязанное к запросу выделение памяти для нижележащего ``zend_string``. Пример::
+
+    smart_str my_str = {0};
+
+    smart_str_appends_ex(&my_str, "Hello world", 1); /* 1 means persistent allocation */
+
+Затем, в зависимости от того, что вы хотите добавить, вы используете нужный вызов API. Если вы добавляете
+классическую C-строку, можете использовать ``smart_str_appends(smart_str *dst, const char *src)``. Если вы работаете
+с бинарной строкой и, таким образом, знаете её длину, используйте
+``smart_str_appendl(smart_str *dst, const char *src, size_t len)``.
+
+Менее специфичная ``smart_str_append(smart_str *dest, const zend_string *src)`` просто добавляет ``zend_string`` в
+вашу строку ``smart_str``. А если вы работаете с другими ``smart_str``, используйте
+``smart_str_append_smart_str(smart_str *dst, const smart_str *src)``, чтобы объединить их вместе.
+
+Специфичные приёмы smart_str
+*****************************
+
+* Никогда не забывайте завершать вашу строку вызовом ``smart_str_0()``. Это ставит символ *NUL* в конце встроенной
+  строки и делает её совместимой с функциями строк libc.
+* Никогда не забывайте освобождать вашу строку с помощью ``smart_str_free()``, когда закончили с ней работать.
+* Используйте ``smart_str_extract()``, чтобы получить самостоятельный ``zend_string`` после завершения построения
+  строки. Это берёт на себя вызов ``smart_str_0()`` и оптимизацию выделений памяти. В этом случае вызывать
+  ``smart_str_free()`` не нужно.
+* Вы можете позже делиться самостоятельным ``zend_string`` в других местах, работая с его счётчиком ссылок.
+  Пожалуйста, посетите :doc:`главу, посвящённую zend_string <zend_strings>`, чтобы узнать об этом больше.
+* Вы можете поиграть с выделениями памяти ``smart_str``. Посмотрите на ``smart_str_alloc()`` и похожие функции.
+* ``smart_str`` активно используется в самом сердце PHP. Например, :doc:`специальные функции printf() <printing_functions>`
+  PHP внутренне используют буфер ``smart_str``.
+* ``smart_str`` — это определённо простая структура, которую вам нужно освоить.

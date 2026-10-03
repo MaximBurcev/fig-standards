@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Обработчики объектов &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Проектирование расширений" href="../extensions_design.html" />
+    <link rel="prev" title="Классы и объекты" href="../classes_objects.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Обработчики объектов</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../classes_objects.html">Классы и объекты</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../extensions_design.html">Проектирование расширений</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Обработчики объектов<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>Почти все операции над объектами в PHP проходят через обработчики объектов, и каждый магический метод или магический
+интерфейс внутренне реализован через обработчик объекта или класса. Более того, есть довольно много обработчиков,
+которые не экспонируются в пользовательский код PHP. Например, внутренние классы могут иметь собственное поведение
+сравнения и приведения типов.</p>
+<section id="id2">
+<h2>Обзор<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Вот все обработчики объектов с их сигнатурами и небольшим описанием.</p>
+<dl class="c member">
+<dt class="sig sig-object c" id="c.read_property">
+<span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">read_property</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">member</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cache_slot</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">rv</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.write_property">
+<span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">write_property</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">member</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">value</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cache_slot</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.has_property">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">has_property</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span>, <span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">has_set_exists</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cache_slot</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.unset_property">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unset_property</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span>, <span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cache_slot</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.get_property_ptr_ptr">
+<span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_property_ptr_ptr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span>, <span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cache_slot</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Эти обработчики соответствуют методам <code class="docutils literal notranslate"><span class="pre">__get</span></code>, <code class="docutils literal notranslate"><span class="pre">__set</span></code>, <code class="docutils literal notranslate"><span class="pre">__isset</span></code> и <code class="docutils literal notranslate"><span class="pre">__unset</span></code>. <code class="docutils literal notranslate"><span class="pre">get_property_ptr_ptr</span></code> —
+это внутренний эквивалент <code class="docutils literal notranslate"><span class="pre">__get</span></code>, возвращающий значение по ссылке. <code class="docutils literal notranslate"><span class="pre">cache_slot</span></code> используется для хранения
+смещения свойства и <code class="docutils literal notranslate"><span class="pre">zend_property_info</span></code>. <code class="docutils literal notranslate"><span class="pre">read_property</span></code> может напрямую вернуть zval, принадлежащий объекту,
+в этом случае его счётчик ссылок не должен изменяться <code class="docutils literal notranslate"><span class="pre">read_property</span></code>, и вызывающая сторона не должна его
+освобождать. В качестве альтернативы, он может вернуть <code class="docutils literal notranslate"><span class="pre">rv</span></code> для временных zval (например, результат вызова
+<code class="docutils literal notranslate"><span class="pre">__get</span></code>), в этом случае счётчик ссылок должен быть увеличен, и ответственность за освобождение значения лежит
+на вызывающей стороне.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.read_dimension">
+<span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">read_dimension</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">offset</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">rv</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.write_dimension">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">write_dimension</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">offset</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">value</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.has_dimension">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">has_dimension</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">offset</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">check_empty</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.unset_dimension">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unset_dimension</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">offset</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Этот набор обработчиков является внутренним представлением интерфейса <code class="docutils literal notranslate"><span class="pre">ArrayAccess</span></code>. <code class="docutils literal notranslate"><span class="pre">zval</span> <span class="pre">*rv</span></code> в
+<code class="docutils literal notranslate"><span class="pre">read_dimension</span></code> используется для временных значений, возвращаемых из <code class="docutils literal notranslate"><span class="pre">offsetGet</span></code> и <code class="docutils literal notranslate"><span class="pre">offsetExists</span></code>.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_properties">
+<span class="n"><span class="pre">HashTable</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_properties</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.get_debug_info">
+<span class="n"><span class="pre">HashTable</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_debug_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">is_temp</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Используются для получения свойств объекта в виде хеш-таблицы. Первый более общего назначения, например, он
+также используется для функции <code class="docutils literal notranslate"><span class="pre">get_object_vars</span></code>. Второй же, напротив, используется исключительно для
+отображения свойств в функциях отладки, таких как <code class="docutils literal notranslate"><span class="pre">var_dump</span></code>. Поэтому, даже если ваш объект не предоставляет
+никаких формальных свойств, вы всё равно можете иметь содержательный вывод для отладки.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_method">
+<span class="n"><span class="pre">zend_function</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_method</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">obj_ptr</span></span>, <span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">method_name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">key</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Обработчик <code class="docutils literal notranslate"><span class="pre">get_method</span></code> получает <code class="docutils literal notranslate"><span class="pre">zend_function</span></code>, используемую для вызова определённого метода.
+Опционально <code class="docutils literal notranslate"><span class="pre">key</span></code> может быть передан в качестве оптимизации, чтобы избежать перевода <code class="docutils literal notranslate"><span class="pre">method_name</span></code> в
+нижний регистр, если он уже присутствует.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_constructor">
+<span class="n"><span class="pre">zend_function</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_constructor</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Аналогично <code class="docutils literal notranslate"><span class="pre">get_method</span></code>, но получает функцию-конструктор. Самая распространённая причина переопределить этот
+обработчик — запретить ручное конструирование, выбросив ошибку в обработчике.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.count_elements">
+<span class="n"><span class="pre">zend_result</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">count_elements</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zend_long</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">count</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Это просто внутренний способ реализации метода <code class="docutils literal notranslate"><span class="pre">Countable::count</span></code>. Функция возвращает <code class="docutils literal notranslate"><span class="pre">zend_result</span></code> и
+присваивает значение указателю <code class="docutils literal notranslate"><span class="pre">zend_long</span> <span class="pre">*count</span></code>.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.compare">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">compare</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">o1</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">o2</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Обработчик <code class="docutils literal notranslate"><span class="pre">compare</span></code> — это обязательный обработчик, который вычисляет равенство данного объекта и другого
+значения. Обратите внимание, что другое значение не обязательно является объектом того же класса, или даже
+объектом вообще. Обработчик должен возвращать отрицательные числа, если левый операнд меньше, 0, если они равны,
+или положительное число, если левый операнд больше. Если значения несравнимы, должно быть возвращено
+<code class="docutils literal notranslate"><span class="pre">ZEND_UNCOMPARABLE</span></code>.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.cast_object">
+<span class="n"><span class="pre">zend_result</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cast_object</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">readobj</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">writeobj</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Внутренние классы имеют возможность реализовывать собственное поведение сравнения и переопределять поведение
+приведения типов для всех типов. Пользовательские классы, напротив, могут переопределить только приведение
+объекта к строке через <code class="docutils literal notranslate"><span class="pre">__toString</span></code>.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_closure">
+<span class="n"><span class="pre">zend_result</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_closure</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">obj</span></span>, <span class="n"><span class="pre">zend_class_entry</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ce_ptr</span></span>, <span class="n"><span class="pre">zend_function</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">fptr_ptr</span></span>, <span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">obj_ptr</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n"><span class="pre">check_only</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Этот обработчик вызывается, когда объект используется как функция, то есть это внутренняя версия <code class="docutils literal notranslate"><span class="pre">__invoke</span></code>.
+Название происходит от того, что его основное применение — реализация замыканий (класс <code class="docutils literal notranslate"><span class="pre">Closure</span></code>).</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_class_name">
+<span class="n"><span class="pre">zend_string</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_class_name</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Этот обработчик используется для получения имени класса из объекта в контекстах отладки. Переопределять его
+практически нет причин.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.clone_obj">
+<span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">clone_obj</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">old_object</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Обработчик <code class="docutils literal notranslate"><span class="pre">clone_obj</span></code> вызывается при выполнении <code class="docutils literal notranslate"><span class="pre">clone</span> <span class="pre">$old_object</span></code>. По умолчанию PHP выполняет
+поверхностное клонирование объектов, что означает, что свойства, содержащие объекты, не клонируются, но и старый,
+и новый объект будут указывать на один и тот же объект. <code class="docutils literal notranslate"><span class="pre">clone_obj</span></code> позволяет настроить это поведение. Он также
+используется для полного запрета <code class="docutils literal notranslate"><span class="pre">clone</span></code>.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_gc">
+<span class="n"><span class="pre">HashTable</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_gc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">zobj</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">table</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Обработчик <code class="docutils literal notranslate"><span class="pre">get_gc</span></code> должен возвращать все переменные, которые удерживает объект, чтобы циклические зависимости
+могли быть корректно собраны сборщиком мусора. Если объект не поддерживает хеш-карту свойств (потому что он не
+хранит никаких динамических свойств), он может использовать <code class="docutils literal notranslate"><span class="pre">table</span></code> для хранения указателя непосредственно на
+список zval, вместе со счётчиком свойств.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.dtor_obj">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dtor_obj</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span><span class="sig-paren">)</span><br /></dt>
+<dt class="sig sig-object c" id="c.free_obj">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">free_obj</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">dtor_obj</span></code> вызывается перед <code class="docutils literal notranslate"><span class="pre">free_obj</span></code>. Объект должен оставаться в допустимом состоянии после завершения
+работы dtor_obj. В отличие от <code class="docutils literal notranslate"><span class="pre">free_obj</span></code>, он выполняется до деактивации исполнителя во время завершения работы,
+что позволяет выполнять пользовательский код. Не гарантируется, что этот обработчик будет вызван (например, при
+фатальной ошибке), и поэтому его не следует использовать для освобождения ресурсов или памяти. Более того,
+освобождение ресурсов в этом обработчике может нарушить обнаружение утечек памяти, так как циклы могут быть
+разорваны заранее. <code class="docutils literal notranslate"><span class="pre">dtor_obj</span></code> следует использовать только для вызова пользовательских хуков уничтожения, таких
+как <code class="docutils literal notranslate"><span class="pre">__destruct</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">free_obj</span></code> должен освобождать любые ресурсы, удерживаемые объектом, не освобождая саму структуру объекта.
+Объекту не обязательно оставаться в допустимом состоянии после завершения работы <code class="docutils literal notranslate"><span class="pre">free_obj</span></code>. <code class="docutils literal notranslate"><span class="pre">free_obj</span></code> будет
+вызван всегда, даже если объект “утекает” или происходит фатальная ошибка. Однако во время завершения работы он
+может быть вызван после того, как исполнитель уже не активен, и в этом случае выполнение пользовательского кода
+может быть пропущено.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.do_operation">
+<span class="n"><span class="pre">zend_result</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">do_operation</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_uchar</span></span><span class="w"> </span><span class="n"><span class="pre">opcode</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">result</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">op1</span></span>, <span class="n"><span class="pre">zval</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">op2</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">do_operation</span></code> — это опциональный обработчик, который будет вызван для различных арифметических и бинарных
+операций на экземплярах данного класса. Это позволяет реализовать семантику перегрузки операторов для
+пользовательских классов. Примеры перегружаемых операторов: <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">++</span></code>, <code class="docutils literal notranslate"><span class="pre">--</span></code>, <code class="docutils literal notranslate"><span class="pre">!</span></code>.</p>
+</dd></dl>
+
+<dl class="c member">
+<dt class="sig sig-object c" id="c.get_properties_for">
+<span class="n"><span class="pre">zend_array</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get_properties_for</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">zend_object</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">object</span></span>, <span class="n"><span class="pre">zend_prop_purpose</span></span><span class="w"> </span><span class="n"><span class="pre">purpose</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">get_properties_for</span></code> может быть использован для настройки списка свойств объекта, возвращаемого для различных
+целей. Цели определены в <code class="docutils literal notranslate"><span class="pre">zend_prop_purpose</span></code>, который на текущий момент включает <code class="docutils literal notranslate"><span class="pre">print_r</span></code>, <code class="docutils literal notranslate"><span class="pre">var_dump</span></code>,
+приведение к <code class="docutils literal notranslate"><span class="pre">(array)</span></code>, <code class="docutils literal notranslate"><span class="pre">serialize</span></code>, <code class="docutils literal notranslate"><span class="pre">var_export</span></code> и <code class="docutils literal notranslate"><span class="pre">json_encode</span></code>.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../classes_objects.html">Классы и объекты</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../extensions_design.html">Проектирование расширений</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

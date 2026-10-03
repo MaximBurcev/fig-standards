@@ -1,0 +1,697 @@
+Регистрация и использование PHP-функций
+========================================
+
+Основная цель PHP-расширения — зарегистрировать новые PHP-функции для пользовательского уровня (userland). Чтобы
+полностью понять механику PHP-функций, уходящую очень глубоко в Zend Engine, нужно приложить немало усилий, но к
+счастью для нашей главы это знание не требуется, поскольку механизм PHP-расширений предоставляет множество способов
+абстрагировать значительную часть этой сложности.
+
+Регистрация и использование новых PHP-функций в расширении — простой шаг. Однако глубокое понимание общей картины
+значительно сложнее. Первым шагом здесь может помочь :doc:`глава о zend_function<../internal_types/functions>`.
+
+Очевидно, здесь вам потребуется освоить :doc:`типы<../internal_types>`, особенно :ref:`zval-ы <ru_zvals>`, и
+:doc:`управление памятью<../memory_management>`. Также нужно знать свои :doc:`хуки<../extensions_design/php_lifecycle>`.
+
+Структура zend_function_entry
+******************************
+
+Не путайте со :doc:`структурой zend_function<../internal_types/functions>`: ``zend_function_entry`` используется
+для регистрации функций в движке внутри расширения.
+Вот она::
+
+    #define INTERNAL_FUNCTION_PARAMETERS zend_execute_data *execute_data, zval *return_value
+
+    typedef struct _zend_function_entry {
+	    const char *fname;
+	    void (*handler)(INTERNAL_FUNCTION_PARAMETERS);
+	    const struct _zend_internal_arg_info *arg_info;
+	    uint32_t num_args;
+	    uint32_t flags;
+    } zend_function_entry;
+
+Вы можете заметить, что эта структура совсем не сложна. Это всё, что потребуется для объявления и регистрации
+новой функции. Разберём её по порядку:
+
+У функции есть имя: ``fname``. Тут добавить нечего, вы и так видите, для чего оно нужно, не так ли? Обратите внимание
+на тип ``const char *`` — он не подходит для использования внутри движка напрямую. Этот ``fname`` служит лишь
+образцом, и движок создаст из него :doc:`интернированную zend_string<../internal_types/strings/zend_strings>`.
+
+Далее идёт ``handler``. Это указатель на функцию языка C, которая станет телом нашей функции. Здесь мы будем
+использовать макросы, чтобы упростить её объявление (увидим это через минуту). Внутри этой функции мы сможем
+разобрать параметры, которые функция получает, и сформировать возвращаемое значение — точно так же, как это делает
+любая PHP-функция уровня userland. Обратите внимание, что это возвращаемое значение передаётся нашему обработчику
+как параметр.
+
+Аргументы. Переменная ``arg_info`` отвечает за объявление аргументов API, которые будет принимать наша функция.
+Здесь, опять же, разобраться во всех деталях бывает непросто, но нам не нужно углубляться настолько сильно — мы снова
+воспользуемся макросами, которые абстрагируют и упрощают объявление аргументов. Важно знать, что объявлять аргументы
+для работы функции не обязательно, но это настоятельно рекомендуется. Мы вернёмся к этому позже. Аргументы
+представляют собой массив ``arg_info``, и поэтому его размер передаётся как ``num_args``.
+
+Затем идут ``flags``. В этой главе мы не будем подробно их рассматривать. Они используются внутри движка, подробности
+можно найти в отдельной главе про :doc:`zend_function<../internal_types/functions>`.
+
+Регистрация PHP-функций
+************************
+
+PHP-функции регистрируются в движке при загрузке расширения. Расширение может объявить вектор функций внутри своей
+структуры. Функции, объявленные расширениями, называются «внутренними» (internal), и, в отличие от «пользовательских»
+функций (функций, объявленных и используемых на уровне userland PHP), они не снимаются с регистрации в конце
+текущего запроса: они постоянны.
+
+Напомним, вот структура PHP-расширения, сокращённая для удобства чтения::
+
+    struct _zend_module_entry {
+	    unsigned short size;
+	    unsigned int zend_api;
+	    unsigned char zend_debug;
+	    unsigned char zts;
+	    const struct _zend_ini_entry *ini_entry;
+	    const struct _zend_module_dep *deps;
+	    const char *name;
+	    const struct _zend_function_entry *functions;     /* function declaration vector */
+	    int (*module_startup_func)(INIT_FUNC_ARGS);
+	    int (*module_shutdown_func)(SHUTDOWN_FUNC_ARGS);
+        /* ... */
+    };
+
+В вектор функций вы передаёте объявленный массив функций. Рассмотрим простой пример::
+
+    /* pib.c */
+    PHP_FUNCTION(fahrenheit_to_celsius)
+    {
+
+    }
+
+    static const zend_function_entry pib_functions[] =
+    {
+        PHP_FE(fahrenheit_to_celsius, NULL)
+        PHP_FE_END
+    };
+
+    zend_module_entry pib_module_entry = {
+        STANDARD_MODULE_HEADER,
+        "pib",
+        pib_functions,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        "0.1",
+        STANDARD_MODULE_PROPERTIES
+    };
+
+Поработаем с простой функцией ``fahrenheit_to_celsius()`` (имя которой говорит само за себя о том, что она делает).
+
+Определение функции выполняется с помощью макроса ``PHP_FUNCTION()``. Он принимает свой аргумент и разворачивается в
+нужную структуру.
+Затем мы собираем символ этой функции и добавляем его в вектор ``pib_functions``. Он имеет тип
+``zend_function_entry *`` — именно такой тип ожидает символ ``zend_module_entry``. В этот вектор мы добавляем наши
+PHP-функции с помощью макроса ``PHP_FE``. Ему нужно имя PHP-функции и вектор аргументов, для которого мы пока
+передали NULL.
+
+В нашем заголовочном файле *php_pib.h* нам нужно здесь объявить эту функцию, как того требует язык C::
+
+    /* pib.h */
+    PHP_FUNCTION(fahrenheit_to_celsius);
+
+Как видите, объявлять функции действительно просто. Всю тяжёлую работу за нас делают макросы.
+Вот тот же код, но с развёрнутыми макросами — чтобы вы могли увидеть, что они делают::
+
+    /* pib.c */
+    void zif_fahrenheit_to_celsius(zend_execute_data *execute_data, zval *return_value)
+    {
+
+    }
+
+    static const zend_function_entry pib_functions[] =
+    {
+        { "fahrenheit_to_celsius", zif_fahrenheit_to_celsius, ((void *)0),
+            (uint32_t) (sizeof(((void *)0))/sizeof(struct _zend_internal_arg_info)-1), 0 },
+    }
+
+Обратите внимание, как ``PHP_FUNCTION()`` развернулся в символ C, начинающийся с ``zif_``. *'zif'* означает
+*Zend Internal Function*; этот префикс добавляется к имени вашей функции, чтобы избежать конфликтов имён символов
+при компиляции PHP и его модулей. Таким образом, наша PHP-функция ``fahrenheit_to_celsius()`` использует C-обработчик
+с именем ``zif_fahrenheit_to_celsius()``. То же самое верно почти для каждой PHP-функции. Если вы поищете
+«zif_var_dump», то найдёте исходный код функции PHP ``var_dump()``, и так далее...
+
+Объявление аргументов функции
+******************************
+
+Пока всё хорошо: если :doc:`скомпилировать<../build_system/building_extensions>` расширение и загрузить его в PHP,
+можно увидеть через reflection, что функция присутствует:
+
+.. code-block:: text
+
+    > ~/php/bin/php -dextension=pib.so --re pib
+    Extension [ <persistent> extension #37 pib version 0.1 ] {
+
+      - Functions {
+        Function [ <internal:pib> function fahrenheit_to_celsius ] {
+        }
+    }
+
+Но её аргументы отсутствуют. Если мы хотим опубликовать сигнатуру функции ``fahrenheit_to_celsius($fahrenheit)``,
+нам нужен один обязательный аргумент.
+
+Важно понимать, что объявление аргументов никак не связано с внутренней работой функции. Это означает, что функция
+могла бы работать, даже если бы мы сейчас написали её тело, — и даже без объявленных аргументов.
+
+.. note:: Объявлять аргументы не обязательно, но настоятельно рекомендуется. Аргументы используются API reflection
+          для получения информации о функции. Также аргументы используются движком, особенно когда речь идёт об
+          аргументах, передаваемых по ссылке, или о функциях, возвращающих ссылки.
+
+Чтобы объявлять аргументы, нам нужно познакомиться со структурой ``zend_internal_arg_info``::
+
+    typedef struct _zend_internal_arg_info {
+	    const char *name;
+	    const char *class_name;
+	    zend_uchar type_hint;
+	    zend_uchar pass_by_reference;
+	    zend_bool allow_null;
+	    zend_bool is_variadic;
+    } zend_internal_arg_info;
+
+Нет смысла подробно разбирать каждое поле — понимание аргументов сложнее, чем эта одна структура. К счастью, вам
+снова предоставлены макросы, которые абстрагируют всю сложную работу за вас::
+
+    ZEND_BEGIN_ARG_INFO_EX(arginfo_fahrenheit_to_celsius, 0, 0, 1)
+        ZEND_ARG_INFO(0, fahrenheit)
+    ZEND_END_ARG_INFO()
+
+Приведённый выше код показывает, как создать аргумент, но если развернуть макросы, можно почувствовать некоторую
+сложность::
+
+    static const zend_internal_arg_info arginfo_fahrenheit_to_celsius[] = { \
+		{ (const char*)(zend_uintptr_t)(1), ((void *)0), 0, 0, 0, 0 },
+		{ "fahrenheit", ((void *)0), 0, 0, 0, 0 },
+	};
+
+Как видно, макросы создают структуру ``zend_internal_arg_info``.
+Если изучить API этих макросов, всё становится понятным::
+
+    /* API only */
+    #define ZEND_BEGIN_ARG_INFO_EX(name, _unused, return_reference, required_num_args)
+    #define ZEND_ARG_INFO(pass_by_ref, name)
+    #define ZEND_ARG_OBJ_INFO(pass_by_ref, name, classname, allow_null)
+    #define ZEND_ARG_ARRAY_INFO(pass_by_ref, name, allow_null)
+    #define ZEND_ARG_CALLABLE_INFO(pass_by_ref, name, allow_null)
+    #define ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+    #define ZEND_ARG_VARIADIC_INFO(pass_by_ref, name)
+
+Этот набор макросов позволяет справиться с любым сценарием использования.
+
+* ``ZEND_BEGIN_ARG_INFO_EX()`` позволяет объявить, сколько обязательных аргументов принимает ваша функция. Он также
+  позволяет объявить функцию с *&return_by_ref()*.
+* Затем для каждого аргумента нужен один из макросов ``ZEND_ARG_***_INFO()``. С его помощью можно указать, передаётся
+  ли аргумент как *&$passed_by_ref*, и нужна ли подсказка типа.
+
+.. note:: Если вы не знаете, как назвать символ вектора аргументов, принято использовать шаблон
+          *'arginfo_[имя функции]'*.
+
+Вернёмся к нашей функции ``fahrenheit_to_celsius()``: мы объявляем простую функцию с возвратом по значению (очень
+классический случай) с одним аргументом по имени ``fahrenheit``, не передаваемым по ссылке (здесь снова всё
+традиционно).
+
+Так был создан символ ``arginfo_fahrenheit_to_celsius`` типа ``zend_internal_arg_info[]`` (вектор, или массив — это
+одно и то же), и теперь нам нужно использовать его в объявлении функции, чтобы прикрепить к ней аргументы::
+
+    PHP_FE(fahrenheit_to_celsius, arginfo_fahrenheit_to_celsius)
+
+Вот и всё — теперь reflection видит аргумент, а движок знает, что делать в случае несовпадения по ссылке. Отлично!
+
+.. note:: Существуют и другие макросы, например ``ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX()``. Все их можно найти в
+          исходном коде, расположенном в
+          `Zend/zend_api.h <https://github.com/php/php-src/blob/648be8600ff89e1b0e4a4ad25cebad42b53bed6d/Zend/
+          zend_API.h>`_
+
+Структура и API PHP-функции на языке C
+***************************************
+
+Хорошо. Вот PHP-функция в том виде, в каком вы используете и объявляете её на языке PHP (userland):
+
+.. code-block:: php
+
+    function fahrenheit_to_celsius($fahrenheit)
+    {
+        return 5/9 * ($fahrenheit - 32);
+    }
+
+Это простая функция, чтобы вам было легче понять материал.
+А вот как она выглядит при программировании на C::
+
+    PHP_FUNCTION(fahrenheit_to_celsius)
+    {
+        /* code to go here */
+    }
+
+После разворачивания макроса получаем::
+
+    void zif_fahrenheit_to_celsius(zend_execute_data *execute_data, zval *return_value)
+    {
+        /* code to go here */
+    }
+
+Сделайте паузу и подумайте об основных различиях.
+
+Первая странность: в C функция не должна ничего возвращать. Она объявлена как ``void``, и здесь, в C, вы не можете
+что-то вернуть. Но мы замечаем, что получаем аргумент под названием ``return_value`` типа ``zval *``, и это выглядит
+многообещающе. При программировании PHP-функции на C вам дают возвращаемое значение в виде указателя на zval, и от
+вас ожидается, что вы будете с ним работать. :ref:`Больше материалов о zval здесь<ru_zvals>`.
+
+.. note:: При программировании PHP-функций в расширениях на C вы получаете возвращаемое значение как аргумент и
+          ничего не возвращаете из тела своей C-функции.
+
+Хорошо, с первым пунктом разобрались. Второй, как вы, возможно, уже догадались: а где аргументы PHP-функции? Где
+``$fahreinheit``? Этот вопрос довольно трудно объяснить полностью, на самом деле это адски сложно.
+
+Но нам не нужно вникать здесь в детали. Объясним ключевые концепции:
+
+* Аргументы помещаются движком в стек. Все они расположены подряд, один за другим, где-то в памяти.
+* Если ваша функция вызвана, значит, не произошло блокирующей ошибки, и поэтому вы сможете просмотреть стек
+  аргументов и прочитать переданные во время выполнения аргументы. Причём не только те, что вы объявили, но и те,
+  что были переданы вашей функции при её вызове. Движок берёт всю эту работу на себя.
+* Чтобы прочитать аргументы, нужна функция или макрос, а также нужно знать, сколько аргументов было помещено в
+  стек — чтобы понимать, до какого момента их читать.
+* Всё происходит через ``zend_execute_data *execute_data``, который вы получаете как аргумент. Но подробности
+  сейчас не рассматриваем.
+
+Разбор параметров: zend_parse_parameters()
+-------------------------------------------
+
+Чтобы прочитать аргументы, познакомимся с API ``zend_parse_parameters()`` (называемым 'zpp').
+
+.. note:: При программировании PHP-функций в расширениях на C вы получаете аргументы PHP-функции благодаря
+          функции ``zend_parse_parameters()`` и её «друзьям».
+
+``zend_parse_parameters()`` — это функция, которая читает за вас аргументы из стека движка Zend. Вы указываете ей,
+сколько аргументов читать и какого типа вы хотите их получить. Эта функция преобразует аргумент в запрошенный тип,
+если это необходимо и возможно, согласно правилам приведения типов в PHP. Если вам нужно целое число, а передан
+float, и если никакое правило строгой типизации не заблокирует это, движок преобразует float в целое число и отдаст
+его вам.
+
+Рассмотрим эту функцию::
+
+    PHP_FUNCTION(fahrenheit_to_celsius)
+    {
+        double f;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &f) == FAILURE) {
+            return;
+        }
+
+        /* continue */
+    }
+
+Мы хотим получить double в переменную f. Для этого мы вызываем ``zend_parse_parameters()``.
+
+Первый аргумент — это количество аргументов, переданных во время выполнения. Об этом нам сообщает макрос
+``ZEND_NUM_ARGS()``, и мы используем его, чтобы сказать zpp(), сколько аргументов читать.
+
+Затем мы передаём ``const char *`` — строку *"d"*. Здесь предполагается, что вы пишете по одной букве на каждый
+принимаемый аргумент, за исключением некоторых особых случаев, которые здесь не рассматриваются. Простое *"d"*
+означает: *«я хочу, чтобы первый полученный аргумент был преобразован, если нужно, в float (double)»*.
+
+Затем после этой строки вы передаёте столько реальных аргументов C, сколько нужно для удовлетворения второго
+параметра. Одно *"d"* означает «один double», и теперь вы передаёте **адрес** переменной double, значение которой
+заполнит движок.
+
+.. note:: Вы всегда передаёте указатель на данные, которые должны быть заполнены.
+
+Актуальную справку по формату строки zpp() можно найти в файле
+`README.PARAMETER_PARSING_API <https://github.com/php/php-src/blob/ef4b2fc283ddaf9bd692015f1db6dad52171c3ce/
+README.PARAMETER_PARSING_API>`_ в исходном коде PHP. Читайте её внимательно, потому что здесь легко что-то напутать
+и получить сбой. Всегда проверяйте свои параметры, всегда передавайте столько же переменных-аргументов, сколько
+ожидается согласно предоставленной строке формата, и того же типа, который вы запросили.
+Будьте логичны.
+
+Обратите также внимание на обычную процедуру разбора аргументов. Функция ``zend_parse_parameters()`` должна
+возвращать ``SUCCESS`` при успехе или ``FAILURE`` при неудаче. Неудача может означать, что вы не использовали
+значение ``ZEND_NUM_ARGS()``, а указали значение вручную (плохая идея), либо что-то пошло не так при разборе
+аргументов. В этом случае самое время вернуться, прервав текущую функцию (вы должны возвращать ``void`` из своей
+C-функции, так что просто ``return``).
+
+Пока всё хорошо, мы получили double. Теперь выполним математические операции и вернём результат::
+
+    static double php_fahrenheit_to_celsius(double f)
+    {
+        return ((double)5/9) * (double)(f - 32);
+    }
+
+    PHP_FUNCTION(fahrenheit_to_celsius)
+    {
+        double f;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &f) == FAILURE) {
+            return;
+        }
+
+        RETURN_DOUBLE(php_fahrenheit_to_celsius(f));
+    }
+
+Возврат значений должен быть для вас простой задачей, так как вы знаете, :ref:`как устроены zval <ru_zvals>`. Нужно
+заполнить ``return_value``.
+
+Для этого предназначены как макросы ``RETURN_***()``, так и ``RETVAL_***()``.
+Оба просто устанавливают тип и значение zval ``return_value``, но после ``RETURN_***()`` следует C-оператор
+``return``, который завершит выполнение текущей функции.
+
+Как альтернатива, API предоставляет набор макросов для обработки и разбора параметров. Такой способ более читаем,
+если вас сбивают с толку спецификаторы в стиле Python.
+
+Для начала и завершения разбора параметров функции потребуются следующие макросы::
+
+    ZEND_PARSE_PARAMETERS_START(min_argument_count, max_argument_count) /* takes two parameters */
+    /* here we will go with argument lists */
+    ZEND_PARSE_PARAMETERS_END();
+
+Доступные макросы параметров можно перечислить следующим образом::
+
+    Z_PARAM_ARRAY()                /* old "a" */
+    Z_PARAM_ARRAY_OR_OBJECT()      /* old "A" */
+    Z_PARAM_BOOL()                 /* old "b" */
+    Z_PARAM_CLASS()                /* old "C" */
+    Z_PARAM_DOUBLE()               /* old "d" */
+    Z_PARAM_FUNC()                 /* old "f" */
+    Z_PARAM_ARRAY_HT()             /* old "h" */
+    Z_PARAM_ARRAY_OR_OBJECT_HT()   /* old "H" */
+    Z_PARAM_LONG()                 /* old "l" */
+    Z_PARAM_STRICT_LONG()          /* old "L" */
+    Z_PARAM_OBJECT()               /* old "o" */
+    Z_PARAM_OBJECT_OF_CLASS()      /* old "O" */
+    Z_PARAM_PATH()                 /* old "p" */
+    Z_PARAM_PATH_STR()             /* old "P" */
+    Z_PARAM_RESOURCE()             /* old "r" */
+    Z_PARAM_STRING()               /* old "s" */
+    Z_PARAM_STR()                  /* old "S" */
+    Z_PARAM_ZVAL()                 /* old "z" */
+    Z_PARAM_VARIADIC()             /* old "+" and "*" */
+
+А чтобы отметить параметр как опциональный, мы используем следующий макрос::
+
+     Z_PARAM_OPTIONAL              /* old "|" */
+
+Вот наш пример со стилем разбора параметров на основе макросов::
+
+    PHP_FUNCTION(fahrenheit_to_celsius)
+    {
+        double f;
+
+        ZEND_PARSE_PARAMETERS_START(1, 1)
+            Z_PARAM_DOUBLE(f);
+        ZEND_PARSE_PARAMETERS_END();
+
+        RETURN_DOUBLE(php_fahrenheit_to_celsius(f));
+    }
+
+Добавление тестов
+******************
+
+Если вы прочитали главу о тестах (см. :ref:`tests_introduction`), теперь вам нужно написать простой тест::
+
+    --TEST--
+    Test fahrenheit_to_celsius
+    --SKIPIF--
+    <?php if (!extension_loaded("pib")) print "skip"; ?>
+    --FILE--
+    <?php
+    printf("%.2f", fahrenheit_to_celsius(70));
+    ?>
+    --EXPECTF--
+    21.11
+
+\... и запустите ``make test``
+
+Работа с константами
+*********************
+
+Перейдём к более сложному примеру.
+Добавим обратную функцию: ``celsius_to_fahrenheit($celsius)``::
+
+    ZEND_BEGIN_ARG_INFO_EX(arginfo_celsius_to_fahrenheit, 0, 0, 1)
+        ZEND_ARG_INFO(0, celsius)
+    ZEND_END_ARG_INFO();
+
+    static double php_celsius_to_fahrenheit(double c)
+    {
+        return (((double)9/5) * c) + 32 ;
+    }
+
+    PHP_FUNCTION(celsius_to_fahrenheit)
+    {
+        double c;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &c) == FAILURE) {
+            return;
+        }
+
+        RETURN_DOUBLE(php_celsius_to_fahrenheit(c));
+    }
+
+    static const zend_function_entry pib_functions[] =
+    {
+        PHP_FE(fahrenheit_to_celsius, arginfo_fahrenheit_to_celsius) /* Done above */
+        PHP_FE(celsius_to_fahrenheit,arginfo_celsius_to_fahrenheit) /* just added */
+        PHP_FE_END
+    };
+
+Теперь более сложный случай использования — сначала покажем его на PHP, а затем реализуем как расширение на C:
+
+.. code-block:: php
+
+    const TEMP_CONVERTER_TO_CELSIUS     = 1;
+    const TEMP_CONVERTER_TO_FAHREINHEIT = 2;
+
+    function temperature_converter($temp, $type = TEMP_CONVERTER_TO_CELSIUS)
+    {
+        switch ($type) {
+            case TEMP_CONVERTER_TO_CELSIUS:
+                return sprintf("%.2f degrees fahrenheit gives %.2f degrees celsius", $temp,
+                                fahrenheit_to_celsius($temp));
+            case TEMP_CONVERTER_TO_FAHREINHEIT:
+                return sprintf("%.2f degrees celsius gives %.2f degrees fahrenheit, $temp,
+                                celsius_to_fahrenheit($temp));
+            default:
+                trigger_error("Invalid mode provided, accepted values are 1 or 2", E_USER_WARNING);
+            break;
+        }
+    }
+
+Этот пример помогает нам ввести понятие **констант**.
+
+Управлять константами в расширениях так же просто, как и их аналогом на уровне userland. Константы, как правило,
+постоянны (persistent) — это означает, что их значение должно сохраняться между запросами. Если вы знакомы с
+:doc:`жизненным циклом PHP<./php_lifecycle>`, вы, вероятно, уже догадались, что ``MINIT()`` — это подходящая стадия
+для регистрации констант в движке.
+
+Вот как выглядит константа внутри — структура ``zend_constant``::
+
+    typedef struct _zend_constant {
+        zval value;
+        zend_string *name;
+        int flags;
+        int module_number;
+    } zend_constant;
+
+Действительно простая структура (которая может превратиться в кошмар, если глубоко вникать в то, как константы
+управляются внутри движка). Вы объявляете ``name``, ``value``, несколько ``flags`` (их не много), а
+``module_number`` автоматически устанавливается равным номеру вашего расширения (об этом заботиться не нужно).
+
+Для регистрации констант здесь снова нет никакой сложности — набор макросов делает всю работу за вас::
+
+    #define TEMP_CONVERTER_TO_FAHRENHEIT 2
+    #define TEMP_CONVERTER_TO_CELSIUS 1
+
+    PHP_MINIT_FUNCTION(pib)
+    {
+        REGISTER_LONG_CONSTANT("TEMP_CONVERTER_TO_CELSIUS", TEMP_CONVERTER_TO_CELSIUS, CONST_CS|CONST_PERSISTENT);
+        REGISTER_LONG_CONSTANT("TEMP_CONVERTER_TO_FAHRENHEIT", TEMP_CONVERTER_TO_FAHRENHEIT, CONST_CS|CONST_PERSISTENT);
+
+        return SUCCESS;
+    }
+
+.. note:: Хорошей практикой является присваивать PHP-константам значения C-макросов. Это упрощает работу, и именно
+          так мы и сделали.
+
+В зависимости от типа вашей константы вы будете использовать ``REGISTER_LONG_CONSTANT()``,
+``REGISTER_DOUBLE_CONSTANT()`` и так далее...
+API и макросы расположены в
+`Zend/zend_constants.h <https://github.com/php/php-src/blob/648be8600ff89e1b0e4a4ad25cebad42b53bed6d/Zend/
+zend_constants.h>`_.
+
+Флаги — это результат операции *OR* между ``CONST_CS`` (регистрозависимая константа, то, что нам нужно) и
+``CONST_PERSISTENT`` (постоянная константа, сохраняющаяся между запросами, что нам также нужно).
+
+Теперь наша функция ``temperature_converter($temp, $type = TEMP_CONVERTER_TO_CELSIUS)`` на C::
+
+    ZEND_BEGIN_ARG_INFO_EX(arginfo_temperature_converter, 0, 0, 1)
+        ZEND_ARG_INFO(0, temperature)
+        ZEND_ARG_INFO(0, mode)
+    ZEND_END_ARG_INFO();
+
+У нас один обязательный аргумент из двух. Именно это мы и объявили. Значение по умолчанию для аргумента объявление
+аргументов решить не может — этим мы займёмся через секунду.
+
+Затем добавим нашу новую функцию в вектор регистрации функций::
+
+    static const zend_function_entry pib_functions[] =
+    {
+        PHP_FE(fahrenheit_to_celsius,arginfo_fahrenheit_to_celsius) /* seen above */
+        PHP_FE(celsius_to_fahrenheit,arginfo_celsius_to_fahrenheit) /* seen above */
+        PHP_FE(temperature_converter, arginfo_temperature_converter) /* our new function */
+    }
+
+И тело функции::
+
+    PHP_FUNCTION(temperature_converter)
+    {
+        double t;
+        zend_long mode = TEMP_CONVERTER_TO_CELSIUS;
+        zend_string *result;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "d|l", &t, &mode) == FAILURE) {
+            return;
+        }
+
+        switch (mode)
+        {
+            case TEMP_CONVERTER_TO_CELSIUS:
+                result = strpprintf(0, "%.2f degrees fahrenheit gives %.2f degrees celsius", t, php_fahrenheit_to_celsius(t));
+                RETURN_STR(result);
+            case TEMP_CONVERTER_TO_FAHRENHEIT:
+                result = strpprintf(0, "%.2f degrees celsius gives %.2f degrees fahrenheit", t, php_celsius_to_fahrenheit(t));
+                RETURN_STR(result);
+            default:
+                php_error(E_WARNING, "Invalid mode provided, accepted values are 1 or 2");
+        }
+    }
+
+Не забудьте внимательно изучить `README.PARAMETER_PARSING_API <https://github.com/php/php-src/blob/
+ef4b2fc283ddaf9bd692015f1db6dad52171c3ce/README.PARAMETER_PARSING_API>`_. Это не сложный API, но с ним нужно
+познакомиться.
+
+Мы используем *"d|l"* как аргумент для ``zend_parse_parameters()``. Один double и опционально (вертикальная черта
+*"|"*) один long. Будьте внимательны: если опциональный аргумент не передан во время выполнения (о чём, напомним,
+сообщает ``ZEND_NUM_ARGS()``), то переменную ``&mode`` zpp() не тронет. Именно поэтому мы задаём этой переменной
+значение по умолчанию ``TEMP_CONVERTER_TO_CELSIUS``.
+
+Затем мы используем ``strpprintf()``, чтобы построить :doc:`zend_string <../internal_types/strings/zend_strings>`, и
+возвращаем её в zval ``return_value`` с помощью ``RETURN_STR()``.
+
+.. note:: ``strpprintf()`` и похожие на неё функции описаны в
+          :doc:`главе о функциях печати <../internal_types/strings/printing_functions>`.
+
+Работа с Hashtable (массивами PHP)
+***********************************
+
+Теперь поработаем с *массивами PHP* и спроектируем решение:
+
+.. code-block:: php
+
+    function multiple_fahrenheit_to_celsius(array $temperatures)
+    {
+        foreach ($temperatures as $temp) {
+            $return[] = fahreinheit_to_celsius($temp);
+        }
+
+        return $return;
+    }
+
+Размышляя о реализации на C, нам нужно вызвать ``zend_parse_parameters()`` и запросить всего один массив, пройти по
+нему итерацией, выполнить математические операции и добавить результат в ``return_value`` в виде массива::
+
+    ZEND_BEGIN_ARG_INFO_EX(arginfo_multiple_fahrenheit_to_celsius, 0, 0, 1)
+        ZEND_ARG_ARRAY_INFO(0, temperatures, 0)
+    ZEND_END_ARG_INFO();
+
+    static const zend_function_entry pib_functions[] =
+    {
+	    /* ... */
+        PHP_FE(multiple_fahrenheit_to_celsius, arginfo_multiple_fahrenheit_to_celsius)
+        PHP_FE_END
+    };
+
+    PHP_FUNCTION(multiple_fahrenheit_to_celsius)
+    {
+        HashTable *temperatures;
+        zval *data;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "h", &temperatures) == FAILURE) {
+            return;
+        }
+        if (zend_hash_num_elements(temperatures) == 0) {
+    	    return;
+        }
+
+        array_init_size(return_value, zend_hash_num_elements(temperatures));
+
+        ZEND_HASH_FOREACH_VAL(temperatures, data)
+            zval dup;
+            ZVAL_COPY_VALUE(&dup, data);
+            convert_to_double(&dup);
+        add_next_index_double(return_value, php_fahrenheit_to_celsius(Z_DVAL(dup)));
+        ZEND_HASH_FOREACH_END();
+    }
+
+
+.. note:: Вам нужно знать, :doc:`как работают Hashtable<../internal_types/hashtables>`, а также обязательно
+          прочитать :ref:`главу о zval<ru_zvals>`
+
+Здесь C-часть будет быстрее, поскольку в цикле мы вызываем не PHP-функцию, а статическую (и, вероятно, встраиваемую
+компилятором) C-функцию, которая на порядки быстрее и требует намного меньше низкоуровневых инструкций CPU для
+выполнения. Дело не в том, что этой небольшой демонстрационной функции так уж нужна такая забота о
+производительности — это просто повод вспомнить одну из причин, по которой мы иногда используем язык C вместо PHP.
+
+Работа со ссылками
+*******************
+
+Теперь поработаем со ссылками PHP. Из :ref:`главы о zval <ru_zvals>` вы узнали, что ссылки — это особый приём,
+используемый внутри движка. Напомним, ссылка (здесь мы имеем в виду ``&$php_reference``) представляет собой
+выделенный в куче ``zval``, хранящийся внутри контейнера ``zval``. Ха-ха.
+
+Поэтому работать с ними в PHP-функциях не очень сложно, если помнить, что такое ссылки и для чего они предназначены.
+
+Если ваша функция принимает параметр как ссылку, нужно объявить это в сигнатуре аргументов и получить ссылку из
+вызова ``zend_parse_parameter()``. Как всегда, посмотрим сначала на пример на PHP:
+
+.. code-block:: php
+
+    function fahrenheit_to_celsius_by_ref(&$fahreinheit)
+    {
+        $fahreinheit = 9/5 * $fahrenheit + 32;
+    }
+
+Теперь на C: сначала нужно изменить наш ``arg_info``::
+
+    ZEND_BEGIN_ARG_INFO_EX(arginfo_fahrenheit_to_celsius, 0, 0, 1)
+        ZEND_ARG_INFO(1, fahrenheit)
+    ZEND_END_ARG_INFO();
+
+*1*, переданная в макрос ``ZEND_ARG_INFO()``, сообщает движку, что этот аргумент должен передаваться по ссылке.
+
+Затем, когда мы получаем аргумент, мы используем тип аргумента *"z"*, чтобы сказать, что хотим получить его как
+``zval *``. Поскольку мы уже подсказали движку, что он должен передать нам ссылку, мы получим ссылку внутри этого
+zval, то есть он будет иметь тип ``IS_REFERENCE``. Нам нужно просто разыменовать его (то есть извлечь zval,
+хранящийся внутри zval), и изменить его как есть, поскольку ожидаемое поведение ссылок заключается в том, что нужно
+изменять значение, которое несёт ссылка::
+
+    PHP_FUNCTION(fahrenheit_to_celsius)
+    {
+        double result;
+        zval *param;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &param) == FAILURE) {
+            return;
+        }
+
+        ZVAL_DEREF(param);
+        convert_to_double(param);
+
+        ZVAL_DOUBLE(param, php_fahrenheit_to_celsius(Z_DVAL_P(param)));
+    }
+
+Готово.
+
+.. note:: Значение ``return_value`` по умолчанию — ``NULL``. Если мы его не трогаем, функция вернёт PHP ``NULL``.

@@ -1,0 +1,205 @@
+Callable-значения PHP
+======================
+
+Работа с функциями PHP на C требует знания следующих двух структур: ``zend_fcall_info``/``zend_fcall_info_cache``.
+Первая обязательно содержит информацию для вызова функции, такую как аргументы и возвращаемое значение, но может
+также включать сам callable. Вторая содержит *только* callable. Мы будем использовать общепринятое сокращение FCI и
+FCC, когда говорим о ``zend_fcall_info`` и ``zend_fcall_info_cache`` соответственно.
+Вы скорее всего столкнётесь с ними при использовании флага аргумента ZPP ``f``, или когда вам нужно вызвать PHP-функцию
+или метод из расширения.
+
+Структура ``zend_fcall_info``
+-------------------------------
+
+.. warning:: Реализация ``zend_fcall_info`` сильно отличается до PHP 7.1.0.
+
+Начиная с PHP 8.0.0, ``zend_fcall_info`` имеет следующую структуру:
+
+::
+
+    struct _zend_fcall_info {
+        size_t size;
+        zval function_name;
+        zval *retval;
+        zval *params;
+        zend_object *object;
+        uint32_t param_count;
+        /* This hashtable can also contain positional arguments (with integer keys),
+         * which will be appended to the normal params[]. This makes it easier to
+         * integrate APIs like call_user_func_array(). The usual restriction that
+         * there may not be position arguments after named arguments applies. */
+        HashTable *named_params;
+    } zend_fcall_info;
+
+
+Рассмотрим подробно различные поля FCI:
+
+``size``:
+  Обязательное поле, представляющее размер структуры FCI, таким образом, всегда: ``sizeof(zend_fcall_info)``
+``function_name``:
+  Обязательное поле, собственно callable, не дайте названию этого поля обмануть вас, это осталось с тех времён,
+  когда в PHP не было объектов и методов классов. Это должен быть строковый zval или массив, следующий тем же
+  правилам, что и callable в PHP, а именно: первый индекс — это класс или экземпляр объекта, а второй — имя метода.
+  Он также может быть неопределён, если и только если предоставлен инициализированный FCC.
+``retval``:
+  Обязательное поле, которое будет содержать результат PHP-функции
+``param_count``:
+  Обязательное поле, число аргументов, которые будут предоставлены этому вызову функции
+``params``:
+  содержит позиционные аргументы, которые будут предоставлены этому вызову функции.
+  Если ``param_count = 0``, может быть ``NULL``.
+``object``:
+  Объект, на котором нужно вызвать метод, имя которого хранится в ``function_name``, или ``NULL``, если объекты не
+  участвуют.
+``named_params``:
+  HashTable, содержащая именованные (или позиционные) аргументы.
+
+.. note:: До PHP 8.0.0 поля ``named_params`` не существовало. Однако существовало поле ``zend_bool no_separation;``,
+   которое указывало, следует ли разделять аргументы-массивы или нет.
+
+Структура ``zend_fcall_info_cache``
+--------------------------------------
+
+Структура ``zend_fcall_info_cache`` имеет следующий вид:
+
+::
+
+    typedef struct _zend_fcall_info_cache {
+        zend_function *function_handler;
+        zend_class_entry *calling_scope;
+        zend_class_entry *called_scope;
+        zend_object *object;
+    } zend_fcall_info_cache;
+
+Рассмотрим подробно различные поля FCC:
+
+``function_handler``:
+  Собственно тело PHP-функции, которое будет использоваться VM, может быть получено из глобальной таблицы функций
+  или таблицы функций класса (``zend_class_entry->function_table``).
+``object``:
+  Если функция является методом объекта, это поле — соответствующий объект.
+``called_scope``:
+  Область видимости, в которой вызывается метод, как правило, это ``object->ce``.
+``calling_scope``:
+  Область видимости, в которой выполняется этот вызов, используется только VM.
+
+.. warning:: До PHP 7.3.0 существовало поле ``initialized``. Теперь FCC считается инициализированным, когда
+  ``function_handler`` установлен в ненулевой указатель.
+
+.. note:: Начиная с PHP 8.3.0, FCC хранит поле ``closure`` и специальный API для хранения пользовательских callable.
+    Этот новый API описан ниже.
+
+*Единственный* случай, когда FCC будет неинициализированным — если функция является трамплином, то есть когда метод
+класса не существует, но обрабатывается магическими методами ``__call()``/``__callStatic()``.
+Это происходит потому, что трамплин освобождается ZPP, так как это недавно выделенная структура ``zend_function`` со
+скопированным op array, и освобождается после вызова. Чтобы получить его вручную, используйте
+``zend_is_callable_ex()``.
+
+.. warning:: Недостаточно просто сохранить FCC, чтобы иметь возможность вызвать пользовательскую функцию позже.
+    Если callable zval из FCI является объектом (потому что у него есть метод ``__invoke``, это ``Closure``,
+    или трамплин), то также необходимо сохранить ссылку на ``zend_object``, увеличить счётчик ссылок и освободить
+    её по необходимости. Более того, если callable — трамплин, ``function_handler`` должен быть скопирован, чтобы
+    сохраняться между вызовами (см., как SPL реализует хранение функций автозагрузки).
+
+.. note:: Чтобы определить, что две пользовательские функции равны, обычно достаточно сравнить
+    ``function_handler``, ``object``, ``called_scope``, ``calling_scope`` и указатель на ``zend_object`` для
+    замыканий. За исключением случая, когда пользовательская функция является трамплином, это связано с тем, что
+    ``function_handler`` переаллоцируется при каждом вызове, в этом случае необходимо сравнивать поле
+    ``function_handler->common.function_name``, используя ``zend_string_equals()``, вместо прямого сравнения
+    указателей обработчика функции.
+
+.. note:: В большинстве случаев FCC не нужно освобождать, за исключением случая, когда FCC может содержать
+  трамплин, в этом случае следует использовать ``void zend_release_fcall_info_cache(zend_fcall_info_cache *fcc)``
+  для его освобождения. Более того, если сохраняется ссылка на замыкание, это должно быть вызвано *до*
+  освобождения замыкания, так как трамплин будет частично ссылаться на запись ``zend_function *`` в CE замыкания.
+
+API движка Zend для callable
+------------------------------
+
+API расположен в различных местах заголовочного файла ``Zend_API.h``.
+Мы рассмотрим различные API, необходимые для работы с callable в PHP.
+
+Прежде всего, чтобы проверить, инициализирован ли FCI, используйте макрос ``ZEND_FCI_INITIALIZED(fci)``.
+
+Если у вас есть корректно инициализированная и настроенная пара FCI/FCC для callable, вы можете вызвать его
+напрямую, используя функцию ``zend_call_function(zend_fcall_info *fci, zend_fcall_info_cache *fci_cache)``.
+
+.. warning:: API ``zend_fcall_info_arg*()`` и ``zend_fcall_info_call()`` не следует использовать.
+    Параметр ``zval *args`` *не* устанавливает поле ``params`` FCI напрямую.
+    Вместо этого ожидается, что это PHP-массив (zval типа ``IS_ARRAY``), содержащий позиционные аргументы,
+    которые будут переаллоцированы в новый C-массив.
+    Поскольку поле ``named_params`` принимает позиционные аргументы, обычно лучше просто
+    присвоить этому полю указатель ``HashTable`` этого аргумента.
+    Более того, поскольку аргументы для пользовательского вызова заранее определены и выделены на стеке, лучше
+    присвоить поля ``params`` и ``param_count`` напрямую.
+
+В более вероятном случае, когда у вас есть просто callable zval, у вас есть выбор из нескольких вариантов, в
+зависимости от случая использования.
+
+Для одноразового вызова подойдут макро-функции
+``call_user_function(function_table, object, function_name, retval_ptr, param_count, params)`` и
+``call_user_function_named(function_table, object, function_name, retval_ptr, param_count, params, named_params)``.
+
+.. note:: Начиная с PHP 7.1.0, аргумент ``function_table`` не используется и всегда должен быть ``NULL``.
+
+Недостаток этих функций в том, что они будут проверять, что zval действительно является callable, и создавать пару
+FCI/FCC при каждом вызове. Если вы знаете, что вам понадобится вызывать эти функции многократно, лучше создать пару
+FCI/FCC самостоятельно, используя функцию ``zend_result zend_fcall_info_init(zval *callable, uint32_t check_flags,
+zend_fcall_info *fci, zend_fcall_info_cache *fcc, zend_string **callable_name, char **error)``.
+Если эта функция возвращает ``FAILURE``, значит zval не является корректным callable.
+``check_flags`` передаётся в ``zend_is_callable_ex()``, как правило, вы не хотите передавать никаких
+изменяющих флагов, однако ``IS_CALLABLE_SUPPRESS_DEPRECATIONS`` может быть полезен в некоторых случаях.
+
+В случае, если у вас есть просто FCC (или комбинация ``zend_function`` и ``zend_object``), вы можете использовать
+следующие функции::
+
+    /* Call the provided zend_function with the given params.
+     * If retval_ptr is NULL, the return value is discarded.
+     * If object is NULL, this must be a free function or static call.
+     * called_scope must be provided for instance and static method calls. */
+    ZEND_API void zend_call_known_function(
+		zend_function *fn, zend_object *object, zend_class_entry *called_scope, zval *retval_ptr,
+		uint32_t param_count, zval *params, HashTable *named_params);
+
+    /* Call the provided zend_function instance method on an object. */
+    static zend_always_inline void zend_call_known_instance_method(
+		zend_function *fn, zend_object *object, zval *retval_ptr,
+		uint32_t param_count, zval *params)
+    {
+	    zend_call_known_function(fn, object, object->ce, retval_ptr, param_count, params, NULL);
+    }
+
+А также специфичные варианты для различного числа параметров для последней функции.
+
+.. note:: Если вы хотите вызвать метод объекта, если он существует, используйте функцию
+    ``zend_call_method_if_exists()``.
+
+Новый API FCI/FCC в PHP 8.3.0
+-------------------------------
+
+PHP 8.3.0 добавил несколько новых API для улучшения обработки и хранения FCC и пользовательских callable.
+Это было достигнуто добавлением поля ``closure`` в FCC.
+
+Прежде всего, был добавлен новый макрос ``ZEND_FCC_INITIALIZED(fcc)``, чтобы проверить, инициализирован ли FCC,
+это вспомогательный макрос, аналогичный ``ZEND_FCI_INITIALIZED(fci)``.
+
+Функции ``zend_fcc_addref()`` и ``zend_fcc_dup()`` выполнят все необходимые увеличения счётчика ссылок для
+безопасного хранения FCC во внутреннем объекте.
+Функция ``zend_fcc_equals()`` может использоваться, чтобы определить, равны ли два FCC или нет, что также
+поддерживает трамплины.
+Функция ``zend_fcc_dtor()`` должна использоваться при освобождении FCC, который был скопирован для внутреннего
+хранения.
+
+Если внутренний объект хранит FCC, должен быть определён обработчик объекта ``get_gc``,
+и его нужно добавить в буфер сборщика мусора через ``zend_get_gc_buffer_add_fcc()``.
+
+Функция ``zend_get_callable_zval_from_fcc()`` создаст callable zval, который может быть возвращён в пользовательский
+код.
+
+При вызове сохранённого FCC следует использовать
+``void zend_call_known_fcc(zend_fcall_info_cache *fcc, zval *retval_ptr, uint32_t param_count, zval *params, HashTable *named_params)``,
+так как она будет дублировать op array трамплина.
+Остальные параметры будут использованы для построения FCI.
+
+.. note:: Функция ``zend_call_function_with_return_value(*fci, *fcc, zval *retval)`` также была добавлена в
+    PHP 8.3.0 для замены использования ``zend_fcall_info_call(fci, fcc, retval, NULL)``.
