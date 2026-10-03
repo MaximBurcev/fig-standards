@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Zend-расширения &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Управление памятью" href="../memory_management.html" />
+    <link rel="prev" title="Объявление и использование настроек INI" href="ini_settings.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Zend-расширения</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="ini_settings.html">Объявление и использование настроек INI</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../memory_management.html">Управление памятью</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="zend">
+<h1>Zend-расширения<a class="headerlink" href="#zend" title="Link to this heading">¶</a></h1>
+<p>PHP поддерживает два вида расширений:</p>
+<ul class="simple">
+<li><p>Обычные расширения PHP (PHP extensions) — наиболее распространённый вид</p></li>
+<li><p>Zend-расширения — более редкий вид, дающий доступ к другим хукам</p></li>
+</ul>
+<p>В этой главе подробно рассматриваются основные различия между zend-расширениями и PHP-расширениями, когда следует
+использовать одно вместо другого, а также как создавать гибридные расширения, то есть расширения, являющиеся
+одновременно и PHP-, и Zend-расширениями (и зачем это делать).</p>
+</section>
+<section id="php-zend">
+<h1>Различия между PHP-расширениями и Zend-расширениями<a class="headerlink" href="#php-zend" title="Link to this heading">¶</a></h1>
+<p>Для начала: в исходном коде PHP расширения PHP называются <strong>“PHP-модулями”</strong>, тогда как zend-расширения называются
+<strong>“Zend-расширениями”</strong>.</p>
+<p>Поэтому в недрах PHP, если вы встречаете ключевое слово “extension”, в первую очередь стоит подумать о
+zend-расширении. А если встречаете ключевое слово “module” — скорее всего речь о PHP-расширении.</p>
+<p>В обычной жизни мы говорим о <em>“PHP-расширениях”</em> в противовес <em>“Zend-расширениям”</em>.</p>
+<p>Отличает их способ загрузки:</p>
+<ul class="simple">
+<li><p>PHP-расширения (также называемые “модулями” PHP) загружаются в INI-файлах строкой вида <em>“extension=pib.so”</em></p></li>
+<li><p>Zend-расширения загружаются в INI-файлах строкой вида <em>“zend_extension=pib.so”</em></p></li>
+</ul>
+<p>Это единственное видимое отличие, которое заметно со стороны пользовательского PHP-кода.</p>
+<p>Но с точки зрения внутреннего устройства всё совсем по-другому.</p>
+</section>
+<section id="id1">
+<h1>Что такое zend-расширение?<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>Прежде всего, zend-расширения компилируются и загружаются так же, как и PHP-расширения. Поэтому, если вы ещё не
+читали главу <a class="reference internal" href="../build_system/building_extensions.html"><span class="doc">о сборке расширений PHP</span></a>, стоит это сделать — она актуальна
+и для zend-расширений.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если вы ещё не сделали этого, <a class="reference internal" href="../extensions_design.html"><span class="doc">ознакомьтесь с информацией о расширениях PHP</span></a> —
+далее мы будем сравнивать с ними. Zend-расширения имеют очень много общих концепций с PHP-расширениями.</p>
+</div>
+<p>Вот как выглядит zend-расширение. Обратите внимание, что для того чтобы движок смог загрузить ваше zend-расширение,
+нужно опубликовать не одну, а две структуры:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Main Zend extension structure */</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">_zend_extension</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span><span class="w">                                           </span><span class="cm">/*</span>
+<span class="cm">    char *version;                                         * Some infos</span>
+<span class="cm">    char *author;                                          *</span>
+<span class="cm">    char *URL;                                             *</span>
+<span class="cm">    char *copyright;                                       */</span>
+
+<span class="w">    </span><span class="n">startup_func_t</span><span class="w"> </span><span class="n">startup</span><span class="p">;</span><span class="w">                               </span><span class="cm">/*</span>
+<span class="cm">    shutdown_func_t shutdown;                              *  Specific branching lifetime points</span>
+<span class="cm">    activate_func_t activate;                              *  ( Hooks )</span>
+<span class="cm">    deactivate_func_t deactivate;                          */</span>
+
+<span class="w">    </span><span class="n">message_handler_func_t</span><span class="w"> </span><span class="n">message_handler</span><span class="p">;</span><span class="w">               </span><span class="cm">/* Hook called on zend_extension registration */</span>
+
+<span class="w">    </span><span class="n">op_array_handler_func_t</span><span class="w"> </span><span class="n">op_array_handler</span><span class="p">;</span><span class="w">             </span><span class="cm">/* Hook called just after Zend compilation */</span>
+
+<span class="w">    </span><span class="n">statement_handler_func_t</span><span class="w"> </span><span class="n">statement_handler</span><span class="p">;</span><span class="w">           </span><span class="cm">/*</span>
+<span class="cm">    fcall_begin_handler_func_t fcall_begin_handler;        *  Hooks called through the Zend VM as specific OPCodes</span>
+<span class="cm">    fcall_end_handler_func_t fcall_end_handler;            */</span>
+
+<span class="w">    </span><span class="n">op_array_ctor_func_t</span><span class="w"> </span><span class="n">op_array_ctor</span><span class="p">;</span><span class="w">                   </span><span class="cm">/* Hook called on OPArray construction */</span>
+<span class="w">    </span><span class="n">op_array_dtor_func_t</span><span class="w"> </span><span class="n">op_array_dtor</span><span class="p">;</span><span class="w">                   </span><span class="cm">/* Hook called on OPArray destruction */</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">api_no_check</span><span class="p">)(</span><span class="kt">int</span><span class="w"> </span><span class="n">api_no</span><span class="p">);</span><span class="w">                      </span><span class="cm">/* Checks against zend_extension incompatibilities</span>
+<span class="cm">    int (*build_id_check)(const char* build_id);           */</span>
+
+<span class="w">    </span><span class="n">op_array_persist_calc_func_t</span><span class="w"> </span><span class="n">op_array_persist_calc</span><span class="p">;</span><span class="w">   </span><span class="cm">/* Hooks called if the zend_extension extended the</span>
+<span class="cm">    op_array_persist_func_t op_array_persist;              * OPArray structure and has some SHM data to declare</span>
+<span class="cm">                                                           */</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">reserved5</span><span class="p">;</span><span class="w">                                      </span><span class="cm">/*</span>
+<span class="cm">    void *reserved6;                                       * Do what you want with those free pointers</span>
+<span class="cm">    void *reserved7;                                       *</span>
+<span class="cm">    void *reserved8;                                       */</span>
+
+<span class="w">    </span><span class="n">DL_HANDLE</span><span class="w"> </span><span class="n">handle</span><span class="p">;</span><span class="w">                                     </span><span class="cm">/* dlopen() returned handle */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">resource_number</span><span class="p">;</span><span class="w">                                  </span><span class="cm">/* internal number used to manage that extension */</span>
+<span class="p">};</span>
+
+<span class="cm">/* Structure used when the Zend extension gets loaded into the engine */</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_extension_version_info</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">zend_extension_api_no</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">build_id</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">zend_extension_version_info</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Как обычно, читайте исходный код. Zend-расширения обрабатываются в файле
+<a class="reference external" href="https://github.com/php/php-src/blob/57dba0e2f5e39f6b05031317048e39d463243cc3/Zend/zend_extensions.c">Zend/zend_extension.c</a> (и .h)</p>
+</div>
+<p>Как видите, zend-расширения сложнее, чем PHP-расширения, так как у них больше хуков, и эти хуки гораздо ближе к
+<a class="reference internal" href="../zend_engine.html"><span class="doc">движку Zend и его виртуальной машине</span></a> (самым сложным частям всего исходного кода PHP).</p>
+</section>
+<section id="id2">
+<h1>Зачем нужно zend-расширение?<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h1>
+<p>Предупредим сразу: до тех пор, пока у вас нет <strong>очень глубоких</strong> знаний о внутренней виртуальной машине PHP и пока
+вам не нужно встраиваться глубоко внутрь неё, zend-расширение вам не нужно — обычного PHP-расширения будет
+достаточно.</p>
+<p>Сегодня наиболее известные zend-расширения в мире PHP — это opcache, Xdebug, phpdbg и Blackfire. Но ведь вы знаете
+десятки обычных PHP-расширений в придачу, не так ли?! Это явный признак того, что:</p>
+<ul class="simple">
+<li><p>В большинстве ваших задач zend-расширение не понадобится</p></li>
+<li><p>Zend-расширения также могут использоваться как PHP-расширения (подробнее об этом далее)</p></li>
+<li><p>PHP-расширение всё же способно на очень многое.</p></li>
+<li><p>Как правило, zend-расширения нужны для двух видов задач: отладчиков и профилировщиков.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Для zend-расширений, в отличие от PHP-расширений, не существует <a class="reference internal" href="extension_skeleton.html"><span class="doc">генератора болванки</span></a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Для zend-расширений нет ни генератора, ни подсказок. Zend-расширения предназначены для <strong>опытных
+программистов</strong>: их сложнее понять, они затрагивают более глубокое поведение движка и обычно требуют
+продвинутых знаний внутреннего устройства PHP.</p>
+</div>
+<p>В целом, если вам нужно создать отладчик, понадобится zend-расширение. Для профилировщиков можно обойтись обычными
+PHP-расширениями — это тоже может сработать, всё зависит от ваших потребностей.</p>
+<p>Кроме того, если вам нужно управлять порядком загрузки расширений, zend-расширения вам в этом помогут (об этом мы
+ещё поговорим).</p>
+<p>Наконец, если ваша цель — “просто” <em>добавить</em> в PHP новые сущности (функции, классы, константы и т.д.), используйте
+PHP-расширение, но если вам нужно <em>изменить</em> текущее поведение PHP, вероятно, лучше подойдёт zend-расширение.</p>
+<p>Мы не можем дать здесь точных правил, но можем объяснить, как всё это работает, чтобы вы сами составили
+представление о возможностях zend-расширений по сравнению с PHP-расширениями.</p>
+<p>Также вы можете создать <em>гибридное</em> расширение, которое является одновременно и zend-расширением, <em>и</em>
+PHP-расширением (это нетривиально, но вполне допустимо и позволяет программировать в обоих “мирах” одновременно).</p>
+</section>
+<section id="api">
+<h1>Управление версиями API и конфликтами<a class="headerlink" href="#api" title="Link to this heading">¶</a></h1>
+<p>Вы знаете, что PHP-расширения перед загрузкой проверяются по нескольким правилам, чтобы определить, совместимы ли
+они с версией PHP, в которую вы пытаетесь их загрузить. Это подробно описано в <a class="reference internal" href="../build_system/building_extensions.html"><span class="doc">главе о сборке PHP-расширений</span></a>.</p>
+<p>Для zend-расширения действуют те же правила, но немного иначе: движок будет использовать опубликованную вами
+структуру <code class="docutils literal notranslate"><span class="pre">zend_extension_version_info</span></code>, чтобы понять, что делать.</p>
+<p>Структура <code class="docutils literal notranslate"><span class="pre">zend_extension_version_info</span></code>, которую вы объявляете, содержит только два поля, которые движок
+использует при запуске загрузки вашего zend-расширения:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ZEND_EXTENSION_API_NO</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ZEND_EXTENSION_BUILD_ID</span></code></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">ZEND_EXTENSION_API_NO</span></code> проверяется при загрузке вашего zend-расширения. Но отличие в том, что если это число не
+совпадает с числом в вашем zend-расширении, у вас всё равно остаётся шанс быть загруженным. Движок вызовет ваш хук
+<code class="docutils literal notranslate"><span class="pre">api_no_check()</span></code>, если вы его объявили, и передаст в него текущий <code class="docutils literal notranslate"><span class="pre">ZEND_EXTENSION_API_NO</span></code> среды выполнения PHP.
+Здесь вы должны сообщить, поддерживаете ли вы этот номер API, просто вернув эту информацию движку. Если вы его не
+поддерживаете, движок не загрузит ваше расширение и выведет об этом предупреждающее сообщение.</p>
+<p>То же самое касается других настроек ABI, таких как <code class="docutils literal notranslate"><span class="pre">ZEND_DEBUG</span></code> или <code class="docutils literal notranslate"><span class="pre">ZTS</span></code>. Там, где PHP-расширения откажутся
+загружаться при несовпадении, zend-расширениям даётся шанс быть загруженными — движок проверяет это через хук
+<code class="docutils literal notranslate"><span class="pre">build_id_check()</span></code>, передавая ему <code class="docutils literal notranslate"><span class="pre">ZEND_EXTENSION_BUILD_ID</span></code>. И снова вы сообщаете, совместимы вы или нет. И
+снова, если вы скажете “нет”, движок не загрузит ваше расширение и выведет об этом предупреждающее сообщение.</p>
+<p>Напомним, что нумерация API и ABI подробно описана <a class="reference internal" href="../build_system/building_extensions.html"><span class="doc">в главе о сборке PHP-расширений</span></a>.</p>
+<p>Эти возможности принудительно навязывать что-то движку на практике используются редко.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Видите, насколько zend-расширения сложнее PHP-расширений? Движок менее строг и предполагает, что вы
+знаете, что делаете, — к лучшему или к худшему.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Zend-расширения действительно должны разрабатываться опытными и продвинутыми программистами, так как
+проверки движка здесь слабее. Он явно предполагает, что вы полностью владеете тем, что делаете.</p>
+</div>
+<p>Подводя итог по совместимости API: каждый шаг подробно описан в
+<a class="reference external" href="https://github.com/php/php-src/blob/57dba0e2f5e39f6b05031317048e39d463243cc3/Zend/zend_extensions.c#L67">zend_load_extension()</a>.</p>
+<p>Далее возникает проблема конфликтов между zend-расширениями. Одно может быть несовместимо с другим, и чтобы
+справиться с этим, у каждого zend-расширения есть хук с именем <code class="docutils literal notranslate"><span class="pre">message_handler</span></code>. Если он объявлен, этот хук
+вызывается у каждого уже загруженного расширения при загрузке очередного zend-расширения. Вам передаётся указатель
+на его структуру <code class="docutils literal notranslate"><span class="pre">zend_extension</span></code>, и вы можете определить, какое именно это расширение, и прервать работу, если
+решите, что возникнет конфликт. Это тоже используется на практике довольно редко.</p>
+</section>
+<section id="id3">
+<h1>Хуки жизненного цикла zend-расширений<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h1>
+<p>Если вы помните про <a class="reference internal" href="php_lifecycle.html"><span class="doc">жизненный цикл PHP</span></a> (рекомендуем прочитать отдельную главу об этом), то
+zend-расширения встраиваются в этот жизненный цикл следующим образом:</p>
+<img alt="../../../_images/php_extensions_lifecycle_full1.png" class="align-center" src="../../../_images/php_extensions_lifecycle_full1.png" />
+<p>Можно заметить, что наши проверочные хуки <code class="docutils literal notranslate"><span class="pre">api_no_check()</span></code>, <code class="docutils literal notranslate"><span class="pre">build_id_check()</span></code> и <code class="docutils literal notranslate"><span class="pre">message_handler()</span></code>
+вызываются только при запуске PHP. Эти три хука подробно описаны в предыдущей части (выше).</p>
+<p>А теперь <strong>важный</strong> момент, который нужно запомнить:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> вызывается у PHP-расширений <strong>до</strong> zend-расширений (<code class="docutils literal notranslate"><span class="pre">startup()</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RINIT()</span></code> вызывается у zend-расширений (<code class="docutils literal notranslate"><span class="pre">activate()</span></code>) <strong>до</strong> PHP-расширений.</p></li>
+<li><p>Процедура завершения запроса у zend-расширений (<code class="docutils literal notranslate"><span class="pre">deactivate()</span></code>) вызывается <strong>между</strong> <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code> и
+<code class="docutils literal notranslate"><span class="pre">PRSHUTDOWN()</span></code> у PHP-расширений.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code> вызывается у PHP-расширений <strong>первым</strong>, а у zend-расширений — <strong>после</strong> этого (<code class="docutils literal notranslate"><span class="pre">shutdown()</span></code>).</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Как и для любого хука, здесь существует строго определённый порядок, который нужно освоить и запомнить
+для расширений со сложными сценариями использования.</p>
+</div>
+<p>На <em>практике</em> об этом можно сказать следующее:</p>
+<ul class="simple">
+<li><p>Zend-расширения запускаются <strong>после</strong> PHP-расширений. Это позволяет zend-расширениям быть уверенными, что при их
+запуске все PHP-расширения уже загружены. Благодаря этому они могут подменять обработчики и встраиваться в
+PHP-расширения. Например, если вам нужно заменить обработчик функции <code class="docutils literal notranslate"><span class="pre">session_start()</span></code> своим собственным,
+сделать это проще в zend-расширении. Если делать это в PHP-расширении, вам нужно быть уверенным, что вы
+загружаетесь после расширения session, а это может быть непросто проверить и обеспечить (хотя зависимость всё же
+можно указать через <a class="reference external" href="https://github.com/php/php-src/blob/c18ba686cdf2d937475eb3d5c239e4ef8e733fa6/Zend/zend_modules.h#L118">zend_module_dep</a>). Тем не менее, <a class="reference internal" href="extension_skeleton.html"><span class="doc">помните</span></a>, что статически скомпилированные расширения всегда запускаются раньше динамически
+скомпилированных. Поэтому для случая с session это не проблема, так как <em>ext/session</em> загружается статически. До
+тех пор, пока некоторые дистрибутивы (привет, FreeBSD) не изменят это…</p></li>
+<li><p>Zend-расширения вызываются <strong>до</strong> PHP-расширений при поступлении запроса. Это значит, что у них есть возможность
+изменить состояние движка применительно к текущему запросу до того, как PHP-расширения начнут использовать этот
+изменённый контекст. Opcache использует такой трюк, чтобы выполнить свои сложные задачи раньше, чем какое-либо
+другое расширение успеет этому помешать.</p></li>
+<li><p>То же самое при завершении запроса: zend-расширения могут считать, что все PHP-расширения уже завершили обработку
+запроса.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h1>Практика: моё первое zend-расширение на примере<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h1>
+<p>Здесь мы на практике подробно разберём некоторые хуки, которые могут использовать zend-расширения, и что с ними
+делать, на примере очень простого сценария.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Помните, что разработка zend-расширений обычно требует глубокого владения <a class="reference internal" href="../zend_engine.html"><span class="doc">движком Zend</span></a>.</p>
+</div>
+<p>Для нашего примера мы спроектируем zend-расширение, использующее следующие хуки:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fcall_begin_handler</span></code> — мы будем определять, какие инструкции сейчас выполняет виртуальная машина, и выводить
+сообщение. Этот хук перехватывает два вида событий: вызов require/include/eval или вызов любой функции/метода.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">op_array_handler</span></code> — мы будем определять, какая функция PHP сейчас компилируется, и выводить сообщение.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">message_handler</span></code> — мы будем обнаруживать загрузку других zend-расширений и выводить сообщение.</p></li>
+</ul>
+<p>Вот наша болванка, которую нам нужно написать самостоятельно, поскольку для zend-расширений, в отличие от
+PHP-расширений, генератора болванки не существует. Файлы называются <em>pib.c</em> и <em>php_pib.h</em>, структура файлов остаётся
+такой же, как и для PHP-расширений, просто мы объявим в них другие вещи:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"php.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"Zend/zend_extensions.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"php_pib.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"Zend/zend_smart_str.h"</span>
+
+<span class="cm">/* Remember that we must declare such a symbol in a Zend extension. It is used to check</span>
+<span class="cm"> * if it was built against the same API as the one PHP runtime uses */</span>
+<span class="n">ZEND_DLEXPORT</span><span class="w"> </span><span class="n">zend_extension_version_info</span><span class="w"> </span><span class="n">extension_version_info</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ZEND_EXTENSION_API_NO</span><span class="p">,</span>
+<span class="w"> </span><span class="n">ZEND_EXTENSION_BUILD_ID</span>
+<span class="p">};</span>
+
+<span class="n">ZEND_DLEXPORT</span><span class="w"> </span><span class="n">zend_extension</span><span class="w"> </span><span class="n">zend_extension_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">"pib-zend-extension"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"PHPInternalsBook Authors"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"http://www.phpinternalsbook.com"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Our Copyright"</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w">                               </span><span class="cm">/* startup() : module startup */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w">                               </span><span class="cm">/* shutdown() : module shutdown */</span>
+<span class="w">    </span><span class="n">pib_zend_extension_activate</span><span class="p">,</span><span class="w">        </span><span class="cm">/* activate() : request startup */</span>
+<span class="w">    </span><span class="n">pib_zend_extension_deactivate</span><span class="p">,</span><span class="w">      </span><span class="cm">/* deactivate() : request shutdown */</span>
+<span class="w">    </span><span class="n">pib_zend_extension_message_handler</span><span class="p">,</span><span class="w"> </span><span class="cm">/* message_handler() */</span>
+
+<span class="w">    </span><span class="n">pib_zend_extension_op_array_handler</span><span class="p">,</span><span class="w">      </span><span class="cm">/* compiler op_array_handler() */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w">                                     </span><span class="cm">/* VM statement_handler() */</span>
+<span class="w">    </span><span class="n">pib_zend_extension_fcall_begin_handler</span><span class="p">,</span><span class="w">   </span><span class="cm">/* VM fcall_begin_handler() */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w">                                     </span><span class="cm">/* VM fcall_end_handler() */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w">                                     </span><span class="cm">/* compiler op_array_ctor() */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w">                                     </span><span class="cm">/* compiler op_array_dtor() */</span>
+<span class="w">    </span><span class="n">STANDARD_ZEND_EXTENSION_PROPERTIES</span><span class="w">        </span><span class="cm">/* Structure-ending macro */</span>
+<span class="p">};</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_activate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_deactivate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_message_handler</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_op_array_handler</span><span class="p">(</span><span class="n">zend_op_array</span><span class="w"> </span><span class="o">*</span><span class="n">op_array</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_fcall_begin_handler</span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Пока всё неплохо: это расширение компилируется как zend-расширение, но ничего не делает. Точнее, почти ничего.
+Первые поля структуры <code class="docutils literal notranslate"><span class="pre">zend_extension</span></code> отображаются в <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">This</span><span class="w"> </span><span class="n">program</span><span class="w"> </span><span class="n">makes</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">Zend</span><span class="w"> </span><span class="n">Scripting</span><span class="w"> </span><span class="n">Language</span><span class="w"> </span><span class="n">Engine</span><span class="o">:</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">Engine</span><span class="w"> </span><span class="n">v3</span><span class="mf">.1.0</span><span class="p">,</span><span class="w"> </span><span class="n">Copyright</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="mi">1998-2017</span><span class="w"> </span><span class="n">Zend</span><span class="w"> </span><span class="n">Technologies</span>
+<span class="w">    </span><span class="n">with</span><span class="w"> </span><span class="n">pib</span><span class="o">-</span><span class="n">zend</span><span class="o">-</span><span class="n">extension</span><span class="w"> </span><span class="n">v1</span><span class="mf">.0</span><span class="p">,</span><span class="w"> </span><span class="n">Our</span><span class="w"> </span><span class="n">Copyright</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">PHPInternalsBook</span><span class="w"> </span><span class="n">Authors</span>
+</pre></div>
+</div>
+<p>Это обязательно: движок реагирует так — он выводит первые поля структуры <code class="docutils literal notranslate"><span class="pre">zend_extension</span></code> в информацию о движке
+для каждого загруженного zend-расширения.</p>
+<p>Это всё, что нужно знать на данный момент. Теперь заполним эти функции с пустым телом:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_message_handler</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"We just detected that zend_extension '%s' is trying to load</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="n">zend_extension</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">ext</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Как было сказано ранее, <code class="docutils literal notranslate"><span class="pre">message_handler()</span></code> — это специальный хук, который zend-расширения могут объявить, чтобы
+получать уведомления о загрузке другого zend-расширения. Но нужно быть внимательным к порядку. Вы должны
+зарегистрировать наше zend-расширение “pib” первым, а затем уже другое zend-расширение (например, opcache), так как
+<code class="docutils literal notranslate"><span class="pre">message_handler()</span></code> вызывается только при загрузке zend-расширения — очевидно, вы должны быть загружены раньше,
+чтобы его объявить. Курица и яйцо.</p>
+<p>Затем начнём погружаться в движок с помощью нашего хука <code class="docutils literal notranslate"><span class="pre">op_array_handler</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_op_array_handler</span><span class="p">(</span><span class="n">zend_op_array</span><span class="w"> </span><span class="o">*</span><span class="n">op_array</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">smart_str</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">"We just compiled "</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">function_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">num_args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">num_args</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">fn_flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ZEND_ACC_CLOSURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">"a closure "</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">"function "</span><span class="p">);</span>
+<span class="w">            </span><span class="n">smart_str_append</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">function_name</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">smart_str_appendc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="sc">'('</span><span class="p">);</span>
+
+<span class="w">        </span><span class="cm">/* The variadic arg is not declared as an arg internally */</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">fn_flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ZEND_ACC_VARIADIC</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">num_args</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">num_args</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">zend_arg_info</span><span class="w"> </span><span class="n">arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">arg_info</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="n">class_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">smart_str_append</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">class_name</span><span class="p">);</span>
+<span class="w">                </span><span class="n">smart_str_appendc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="sc">' '</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="n">pass_by_reference</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">smart_str_appendc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="sc">'&amp;'</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="n">is_variadic</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">"..."</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">smart_str_appendc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="sc">'$'</span><span class="p">);</span>
+<span class="w">            </span><span class="n">smart_str_append</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">num_args</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">", "</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">") in file "</span><span class="p">);</span>
+<span class="w">        </span><span class="n">smart_str_append</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">filename</span><span class="p">);</span>
+<span class="w">        </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">" between line "</span><span class="p">);</span>
+<span class="w">        </span><span class="n">smart_str_append_unsigned</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">line_start</span><span class="p">);</span>
+<span class="w">        </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">" and line "</span><span class="p">);</span>
+<span class="w">        </span><span class="n">smart_str_append_unsigned</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">line_end</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">smart_str_appends</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">"the file "</span><span class="p">);</span>
+<span class="w">        </span><span class="n">smart_str_append</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">op_array</span><span class="o">-&gt;</span><span class="n">filename</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">smart_str_0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">);</span>
+<span class="w">    </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">out</span><span class="p">.</span><span class="n">s</span><span class="p">));</span>
+<span class="w">    </span><span class="n">smart_str_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">out</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>При необходимости ознакомьтесь с информацией <a class="reference internal" href="../zend_engine.html"><span class="doc">о движке Zend</span></a>.</p>
+</div>
+<p>Этот хук вызывается на втором проходе компилятора. Когда компилятор Zend запускается, он компилирует скрипт или
+функцию. Перед самым завершением он запускает второй проход компиляции, цель которого — разрешить неразрешённые
+указатели (значение которых не могло быть известно во время компиляции скрипта). Это функция <code class="docutils literal notranslate"><span class="pre">pass_two()</span></code>,
+<a class="reference external" href="https://github.com/php/php-src/blob/81c2a4b9ba0816a0bda4f004aeca634ad8b58970/Zend/zend_opcode.c#L577">исходный код которой</a> вы можете изучить.</p>
+<p>В исходном коде <code class="docutils literal notranslate"><span class="pre">pass_two()</span></code> видно, что он вызывает <code class="docutils literal notranslate"><span class="pre">op_array_handler()</span></code> у каждого уже зарегистрированного
+zend-расширения и передаёт ему в качестве аргумента текущий, ещё не полностью разрешённый OPArray. Именно это мы
+получаем как аргумент нашей функции. Затем мы его анализируем и пытаемся извлечь некоторую информацию о нём:
+текущую компилируемую функцию, информацию о её аргументах и т.д. Это очень похоже на то, что делает Reflection API,
+только здесь мы немного менее точны, так как OPArray ещё не полностью разрешён — мы всё ещё находимся внутри этапа
+компиляции. Мы могли бы также собрать значения аргументов по умолчанию (что здесь не сделано), но это сильно
+усложнило бы пример, поэтому мы решили не показывать эту часть.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Напомним, что <a class="reference internal" href="../internal_types/strings/smart_str.html"><span class="doc">про smart_str подробно рассказано здесь</span></a>,
+<a class="reference internal" href="../zvals.html#ru-zvals"><span class="std std-ref">про zval здесь</span></a>, <a class="reference internal" href="../zend_engine.html"><span class="doc">про OPArray здесь</span></a>, и т.д…</p>
+</div>
+<p>Продолжим?:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_activate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">CG</span><span class="p">(</span><span class="n">compiler_options</span><span class="p">)</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">ZEND_COMPILE_EXTENDED_INFO</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_deactivate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">CG</span><span class="p">(</span><span class="n">compiler_options</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;=</span><span class="w"> </span><span class="o">~</span><span class="n">ZEND_COMPILE_EXTENDED_INFO</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_fcall_begin_handler</span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* Fetch the next OPline. We use pointer arithmetic for that */</span>
+<span class="w">        </span><span class="n">zend_op</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">op_array</span><span class="p">.</span><span class="n">opcodes</span><span class="p">[(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">opline</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">op_array</span><span class="p">.</span><span class="n">opcodes</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">extended_value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ZEND_EVAL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Beginning of a code eval() in %s:%u"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">op_array</span><span class="p">.</span><span class="n">filename</span><span class="p">),</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">lineno</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="cm">/* The file to be include()ed is stored into the operand 1 of the OPLine */</span>
+<span class="w">            </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zval_get_string</span><span class="p">(</span><span class="n">EX_CONSTANT</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">op1</span><span class="p">));</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Beginning of an include of file '%s'"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">file</span><span class="p">));</span>
+<span class="w">            </span><span class="n">zend_string_release</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">common</span><span class="p">.</span><span class="n">fn_flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ZEND_ACC_STATIC</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Beginning of a new static method call : '%s::%s'"</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">Z_CE</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">This</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">common</span><span class="p">.</span><span class="n">function_name</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Z_TYPE</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">This</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">IS_OBJECT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Beginning of a new method call : %s-&gt;%s"</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">Z_OBJCE</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">This</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">),</span>
+<span class="w">                    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">common</span><span class="p">.</span><span class="n">function_name</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Beginning of a new function call : %s"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">call</span><span class="o">-&gt;</span><span class="n">func</span><span class="o">-&gt;</span><span class="n">common</span><span class="p">.</span><span class="n">function_name</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">PHPWRITE</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>При старте запроса мы указываем компилятору генерировать в создаваемом OPArray дополнительную расширенную
+информацию. За это отвечает флаг <code class="docutils literal notranslate"><span class="pre">ZEND_COMPILE_EXTENDED_INFO</span></code>. Расширенная информация — это хуки OPCode
+виртуальной машины, то есть компилятор будет генерировать специальный OPCode перед каждым вызовом функции и после
+завершения каждого вызова функции. Это OPCode’ы <code class="docutils literal notranslate"><span class="pre">FCALL_BEGIN</span></code> и <code class="docutils literal notranslate"><span class="pre">FCALL_END</span></code>.</p>
+<p>Вот пример OPCode’ов для простого вызова функции PHP, где строка ‘foo’ передаётся единственным аргументом:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>L9    #1     INIT_FCALL              112                  "foo"
+L9    #2     SEND_VAL                "foo"                1
+L9    #3     DO_FCALL
+L11   #4     RETURN                  1
+</pre></div>
+</div>
+<p>А теперь то же самое, но после того как мы указали компилятору генерировать дополнительные OPCode’ы:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>L9    #3     INIT_FCALL              112                  "foo"
+L9    #4     EXT_FCALL_BEGIN
+L9    #5     SEND_VAL                "foo"                1
+L9    #6     DO_FCALL
+L9    #7     EXT_FCALL_END
+L11   #8     RETURN                  1
+</pre></div>
+</div>
+<p>Как видите, OPCode’ы, отвечающие за отправку аргумента и вызов функции, оказались окружены двумя OPCode’ами —
+<code class="docutils literal notranslate"><span class="pre">EXT_FCALL_BEGIN</span></code> и <code class="docutils literal notranslate"><span class="pre">EXT_FCALL_END</span></code>. Эти два OPCode’а в дальнейшем выполнят обработчики <code class="docutils literal notranslate"><span class="pre">fcall_begin()</span></code> и
+<code class="docutils literal notranslate"><span class="pre">fcall_end()</span></code> у каждого объявленного zend-расширения, включая наше.</p>
+<p>Помните, что с точки зрения движка вызовом функции считается как настоящий вызов функции, так и выполнение
+подключаемого (include) PHP-файла, или выполнение нового блока <code class="docutils literal notranslate"><span class="pre">eval()</span></code>. Посмотрите на дизассемблированный
+<code class="docutils literal notranslate"><span class="pre">require()</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>L9    #3     EXT_FCALL_BEGIN
+L9    #4     INCLUDE_OR_EVAL         "foo.php"
+L9    #5     EXT_FCALL_END
+L11   #6     RETURN                  1
+</pre></div>
+</div>
+<p>После того как эти “маркерные” OPCode’ы сгенерированы, при выполнении виртуальной машиной OPCode’ов OPArray будет
+вызван наш объявленный обработчик <code class="docutils literal notranslate"><span class="pre">fcall_begin()</span></code>. Это способ определить, какая функция/файл/eval будет выполнен
+следующим. Мы просто выводим эту информацию.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если попросить компилятор генерировать инструкции <code class="docutils literal notranslate"><span class="pre">EXT_FCALL</span></code>, это сильно замедлит исполнение —
+примерно в четыре раза медленнее для выполнения того же самого кода. <code class="docutils literal notranslate"><span class="pre">EXT_FCALL</span></code> следует использовать
+только для отладчиков, или как минимум не в продакшен-коде, так как при их включении исполнитель Zend VM
+работает гораздо медленнее: на каждый fcall/include/eval приходится больше кода для выполнения.</p>
+</div>
+</section>
+<section id="id6">
+<h1>Гибридные расширения<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h1>
+<p>То, что мы называем гибридными расширениями — это расширения, которые являются <strong>одновременно</strong> и
+zend-расширениями, и PHP-расширениями.</p>
+<p>Как это возможно? И для чего?</p>
+<p>На этот вопрос есть несколько ответов:</p>
+<ul class="simple">
+<li><p>Для <a class="reference internal" href="php_functions.html"><span class="doc">регистрации новых функций PHP</span></a> PHP-расширение лучше, чем zend-расширение, так как оно
+уже умеет это делать и изначально было спроектировано именно для этой цели. Было бы жалко этим не воспользоваться.
+Именно так делает opcache.</p></li>
+<li><p>Если вам нужно зарегистрировать практически все хуки на протяжении всего жизненного цикла, вам, очевидно,
+понадобятся обе стороны</p></li>
+<li><p>Если вам нужно управлять порядком загрузки zend-расширений, например, чтобы загружаться после opcache, вам
+понадобится быть гибридным</p></li>
+</ul>
+<p>Хитрость проста — выберите один из вариантов:</p>
+<ul class="simple">
+<li><p>Вы в основном PHP-расширение. Вы регистрируетесь как PHP-расширение, и при запуске (<code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>) регистрируете
+себя как zend-расширение (подчинённое).</p></li>
+<li><p>Вы в основном zend-расширение. Вы регистрируетесь как zend-расширение, и при запуске (<code class="docutils literal notranslate"><span class="pre">startup()</span></code>)
+регистрируете себя как PHP-расширение (подчинённое).</p></li>
+</ul>
+<p>То есть либо вы главное PHP-расширение, а zend-расширение — подчинённое; либо наоборот.</p>
+<p>Чтобы этот трюк был полностью понятен, повторим здесь полный жизненный цикл PHP- и zend-расширений. Отпечатайте это
+в памяти:</p>
+<img alt="../../../_images/php_extensions_lifecycle_full1.png" class="align-center" src="../../../_images/php_extensions_lifecycle_full1.png" />
+<p>Однако помните: какую бы схему вы ни выбрали, подчинённую часть нужно будет регистрировать и запускать вручную, так
+как движок, очевидно, этого не сделает. Движок автоматически запускает только главную часть.</p>
+<section id="zend-php">
+<h2>Гибрид: главное zend-расширение, подчинённое PHP-расширение<a class="headerlink" href="#zend-php" title="Link to this heading">¶</a></h2>
+<p>Тут всё просто. Мы не хотим загружаться как PHP-расширение, а только исключительно как zend-расширение. Чтобы
+этого добиться, мы не будем публиковать обязательный символ <code class="docutils literal notranslate"><span class="pre">get_module</span></code>, который движок ищет при попытке
+зарегистрировать PHP-расширение, читая INI-файл.</p>
+<p>Таким образом, мы сможем зарегистрироваться только как <em>zend_extension=pib.so</em>. Регистрация как <em>extension=pib.so</em>
+завершится ошибкой, так как движок не найдёт наш неэкспортированный символ <code class="docutils literal notranslate"><span class="pre">get_module</span></code>.</p>
+<p>Но ничто не мешает нам в нашем хуке startup zend-расширения зарегистрировать себя как PHP-расширение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"php.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"Zend/zend_extensions.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"php_pib.h"</span>
+
+<span class="cp">#define PRINT(what) fprintf(stderr, what "\n");</span>
+
+<span class="cm">/* Declared as static, thus private */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_module_entry</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_HEADER</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pib"</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Function entries */</span>
+<span class="w">    </span><span class="n">PHP_MINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Module init */</span>
+<span class="w">    </span><span class="n">PHP_MSHUTDOWN</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Module shutdown */</span>
+<span class="w">    </span><span class="n">PHP_RINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Request init */</span>
+<span class="w">    </span><span class="n">PHP_RSHUTDOWN</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Request shutdown */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module information */</span>
+<span class="w">    </span><span class="s">"0.1"</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Replace with version number for your extension */</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_PROPERTIES</span>
+<span class="p">};</span>
+
+<span class="cm">/* This line should stay commented</span>
+<span class="cm">ZEND_GET_MODULE(pib)</span>
+<span class="cm">*/</span>
+
+<span class="n">ZEND_DLEXPORT</span><span class="w"> </span><span class="n">zend_extension_version_info</span><span class="w"> </span><span class="n">extension_version_info</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ZEND_EXTENSION_API_NO</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ZEND_EXTENSION_BUILD_ID</span>
+<span class="p">};</span>
+
+<span class="n">ZEND_DLEXPORT</span><span class="w"> </span><span class="n">zend_extension</span><span class="w"> </span><span class="n">zend_extension_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">"pib-zend-extension"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"PHPInternalsBook Authors"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"http://www.phpinternalsbook.com"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Our Copyright"</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_startup</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_shutdown</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_activate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_deactivate</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+
+<span class="w">    </span><span class="n">STANDARD_ZEND_EXTENSION_PROPERTIES</span>
+<span class="p">};</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_activate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension new request starting up"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_deactivate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension current request is shutting down"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">pib_zend_extension_startup</span><span class="p">(</span><span class="n">zend_extension</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* When the Zend extension part will startup(), make it register</span>
+<span class="cm">       a PHP extension by calling ourselves zend_startup_module() */</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">zend_startup_module</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pib_module_entry</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_shutdown</span><span class="p">(</span><span class="n">zend_extension</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension is shutting down"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension is shutting down"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_RINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension new request starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_RSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension current request is shutting down"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Готово. Запуск PHP с таким активированным zend-расширением выведет в stderr следующее:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+</pre></div>
+</div>
+<p>Как видите, хуки соблюдают правильный порядок, за исключением первых двух. Теоретически PHP-расширения должны
+запускаться раньше zend-расширений, но так как мы зарегистрированы как zend-расширение, когда движок вызывает наш
+хук zend-расширения, он ещё ничего не знает о запуске части PHP-расширения (<code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>). Мы говорим движку
+запустить наше PHP-расширение, и в рамках хука <code class="docutils literal notranslate"><span class="pre">startup()</span></code> zend-расширения вручную вызываем хук запуска
+PHP-расширения с помощью <code class="docutils literal notranslate"><span class="pre">zend_startup_module()</span></code>. Очевидно, вам нужно быть осторожным, чтобы не создать
+циклическую зависимость и не свести движок с ума тем, что конкретно вы будете делать в таких хуках.</p>
+<p>Это одновременно просто и логично.</p>
+<p>Теперь мы одновременно и PHP-расширение, и zend-расширение. Взгляните:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="w"> </span><span class="n">php</span><span class="w"> </span><span class="o">-</span><span class="n">dzend_extension</span><span class="o">=</span><span class="n">pib</span><span class="p">.</span><span class="n">so</span><span class="w"> </span><span class="o">-</span><span class="n">m</span>
+<span class="p">[</span><span class="n">PHP</span><span class="w"> </span><span class="n">modules</span><span class="p">]</span>
+<span class="n">Core</span>
+<span class="n">date</span>
+<span class="p">(...)</span>
+<span class="n">pib</span>
+<span class="n">posix</span>
+<span class="n">Reflection</span>
+<span class="p">(...)</span>
+
+<span class="p">[</span><span class="n">Zend</span><span class="w"> </span><span class="n">Modules</span><span class="p">]</span>
+<span class="n">pib</span><span class="o">-</span><span class="n">zend</span><span class="o">-</span><span class="n">extension</span>
+</pre></div>
+</div>
+<p>Наше PHP-расширение действительно называется “pib” и отображается в списке, а наше zend-расширение называется
+“pib-zend-extension” и также отображается. Мы выбрали два разных имени для обеих частей, хотя могли выбрать и
+одинаковое.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Opcache и Xdebug используют такую гибридную модель: они являются zend-расширениями, но им нужно
+публиковать функции PHP, и поэтому они также являются PHP-расширениями.</p>
+</div>
+</section>
+<section id="id7">
+<h2>Гибрид: главное PHP-расширение, подчинённое zend-расширение<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>Теперь рассмотрим обратный вариант: мы хотим, чтобы движок зарегистрировал нас как PHP-расширение, а не как
+zend-расширение, но при этом всё равно хотим быть гибридными.</p>
+<p>Для этого мы сделаем наоборот: не будем публиковать символ <code class="docutils literal notranslate"><span class="pre">zend_extension_version_info</span></code> — таким образом загрузить
+нас как zend-расширение будет невозможно, движок откажет в этом. Но на этот раз мы, очевидно, объявим символ
+<code class="docutils literal notranslate"><span class="pre">get_module</span></code>, чтобы можно было загрузиться как PHP-расширение. И в нашем <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> мы зарегистрируем себя как
+zend-расширение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"php.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"Zend/zend_extensions.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"php_pib.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"Zend/zend_smart_str.h"</span>
+
+<span class="cp">#define PRINT(what) fprintf(stderr, what "\n");</span>
+
+<span class="n">zend_module_entry</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_HEADER</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pib"</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Function entries */</span>
+<span class="w">    </span><span class="n">PHP_MINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Module init */</span>
+<span class="w">    </span><span class="n">PHP_MSHUTDOWN</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Module shutdown */</span>
+<span class="w">    </span><span class="n">PHP_RINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Request init */</span>
+<span class="w">    </span><span class="n">PHP_RSHUTDOWN</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Request shutdown */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module information */</span>
+<span class="w">    </span><span class="s">"0.1"</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Replace with version number for your extension */</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_PROPERTIES</span>
+<span class="p">};</span>
+
+<span class="n">ZEND_GET_MODULE</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="cm">/* Should be kept commented</span>
+<span class="cm"> * zend_extension_version_info extension_version_info = {</span>
+<span class="cm"> *   ZEND_EXTENSION_API_NO,</span>
+<span class="cm"> *    ZEND_EXTENSION_BUILD_ID</span>
+<span class="cm"> * };</span>
+<span class="cm"> */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">zend_extension</span><span class="w"> </span><span class="n">zend_extension_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">"pib-zend-extension"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"PHPInternalsBook Authors"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"http://www.phpinternalsbook.com"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Our Copyright"</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_startup</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_shutdown</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_activate</span><span class="p">,</span>
+<span class="w">    </span><span class="n">pib_zend_extension_deactivate</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+
+<span class="w">    </span><span class="n">STANDARD_ZEND_EXTENSION_PROPERTIES</span>
+<span class="p">};</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_activate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension new request starting up"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_zend_extension_deactivate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension current request is shutting down"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">pib_zend_extension_startup</span><span class="p">(</span><span class="n">zend_extension</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* Register our zend_extension part now */</span>
+<span class="w">    </span><span class="n">zend_register_extension</span><span class="p">(</span><span class="o">&amp;</span><span class="n">zend_extension_entry</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">pib_zend_extension_shutdown</span><span class="p">(</span><span class="n">zend_extension</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension is shutting down"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension is shutting down"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_RINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension new request starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_RSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension current request is shutting down"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>И это с треском обрушивается в самом конце (как жаль!), в функции <code class="docutils literal notranslate"><span class="pre">pib_zend_extension_shutdown()</span></code>. Если запустить
+отладчик, легко понять почему.</p>
+<p>Здесь мы загружены как PHP-расширение. Посмотрите на хуки. Когда доходит до <code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code>, движок выполняет наш
+<code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code>, но <strong>сразу после этого выгружает нас</strong>! Он вызывает <code class="docutils literal notranslate"><span class="pre">dlclose()</span></code> для нашего расширения,
+<a class="reference external" href="https://github.com/php/php-src/blob/4d6100569b7611ef66086bec96fe8b5046e30ef7/Zend/zend_API.c#L2527">посмотрите исходный код</a> — решение, как обычно, находится там.</p>
+<p>Всё происходящее просто: сразу после вызова нашего <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code> движок выгружает наш <em>pib.so</em>; когда приходит
+время вызвать часть <code class="docutils literal notranslate"><span class="pre">shutdown()</span></code> нашего zend-расширения, мы уже не являемся частью адресного пространства
+процесса, из-за чего мы с треском обрушиваем весь процесс PHP.</p>
+<p>Какое решение? Если вы читали исходный код, а также другие главы этой книги, то должны знать, что если задать
+переменную окружения <code class="docutils literal notranslate"><span class="pre">ZEND_DONT_UNLOAD_MODULES</span></code> равной 1, движок не станет нас выгружать. Тогда мы могли бы
+установить эту переменную окружения в <code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code> и сбросить её в <code class="docutils literal notranslate"><span class="pre">shutdown()</span></code>. Для этого подойдёт
+<a class="reference external" href="http://man7.org/linux/man-pages/man3/putenv.3.html">putenv()</a>. Это нормально сработает, хотя и выглядит
+нетривиально. Кроме того, если какое-то другое расширение между этими вызовами тоже играет с этой переменной, нам
+будет плохо.</p>
+<p>Второе решение основано на хитрости с механизмом выгрузки. Если передать дескриптор libdl из структуры
+PHP-расширения в структуру zend-расширения, выгрузка движком пройдёт без проблем.</p>
+<p>Исправленный код:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Dl_info</span><span class="w"> </span><span class="n">infos</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* Register our zend_extension part, and give it our own PHP extension handle */</span>
+<span class="w">    </span><span class="n">zend_register_extension</span><span class="p">(</span><span class="o">&amp;</span><span class="n">zend_extension_entry</span><span class="p">,</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="p">.</span><span class="n">handle</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* Prevent the engine from unloading our PHP extension */</span>
+<span class="w">    </span><span class="n">pib_module_entry</span><span class="p">.</span><span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Если запустить это сейчас, вы получите ожидаемый результат:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">starting</span><span class="w"> </span><span class="n">up</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+<span class="n">PHP</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+<span class="n">Zend</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">shutting</span><span class="w"> </span><span class="n">down</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Blackfire использует такую же гибридную модель, но у него нет хука <code class="docutils literal notranslate"><span class="pre">shutdown()</span></code> zend-расширения, и
+поэтому патч про выгрузку модуля ему не нужен.</p>
+</div>
+</section>
+<section id="id9">
+<h2>Гибрид гибридов<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<p>Гибрид гибридов — это просто модель, в которой вы позволяете пользователю загружать вас либо как zend-расширение,
+либо как PHP-расширение.</p>
+<p>Всё, что вам нужно сделать — это запомнить, как вас загрузили (например, с помощью глобальной переменной), чтобы
+суметь обработать оба режима.</p>
+<p>Напишем только отличающиеся части:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">started</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">pib_zend_extension_startup</span><span class="p">(</span><span class="n">zend_extension</span><span class="w"> </span><span class="o">*</span><span class="n">ext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">started</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">started</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">zend_startup_module</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pib_module_entry</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"Zend extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">started</span><span class="p">)</span><span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">started</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Dl_info</span><span class="w"> </span><span class="n">infos</span><span class="p">;</span>
+<span class="w">        </span><span class="n">zend_register_extension</span><span class="p">(</span><span class="o">&amp;</span><span class="n">zend_extension_entry</span><span class="p">,</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="p">.</span><span class="n">handle</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">dladdr</span><span class="p">(</span><span class="n">ZEND_MODULE_STARTUP_N</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">infos</span><span class="p">);</span>
+<span class="w">        </span><span class="n">dlopen</span><span class="p">(</span><span class="n">infos</span><span class="p">.</span><span class="n">dli_fname</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PRINT</span><span class="p">(</span><span class="s">"PHP extension is starting up"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Очевидно, что все символы должны быть публичными. С приведённым выше кодом вас можно загрузить как PHP-расширение
+(extension=pib.so) или как zend-расширение (zend_extension=pib.so); у конечного пользователя будет выбор — это
+преимущество такой модели, хотя нам, авторам, об её использовании ничего не известно.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="ini_settings.html">Объявление и использование настроек INI</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../memory_management.html">Управление памятью</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

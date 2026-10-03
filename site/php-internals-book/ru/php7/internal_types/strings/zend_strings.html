@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API zend_string &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=38da9290" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="API smart_str" href="smart_str.html" />
+    <link rel="prev" title="Строки" href="../strings.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>API zend_string</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../strings.html">Строки</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="smart_str.html">API smart_str</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="api-zend-string">
+<span id="ru-zend-strings"></span><h1>API <code class="docutils literal notranslate"><span class="pre">zend_string</span></code><a class="headerlink" href="#api-zend-string" title="Link to this heading">¶</a></h1>
+<p>Строки в C обычно представляются в виде null-terminated указателей <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code>. Поскольку PHP поддерживает строки,
+содержащие нулевые байты, PHP должен явно хранить длину строки. Кроме того, PHP должен обеспечивать соответствие
+строк общей концепции структур с подсчётом ссылок. Именно для этого предназначен тип <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>.</p>
+<section id="id1">
+<h2>Структура<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Структура <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> выглядит следующим образом:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_refcounted_h</span><span class="w"> </span><span class="n">gc</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_ulong</span><span class="w">        </span><span class="n">h</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w">            </span><span class="n">len</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w">              </span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Как и многие другие структуры в PHP, она включает в себя заголовок <code class="docutils literal notranslate"><span class="pre">zend_refcounted_h</span></code>, который хранит
+<a class="reference internal" href="../../zvals/memory_management.html#ru-refcounting"><span class="std std-ref">подсчёт ссылок</span></a>, а также некоторые флаги.</p>
+<p>Фактическое содержимое символов строки хранится с помощью так называемого “struct hack”: содержимое строки
+дописывается в конец структуры. Хотя оно объявлено как <code class="docutils literal notranslate"><span class="pre">char[1]</span></code>, фактический размер определяется динамически.
+Это означает, что заголовок <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> и содержимое строки объединены в единую область выделенной памяти, что
+более эффективно, чем использование двух отдельных выделений. Вы увидите, что PHP использует struct hack в довольно
+многих местах, где заголовок фиксированного размера сочетается с динамическим объёмом данных.</p>
+<p>Длина строки хранится явно в поле <code class="docutils literal notranslate"><span class="pre">len</span></code>. Это необходимо для поддержки строк, содержащих нулевые байты, а также
+полезно для производительности, поскольку длину строки не нужно постоянно пересчитывать. Следует отметить, что хотя
+<code class="docutils literal notranslate"><span class="pre">len</span></code> хранит длину без учёта завершающего нулевого байта, фактическое содержимое строки в <code class="docutils literal notranslate"><span class="pre">val</span></code> всегда должно
+содержать завершающий нулевой байт. Причина в том, что существует довольно много C API, принимающих
+null-terminated строку, и мы хотим использовать эти API без создания отдельной null-terminated копии строки.
+Например, строка PHP <code class="docutils literal notranslate"><span class="pre">&quot;foo\0bar&quot;</span></code> будет храниться с <code class="docutils literal notranslate"><span class="pre">len</span> <span class="pre">=</span> <span class="pre">7</span></code>, но <code class="docutils literal notranslate"><span class="pre">val</span> <span class="pre">=</span> <span class="pre">&quot;foo\0bar\0&quot;</span></code>.</p>
+<p>Наконец, строка хранит кэш значения хеша <code class="docutils literal notranslate"><span class="pre">h</span></code>, который используется при использовании строк в качестве ключей
+<a class="reference internal" href="../hashtables.html"><span class="doc">хеш-таблицы</span></a>. Изначально он имеет значение <code class="docutils literal notranslate"><span class="pre">0</span></code>, означающее, что хеш ещё не вычислен, а
+настоящий хеш вычисляется при первом использовании.</p>
+</section>
+<section id="id2">
+<h2>Макросы доступа к строке<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Как и с <a class="reference internal" href="../../zvals.html#ru-zvals"><span class="std std-ref">zval’ами</span></a>, вы не манипулируете полями <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> напрямую, а используете ряд макросов
+доступа:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="s">"foo"</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">php_printf</span><span class="p">(</span><span class="s">"This is my string: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+<span class="n">php_printf</span><span class="p">(</span><span class="s">"It is %zd char long</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">str</span><span class="p">));</span><span class="w"> </span><span class="c1">// %zd is the printf format for size_t</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Два самых важных из них — <code class="docutils literal notranslate"><span class="pre">ZSTR_VAL()</span></code>, который возвращает содержимое строки как <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code>, и <code class="docutils literal notranslate"><span class="pre">ZSTR_LEN()</span></code>,
+который возвращает длину строки как <code class="docutils literal notranslate"><span class="pre">size_t</span></code>.</p>
+<p>Именование этих макросов немного неудачное: существуют как <code class="docutils literal notranslate"><span class="pre">ZSTR_VAL</span></code>/<code class="docutils literal notranslate"><span class="pre">ZSTR_LEN</span></code>, так и
+<code class="docutils literal notranslate"><span class="pre">Z_STRVAL</span></code>/<code class="docutils literal notranslate"><span class="pre">Z_STRLEN</span></code>, и отличаются они только позицией символа подчёркивания. Запомните, что макросы <code class="docutils literal notranslate"><span class="pre">ZSTR_*</span></code>
+работают с <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>, а макросы <code class="docutils literal notranslate"><span class="pre">Z_</span></code> работают с <code class="docutils literal notranslate"><span class="pre">zval</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
+<span class="n">ZVAL_STRING</span><span class="p">(</span><span class="o">&amp;</span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="s">"foo"</span><span class="p">);</span>
+
+<span class="c1">// Z_STRLEN, Z_STRVAL work on zval.</span>
+<span class="n">php_printf</span><span class="p">(</span><span class="s">"string(%zd) </span><span class="se">\"</span><span class="s">%s</span><span class="se">\"\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_STRLEN</span><span class="p">(</span><span class="n">val</span><span class="p">),</span><span class="w"> </span><span class="n">Z_STRVAL</span><span class="p">(</span><span class="n">val</span><span class="p">));</span>
+
+<span class="c1">// ZSTR_LEN, ZSTR_VAL work on zend_string.</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Z_STR</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="n">php_printf</span><span class="p">(</span><span class="s">"string(%zd) </span><span class="se">\"</span><span class="s">%s</span><span class="se">\"\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">str</span><span class="p">),</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">str</span><span class="p">));</span>
+
+<span class="n">zval_ptr_dtor</span><span class="p">(</span><span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Доступ к кэшу значения хеша строки можно получить с помощью <code class="docutils literal notranslate"><span class="pre">ZSTR_H()</span></code>. Однако это обращение к необработанному
+кэшу, который будет равен нулю, если хеш ещё не вычислен. Вместо этого следует использовать <code class="docutils literal notranslate"><span class="pre">ZSTR_HASH()</span></code> или
+<code class="docutils literal notranslate"><span class="pre">zend_string_hash_val()</span></code>, чтобы либо получить предварительно вычисленный хеш, либо вычислить его. В очень редком
+случае, когда строка модифицируется после первоначального создания, можно сбросить закэшированное значение с помощью
+<code class="docutils literal notranslate"><span class="pre">zend_string_forget_hash_val()</span></code>.</p>
+</section>
+<section id="id3">
+<h2>Управление памятью<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Хотя мы уже знаем, как <a class="reference internal" href="../../zvals/memory_management.html#ru-initializing-zvals"><span class="std std-ref">инициализировать строковые zval’ы</span></a>, единственным представленным
+до сих пор прямым API создания строк является <code class="docutils literal notranslate"><span class="pre">zend_string_init()</span></code>, который используется для создания
+<code class="docutils literal notranslate"><span class="pre">zend_string</span></code> из существующей строки и длины.</p>
+<p>Наиболее фундаментальной функцией создания строк, на которой основаны все остальные, является
+<code class="docutils literal notranslate"><span class="pre">zend_string_alloc()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="p">;</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_alloc</span><span class="p">(</span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="cm">/* persistent */</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">str</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'a'</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// Don't forget to null-terminate!</span>
+<span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">str</span><span class="p">)[</span><span class="n">len</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'\0'</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Эта функция выделяет строку заданной длины (как всегда, длина не включает завершающий нулевой байт), оставляя её
+инициализацию на ваше усмотрение. Как и все функции выделения строк, она принимает параметр, определяющий,
+использовать ли аллокатор, привязанный к запросу, или постоянный.</p>
+<p>Функция <code class="docutils literal notranslate"><span class="pre">zend_string_safe_alloc(n,</span> <span class="pre">m,</span> <span class="pre">l,</span> <span class="pre">persistent)</span></code> выделяет строку длины <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">m</span> <span class="pre">+</span> <span class="pre">l</span></code>. Эта функция часто
+полезна при изменении кодировки. Например, вот как можно было бы перевести строку в hex-представление:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="nf">convert_to_hex</span><span class="p">(</span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">orig_str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">hex_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_safe_alloc</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">orig_str</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="cm">/* persistent */</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">orig_str</span><span class="p">),</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">to_hex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"0123456789abcdef"</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">orig_str</span><span class="p">)[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">        </span><span class="o">*</span><span class="n">p</span><span class="o">++</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">to_hex</span><span class="p">[</span><span class="n">c</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">4</span><span class="p">];</span>
+<span class="w">        </span><span class="o">*</span><span class="n">p</span><span class="o">++</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">to_hex</span><span class="p">[</span><span class="n">c</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xf</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'\0'</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">hex_str</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Почему нельзя просто использовать <code class="docutils literal notranslate"><span class="pre">zend_string_alloc(2</span> <span class="pre">*</span> <span class="pre">ZSTR_LEN(orig_str),</span> <span class="pre">0)</span></code>? Причина в том, что функция
+<code class="docutils literal notranslate"><span class="pre">zend_string_safe_alloc()</span></code> гарантирует, что вычисление <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">m</span> <span class="pre">+</span> <span class="pre">l</span></code> не приведёт к переполнению. Например, если
+вы работаете на 32-битной системе, и строка имеет размер ровно 2 ГБ, то умножение длины на два приведёт к
+переполнению и даст нулевую длину. В результате код выйдет за границы выделенной области и повредит несвязанную
+память. API <code class="docutils literal notranslate"><span class="pre">zend_string_safe_alloc()</span></code> обнаруживает такую ситуацию и в этом случае выбрасывает фатальную ошибку.</p>
+<p>Также можно изменить размер строки с помощью <code class="docutils literal notranslate"><span class="pre">zend_string_realloc()</span></code> и его вариаций:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="nf">zend_string_realloc</span><span class="p">(</span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">persistent</span><span class="p">);</span>
+<span class="c1">// Requires new length larger old length.</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="nf">zend_string_extend</span><span class="p">(</span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">persistent</span><span class="p">);</span>
+<span class="c1">// Requires new length smaller new length.</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="nf">zend_string_truncate</span><span class="p">(</span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">persistent</span><span class="p">)</span>
+<span class="c1">// n * m + l safe variant of zend_string_realloc.</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">zend_string_safe_realloc</span><span class="p">(</span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">persistent</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Поскольку строки являются структурами с подсчётом ссылок, функции realloc также учитывают счётчик ссылок. Хотя
+реализованы эти функции иначе, по семантике они эквивалентны выполнению чего-то подобного:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">new_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">persistent</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="k">return</span><span class="w"> </span><span class="n">new_str</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>То есть эти функции освобождают переданную им строку, но их безопасно использовать с общими (или неизменяемыми)
+строками. Если строка общая, счётчик ссылок уменьшается, но сама строка не уничтожается.</p>
+<p>Это подводит нас к следующей теме — управлению счётчиком ссылок. Вместо использования низкоуровневых макросов
+<code class="docutils literal notranslate"><span class="pre">GC_*</span></code>, API <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> содержит два помощника для увеличения счётчика ссылок:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string_addref</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+<span class="k">return</span><span class="w"> </span><span class="n">str</span><span class="p">;</span>
+
+<span class="c1">// More compact:</span>
+<span class="k">return</span><span class="w"> </span><span class="n">zend_string_copy</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>В отличие от <code class="docutils literal notranslate"><span class="pre">GC_ADDREF()</span></code>, функция <code class="docutils literal notranslate"><span class="pre">zend_string_addref()</span></code> корректно обрабатывает неизменяемые строки. Однако
+самой часто используемой функцией является <code class="docutils literal notranslate"><span class="pre">zend_string_copy()</span></code>. Эта функция не только увеличивает счётчик
+ссылок, но и возвращает исходную строку, что делает код более читаемым на практике.</p>
+<p>Также существует функция <code class="docutils literal notranslate"><span class="pre">zend_string_dup()</span></code>, выполняющая настоящее копирование строки (а не просто увеличение
+счётчика ссылок), но её поведение часто считается запутывающим, поскольку она копирует только неизменяемые
+(не-immutable) строки. Если вы хотите принудительно создать копию строки, лучше создать новую с помощью
+<code class="docutils literal notranslate"><span class="pre">zend_string_init()</span></code>.</p>
+<p>Если дублирование нужно для модификации уже существующей строки, вместо этого можно использовать
+<code class="docutils literal notranslate"><span class="pre">zend_string_separate()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="nf">modify_char</span><span class="p">(</span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">orig_str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_separate</span><span class="p">(</span><span class="n">orig_str</span><span class="p">,</span><span class="w"> </span><span class="cm">/* persistent */</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ZEND_ASSERT</span><span class="p">(</span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">str</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'A'</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">str</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Как и в общей концепции разделения zval’ов, эта функция вернёт исходную строку (со сброшенным кэшем хеша), если её
+счётчик ссылок равен единице и она, таким образом, принадлежит только одному владельцу, а в противном случае создаст
+копию.</p>
+<p>Наконец, строки нужно освобождать, когда они больше не используются. Вы уже знакомы с API <code class="docutils literal notranslate"><span class="pre">zend_string_release()</span></code>,
+который уменьшает счётчик ссылок и освобождает строку, если он опускается до нуля. Как правило, достаточно
+использовать только эту функцию.</p>
+<p>Однако вы можете встретить и ряд оптимизированных вариаций. Самая распространённая из них —
+<code class="docutils literal notranslate"><span class="pre">zend_string_release_ex()</span></code>, которая позволяет явно указать, является переданная строка постоянной или
+непостоянной:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string_release_ex</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="cm">/* persistent */</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Обычно это определяется на основе флагов строки. Явное указание позволяет избежать проверки во время выполнения и
+генерирует меньше кода. Наконец, есть ещё две функции, работающие только со строками, у которых счётчик ссылок равен
+единице:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Requires refcount 1 or immutable.</span>
+<span class="n">zend_string_free</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+<span class="c1">// Requires refcount 1 and not immutable.</span>
+<span class="n">zend_string_efree</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Использования этих функций следует избегать, так как легко внести критические ошибки, если какой-либо API изменится
+и начнёт возвращать не новые строки, а переиспользовать уже существующие.</p>
+</section>
+<section id="id4">
+<h2>Другие операции<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>API <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> поддерживает несколько дополнительных операций. Самая распространённая — сравнение строк:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">FOO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"FOO"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"FOO"</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// Case-sensitive comparison between zend_strings.</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_equals</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="n">FOO</span><span class="p">);</span><span class="w"> </span><span class="c1">// false</span>
+<span class="c1">// Case-insensitive comparison between zend_strings.</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_equals_ci</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="n">FOO</span><span class="p">);</span><span class="w"> </span><span class="c1">// true</span>
+
+<span class="c1">// Case-sensitive comparison with a string literal.</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_equals_literal</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="s">"FOO"</span><span class="p">);</span><span class="w"> </span><span class="c1">// false</span>
+<span class="c1">// Case-insensitive comparison with a string literal.</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_equals_literal_ci</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="s">"FOO"</span><span class="p">);</span><span class="w"> </span><span class="c1">// true</span>
+
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">FOO</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Также есть помощники для конкатенации двух или трёх строк. Если вам нужно соединить больше строк, вместо этого
+следует использовать API <code class="docutils literal notranslate"><span class="pre">smart_str</span></code>, рассматриваемый в следующей главе.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">bar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"bar"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"bar"</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// Creates "foobar"</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foobar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_concat2</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">bar</span><span class="p">),</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">bar</span><span class="p">));</span>
+<span class="c1">// Creates "foo::bar"</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo_bar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_concat3</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">foo</span><span class="p">),</span>
+<span class="w">    </span><span class="s">"::"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"::"</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">bar</span><span class="p">),</span><span class="w"> </span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">bar</span><span class="p">));</span>
+
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">bar</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foobar</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo_bar</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Как видите, эти API принимают пары <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code> и длины, а не структуры <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>. Это позволяет передавать
+части конкатенации в виде строковых литералов, не выделяя под них <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>.</p>
+<p>Наконец, API <code class="docutils literal notranslate"><span class="pre">zend_string_tolower()</span></code> можно использовать для перевода строки в нижний регистр:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">FOO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"FOO"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"FOO"</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_tolower</span><span class="p">(</span><span class="n">FOO</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">FOO</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Перевод в нижний регистр использует правила ASCII и не зависит от локали. Обычно эту функцию используют для того,
+чтобы сделать ключи хеш-таблицы регистронезависимыми.</p>
+</section>
+<section id="id5">
+<h2>Интернированные строки<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Здесь всего несколько слов о <a class="reference external" href="https://en.wikipedia.org/wiki/String_interning">интернированных строках</a>. Такая
+концепция может понадобиться вам при разработке расширений. Интернированные строки также взаимодействуют с
+расширением opcache.</p>
+<p>Интернированные строки — это дедуплицированные строки. При использовании с opcache они также переиспользуются от
+запроса к запросу.</p>
+<p>Допустим, вы хотите создать строку “foo”. Обычно для этого просто создают новую строку “foo”:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="p">;</span>
+<span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="s">"foo"</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="cm">/* ... */</span>
+</pre></div>
+</div>
+<p>Но возникает вопрос: не была ли эта строка уже создана до того, как она вам понадобилась? Когда вам нужна строка,
+ваш код выполняется в какой-то момент жизни PHP, то есть какой-то код, выполнившийся до вашего, мог уже нуждаться в
+точно такой же строке (“foo” в нашем примере).</p>
+<p>Интернированные строки — это механизм, при котором движок просит проверить хранилище интернированных строк и
+переиспользовать уже выделенный указатель, если такая строка найдена. Если нет — создаётся новая строка и
+“интернируется”, то есть становится доступной для других частей исходного кода PHP (других расширений, самого
+движка и т.д.).</p>
+<p>Вот пример:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="p">;</span>
+<span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="s">"foo"</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_new_interned_string</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+
+<span class="n">php_printf</span><span class="p">(</span><span class="s">"This string is interned : %s"</span><span class="p">,</span><span class="w"> </span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">foo</span><span class="p">));</span>
+
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>В приведённом выше коде мы создаём новый <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> совершенно обычным способом. Затем мы передаём этот
+созданный <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> в <code class="docutils literal notranslate"><span class="pre">zend_new_interned_string()</span></code>. Эта функция ищет точно такую же строку (“foo” в данном
+случае) в буфере интернированных строк движка. Если она находит её (то есть кто-то уже создал такую строку), она
+освобождает вашу строку (вероятно, освобождая её память) и заменяет её строкой из буфера интернированных строк. Если
+не находит — добавляет её в буфер интернированных строк, делая её доступной для дальнейшего использования или других
+частей PHP.</p>
+<p>Нужно внимательно относиться к выделению памяти. Интернированные строки всегда имеют счётчик ссылок, равный единице,
+поскольку им не нужен подсчёт ссылок: они будут общими для буфера интернированных строк и поэтому не могут быть
+уничтожены за его пределами.</p>
+<p>Пример:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">foo2</span><span class="p">;</span>
+
+<span class="n">foo</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="s">"foo"</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">foo2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_copy</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span><span class="w"> </span><span class="cm">/* increments refcount of foo */</span>
+
+<span class="w"> </span><span class="cm">/* foo points to the interned string buffer, and refcount</span>
+<span class="cm">  * in original zend_string falls back to 1 */</span>
+<span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_new_interned_string</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+
+<span class="cm">/* This doesn't do anything, as foo is interned */</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span>
+
+<span class="cm">/* The original buffer referenced by foo2 is released */</span>
+<span class="n">zend_string_release</span><span class="p">(</span><span class="n">foo2</span><span class="p">);</span>
+
+<span class="cm">/* At the end of the process, PHP will purge its interned</span>
+<span class="cm">  string buffer, and thus free() our "foo" string itself */</span>
+</pre></div>
+</div>
+<p>Всё дело здесь в сборке мусора.</p>
+<p>Когда строка интернируется, её флаги GC изменяются с добавлением флага <code class="docutils literal notranslate"><span class="pre">IS_STR_INTERNED</span></code>, независимо от того,
+какой класс выделения памяти (постоянный или привязанный к запросу) они используют. Этот флаг проверяется, когда вы
+хотите скопировать или освободить строку. Если строка интернирована, движок не увеличивает её счётчик ссылок при
+копировании строки. Но он также не уменьшает его и не освобождает строку при её освобождении — он просто ничего не
+делает. В конце жизненного цикла процесса движок уничтожит свой буфер интернированных строк и тем самым освободит
+ваши интернированные строки.</p>
+<p>На самом деле этот процесс немного сложнее. Если вы используете интернированную строку вне
+<a class="reference internal" href="../../extensions_design/php_lifecycle.html"><span class="doc">обработки запроса</span></a>, эта строка точно будет интернирована. Однако если
+вы используете интернированную строку в момент, когда PHP обрабатывает запрос, эта строка будет интернирована только
+для текущего запроса и будет очищена после его завершения. Всё это справедливо, если вы не используете расширение
+opcache, а не использовать его вы не должны: используйте его.</p>
+<p>При использовании расширения opcache, если вы используете интернированную строку вне обработки запроса, эта строка
+точно будет интернирована и, кроме того, будет общей для каждого процесса или потока PHP, который будет порождён
+вашим слоем параллелизма. Также, если вы используете интернированную строку в момент обработки PHP запроса, эта
+строка также будет интернирована самим opcache и станет общей для каждого процесса или потока PHP, порождённого
+вашим слоем параллелизма.</p>
+<p>Механизмы интернированных строк меняются при включении расширения opcache. Opcache не только позволяет интернировать
+строки, поступающие из запроса, но и делает их общими для каждого PHP-процесса одного пула. Это достигается с
+помощью общей памяти (shared memory). При сохранении интернированной строки opcache также добавляет флаг
+<code class="docutils literal notranslate"><span class="pre">IS_STR_PERMANENT</span></code> в её информацию GC. Этот флаг означает, что выделение памяти для структуры (здесь —
+<code class="docutils literal notranslate"><span class="pre">zend_string</span></code>) постоянно и может представлять собой сегмент общей памяти, доступный только для чтения.</p>
+<p>Интернированные строки экономят память, поскольку одна и та же строка никогда не хранится в памяти более одного
+раза. Но они могут расходовать некоторое процессорное время, так как часто требуется поиск в хранилище
+интернированных строк, хотя этот процесс и достаточно хорошо оптимизирован.
+Как разработчику расширений, вам стоит придерживаться следующих общих правил:</p>
+<ul class="simple">
+<li><p>Если используется opcache (а он должен использоваться), и если вам нужны строки только для чтения — используйте
+интернированную строку.</p></li>
+<li><p>Если вам нужна строка, про которую вы точно знаете, что PHP её интернирует (хорошо известная строка PHP, например
+“php” или “str_replace”) — используйте интернированную строку.</p></li>
+<li><p>Если строка доступна не только для чтения и может/должна изменяться после создания — не используйте
+интернированную строку.</p></li>
+<li><p>Если строка вряд ли будет переиспользована в будущем — не используйте интернированную строку.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Никогда не пытайтесь модифицировать (писать в) интернированную строку — скорее всего, вы получите крэш.</p>
+</div>
+<p>Интернированные строки подробно описаны в
+<a class="reference external" href="https://github.com/php/php-src/blob/PHP-7.0/Zend/zend_string.c">Zend/zend_string.c</a></p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../strings.html">Строки</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="smart_str.html">API smart_str</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

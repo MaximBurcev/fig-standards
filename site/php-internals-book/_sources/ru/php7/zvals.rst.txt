@@ -1,0 +1,17 @@
+.. _ru_zvals:
+
+Zval'ы
+======
+
+В этой главе представлена структура данных ``zval``, используемая для представления произвольных значений PHP. Мы
+объясняем концепции, лежащие в основе zval'ов, и то, как использовать их в коде расширений.
+
+Содержание:
+
+.. toctree::
+    :maxdepth: 2
+
+    zvals/basic_structure.rst
+    zvals/memory_management.rst
+    zvals/references.rst
+    zvals/casts_and_operations.rst

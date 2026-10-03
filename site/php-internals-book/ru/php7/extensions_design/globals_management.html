@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Управление глобальным состоянием &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Публикация информации о расширении" href="extension_infos.html" />
+    <link rel="prev" title="Регистрация и использование PHP-функций" href="php_functions.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Управление глобальным состоянием</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="php_functions.html">Регистрация и использование PHP-функций</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="extension_infos.html">Публикация информации о расширении</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Управление глобальным состоянием<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>В императивных языках всегда существует потребность в некотором глобальном пространстве. Работая
+с PHP или расширениями, мы будем проводить чёткое различие между тем, что мы называем глобальными
+переменными, привязанными к запросу, и истинными глобальными переменными.</p>
+<p>Глобальные переменные запроса — это глобальные переменные, которые нужны, чтобы переносить и
+запоминать информацию в процессе обработки запроса. Простой пример — вы просите пользователя
+передать значение в качестве аргумента функции, и хотите иметь возможность использовать это
+значение позже в других функциях. Помимо того, что эта информация «сохраняет своё значение» на
+протяжении нескольких вызовов функций PHP, она сохраняет это значение только для текущего
+запроса. Следующий запрос ничего о ней не должен знать. PHP предоставляет механизм управления
+глобальными переменными запроса независимо от выбранной модели многопроцессности, и мы рассмотрим
+это подробнее далее в этой главе.</p>
+<p>Истинные глобальные переменные — это информация, которая сохраняется между запросами. Как
+правило, эта информация доступна только для чтения. Если вам нужно записывать в такие глобальные
+переменные в процессе обработки запроса, PHP здесь не поможет.
+Если вы используете <a class="reference internal" href="php_lifecycle.html"><span class="doc">потоки как модель многопроцессности</span></a>, вам нужно будет
+самостоятельно выполнять блокировки памяти.
+Если вы используете <a class="reference internal" href="php_lifecycle.html"><span class="doc">процессы как модель многопроцессности</span></a>, вам нужно будет
+самостоятельно использовать свой собственный IPC (Inter Process Communication — межпроцессное
+взаимодействие).
+Однако такие случаи никогда не должны возникать при программировании расширений PHP.</p>
+<section id="id2">
+<h2>Управление глобальными переменными запроса<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Вот простой пример простого расширения, использующего глобальную переменную запроса:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* true C global */</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_long</span><span class="w"> </span><span class="n">rnd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_rnd_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Pick a number to guess between 0 and 100 */</span>
+<span class="w">    </span><span class="n">php_random_int</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rnd</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_RINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_guess</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">(),</span><span class="w"> </span><span class="s">"l"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rnd</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* Reset the number to guess */</span>
+<span class="w">        </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+<span class="w">        </span><span class="n">RETURN_TRUE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rnd</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">RETURN_STRING</span><span class="p">(</span><span class="s">"more"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">RETURN_STRING</span><span class="p">(</span><span class="s">"less"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_reset</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters_none</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Как видите, это расширение выбирает случайное целое число при старте запроса, а затем пользователь
+— через <code class="docutils literal notranslate"><span class="pre">pib_guess()</span></code> — может попытаться угадать это число. После угадывания число сбрасывается.
+Если пользователь хочет, он может также вызвать <code class="docutils literal notranslate"><span class="pre">pib_reset()</span></code>, чтобы сбросить число
+самостоятельно, вручную.</p>
+<p>Это случайное число реализовано как <strong>истинная глобальная переменная C</strong>. Хотя это не проблема,
+если PHP используется в процессах в рамках <a class="reference internal" href="php_lifecycle.html"><span class="doc">модели многопроцессности</span></a>,
+<strong>это недопустимо</strong>, если та использует потоки.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="php_lifecycle.html"><span class="doc">Напомним</span></a>, что вы не управляете тем, какая модель многопроцессности
+будет использоваться. При проектировании расширений вы должны быть готовы к обеим
+моделям.</p>
+</div>
+<p>Когда используются потоки, такая истинная глобальная переменная C является общей для каждого
+потока сервера. В нашем примере выше это означает, что все параллельные пользователи веб-сервера
+будут делить одно и то же число. Одни могут сбросить число в тот момент, когда другие пытаются его
+угадать. Короче говоря, здесь становится ясна принципиальная проблема потоков.</p>
+<p>Нам нужно сохранять один фрагмент данных в рамках одного и того же запроса, но нам нужно, чтобы он
+был <strong>привязан</strong> к текущему запросу, даже если модель многопроцессности, в которой работает PHP,
+использует потоки.</p>
+<section id="tsrm">
+<h3>Использование макросов TSRM для защиты глобального пространства<a class="headerlink" href="#tsrm" title="Link to this heading">¶</a></h3>
+<p>В PHP разработан слой, который помогает разработчикам расширений и ядра работать с глобальными
+переменными запроса. Этот слой называется <strong>TSRM</strong> (Thread Safe Resource Manager) и предоставляется
+в виде набора макросов, которые вы должны использовать каждый раз, когда вам нужен доступ к
+глобальной переменной, привязанной к запросу (доступ на чтение и на запись).</p>
+<p>За кулисами эти макросы разворачиваются в нечто похожее на код, который мы показали выше, в
+случае, если модель многопроцессности использует процессы. Как мы видели, приведённый выше код
+полностью корректен, если потоки не используются. Таким образом, когда используются процессы,
+макросы, которые мы вскоре увидим, разворачиваются в нечто подобное.</p>
+<p>Первое, что нужно сделать — объявить структуру, которая будет корнем всех ваших глобальных
+переменных:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_BEGIN_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">rnd</span><span class="p">;</span>
+<span class="n">ZEND_END_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="cm">/* Resolved as :</span>
+<span class="cm">*</span>
+<span class="cm">* typedef struct _zend_pib_globals {</span>
+<span class="cm">*    zend_long rnd;</span>
+<span class="cm">* } zend_pib_globals;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>Затем вы создаёте истинную глобальную переменную такого типа:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_DECLARE_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="cm">/* Resolved as zend_pib_globals pib_globals; */</span>
+</pre></div>
+</div>
+<p>Теперь вы можете обращаться к своим данным с помощью глобального макроса-аксессора. Этот макрос
+создаётся <a class="reference internal" href="extension_skeleton.html"><span class="doc">скелетом расширения</span></a>, он должен быть определён в вашем
+заголовочном файле <em>php_pib.h</em>. Вот как он выглядит:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifdef ZTS</span>
+<span class="cp">#define PIB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(pib, v)</span>
+<span class="cp">#else</span>
+<span class="cp">#define PIB_G(v) (pib_globals.v)</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>Как видите, если режим ZTS не включён, то есть если вы <a class="reference internal" href="../build_system/building_php.html"><span class="doc">скомпилировали PHP и расширение без
+поддержки потокобезопасности</span></a> (такой режим мы называем <em>NTS</em>:
+Non-Thread-Safe), макрос просто разворачивается в данные, объявленные в вашей структуре. Отсюда
+следуют такие изменения:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_rnd_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">php_random_int</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_guess</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">(),</span><span class="w"> </span><span class="s">"l"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+<span class="w">        </span><span class="n">RETURN_TRUE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">RETURN_STRING</span><span class="p">(</span><span class="s">"more"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">RETURN_STRING</span><span class="p">(</span><span class="s">"less"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>При использовании модели процессов макросы <em>TSRM</em> просто разворачиваются в обращение к
+истинной глобальной переменной C.</p>
+</div>
+<p>Всё становится гораздо сложнее, когда используются потоки, то есть когда вы <a class="reference internal" href="../build_system/building_php.html"><span class="doc">компилируете PHP
+с ZTS</span></a>. Все рассмотренные нами макросы в этом случае разворачиваются
+в нечто совершенно иное, и объяснить это здесь довольно сложно. В общих чертах происходит
+следующее: <em>TSRM</em> выполняет сложную работу, используя TLS (Thread Local Storage), когда PHP
+скомпилирован с ZTS.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Одним словом, при компиляции в ZTS глобальные переменные привязываются к текущему
+потоку, тогда как при компиляции в NTS глобальные переменные привязываются к текущему
+процессу. Макросы TSRM берут на себя всю сложную работу. Если вас интересует, как это
+работает внутри, <a class="reference external" href="https://github.com/php/php-src/tree/d0b7eed0c9d873a0606dbbc7e33f14492f1a3dd6/TSRM">загляните в каталог /TSRM</a> исходного кода PHP, чтобы узнать
+больше о потокобезопасности в PHP.</p>
+</div>
+</section>
+<section id="id4">
+<h3>Использование хуков глобальных переменных в расширениях<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Иногда может понадобиться, чтобы ваши глобальные переменные инициализировались каким-то значением
+по умолчанию, обычно нулём. Система TSRM, с помощью движка, предоставляет хук для задания
+глобальным переменным значений по умолчанию — мы называем его <strong>GINIT</strong>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Полный обзор хуков PHP приведён в <a class="reference internal" href="php_lifecycle.html"><span class="doc">главе о жизненном цикле PHP</span></a>.</p>
+</div>
+<p>Обнулим наше случайное значение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">PHP_GSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="n">PHP_GINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">pib_globals</span><span class="o">-&gt;</span><span class="n">rnd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">zend_module_entry</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_HEADER</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pib"</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"0.1"</span><span class="p">,</span>
+<span class="w">    </span><span class="n">PHP_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PHP_GINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PHP_GSHUTDOWN</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* PRSHUTDOWN() */</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_PROPERTIES_EX</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Мы решили показать только релевантную часть <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code> (остальное — <code class="docutils literal notranslate"><span class="pre">NULL</span></code>). Как
+видите, хуки управления глобальными переменными располагаются в середине структуры. Первый
+<code class="docutils literal notranslate"><span class="pre">PHP_MODULE_GLOBALS()</span></code> определяет размер глобальных переменных, затем следуют наши хуки
+<code class="docutils literal notranslate"><span class="pre">GINIT</span></code> и <code class="docutils literal notranslate"><span class="pre">GSHUTDOWN</span></code>. Далее, чтобы завершить структуру, мы использовали
+<code class="docutils literal notranslate"><span class="pre">STANDARD_MODULE_PROPERTIES_EX</span></code> вместо <code class="docutils literal notranslate"><span class="pre">STANDARD_MODULE_PROPERTIES</span></code>. Это лишь вопрос
+правильного завершения структуры, смотрите?:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define STANDARD_MODULE_PROPERTIES \</span>
+<span class="cp">    NO_MODULE_GLOBALS, NULL, STANDARD_MODULE_PROPERTIES_EX</span>
+</pre></div>
+</div>
+<p>В функции <code class="docutils literal notranslate"><span class="pre">GINIT</span></code> вам передаётся указатель на текущее место в памяти ваших глобальных
+переменных. Вы используете его для инициализации глобальных переменных. Здесь мы записываем ноль
+в наше случайное значение (не особо полезно, но пусть так).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Не используйте макрос <code class="docutils literal notranslate"><span class="pre">PIB_G()</span></code> в GINIT. Используйте переданный вам указатель.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">GINIT()</span></code> запускается перед <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> для текущего процесса. В случае NTS это всё.
+В случае ZTS <code class="docutils literal notranslate"><span class="pre">GINIT()</span></code> будет дополнительно вызываться для каждого нового потока,
+порождённого библиотекой потоков.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">GINIT()</span></code> не вызывается в рамках <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code>. Если вам нужно очищать глобальные
+переменные при каждом новом запросе, вам нужно делать это вручную, как мы делали в
+примере, показанном на протяжении этой главы.</p>
+</div>
+</section>
+<section id="id5">
+<h3>Полный пример<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>Вот более продвинутый полный пример. Если игрок выигрывает, его результат (число попыток)
+добавляется в массив результатов, который можно получить из пользовательского уровня. Ничего
+сложного — массив результатов инициализируется при старте запроса, затем используется каждый раз,
+когда игрок выигрывает, и очищается в конце текущего запроса:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_BEGIN_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">rnd</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_ulong</span><span class="w"> </span><span class="n">cur_score</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zval</span><span class="w"> </span><span class="n">scores</span><span class="p">;</span>
+<span class="n">ZEND_END_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="n">ZEND_DECLARE_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">pib_rnd_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* reset current score as well */</span>
+<span class="w">    </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">cur_score</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">php_random_int</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_GINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* ZEND_SECURE_ZERO is a memset(0). Could resolve to bzero() as well */</span>
+<span class="w">    </span><span class="n">ZEND_SECURE_ZERO</span><span class="p">(</span><span class="n">pib_globals</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">pib_globals</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="n">ZEND_BEGIN_ARG_INFO_EX</span><span class="p">(</span><span class="n">arginfo_guess</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="n">ZEND_ARG_INFO</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">)</span>
+<span class="n">ZEND_END_ARG_INFO</span><span class="p">()</span>
+
+<span class="n">PHP_RINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">array_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">scores</span><span class="p">));</span>
+<span class="w">    </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_RSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zval_dtor</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">scores</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_guess</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">(),</span><span class="w"> </span><span class="s">"l"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">add_next_index_long</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">cur_score</span><span class="p">));</span>
+<span class="w">        </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+<span class="w">        </span><span class="n">RETURN_TRUE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">cur_score</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">RETURN_STRING</span><span class="p">(</span><span class="s">"more"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">RETURN_STRING</span><span class="p">(</span><span class="s">"less"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_get_scores</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters_none</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">RETVAL_ZVAL</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_reset</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters_none</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">zend_function_entry</span><span class="w"> </span><span class="n">func</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">PHP_FE</span><span class="p">(</span><span class="n">pib_reset</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PHP_FE</span><span class="p">(</span><span class="n">pib_get_scores</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PHP_FE</span><span class="p">(</span><span class="n">pib_guess</span><span class="p">,</span><span class="w"> </span><span class="n">arginfo_guess</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PHP_FE_END</span>
+<span class="p">};</span>
+
+<span class="n">zend_module_entry</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_HEADER</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pib"</span><span class="p">,</span>
+<span class="w">    </span><span class="n">func</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Function entries */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module init */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module shutdown */</span>
+<span class="w">    </span><span class="n">PHP_RINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Request init */</span>
+<span class="w">    </span><span class="n">PHP_RSHUTDOWN</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Request shutdown */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module information */</span>
+<span class="w">    </span><span class="s">"0.1"</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Replace with version number for your extension */</span>
+<span class="w">    </span><span class="n">PHP_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PHP_GINIT</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_PROPERTIES_EX</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Здесь стоит отметить, что PHP не предоставляет средств, если бы вы хотели сохранять результаты
+между запросами. Для этого потребовалось бы постоянное общее хранилище, например файл, база
+данных, какая-то область памяти и т.д. PHP по своей сути не был разработан для сохранения
+информации между запросами, поэтому он не предоставляет для этого никаких средств, но
+предоставляет утилиты для доступа к глобальному пространству, привязанному к запросу, как мы
+показали.</p>
+<p>Затем, что довольно просто, мы инициализируем массив в <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code> и уничтожаем его в
+<code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code>. Напомним, что <code class="docutils literal notranslate"><span class="pre">array_init()</span></code> создаёт <a class="reference internal" href="../internal_types/hashtables.html"><span class="doc">zend_array</span></a>
+и помещает его в <a class="reference internal" href="../zvals.html#ru-zvals"><span class="std std-ref">zval</span></a>. Но это не требует реальной аллокации, не бойтесь выделять
+массив, который пользователь мог бы не использовать (что было бы напрасной аллокацией) —
+<code class="docutils literal notranslate"><span class="pre">array_init()</span></code> очень дешёвая операция (<a class="reference external" href="https://github.com/php/php-src/blob/d0b7eed0c9d873a0606dbbc7e33f14492f1a3dd6/Zend/zend_API.c#L1057">читайте исходный код</a>).</p>
+<p>Когда мы возвращаем такой массив пользователю, мы не забываем увеличить его refcount (в
+<code class="docutils literal notranslate"><span class="pre">RETVAL_ZVAL</span></code>), так как мы сохраняем ссылку на этот массив в нашем расширении.</p>
+</section>
+</section>
+<section id="id7">
+<h2>Использование истинных глобальных переменных<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>Истинные глобальные переменные — это непотокозащищённые истинные глобальные переменные C. Иногда
+может понадобиться использовать некоторые из них. Однако помните главное правило: вы не можете
+безопасно записывать в такие глобальные переменные во время обработки запроса. Поэтому обычно в
+PHP такие переменные используются как переменные, доступные только для чтения.</p>
+<p>Помните, что абсолютно безопасно записывать в истинные глобальные переменные, когда вы находитесь
+на этапах <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> или <code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code> жизненного цикла PHP. Но вы не можете записывать в них
+во время обработки запроса (однако читать из них можно).</p>
+<p>Простой пример — вы хотите прочитать значение переменной окружения, чтобы что-то с ним сделать.
+Также нередко инициализируют постоянные <a class="reference internal" href="../internal_types/strings/zend_strings.html"><span class="doc">zend_string</span></a>,
+чтобы использовать их позже при обработке запросов.</p>
+<p>Вот изменённый пример, вводящий истинные глобальные переменные — мы покажем только разницу с
+предыдущим кодом, а не полный код:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">more</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">less</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="n">zend_ulong</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">register_persistent_string</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">zend_string</span><span class="w"> </span><span class="o">**</span><span class="n">result</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="o">*</span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_string_init</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">zend_string_hash_val</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">GC_ADD_FLAGS</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">IS_STR_INTERNED</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pib_rnd_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* reset current score as well */</span>
+<span class="w">    </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">cur_score</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">php_random_int</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">pib_max</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">register_persistent_string</span><span class="p">(</span><span class="s">"more"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">more</span><span class="p">);</span>
+<span class="w">    </span><span class="n">register_persistent_string</span><span class="p">(</span><span class="s">"less"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">less</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pib_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"PIB_RAND_MAX"</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strchr</span><span class="p">(</span><span class="n">pib_max</span><span class="p">,</span><span class="w"> </span><span class="sc">'-'</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZEND_STRTOUL</span><span class="p">(</span><span class="n">pib_max</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_string_release</span><span class="p">(</span><span class="n">more</span><span class="p">);</span>
+<span class="w">    </span><span class="n">zend_string_release</span><span class="p">(</span><span class="n">less</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">pib_guess</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">(),</span><span class="w"> </span><span class="s">"l"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">add_next_index_long</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PIB_G</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">cur_score</span><span class="p">));</span>
+<span class="w">        </span><span class="n">pib_rnd_init</span><span class="p">();</span>
+<span class="w">        </span><span class="n">RETURN_TRUE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">cur_score</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">rnd</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">RETURN_STR</span><span class="p">(</span><span class="n">more</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">RETURN_STR</span><span class="p">(</span><span class="n">less</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Здесь мы создали две переменные <a class="reference internal" href="../internal_types/strings/zend_strings.html"><span class="doc">zend_string</span></a> —
+<code class="docutils literal notranslate"><span class="pre">more</span></code> и <code class="docutils literal notranslate"><span class="pre">less</span></code>. Эти строки не нужно создавать и уничтожать каждый раз при использовании, как
+это делалось раньше. Это неизменяемые строки, которые можно выделить один раз и затем использовать
+повторно сколько угодно раз, пока они остаются неизменяемыми (то есть доступными только для
+чтения). Мы инициализируем эти две строки в <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>, используя постоянную аллокацию в
+<code class="docutils literal notranslate"><span class="pre">zend_string_init()</span></code>, заранее вычисляем их хэш (вместо того, чтобы это делал самый первый
+запрос), и сообщаем сборщику мусора zval, что эти строки интернированы, чтобы он никогда не
+пытался их уничтожить (однако ему может понадобиться скопировать их, если они используются как
+часть операции записи, например конкатенации). Разумеется, мы не забываем уничтожить такие строки
+в <code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code>.</p>
+<p>Затем в <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> мы проверяем переменную окружения <code class="docutils literal notranslate"><span class="pre">PIB_RAND_MAX</span></code> и используем её как
+максимальное значение диапазона для выбора нашего случайного числа. Поскольку мы используем
+беззнаковое целое число и знаем, что <code class="docutils literal notranslate"><span class="pre">strtoull()</span></code> не будет возражать против отрицательных чисел
+(и, следовательно, произойдёт переполнение границ целого числа из-за несовпадения знака), мы
+просто избегаем использования отрицательных значений (классический обходной путь для libc).</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="php_functions.html">Регистрация и использование PHP-функций</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="extension_infos.html">Публикация информации о расширении</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Публикация информации о расширении &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Хуки, предоставляемые PHP" href="hooks.html" />
+    <link rel="prev" title="Управление глобальным состоянием" href="globals_management.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Публикация информации о расширении</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="globals_management.html">Управление глобальным состоянием</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="hooks.html">Хуки, предоставляемые PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Публикация информации о расширении<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>Расширения могут публиковать информацию, запрашиваемую <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code> или Reflection API. Давайте разберёмся с этим
+вместе.</p>
+<p>Эта глава не будет длинной, так как здесь действительно нет никаких сложностей.</p>
+<section id="minfo">
+<h2>Хук MINFO()<a class="headerlink" href="#minfo" title="Link to this heading">¶</a></h2>
+<p>Всё происходит в хуке <code class="docutils literal notranslate"><span class="pre">MINFO()</span></code>, который вы объявили, если вы его объявили. Если вы не объявили его, то движок
+запустит функцию по умолчанию, которая выведет информацию о вашем расширении. Эта функция выведет только версию
+вашего расширения и <a class="reference internal" href="ini_settings.html"><span class="doc">INI-настройки</span></a>, которые вы в итоге объявили. Если вы хотите встроиться в
+этот процесс, вы должны объявить хук <code class="docutils literal notranslate"><span class="pre">MINFO()</span></code> <a class="reference internal" href="php_lifecycle.html"><span class="doc">здесь</span></a> в структуре вашего расширения.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Всё происходит в <a class="reference external" href="https://github.com/php/php-src/blob/ce64b82ebb2ac87e53cb85c312eafc8c5c37b112/ext/standard/info.c">ext/standard/info.c</a>, вы можете прочитать этот файл. Вывод
+информации о расширениях PHP выполняется движком путём вызова <a class="reference external" href="https://github.com/php/php-src/blob/ce64b82ebb2ac87e53cb85c312eafc8c5c37b112/ext/standard/info.c#L139">php_info_print_module()</a></p>
+</div>
+<p>Вот простой пример <code class="docutils literal notranslate"><span class="pre">MINFO()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"php/main/SAPI.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"ext/standard/info.h"</span>
+
+<span class="cp">#define PIB_TXT  "PHPInternalsBook Authors"</span>
+<span class="cp">#define PIB_HTML "&lt;h3&gt;" PIB_TXT "&lt;/h3&gt;"</span>
+
+<span class="n">PHP_MINFO_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">cur_time</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>
+
+<span class="w">    </span><span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">t</span><span class="p">);</span>
+<span class="w">    </span><span class="n">php_asctime_r</span><span class="p">(</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">t</span><span class="p">),</span><span class="w"> </span><span class="n">cur_time</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">php_info_print_table_start</span><span class="p">();</span>
+<span class="w">        </span><span class="n">php_info_print_table_colspan_header</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"PHPInternalsBook"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">php_info_print_table_row</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"Current time"</span><span class="p">,</span><span class="w"> </span><span class="n">cur_time</span><span class="p">);</span>
+<span class="w">    </span><span class="n">php_info_print_table_end</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">php_info_print_box_start</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">sapi_module</span><span class="p">.</span><span class="n">phpinfo_as_text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">php_write</span><span class="p">(</span><span class="n">PIB_HTML</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">PIB_HTML</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">php_write</span><span class="p">(</span><span class="n">PIB_TXT</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">PIB_TXT</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="n">php_info_print_box_end</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">zend_module_entry</span><span class="w"> </span><span class="n">pib_module_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_HEADER</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pib"</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Function entries */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module init */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Module shutdown */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Request init */</span>
+<span class="w">    </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Request shutdown */</span>
+<span class="w">    </span><span class="n">PHP_MINFO</span><span class="p">(</span><span class="n">pib</span><span class="p">),</span><span class="w"> </span><span class="cm">/* Module information */</span>
+<span class="w">    </span><span class="s">"0.1"</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Replace with version number for your extension */</span>
+<span class="w">    </span><span class="n">STANDARD_MODULE_PROPERTIES</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<img alt="../../../_images/php_minfo1.png" class="align-center" src="../../../_images/php_minfo1.png" />
+<p>Что вам в основном нужно сделать — это работать с API <code class="docutils literal notranslate"><span class="pre">php_info_print_*()</span></code>, который позволяет выводить в поток
+вывода, который генерируется. Если вы хотите вывести какую-то необработанную информацию, достаточно простого
+<code class="docutils literal notranslate"><span class="pre">php_write()</span></code>. <code class="docutils literal notranslate"><span class="pre">php_write()</span></code> просто записывает то, что вы передаёте в качестве аргумента, в поток вывода SAPI,
+тогда как API <code class="docutils literal notranslate"><span class="pre">php_info_print_*()</span></code> делает то же самое, но перед этим форматирует содержимое, используя HTML-теги
+<em>table-tr-td</em>, если ожидается, что вывод будет HTML, или простые пробелы, если нет.</p>
+<p>Как видите, вам нужно подключить <em>ext/standard/info.h</em>, чтобы получить доступ к API <code class="docutils literal notranslate"><span class="pre">php_info_print_*()</span></code>, а также
+вам понадобится <em>php/main/SAPI.h</em>, чтобы получить доступ к символу <code class="docutils literal notranslate"><span class="pre">sapi_module</span></code>. Этот символ глобальный, он
+представляет текущий <em>SAPI</em>, используемый процессом PHP. Поле <code class="docutils literal notranslate"><span class="pre">phpinfo_as_text</span></code> сообщает, пишете ли вы в “веб”
+SAPI, например <em>php-fpm</em>, или в “текстовый”, например <em>php-cli</em>.</p>
+<p>Что запустит ваш хук <code class="docutils literal notranslate"><span class="pre">MINFO()</span></code>:</p>
+<ul class="simple">
+<li><p>Вызовы пользовательской функции <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">-i</span></code>, <code class="docutils literal notranslate"><span class="pre">php-cgi</span> <span class="pre">-i</span></code>, <code class="docutils literal notranslate"><span class="pre">php-fpm</span> <span class="pre">-i</span></code>. Более обобщённо: <code class="docutils literal notranslate"><span class="pre">&lt;SAPI_binary&gt;</span> <span class="pre">-i</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">--ri</span></code> или пользовательский <code class="docutils literal notranslate"><span class="pre">ReflectionExtension::info()</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Обратите внимание на форматирование вывода. Проверяйте <code class="docutils literal notranslate"><span class="pre">sapi_module.phpinfo_as_text</span></code>, если вам нужно
+переключаться между текстовым и HTML-форматированием. Вы не знаете, как информация о вашем расширении
+будет вызвана из пользовательского кода.</p>
+</div>
+<p>Если вам нужно отобразить ваши INI-настройки, просто вызовите макрос <code class="docutils literal notranslate"><span class="pre">DISPLAY_INI_ENTRIES()</span></code> внутри вашего
+<code class="docutils literal notranslate"><span class="pre">MINFO()</span></code>. Этот макрос раскрывается в <a class="reference external" href="https://github.com/php/php-src/blob/4903f044d3a65de5b1c457d9eb618c9e247f7086/main/php_ini.c#L167">display_ini_entries()</a>.</p>
+</section>
+<section id="reflection-api">
+<h2>Замечание о Reflection API<a class="headerlink" href="#reflection-api" title="Link to this heading">¶</a></h2>
+<p>Reflection активно использует вашу структуру <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code>. Например, когда вы вызываете
+<code class="docutils literal notranslate"><span class="pre">ReflectionExtension::getVersion()</span></code>, API просто читает поле version вашей структуры <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code>.</p>
+<p>Аналогично для обнаружения функций, в вашей структуре <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code> есть член
+<code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">_zend_function_entry</span> <span class="pre">*functions</span></code>, который используется для регистрации PHP-функций.</p>
+<p>По сути, пользовательский Reflection API просто читает вашу структуру <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code> и публикует эту
+информацию. Он также может использовать ваш <code class="docutils literal notranslate"><span class="pre">module_number</span></code>, чтобы собрать обратно информацию, которую ваше
+расширение зарегистрировало в разных местах движка. Например, <code class="docutils literal notranslate"><span class="pre">ReflectionExtension::getINIentries()</span></code> или
+<code class="docutils literal notranslate"><span class="pre">ReflectionExtension::getClasses()</span></code> используют именно это.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="globals_management.html">Управление глобальным состоянием</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="hooks.html">Хуки, предоставляемые PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

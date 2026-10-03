@@ -1,0 +1,428 @@
+Хуки, предоставляемые PHP
+=========================
+
+PHP и Zend Engine предоставляют расширениям множество различных хуков, которые позволяют
+разработчикам расширений управлять работой PHP во время выполнения такими способами, которые
+недоступны из пользовательского уровня PHP.
+
+В этой главе будут показаны различные хуки и типичные случаи использования подключения к ним
+из расширения.
+
+Общий паттерн для подключения к функциональности PHP заключается в том, что расширения
+перезаписывают указатели на функции, предоставляемые ядром PHP. Функция расширения затем часто
+выполняет свою собственную работу и вызывает оригинальную функцию ядра PHP. Используя этот
+паттерн, разные расширения могут перезаписывать один и тот же хук без возникновения конфликтов.
+
+Подключение к выполнению функций
+********************************
+
+Выполнение пользовательских и внутренних функций обрабатывается двумя функциями внутри Zend
+engine, которые можно заменить своими собственными реализациями. Основной случай использования
+этого хука расширениями — универсальное профилирование на уровне функций, отладка и
+аспектно-ориентированное программирование.
+
+Эти хуки определены в ``Zend/zend_execute.h``::
+
+    ZEND_API extern void (*zend_execute_ex)(zend_execute_data *execute_data);
+    ZEND_API extern void (*zend_execute_internal)(zend_execute_data *execute_data, zval *return_value);
+
+Если вы хотите перезаписать эти указатели на функции, то вы должны делать это в MINIT, поскольку
+другие решения внутри Zend Engine принимаются заранее на основе того, перезаписаны указатели или
+нет.
+
+Обычный паттерн для перезаписи выглядит так::
+
+    static void (*original_zend_execute_ex) (zend_execute_data *execute_data);
+    static void (*original_zend_execute_internal) (zend_execute_data *execute_data, zval *return_value);
+    void my_execute_internal(zend_execute_data *execute_data, zval *return_value);
+    void my_execute_ex (zend_execute_data *execute_data);
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        REGISTER_INI_ENTRIES();
+
+        original_zend_execute_internal = zend_execute_internal;
+        zend_execute_internal = my_execute_internal;
+
+        original_zend_execute_ex = zend_execute_ex;
+        zend_execute_ex = my_execute_ex;
+
+        return SUCCESS;
+    }
+
+    PHP_MSHUTDOWN_FUNCTION(my_extension)
+    {
+        zend_execute_internal = original_zend_execute_internal;
+        zend_execute_ex = original_zend_execute_ex;
+
+        return SUCCESS;
+    }
+
+Один из недостатков перезаписи ``zend_execute_ex`` заключается в том, что это меняет поведение
+виртуальной машины Zend во время выполнения — она начинает использовать рекурсию вместо обработки
+вызовов без выхода из цикла интерпретатора. Кроме того, движок PHP без перезаписанного
+``zend_execute_ex`` может генерировать более оптимизированные опкоды вызова функций.
+
+Эти хуки очень чувствительны к производительности в зависимости от сложности кода, который
+оборачивает оригинальные функции.
+
+Перезапись внутренней функции
+*****************************
+
+Хотя перезапись execute-хуков позволяет расширению записывать **каждый** вызов функции, вы также
+можете перезаписать отдельные указатели функций пользовательского уровня, ядра и функций (и
+методов) расширений. Это даёт гораздо лучшие показатели производительности, если расширению нужен
+доступ только к конкретным вызовам внутренних функций.::
+
+    #if PHP_VERSION_ID < 70200
+    typedef void (*zif_handler)(INTERNAL_FUNCTION_PARAMETERS);
+    #endif
+    zif_handler original_handler_var_dump;
+
+    ZEND_NAMED_FUNCTION(my_overwrite_var_dump)
+    {
+        // if we want to call the original function
+        original_handler_var_dump(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+    }
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        // If the ZEND_TSRMLS_CACHE_UPDATE() is in RINIT, move it
+        // to MINIT to ensure access to the compiler globals
+    #if defined(COMPILE_DL_MY_EXTENSION) && defined(ZTS)
+        ZEND_TSRMLS_CACHE_UPDATE();
+    #endif
+
+        zend_function *original;
+
+        original = zend_hash_str_find_ptr(CG(function_table), "var_dump", sizeof("var_dump")-1);
+
+        if (original != NULL) {
+            original_handler_var_dump = original->internal_function.handler;
+            original->internal_function.handler = my_overwrite_var_dump;
+        }
+    }
+
+При перезаписи метода класса таблицу функций можно найти в ``zend_class_entry``.::
+
+    zend_class_entry *ce = zend_hash_str_find_ptr(CG(class_table), "PDO", sizeof("PDO")-1);
+    if (ce != NULL) {
+        original = zend_hash_str_find_ptr(&ce->function_table, "exec", sizeof("exec")-1);
+
+        if (original != NULL) {
+            original_handler_pdo_exec = original->internal_function.handler;
+            original->internal_function.handler = my_overwrite_pdo_exec;
+        }
+    }
+
+Модификация абстрактного синтаксического дерева (AST)
+*****************************************************
+
+Когда PHP 7 компилирует код PHP, он преобразует его в абстрактное синтаксическое дерево (AST),
+прежде чем окончательно сгенерировать опкоды, которые сохраняются в opcache. Хук
+``zend_ast_process hook`` вызывается для каждого скомпилированного скрипта и позволяет изменять
+AST после того, как оно было разобрано и создано.
+
+Это один из самых сложных хуков в использовании, поскольку он требует безупречного понимания
+возможностей AST. Создание невалидного AST здесь может привести к странному поведению или крашам.
+
+Лучше всего посмотреть на примеры расширений, которые используют этот хук:
+
+- `Google Stackdriver PHP Debugger Extension
+  <https://github.com/GoogleCloudPlatform/stackdriver-debugger-php-extension/blob/master/stackdriver_debugger_ast.c>`_
+- На основе Stackdriver этот `Proof of Concept Tracer with AST <https://github.com/beberlei/php-ast-tracer-poc/blob/master/astracer.c>`_
+
+Подключение к компиляции скрипта/файла
+**************************************
+
+Каждый раз, когда пользовательский скрипт вызывает ``include``/``require`` или их аналоги
+``include_once``/``require_once``, ядро PHP вызывает функцию по указателю ``zend_compile_file``
+для обработки этого запроса. Аргументом является файловый хендл, а результатом —
+``zend_op_array``.::
+
+    zend_op_array *my_extension_compile_file(zend_file_handle *file_handle, int type);
+
+В ядре PHP есть два расширения, которые реализуют этот хук: dtrace и opcache.
+
+- Если вы запускаете PHP-скрипт с переменной окружения ``USE_ZEND_DTRACE`` и PHP скомпилирован с
+  поддержкой dtrace, то используется ``dtrace_compile_file`` из ``Zend/zend_dtrace.c``.
+
+- Opcache хранит op-массивы в общей памяти для повышения производительности, так что при
+  компиляции скрипта его итоговый op-массив отдаётся из кэша и не компилируется повторно. Эту
+  реализацию можно найти в ``ext/opcache/ZendAccelerator.c``.
+
+- Реализация по умолчанию, называемая ``compile_file``, является частью кода сканера в
+  ``Zend/zend_language_scanner.l``.
+
+Случаи использования этого хука включают ускорение опкодов, шифрование/дешифрование кода PHP,
+отладку или профилирование.
+
+Вы можете заменить этот хук в любой момент выполнения процесса PHP, и все PHP-скрипты,
+скомпилированные после замены, будут обрабатываться вашей реализацией хука.
+
+Очень важно всегда вызывать оригинальный указатель на функцию, иначе PHP больше не сможет
+компилировать скрипты, а opcache перестанет работать.
+
+Порядок перезаписи расширениями здесь также важен, так как вам нужно понимать, хотите ли вы
+зарегистрировать свой хук до или после opcache, потому что opcache не вызывает оригинальный
+указатель на функцию, если находит запись op-массива в своём кэше общей памяти. Opcache
+регистрирует свой хук как post-startup хук, который выполняется после фазы minit для расширений,
+поэтому по умолчанию ваш хук больше не будет вызываться, когда скрипт попадает в кэш.
+
+Уведомление при вызове обработчика ошибок
+*****************************************
+
+Подобно пользовательской функции PHP ``set_error_handler()``, расширение может зарегистрировать
+себя как обработчик ошибок, реализовав хук ``zend_error_cb``.::
+
+    ZEND_API void (*zend_error_cb)(int type, const char *error_filename, const uint32_t error_lineno, const char *format, va_list args);
+
+Переменная ``type`` соответствует константам ошибок ``E_*``, которые также доступны на
+пользовательском уровне PHP.
+
+Взаимосвязь между обработчиками ошибок ядра PHP и пользовательского уровня непростая:
+
+1. Если пользовательский обработчик ошибок не зарегистрирован, то ``zend_error_cb`` всегда
+   вызывается.
+2. Если пользовательский обработчик ошибок зарегистрирован, то для всех ошибок типа
+   ``E_ERROR``, ``E_PARSE``, ``E_CORE_ERROR``, ``E_CORE_WARNING``, ``E_COMPILE_ERROR`` и
+   ``E_COMPILE_WARNING`` хук ``zend_error_cb`` всегда вызывается.
+3. Для всех остальных ошибок ``zend_error_cb`` вызывается только если пользовательский
+   обработчик завершился с ошибкой или вернул ``false``.
+
+Кроме того, Xdebug перезаписывает обработчик ошибок таким образом, что не вызывает ранее
+зарегистрированные внутренние обработчики, из-за своей сложной собственной реализации.
+
+Таким образом, перезапись этого хука не очень надёжна.
+
+Как и прежде, перезапись должна выполняться с учётом оригинального обработчика, если вы не
+хотите полностью заменить его::
+
+    void (*original_zend_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
+
+    void my_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
+    {
+        // my special error handling here
+
+        original_zend_error_cb(type, error_filename, error_lineno, format, args);
+    }
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        original_zend_error_cb = zend_error_cb;
+        zend_error_cb = my_error_cb;
+
+        RETURN SUCCESS;
+    }
+
+    PHP_MSHUTDOWN(my_extension)
+    {
+        zend_error_cb = original_zend_error_cb;
+    }
+
+Этот хук главным образом используется для реализации централизованного отслеживания исключений
+в программном обеспечении для Exception Tracking или Application Performance Management.
+
+Уведомление при выбросе исключения
+**********************************
+
+Каждый раз, когда ядро PHP или пользовательский код выбрасывает исключение, вызывается
+``zend_throw_exception_hook`` с исключением в качестве аргумента.
+
+Сигнатура этого хука довольно проста::
+
+    void my_throw_exception_hook(zval *exception)
+    {
+        if (original_zend_throw_exception_hook != NULL) {
+            original_zend_throw_exception_hook(exception);
+        }
+    }
+
+Этот хук не имеет реализации по умолчанию и указывает на ``NULL``, если не перезаписан
+расширением.
+
+::
+
+    static void (*original_zend_throw_exception_hook)(zval *ex);
+    void my_throw_exception_hook(zval *exception);
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        original_zend_throw_exception_hook = zend_throw_exception_hook;
+        zend_throw_exception_hook = my_throw_exception_hook;
+
+        return SUCCESS;
+    }
+
+Если вы реализуете этот хук, учитывайте, что он вызывается независимо от того, перехвачено
+исключение или нет. Тем не менее, может быть полезно временно сохранить исключение здесь, а
+затем совместить это с реализацией хука обработчика ошибок, чтобы проверить, было ли исключение
+неперехваченным и привело ли оно к остановке скрипта.
+
+Случаи использования этого хука включают отладку, логирование и отслеживание исключений.
+
+Подключение к eval()
+********************
+
+``eval`` в PHP — это не внутренняя функция, а особая языковая конструкция. Поэтому вы не можете
+подключиться к ней через ``zend_execute_internal`` или путём перезаписи её указателя на функцию.
+
+Случаев использования для подключения к eval не так много — это можно использовать для
+профилирования или в целях безопасности. Если вы меняете его поведение, учитывайте, что eval
+может понадобиться другим расширениям. Один из примеров — Xdebug, который использует его для
+выполнения условий точек останова.
+
+::
+
+    extern ZEND_API zend_op_array *(*zend_compile_string)(zval *source_string, char *filename);
+
+Подключение к сборщику мусора
+*****************************
+
+Сборщик мусора PHP может быть запущен явно при вызове ``gc_collect_cycles()`` или неявно самим
+движком, когда количество объектов, пригодных для сборки, достигает определённого порога.
+
+Чтобы понять, как работает сборщик мусора, или профилировать его производительность, вы можете
+перезаписать указатель на функцию-хук, выполняющую операцию сборки мусора. Теоретически здесь
+можно реализовать свой собственный алгоритм сборки мусора, но, учитывая, что вероятно
+потребуются и другие изменения движка, это, скорее всего, не очень осуществимо.
+
+::
+
+    int (*original_gc_collect_cycles)(void);
+
+    int my_gc_collect_cycles(void)
+    {
+        original_gc_collect_cycles();
+    }
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        original_gc_collect_cycles = gc_collect_cycles;
+        gc_collect_cycles = my_gc_collect_cycles;
+
+        return SUCCESS;
+    }
+
+Перезапись обработчика прерываний
+*********************************
+
+Обработчик прерываний вызывается один раз, когда глобальная переменная исполнителя
+``EG(vm_interrupt)`` устанавливается в 1. Это проверяется в регулярных контрольных точках во
+время выполнения пользовательского кода. Движок использует этот хук для реализации таймаута
+выполнения PHP через обработчик сигнала, который устанавливает прерывание в 1 после достижения
+длительности таймаута.
+
+Это может быть полезно, чтобы отложить обработку сигнала на более позднюю стадию выполнения,
+когда безопаснее выполнить очистку, или чтобы реализовать свою собственную обработку таймаута.
+Устанавливая этот хук, вы не можете случайно отключить проверку таймаута PHP, потому что у неё
+есть специализированная обработка с более высоким приоритетом, чем любая перезапись
+``zend_interrupt_function``.
+
+::
+
+    ZEND_API void (*original_interrupt_function)(zend_execute_data *execute_data);
+
+    void my_interrupt_function(zend_execute_data *execute_data)
+    {
+        if (original_interrupt_function != NULL) {
+            original_interrupt_function(execute_data);
+        }
+    }
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        original_interrupt_function = zend_interrupt_function;
+        zend_interrupt_function = my_interrupt_function;
+
+        return SUCCESS;
+    }
+
+Замена обработчиков опкодов
+***************************
+
+Можно переопределить отдельные обработчики опкодов движка Zend. Это может быть полезно, чтобы
+игнорировать оператор ``@`` или считать, сколько раз выполняется каждый опкод. API движка
+рассчитан только на *один* обработчик, заданный расширением, для каждого опкода, из-за чего
+важно, чтобы вы как автор расширения заботились об обработчиках, уже установленных другими
+расширениями.
+
+Базовые API движка выглядят так::
+
+    void zend_set_user_opcode_handler(int opcode, user_opcode_handler_t handler);
+    user_opcode_handler_t zend_get_user_opcode_handler(int opcode);
+
+`user_opcode_handler_t` является указателем на функцию, и каждый обработчик имеет следующую сигнатуру [1]_::
+
+    int my_handler(zend_execute_data *execute_data);
+
+Возвращаемое значение обработчика важно, и определено несколько констант, имеющих особое
+значение:
+
+ZEND_USER_OPCODE_CONTINUE
+    Выполнить следующий опкод
+ZEND_USER_OPCODE_RETURN
+    Выйти из исполнителя (вернуться из функции)
+ZEND_USER_OPCODE_DISPATCH
+    Вызвать оригинальный обработчик опкода
+ZEND_USER_OPCODE_ENTER
+    Войти в новый op_array без рекурсии
+ZEND_USER_OPCODE_LEAVE
+    Вернуться в вызывающий op_array в рамках того же исполнителя
+
+В примере ниже мы переопределим опкоды ``ZEND_BEGIN_SILENCE`` и ``ZEND_END_SILENCE``, которые
+используются для реализации оператора ``@``. На основе глобальной переменной расширения
+(``no_silence``) обработчик либо пропустит опкоды, либо позволит движку выполнить своё обычное
+поведение::
+
+    ZEND_BEGIN_MODULE_GLOBALS(my_extension)
+        int                   no_silence;
+        user_opcode_handler_t original_begin_silence_handler;
+        user_opcode_handler_t original_end_silence_handler
+    ZEND_END_MODULE_GLOBALS(my_extension)
+
+    static int silence_handler(zend_execute_data *execute_data)
+    {
+        if (MYEXTG(no_silence)) {
+            execute_data->opline++;
+            return ZEND_USER_OPCODE_CONTINUE;
+        }
+
+        /* We select the handler depending on which opcode this handler is called *for* */
+        if (execute_data->opline == ZEND_BEGIN_SILENCE) {
+            /* Only call the original handler if it wasn't NULL */
+            if (MYEXTG(original_begin_silence_handler)(execute_data)) {
+                return MYEXTG(original_begin_silence_handler)(execute_data);
+            }
+        } else {
+            if (MYEXTG(original_end_silence_handler)(execute_data)) {
+                return MYEXTG(original_end_silence_handler)(execute_data);
+            }
+        }
+
+        /* If the original handler was NULL, instruct the VM to do whatever it needs to */
+        return ZEND_USER_OPCODE_DISPATCH;
+    }
+
+    PHP_MINIT_FUNCTION(my_extension)
+    {
+        MYEXTG(original_begin_silence_handler) = zend_get_user_opcode_handler(ZEND_BEGIN_SILENCE);
+        MYEXTG(original_end_silence_handler) = zend_get_user_opcode_handler(ZEND_END_SILENCE);
+        zend_set_user_opcode_handler(ZEND_BEGIN_SILENCE, silence_handler);
+        zend_set_user_opcode_handler(ZEND_END_SILENCE, silence_handler);
+
+        return SUCCESS;
+    }
+
+    PHP_MSHUTDOWN_FUNCTION(my_extension)
+    {
+        zend_set_user_opcode_handler(ZEND_BEGIN_SILENCE, MYEXTG(original_begin_silence_handler));
+        zend_set_user_opcode_handler(ZEND_END_SILENCE, MYEXTG(original_end_silence_handler));
+
+        return SUCCESS;
+    }
+
+.. rubric:: Footnotes
+
+.. [1] В PHP 8 эта сигнатура меняется и будет отличаться в зависимости от того, включена ли
+       определённая функция GCC.
