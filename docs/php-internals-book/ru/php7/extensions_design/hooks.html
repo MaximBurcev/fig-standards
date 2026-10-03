@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Хуки, предоставляемые PHP &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Объявление и использование настроек INI" href="ini_settings.html" />
+    <link rel="prev" title="Публикация информации о расширении" href="extension_infos.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Хуки, предоставляемые PHP</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="extension_infos.html">Публикация информации о расширении</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ini_settings.html">Объявление и использование настроек INI</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="php">
+<h1>Хуки, предоставляемые PHP<a class="headerlink" href="#php" title="Link to this heading">¶</a></h1>
+<p>PHP и Zend Engine предоставляют расширениям множество различных хуков, которые позволяют
+разработчикам расширений управлять работой PHP во время выполнения такими способами, которые
+недоступны из пользовательского уровня PHP.</p>
+<p>В этой главе будут показаны различные хуки и типичные случаи использования подключения к ним
+из расширения.</p>
+<p>Общий паттерн для подключения к функциональности PHP заключается в том, что расширения
+перезаписывают указатели на функции, предоставляемые ядром PHP. Функция расширения затем часто
+выполняет свою собственную работу и вызывает оригинальную функцию ядра PHP. Используя этот
+паттерн, разные расширения могут перезаписывать один и тот же хук без возникновения конфликтов.</p>
+<section id="id1">
+<h2>Подключение к выполнению функций<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Выполнение пользовательских и внутренних функций обрабатывается двумя функциями внутри Zend
+engine, которые можно заменить своими собственными реализациями. Основной случай использования
+этого хука расширениями — универсальное профилирование на уровне функций, отладка и
+аспектно-ориентированное программирование.</p>
+<p>Эти хуки определены в <code class="docutils literal notranslate"><span class="pre">Zend/zend_execute.h</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_API</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">zend_execute_ex</span><span class="p">)(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">);</span>
+<span class="n">ZEND_API</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">zend_execute_internal</span><span class="p">)(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">return_value</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Если вы хотите перезаписать эти указатели на функции, то вы должны делать это в MINIT, поскольку
+другие решения внутри Zend Engine принимаются заранее на основе того, перезаписаны указатели или
+нет.</p>
+<p>Обычный паттерн для перезаписи выглядит так:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">original_zend_execute_ex</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">);</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">original_zend_execute_internal</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">return_value</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">my_execute_internal</span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">,</span><span class="w"> </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">return_value</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">my_execute_ex</span><span class="w"> </span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">);</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">REGISTER_INI_ENTRIES</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">original_zend_execute_internal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_execute_internal</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_execute_internal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_execute_internal</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">original_zend_execute_ex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_execute_ex</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_execute_ex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_execute_ex</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_execute_internal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">original_zend_execute_internal</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_execute_ex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">original_zend_execute_ex</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Один из недостатков перезаписи <code class="docutils literal notranslate"><span class="pre">zend_execute_ex</span></code> заключается в том, что это меняет поведение
+виртуальной машины Zend во время выполнения — она начинает использовать рекурсию вместо обработки
+вызовов без выхода из цикла интерпретатора. Кроме того, движок PHP без перезаписанного
+<code class="docutils literal notranslate"><span class="pre">zend_execute_ex</span></code> может генерировать более оптимизированные опкоды вызова функций.</p>
+<p>Эти хуки очень чувствительны к производительности в зависимости от сложности кода, который
+оборачивает оригинальные функции.</p>
+</section>
+<section id="id2">
+<h2>Перезапись внутренней функции<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Хотя перезапись execute-хуков позволяет расширению записывать <strong>каждый</strong> вызов функции, вы также
+можете перезаписать отдельные указатели функций пользовательского уровня, ядра и функций (и
+методов) расширений. Это даёт гораздо лучшие показатели производительности, если расширению нужен
+доступ только к конкретным вызовам внутренних функций.:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#if PHP_VERSION_ID &lt; 70200</span>
+<span class="k">typedef</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">zif_handler</span><span class="p">)(</span><span class="n">INTERNAL_FUNCTION_PARAMETERS</span><span class="p">);</span>
+<span class="cp">#endif</span>
+<span class="n">zif_handler</span><span class="w"> </span><span class="n">original_handler_var_dump</span><span class="p">;</span>
+
+<span class="n">ZEND_NAMED_FUNCTION</span><span class="p">(</span><span class="n">my_overwrite_var_dump</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// if we want to call the original function</span>
+<span class="w">    </span><span class="n">original_handler_var_dump</span><span class="p">(</span><span class="n">INTERNAL_FUNCTION_PARAM_PASSTHRU</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// If the ZEND_TSRMLS_CACHE_UPDATE() is in RINIT, move it</span>
+<span class="w">    </span><span class="c1">// to MINIT to ensure access to the compiler globals</span>
+<span class="cp">#if defined(COMPILE_DL_MY_EXTENSION) &amp;&amp; defined(ZTS)</span>
+<span class="w">    </span><span class="n">ZEND_TSRMLS_CACHE_UPDATE</span><span class="p">();</span>
+<span class="cp">#endif</span>
+
+<span class="w">    </span><span class="n">zend_function</span><span class="w"> </span><span class="o">*</span><span class="n">original</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_hash_str_find_ptr</span><span class="p">(</span><span class="n">CG</span><span class="p">(</span><span class="n">function_table</span><span class="p">),</span><span class="w"> </span><span class="s">"var_dump"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"var_dump"</span><span class="p">)</span><span class="mi">-1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">original_handler_var_dump</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">original</span><span class="o">-&gt;</span><span class="n">internal_function</span><span class="p">.</span><span class="n">handler</span><span class="p">;</span>
+<span class="w">        </span><span class="n">original</span><span class="o">-&gt;</span><span class="n">internal_function</span><span class="p">.</span><span class="n">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_overwrite_var_dump</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>При перезаписи метода класса таблицу функций можно найти в <code class="docutils literal notranslate"><span class="pre">zend_class_entry</span></code>.:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_class_entry</span><span class="w"> </span><span class="o">*</span><span class="n">ce</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_hash_str_find_ptr</span><span class="p">(</span><span class="n">CG</span><span class="p">(</span><span class="n">class_table</span><span class="p">),</span><span class="w"> </span><span class="s">"PDO"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"PDO"</span><span class="p">)</span><span class="mi">-1</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ce</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_hash_str_find_ptr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ce</span><span class="o">-&gt;</span><span class="n">function_table</span><span class="p">,</span><span class="w"> </span><span class="s">"exec"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="s">"exec"</span><span class="p">)</span><span class="mi">-1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">original_handler_pdo_exec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">original</span><span class="o">-&gt;</span><span class="n">internal_function</span><span class="p">.</span><span class="n">handler</span><span class="p">;</span>
+<span class="w">        </span><span class="n">original</span><span class="o">-&gt;</span><span class="n">internal_function</span><span class="p">.</span><span class="n">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_overwrite_pdo_exec</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="ast">
+<h2>Модификация абстрактного синтаксического дерева (AST)<a class="headerlink" href="#ast" title="Link to this heading">¶</a></h2>
+<p>Когда PHP 7 компилирует код PHP, он преобразует его в абстрактное синтаксическое дерево (AST),
+прежде чем окончательно сгенерировать опкоды, которые сохраняются в opcache. Хук
+<code class="docutils literal notranslate"><span class="pre">zend_ast_process</span> <span class="pre">hook</span></code> вызывается для каждого скомпилированного скрипта и позволяет изменять
+AST после того, как оно было разобрано и создано.</p>
+<p>Это один из самых сложных хуков в использовании, поскольку он требует безупречного понимания
+возможностей AST. Создание невалидного AST здесь может привести к странному поведению или крашам.</p>
+<p>Лучше всего посмотреть на примеры расширений, которые используют этот хук:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/GoogleCloudPlatform/stackdriver-debugger-php-extension/blob/master/stackdriver_debugger_ast.c">Google Stackdriver PHP Debugger Extension</a></p></li>
+<li><p>На основе Stackdriver этот <a class="reference external" href="https://github.com/beberlei/php-ast-tracer-poc/blob/master/astracer.c">Proof of Concept Tracer with AST</a></p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>Подключение к компиляции скрипта/файла<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Каждый раз, когда пользовательский скрипт вызывает <code class="docutils literal notranslate"><span class="pre">include</span></code>/<code class="docutils literal notranslate"><span class="pre">require</span></code> или их аналоги
+<code class="docutils literal notranslate"><span class="pre">include_once</span></code>/<code class="docutils literal notranslate"><span class="pre">require_once</span></code>, ядро PHP вызывает функцию по указателю <code class="docutils literal notranslate"><span class="pre">zend_compile_file</span></code>
+для обработки этого запроса. Аргументом является файловый хендл, а результатом —
+<code class="docutils literal notranslate"><span class="pre">zend_op_array</span></code>.:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zend_op_array</span><span class="w"> </span><span class="o">*</span><span class="nf">my_extension_compile_file</span><span class="p">(</span><span class="n">zend_file_handle</span><span class="w"> </span><span class="o">*</span><span class="n">file_handle</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>В ядре PHP есть два расширения, которые реализуют этот хук: dtrace и opcache.</p>
+<ul class="simple">
+<li><p>Если вы запускаете PHP-скрипт с переменной окружения <code class="docutils literal notranslate"><span class="pre">USE_ZEND_DTRACE</span></code> и PHP скомпилирован с
+поддержкой dtrace, то используется <code class="docutils literal notranslate"><span class="pre">dtrace_compile_file</span></code> из <code class="docutils literal notranslate"><span class="pre">Zend/zend_dtrace.c</span></code>.</p></li>
+<li><p>Opcache хранит op-массивы в общей памяти для повышения производительности, так что при
+компиляции скрипта его итоговый op-массив отдаётся из кэша и не компилируется повторно. Эту
+реализацию можно найти в <code class="docutils literal notranslate"><span class="pre">ext/opcache/ZendAccelerator.c</span></code>.</p></li>
+<li><p>Реализация по умолчанию, называемая <code class="docutils literal notranslate"><span class="pre">compile_file</span></code>, является частью кода сканера в
+<code class="docutils literal notranslate"><span class="pre">Zend/zend_language_scanner.l</span></code>.</p></li>
+</ul>
+<p>Случаи использования этого хука включают ускорение опкодов, шифрование/дешифрование кода PHP,
+отладку или профилирование.</p>
+<p>Вы можете заменить этот хук в любой момент выполнения процесса PHP, и все PHP-скрипты,
+скомпилированные после замены, будут обрабатываться вашей реализацией хука.</p>
+<p>Очень важно всегда вызывать оригинальный указатель на функцию, иначе PHP больше не сможет
+компилировать скрипты, а opcache перестанет работать.</p>
+<p>Порядок перезаписи расширениями здесь также важен, так как вам нужно понимать, хотите ли вы
+зарегистрировать свой хук до или после opcache, потому что opcache не вызывает оригинальный
+указатель на функцию, если находит запись op-массива в своём кэше общей памяти. Opcache
+регистрирует свой хук как post-startup хук, который выполняется после фазы minit для расширений,
+поэтому по умолчанию ваш хук больше не будет вызываться, когда скрипт попадает в кэш.</p>
+</section>
+<section id="id4">
+<h2>Уведомление при вызове обработчика ошибок<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Подобно пользовательской функции PHP <code class="docutils literal notranslate"><span class="pre">set_error_handler()</span></code>, расширение может зарегистрировать
+себя как обработчик ошибок, реализовав хук <code class="docutils literal notranslate"><span class="pre">zend_error_cb</span></code>.:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_API</span><span class="w"> </span><span class="nf">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">zend_error_cb</span><span class="p">)(</span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">error_filename</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">error_lineno</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="kt">va_list</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Переменная <code class="docutils literal notranslate"><span class="pre">type</span></code> соответствует константам ошибок <code class="docutils literal notranslate"><span class="pre">E_*</span></code>, которые также доступны на
+пользовательском уровне PHP.</p>
+<p>Взаимосвязь между обработчиками ошибок ядра PHP и пользовательского уровня непростая:</p>
+<ol class="arabic simple">
+<li><p>Если пользовательский обработчик ошибок не зарегистрирован, то <code class="docutils literal notranslate"><span class="pre">zend_error_cb</span></code> всегда
+вызывается.</p></li>
+<li><p>Если пользовательский обработчик ошибок зарегистрирован, то для всех ошибок типа
+<code class="docutils literal notranslate"><span class="pre">E_ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">E_PARSE</span></code>, <code class="docutils literal notranslate"><span class="pre">E_CORE_ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">E_CORE_WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">E_COMPILE_ERROR</span></code> и
+<code class="docutils literal notranslate"><span class="pre">E_COMPILE_WARNING</span></code> хук <code class="docutils literal notranslate"><span class="pre">zend_error_cb</span></code> всегда вызывается.</p></li>
+<li><p>Для всех остальных ошибок <code class="docutils literal notranslate"><span class="pre">zend_error_cb</span></code> вызывается только если пользовательский
+обработчик завершился с ошибкой или вернул <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+</ol>
+<p>Кроме того, Xdebug перезаписывает обработчик ошибок таким образом, что не вызывает ранее
+зарегистрированные внутренние обработчики, из-за своей сложной собственной реализации.</p>
+<p>Таким образом, перезапись этого хука не очень надёжна.</p>
+<p>Как и прежде, перезапись должна выполняться с учётом оригинального обработчика, если вы не
+хотите полностью заменить его:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">original_zend_error_cb</span><span class="p">)(</span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">error_filename</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">uint</span><span class="w"> </span><span class="n">error_lineno</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="kt">va_list</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">my_error_cb</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">error_filename</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">uint</span><span class="w"> </span><span class="n">error_lineno</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="kt">va_list</span><span class="w"> </span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// my special error handling here</span>
+
+<span class="w">    </span><span class="n">original_zend_error_cb</span><span class="p">(</span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="n">error_filename</span><span class="p">,</span><span class="w"> </span><span class="n">error_lineno</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">original_zend_error_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_error_cb</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_error_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_error_cb</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">RETURN</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_error_cb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">original_zend_error_cb</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Этот хук главным образом используется для реализации централизованного отслеживания исключений
+в программном обеспечении для Exception Tracking или Application Performance Management.</p>
+</section>
+<section id="id5">
+<h2>Уведомление при выбросе исключения<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Каждый раз, когда ядро PHP или пользовательский код выбрасывает исключение, вызывается
+<code class="docutils literal notranslate"><span class="pre">zend_throw_exception_hook</span></code> с исключением в качестве аргумента.</p>
+<p>Сигнатура этого хука довольно проста:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">my_throw_exception_hook</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">exception</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original_zend_throw_exception_hook</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">original_zend_throw_exception_hook</span><span class="p">(</span><span class="n">exception</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Этот хук не имеет реализации по умолчанию и указывает на <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, если не перезаписан
+расширением.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">original_zend_throw_exception_hook</span><span class="p">)(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">ex</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">my_throw_exception_hook</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">exception</span><span class="p">);</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">original_zend_throw_exception_hook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_throw_exception_hook</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_throw_exception_hook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_throw_exception_hook</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Если вы реализуете этот хук, учитывайте, что он вызывается независимо от того, перехвачено
+исключение или нет. Тем не менее, может быть полезно временно сохранить исключение здесь, а
+затем совместить это с реализацией хука обработчика ошибок, чтобы проверить, было ли исключение
+неперехваченным и привело ли оно к остановке скрипта.</p>
+<p>Случаи использования этого хука включают отладку, логирование и отслеживание исключений.</p>
+</section>
+<section id="eval">
+<h2>Подключение к eval()<a class="headerlink" href="#eval" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">eval</span></code> в PHP — это не внутренняя функция, а особая языковая конструкция. Поэтому вы не можете
+подключиться к ней через <code class="docutils literal notranslate"><span class="pre">zend_execute_internal</span></code> или путём перезаписи её указателя на функцию.</p>
+<p>Случаев использования для подключения к eval не так много — это можно использовать для
+профилирования или в целях безопасности. Если вы меняете его поведение, учитывайте, что eval
+может понадобиться другим расширениям. Один из примеров — Xdebug, который использует его для
+выполнения условий точек останова.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="n">ZEND_API</span><span class="w"> </span><span class="n">zend_op_array</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">zend_compile_string</span><span class="p">)(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">source_string</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">filename</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>Подключение к сборщику мусора<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Сборщик мусора PHP может быть запущен явно при вызове <code class="docutils literal notranslate"><span class="pre">gc_collect_cycles()</span></code> или неявно самим
+движком, когда количество объектов, пригодных для сборки, достигает определённого порога.</p>
+<p>Чтобы понять, как работает сборщик мусора, или профилировать его производительность, вы можете
+перезаписать указатель на функцию-хук, выполняющую операцию сборки мусора. Теоретически здесь
+можно реализовать свой собственный алгоритм сборки мусора, но, учитывая, что вероятно
+потребуются и другие изменения движка, это, скорее всего, не очень осуществимо.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">original_gc_collect_cycles</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">my_gc_collect_cycles</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">original_gc_collect_cycles</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">original_gc_collect_cycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gc_collect_cycles</span><span class="p">;</span>
+<span class="w">    </span><span class="n">gc_collect_cycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_gc_collect_cycles</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2>Перезапись обработчика прерываний<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>Обработчик прерываний вызывается один раз, когда глобальная переменная исполнителя
+<code class="docutils literal notranslate"><span class="pre">EG(vm_interrupt)</span></code> устанавливается в 1. Это проверяется в регулярных контрольных точках во
+время выполнения пользовательского кода. Движок использует этот хук для реализации таймаута
+выполнения PHP через обработчик сигнала, который устанавливает прерывание в 1 после достижения
+длительности таймаута.</p>
+<p>Это может быть полезно, чтобы отложить обработку сигнала на более позднюю стадию выполнения,
+когда безопаснее выполнить очистку, или чтобы реализовать свою собственную обработку таймаута.
+Устанавливая этот хук, вы не можете случайно отключить проверку таймаута PHP, потому что у неё
+есть специализированная обработка с более высоким приоритетом, чем любая перезапись
+<code class="docutils literal notranslate"><span class="pre">zend_interrupt_function</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_API</span><span class="w"> </span><span class="nf">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">original_interrupt_function</span><span class="p">)(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">);</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">my_interrupt_function</span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original_interrupt_function</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">original_interrupt_function</span><span class="p">(</span><span class="n">execute_data</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">original_interrupt_function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_interrupt_function</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_interrupt_function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_interrupt_function</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2>Замена обработчиков опкодов<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<p>Можно переопределить отдельные обработчики опкодов движка Zend. Это может быть полезно, чтобы
+игнорировать оператор <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> или считать, сколько раз выполняется каждый опкод. API движка
+рассчитан только на <em>один</em> обработчик, заданный расширением, для каждого опкода, из-за чего
+важно, чтобы вы как автор расширения заботились об обработчиках, уже установленных другими
+расширениями.</p>
+<p>Базовые API движка выглядят так:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">zend_set_user_opcode_handler</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">opcode</span><span class="p">,</span><span class="w"> </span><span class="n">user_opcode_handler_t</span><span class="w"> </span><span class="n">handler</span><span class="p">);</span>
+<span class="n">user_opcode_handler_t</span><span class="w"> </span><span class="nf">zend_get_user_opcode_handler</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">opcode</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><cite>user_opcode_handler_t</cite> является указателем на функцию, и каждый обработчик имеет следующую сигнатуру <a class="footnote-reference brackets" href="#id10" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">my_handler</span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Возвращаемое значение обработчика важно, и определено несколько констант, имеющих особое
+значение:</p>
+<dl class="simple">
+<dt>ZEND_USER_OPCODE_CONTINUE</dt><dd><p>Выполнить следующий опкод</p>
+</dd>
+<dt>ZEND_USER_OPCODE_RETURN</dt><dd><p>Выйти из исполнителя (вернуться из функции)</p>
+</dd>
+<dt>ZEND_USER_OPCODE_DISPATCH</dt><dd><p>Вызвать оригинальный обработчик опкода</p>
+</dd>
+<dt>ZEND_USER_OPCODE_ENTER</dt><dd><p>Войти в новый op_array без рекурсии</p>
+</dd>
+<dt>ZEND_USER_OPCODE_LEAVE</dt><dd><p>Вернуться в вызывающий op_array в рамках того же исполнителя</p>
+</dd>
+</dl>
+<p>В примере ниже мы переопределим опкоды <code class="docutils literal notranslate"><span class="pre">ZEND_BEGIN_SILENCE</span></code> и <code class="docutils literal notranslate"><span class="pre">ZEND_END_SILENCE</span></code>, которые
+используются для реализации оператора <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>. На основе глобальной переменной расширения
+(<code class="docutils literal notranslate"><span class="pre">no_silence</span></code>) обработчик либо пропустит опкоды, либо позволит движку выполнить своё обычное
+поведение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_BEGIN_MODULE_GLOBALS</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">                   </span><span class="n">no_silence</span><span class="p">;</span>
+<span class="w">    </span><span class="n">user_opcode_handler_t</span><span class="w"> </span><span class="n">original_begin_silence_handler</span><span class="p">;</span>
+<span class="w">    </span><span class="n">user_opcode_handler_t</span><span class="w"> </span><span class="n">original_end_silence_handler</span>
+<span class="n">ZEND_END_MODULE_GLOBALS</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">silence_handler</span><span class="p">(</span><span class="n">zend_execute_data</span><span class="w"> </span><span class="o">*</span><span class="n">execute_data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">no_silence</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">opline</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ZEND_USER_OPCODE_CONTINUE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* We select the handler depending on which opcode this handler is called *for* */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">execute_data</span><span class="o">-&gt;</span><span class="n">opline</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ZEND_BEGIN_SILENCE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* Only call the original handler if it wasn't NULL */</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_begin_silence_handler</span><span class="p">)(</span><span class="n">execute_data</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_begin_silence_handler</span><span class="p">)(</span><span class="n">execute_data</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_end_silence_handler</span><span class="p">)(</span><span class="n">execute_data</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_end_silence_handler</span><span class="p">)(</span><span class="n">execute_data</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* If the original handler was NULL, instruct the VM to do whatever it needs to */</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ZEND_USER_OPCODE_DISPATCH</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_begin_silence_handler</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_get_user_opcode_handler</span><span class="p">(</span><span class="n">ZEND_BEGIN_SILENCE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_end_silence_handler</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_get_user_opcode_handler</span><span class="p">(</span><span class="n">ZEND_END_SILENCE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">zend_set_user_opcode_handler</span><span class="p">(</span><span class="n">ZEND_BEGIN_SILENCE</span><span class="p">,</span><span class="w"> </span><span class="n">silence_handler</span><span class="p">);</span>
+<span class="w">    </span><span class="n">zend_set_user_opcode_handler</span><span class="p">(</span><span class="n">ZEND_END_SILENCE</span><span class="p">,</span><span class="w"> </span><span class="n">silence_handler</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">my_extension</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_set_user_opcode_handler</span><span class="p">(</span><span class="n">ZEND_BEGIN_SILENCE</span><span class="p">,</span><span class="w"> </span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_begin_silence_handler</span><span class="p">));</span>
+<span class="w">    </span><span class="n">zend_set_user_opcode_handler</span><span class="p">(</span><span class="n">ZEND_END_SILENCE</span><span class="p">,</span><span class="w"> </span><span class="n">MYEXTG</span><span class="p">(</span><span class="n">original_end_silence_handler</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id10" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">1</a><span class="fn-bracket">]</span></span>
+<p>В PHP 8 эта сигнатура меняется и будет отличаться в зависимости от того, включена ли
+определённая функция GCC.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="extension_infos.html">Публикация информации о расширении</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ini_settings.html">Объявление и использование настроек INI</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

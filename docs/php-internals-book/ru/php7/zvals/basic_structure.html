@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Базовая структура &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Управление памятью" href="memory_management.html" />
+    <link rel="prev" title="Zval’ы" href="../zvals.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Базовая структура</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../zvals.html">Zval’ы</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="memory_management.html">Управление памятью</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Базовая структура<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>zval (сокращение от “Zend value”) представляет произвольное значение PHP. Как таковой, это, вероятно, самая важная
+структура во всём PHP, и вам предстоит много с ней работать. В этом разделе описаны базовые концепции zval и их
+использование.</p>
+<section id="id2">
+<h2>Типы и значения<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Помимо прочего, каждый zval хранит некое значение и тип этого значения. Это необходимо, потому что PHP —
+динамически типизированный язык, и как следствие типы переменных известны только во время выполнения, а не во время
+компиляции. Более того, тип может меняться в течение жизни zval, так что если zval ранее хранил целое число, позже
+он может содержать строку.</p>
+<p>Тип хранится как целочисленный тег, который может принимать одно из нескольких значений. Некоторые значения
+соответствуют восьми типам, доступным в PHP, другие используются только для внутренних целей движка. На эти
+значения ссылаются с помощью констант вида <code class="docutils literal notranslate"><span class="pre">IS_TYPE</span></code>. Например, <code class="docutils literal notranslate"><span class="pre">IS_NULL</span></code> соответствует типу null, а
+<code class="docutils literal notranslate"><span class="pre">IS_STRING</span></code> соответствует строковому типу.</p>
+<p>Само значение хранится в объединении (union), которое определено так:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">union</span><span class="w"> </span><span class="nc">_zend_value</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w">         </span><span class="n">lval</span><span class="p">;</span><span class="w">    </span><span class="c1">// For IS_LONG</span>
+<span class="w">    </span><span class="kt">double</span><span class="w">            </span><span class="n">dval</span><span class="p">;</span><span class="w">    </span><span class="c1">// For IS_DOUBLE</span>
+<span class="w">    </span><span class="n">zend_refcounted</span><span class="w">  </span><span class="o">*</span><span class="n">counted</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_string</span><span class="w">      </span><span class="o">*</span><span class="n">str</span><span class="p">;</span><span class="w">     </span><span class="c1">// For IS_STRING</span>
+<span class="w">    </span><span class="n">zend_array</span><span class="w">       </span><span class="o">*</span><span class="n">arr</span><span class="p">;</span><span class="w">     </span><span class="c1">// For IS_ARRAY</span>
+<span class="w">    </span><span class="n">zend_object</span><span class="w">      </span><span class="o">*</span><span class="n">obj</span><span class="p">;</span><span class="w">     </span><span class="c1">// For IS_OBJECT</span>
+<span class="w">    </span><span class="n">zend_resource</span><span class="w">    </span><span class="o">*</span><span class="n">res</span><span class="p">;</span><span class="w">     </span><span class="c1">// For IS_RESOURCE</span>
+<span class="w">    </span><span class="n">zend_reference</span><span class="w">   </span><span class="o">*</span><span class="n">ref</span><span class="p">;</span><span class="w">     </span><span class="c1">// For IS_REFERENCE</span>
+<span class="w">    </span><span class="n">zend_ast_ref</span><span class="w">     </span><span class="o">*</span><span class="n">ast</span><span class="p">;</span><span class="w">     </span><span class="c1">// For IS_CONSTANT_AST (special)</span>
+<span class="w">    </span><span class="n">zval</span><span class="w">             </span><span class="o">*</span><span class="n">zv</span><span class="p">;</span><span class="w">      </span><span class="c1">// For IS_INDIRECT (special)</span>
+<span class="w">    </span><span class="kt">void</span><span class="w">             </span><span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_class_entry</span><span class="w"> </span><span class="o">*</span><span class="n">ce</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_function</span><span class="w">    </span><span class="o">*</span><span class="n">func</span><span class="p">;</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">w1</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">w2</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">ww</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">zend_value</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Для тех, кто не знаком с концепцией union: union определяет несколько членов разных типов, но в любой момент может
+использоваться только один из них. Например, если был установлен член <code class="docutils literal notranslate"><span class="pre">value.lval</span></code>, то и искать значение нужно
+через <code class="docutils literal notranslate"><span class="pre">value.lval</span></code>, а не через какой-либо другой член (иначе это нарушило бы гарантии “строгого алиасинга” и
+привело бы к неопределённому поведению). Причина в том, что union хранит все свои члены в одном и том же месте
+памяти и просто по-разному интерпретирует расположенное там значение в зависимости от того, к какому члену вы
+обращаетесь. Размер union равен размеру его самого крупного члена.</p>
+<p>При работе с zval тег типа используется, чтобы определить, какой из членов union используется в данный момент.
+Прежде чем взглянуть на API, используемые для этого, давайте пройдёмся по различным типам, которые поддерживает
+PHP, и по тому, как они хранятся:</p>
+<p>Самый простой тип — <code class="docutils literal notranslate"><span class="pre">IS_NULL</span></code>: ему не нужно хранить какое-либо значение, потому что существует только одно
+значение <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+<p>Булевы значения используют тип либо <code class="docutils literal notranslate"><span class="pre">IS_TRUE</span></code>, либо <code class="docutils literal notranslate"><span class="pre">IS_FALSE</span></code>, и им также не нужно хранить значение. Внутри PHP
+представляет true и false как отдельные типы из соображений эффективности, даже если с точки зрения пользователя они
+считаются значениями. Также существует тип <code class="docutils literal notranslate"><span class="pre">_IS_BOOL</span></code>, однако он никогда не используется как тип zval. Он
+используется внутри для обозначения приведений к булевому типу и подобных целей.</p>
+<p>Для хранения чисел PHP предоставляет типы <code class="docutils literal notranslate"><span class="pre">IS_LONG</span></code> и <code class="docutils literal notranslate"><span class="pre">IS_DOUBLE</span></code>, которые используют соответственно члены
+<code class="docutils literal notranslate"><span class="pre">zend_long</span> <span class="pre">lval</span></code> и <code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">dval</span></code>. Первый используется для хранения целых чисел, тогда как второй хранит числа с
+плавающей точкой.</p>
+<p>Есть несколько моментов, о которых следует знать относительно типа <code class="docutils literal notranslate"><span class="pre">zend_long</span></code>: во-первых, это знаковый целочисленный
+тип, то есть он может хранить как положительные, так и отрицательные целые числа, но обычно не очень хорошо подходит
+для побитовых операций. Во-вторых, <code class="docutils literal notranslate"><span class="pre">zend_long</span></code> <strong>не</strong> то же самое, что <code class="docutils literal notranslate"><span class="pre">long</span></code>, поскольку он абстрагируется от
+различий между платформами. <code class="docutils literal notranslate"><span class="pre">zend_long</span></code> всегда занимает 4 байта на 32-битных платформах и 8 байт на 64-битных
+платформах, даже если тип <code class="docutils literal notranslate"><span class="pre">long</span></code> может иметь другой размер.</p>
+<p>По этой причине важно использовать макросы, написанные специально для работы с <code class="docutils literal notranslate"><span class="pre">zend_long</span></code>, такие как
+<code class="docutils literal notranslate"><span class="pre">SIZEOF_ZEND_LONG</span></code> или <code class="docutils literal notranslate"><span class="pre">ZEND_LONG_MAX</span></code>. Больше подобных макросов можно найти в
+<a class="reference external" href="https://github.com/php/php-src/blob/1a0fa12753931dba9908161df0f63feb6d0ba025/Zend/zend_long.h">Zend/zend_long.h</a>.</p>
+<p>Тип <code class="docutils literal notranslate"><span class="pre">double</span></code>, используемый для хранения чисел с плавающей точкой, — это 8-байтное значение, соответствующее
+спецификации IEEE-754. Детали этого формата здесь не рассматриваются, но вам стоит хотя бы знать о том, что у этого
+типа ограниченная точность, и он часто не хранит именно то значение, которое вам нужно.</p>
+<p>Оставшиеся четыре типа будут здесь лишь упомянуты, а подробнее рассмотрены в собственных главах:</p>
+<p>Строки (<code class="docutils literal notranslate"><span class="pre">IS_STRING</span></code>) хранятся в структуре <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>, которая объединяет длину строки и её содержимое в
+одном выделении памяти. Больше информации о структуре <code class="docutils literal notranslate"><span class="pre">zend_string</span></code> и её собственном API вы найдёте в главе про
+<a class="reference internal" href="../internal_types/strings.html"><span class="doc">строки</span></a>.</p>
+<p>Массивы используют тег типа <code class="docutils literal notranslate"><span class="pre">IS_ARRAY</span></code> и хранятся в члене <code class="docutils literal notranslate"><span class="pre">zend_array</span> <span class="pre">*arr</span></code>. О том, как работает структура
+<code class="docutils literal notranslate"><span class="pre">HashTable</span></code>, будет рассказано в главе <a class="reference internal" href="../internal_types/hashtables.html"><span class="doc">Хештаблицы</span></a>.</p>
+<p>Объекты (<code class="docutils literal notranslate"><span class="pre">IS_OBJECT</span></code>) используют член <code class="docutils literal notranslate"><span class="pre">zend_object</span> <span class="pre">*obj</span></code>. Система классов и объектов PHP будет описана в главе
+<a class="reference internal" href="../classes_objects.html"><span class="doc">объекты</span></a>.</p>
+<p>Ресурсы (<code class="docutils literal notranslate"><span class="pre">IS_RESOURCE</span></code>) используют член <code class="docutils literal notranslate"><span class="pre">zend_resource</span> <span class="pre">*res</span></code>. Ресурсы рассматриваются в главе
+<a class="reference internal" href="../internal_types/zend_resources.html"><span class="doc">Ресурсы</span></a>.</p>
+<p>Подытоживая, вот таблица со всеми доступными “обычными” тегами типов и соответствующим местом хранения их значений:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Тег типа</p></th>
+<th class="head"><p>Место хранения</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IS_NULL</span></code></p></td>
+<td><p>нет</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IS_TRUE</span></code> или <code class="docutils literal notranslate"><span class="pre">IS_FALSE</span></code></p></td>
+<td><p>нет</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IS_LONG</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_long</span> <span class="pre">lval</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IS_DOUBLE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">dval</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IS_STRING</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_string</span> <span class="pre">*str</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IS_ARRAY</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_array</span> <span class="pre">*arr</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IS_OBJECT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_object</span> <span class="pre">*obj</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IS_RESOURCE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_resource</span> <span class="pre">*res</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="id3">
+<h3>Специальные типы<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Существует ряд дополнительных типов, у которых нет прямого соответствия в пользовательском пространстве, и которые
+используются только внутри движка. Из них <code class="docutils literal notranslate"><span class="pre">IS_UNDEF</span></code> и <code class="docutils literal notranslate"><span class="pre">IS_REFERENCE</span></code> — единственные типы, с которыми вы будете
+регулярно сталкиваться.</p>
+<p>Тип <code class="docutils literal notranslate"><span class="pre">IS_UNDEF</span></code> используется для обозначения неинициализированного zval. Этот тег типа имеет значение нуль, так что
+обнуление zval с помощью <code class="docutils literal notranslate"><span class="pre">memset</span></code> приведёт к zval типа <code class="docutils literal notranslate"><span class="pre">UNDEF</span></code>. Точный смысл <code class="docutils literal notranslate"><span class="pre">IS_UNDEF</span></code> зависит от контекста,
+например, он может означать неинициализированное/неустановленное свойство объекта или неиспользуемую корзину
+хештаблицы.</p>
+<p>Тип <code class="docutils literal notranslate"><span class="pre">IS_REFERENCE</span></code> в сочетании с членом <code class="docutils literal notranslate"><span class="pre">zend_reference</span> <span class="pre">*ref</span></code> используется для представления ссылки PHP. Хотя с
+точки зрения пользовательского пространства ссылки не являются отдельным типом, внутри они представлены как обёртка
+вокруг другого zval, которая может быть разделена между несколькими местами.</p>
+<p>Член <code class="docutils literal notranslate"><span class="pre">zend_refcounted</span> <span class="pre">*counted</span></code> обращается к общему заголовку для всех типов с подсчётом ссылок, включая строки,
+массивы, объекты, ресурсы и ссылки. Как это работает, рассматривается в главе <a class="reference internal" href="memory_management.html"><span class="doc">управление памятью</span></a>.</p>
+<p>Тип <code class="docutils literal notranslate"><span class="pre">IS_CONSTANT_AST</span></code> и член <code class="docutils literal notranslate"><span class="pre">zend_ast_ref</span> <span class="pre">*ast</span></code> используются для хранения невычисленных абстрактных
+синтаксических деревьев (AST) константных выражений. Это может встречаться только в определённых местах, например, в
+значениях свойств по умолчанию. AST будут рассмотрены в главе <a class="reference internal" href="../zend_engine/zend_compiler.html"><span class="doc">компилятор</span></a>.</p>
+<p>Тип <code class="docutils literal notranslate"><span class="pre">IS_INDIRECT</span></code> и член <code class="docutils literal notranslate"><span class="pre">zval</span> <span class="pre">*zv</span></code> используются для хранения прямого указателя на другой zval. Это используется
+в основном для таблиц символов и таблиц динамических свойств, чтобы указывать на реальное значение, хранящееся
+где-то ещё.</p>
+<p>Тип <code class="docutils literal notranslate"><span class="pre">IS_PTR</span></code> вместе с полем <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*ptr</span></code> используются для хранения произвольного указателя. В C любой указатель
+можно преобразовать в <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*</span></code> и обратно. Это используется для хранения указателей в местах, которые обычно
+принимают только zval, например, в значениях хештаблицы.</p>
+<p>Члены <code class="docutils literal notranslate"><span class="pre">zend_class_entry</span> <span class="pre">*ce</span></code> и <code class="docutils literal notranslate"><span class="pre">zend_function</span> <span class="pre">*func</span></code> просто задают более точный тип, но в остальном служат той же
+цели, что и <code class="docutils literal notranslate"><span class="pre">ptr</span></code>.</p>
+</section>
+</section>
+<section id="zval">
+<h2>Структура zval<a class="headerlink" href="#zval" title="Link to this heading">¶</a></h2>
+<p>Теперь давайте посмотрим, как на самом деле выглядит структура <code class="docutils literal notranslate"><span class="pre">zval</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zval_struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_value</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="k">union</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">type_info</span><span class="p">;</span>
+<span class="w">        </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ZEND_ENDIAN_LOHI_3</span><span class="p">(</span>
+<span class="w">                </span><span class="n">zend_uchar</span><span class="w">    </span><span class="n">type</span><span class="p">,</span>
+<span class="w">                </span><span class="n">zend_uchar</span><span class="w">    </span><span class="n">type_flags</span><span class="p">,</span>
+<span class="w">                </span><span class="k">union</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="kt">uint16_t</span><span class="w">  </span><span class="n">extra</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="n">u</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">u1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">union</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">next</span><span class="p">;</span><span class="w">                 </span><span class="cm">/* hash collision chain */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">cache_slot</span><span class="p">;</span><span class="w">           </span><span class="cm">/* cache slot (for RECV_INIT) */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">opline_num</span><span class="p">;</span><span class="w">           </span><span class="cm">/* opline number (for FAST_CALL) */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">lineno</span><span class="p">;</span><span class="w">               </span><span class="cm">/* line number (for ast nodes) */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">num_args</span><span class="p">;</span><span class="w">             </span><span class="cm">/* arguments number for EX(This) */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">fe_pos</span><span class="p">;</span><span class="w">               </span><span class="cm">/* foreach position */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">fe_iter_idx</span><span class="p">;</span><span class="w">          </span><span class="cm">/* foreach iterator index */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">access_flags</span><span class="p">;</span><span class="w">         </span><span class="cm">/* class constant access flags */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">property_guard</span><span class="p">;</span><span class="w">       </span><span class="cm">/* single property guard */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">constant_flags</span><span class="p">;</span><span class="w">       </span><span class="cm">/* constant flags */</span>
+<span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">extra</span><span class="p">;</span><span class="w">                </span><span class="cm">/* not further specified */</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">u2</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Эта структура выглядит немного сложнее, чем она есть на самом деле. По сути, она хранит 8-байтовое <code class="docutils literal notranslate"><span class="pre">value</span></code> и
+однобайтовый тег <code class="docutils literal notranslate"><span class="pre">type</span></code>, о которых мы уже говорили выше.</p>
+<p>Теоретически это оставляло бы нам размер zval в 9 байт. Однако для обеспечения эффективного доступа необходимо
+выровнять размер структуры по границе 8 байт, так что итоговый размер становится 16 байт. Поскольку дополнительное
+место будет использовано в любом случае, PHP находит применение этому “потерянному” пространству:</p>
+<p>Тег <code class="docutils literal notranslate"><span class="pre">type</span></code> является частью более крупной структуры <code class="docutils literal notranslate"><span class="pre">type_info</span></code>, которая дополнительно хранит <code class="docutils literal notranslate"><span class="pre">type_flags</span></code>. На
+момент PHP 7.4 существует только два флага типа: <code class="docutils literal notranslate"><span class="pre">IS_TYPE_REFCOUNTED</span></code> указывает, что значение подсчитывает ссылки,
+а <code class="docutils literal notranslate"><span class="pre">IS_TYPE_COLLECTABLE</span></code> указывает, что оно участвует в циклической сборке мусора. Мы обсудим оба этих флага в
+будущем.</p>
+<p>Член <code class="docutils literal notranslate"><span class="pre">u2</span></code> — это 32-битное пространство для хранения произвольных данных, которое используется для разных целей в
+зависимости от контекста. Хештаблицы используют его для хранения цепочки разрешения коллизий, но, как указывают
+приведённые выше комментарии, есть и много других применений. Стоит отметить, что стандартные макросы zval никогда
+не изменяют и не копируют поле <code class="docutils literal notranslate"><span class="pre">u2</span></code>.</p>
+<p>Поле <code class="docutils literal notranslate"><span class="pre">u1.v.u.extra</span></code>, являющееся частью типа, очень редко используется для хранения дополнительной информации.
+Однако использование этого поля возможно лишь в очень специфичных обстоятельствах, поскольку PHP обычно
+предполагает, что оно равно нулю.</p>
+</section>
+<section id="id4">
+<h2>Макросы доступа<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Зная структуру zval, вы теперь можете писать код, использующий её:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">zv_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... get zval from somewhere */</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zv_ptr</span><span class="o">-&gt;</span><span class="n">u1</span><span class="p">.</span><span class="n">v</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">IS_LONG</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Zval is a long with value "</span><span class="w"> </span><span class="n">ZEND_LONG_FMT</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">zv_ptr</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">.</span><span class="n">lval</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="cm">/* ... handle other types */</span>
+</pre></div>
+</div>
+<p>Хотя приведённый выше код работает, это не идиоматичный способ его написания. Он напрямую обращается к членам zval,
+вместо того чтобы использовать для этого специальный набор макросов доступа:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">zv_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">IS_LONG</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"Zval is a long with value "</span><span class="w"> </span><span class="n">ZEND_LONG_FMT</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_LVAL_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="cm">/* ... */</span>
+</pre></div>
+</div>
+<p>Приведённый выше код использует макрос <code class="docutils literal notranslate"><span class="pre">Z_TYPE_P()</span></code> для получения тега типа и <code class="docutils literal notranslate"><span class="pre">Z_LVAL_P()</span></code> для получения
+значения long (целого числа). Все макросы доступа имеют варианты с суффиксом <code class="docutils literal notranslate"><span class="pre">_P</span></code> (от “pointer”, указатель) или
+вовсе без суффикса. Какой из них использовать, зависит от того, работаете вы с <code class="docutils literal notranslate"><span class="pre">zval</span></code> или с <code class="docutils literal notranslate"><span class="pre">zval*</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="n">zv</span><span class="p">;</span>
+<span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">zv_ptr</span><span class="p">;</span>
+
+<span class="n">Z_TYPE</span><span class="p">(</span><span class="n">zv</span><span class="p">);</span><span class="w">       </span><span class="c1">// Same as Z_TYPE_P(&amp;zv).</span>
+<span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">);</span><span class="w"> </span><span class="c1">// Same as Z_TYPE(*zv_ptr).</span>
+</pre></div>
+</div>
+<p>Аналогично <code class="docutils literal notranslate"><span class="pre">Z_LVAL</span></code> существуют также макросы для получения значений всех остальных типов. Чтобы продемонстрировать
+их использование, мы создадим простую функцию для вывода содержимого zval:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">dump</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">zv_ptr</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">(),</span><span class="w"> </span><span class="s">"z"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">zv_ptr</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="nl">try_again</span><span class="p">:</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_NULL</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"NULL: null</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_TRUE</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"BOOL: true</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_FALSE</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"BOOL: false</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_LONG</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"LONG: %ld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_LVAL_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_DOUBLE</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"DOUBLE: %g</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_DVAL_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_STRING</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"STRING: value=</span><span class="se">\"</span><span class="s">"</span><span class="p">);</span>
+<span class="w">            </span><span class="n">PHPWRITE</span><span class="p">(</span><span class="n">Z_STRVAL_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">),</span><span class="w"> </span><span class="n">Z_STRLEN_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"</span><span class="se">\"</span><span class="s">, length=%zd</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_STRLEN_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_RESOURCE</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"RESOURCE: id=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_RES_HANDLE_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_ARRAY</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"ARRAY: hashtable=%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_ARRVAL_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_OBJECT</span><span class="p">:</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"OBJECT: object=%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">Z_OBJ_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">));</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">IS_REFERENCE</span><span class="p">:</span>
+<span class="w">            </span><span class="c1">// For references, remove the reference wrapper and try again.</span>
+<span class="w">            </span><span class="c1">// Yes, you are allowed to use goto for this purpose!</span>
+<span class="w">            </span><span class="n">php_printf</span><span class="p">(</span><span class="s">"REFERENCE: "</span><span class="p">);</span>
+<span class="w">            </span><span class="n">zv_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Z_REFVAL_P</span><span class="p">(</span><span class="n">zv_ptr</span><span class="p">);</span>
+<span class="w">            </span><span class="k">goto</span><span class="w"> </span><span class="n">try_again</span><span class="p">;</span>
+<span class="w">        </span><span class="n">EMPTY_SWITCH_DEFAULT_CASE</span><span class="p">()</span><span class="w"> </span><span class="c1">// Assert that all types are handled.</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Попробуем это в деле:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">dump</span><span class="p">(</span><span class="n">null</span><span class="p">);</span><span class="w">                 </span><span class="c1">// NULL: null</span>
+<span class="n">dump</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="w">                 </span><span class="c1">// BOOL: true</span>
+<span class="n">dump</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span><span class="w">                </span><span class="c1">// BOOL: false</span>
+<span class="n">dump</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span><span class="w">                   </span><span class="c1">// LONG: 42</span>
+<span class="n">dump</span><span class="p">(</span><span class="mf">4.2</span><span class="p">);</span><span class="w">                  </span><span class="c1">// DOUBLE: 4.2</span>
+<span class="n">dump</span><span class="p">(</span><span class="s">"foo"</span><span class="p">);</span><span class="w">                </span><span class="c1">// STRING: value="foo", length=3</span>
+<span class="n">dump</span><span class="p">(</span><span class="n">fopen</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">,</span><span class="w"> </span><span class="s">"r"</span><span class="p">));</span><span class="w"> </span><span class="c1">// RESOURCE: id=???</span>
+<span class="n">dump</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span><span class="w">       </span><span class="c1">// ARRAY: hashtable=0x???</span>
+<span class="n">dump</span><span class="p">(</span><span class="n">new</span><span class="w"> </span><span class="n">stdClass</span><span class="p">);</span><span class="w">         </span><span class="c1">// OBJECT: object=0x???</span>
+</pre></div>
+</div>
+<p>В следующей таблице перечислены наиболее часто используемые макросы доступа, хотя их существует заметно больше.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Макрос</p></th>
+<th class="head"><p>Возвращаемый тип</p></th>
+<th class="head"><p>Требуемый тип zval</p></th>
+<th class="head"><p>Описание</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_TYPE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">char</span></code></p></td>
+<td></td>
+<td><p>Тип zval. Одна из констант <code class="docutils literal notranslate"><span class="pre">IS_*</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_LVAL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_long</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_LONG</span></code></p></td>
+<td><p>Целочисленное значение.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_DVAL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_DOUBLE</span></code></p></td>
+<td><p>Значение с плавающей точкой.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_STR</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_string</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_STRING</span></code></p></td>
+<td><p>Указатель на полную структуру <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_STRVAL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_STRING</span></code></p></td>
+<td><p>Содержимое строки структуры <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_STRLEN</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">size_t</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_STRING</span></code></p></td>
+<td><p>Длина строки структуры <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_ARR</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HashTable</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_ARRAY</span></code></p></td>
+<td><p>Указатель на структуру <code class="docutils literal notranslate"><span class="pre">HashTable</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_ARRVAL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HashTable</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_ARRAY</span></code></p></td>
+<td><p>Синоним <code class="docutils literal notranslate"><span class="pre">Z_ARR</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_OBJ</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_object</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_OBJECT</span></code></p></td>
+<td><p>Указатель на структуру <code class="docutils literal notranslate"><span class="pre">zend_object</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_OBJCE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_class_entry</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_OBJECT</span></code></p></td>
+<td><p>Class entry объекта.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_RES</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_resource</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_RESOURCE</span></code></p></td>
+<td><p>Указатель на структуру <code class="docutils literal notranslate"><span class="pre">zend_resource</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_REF</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zend_reference</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_REFERENCE</span></code></p></td>
+<td><p>Указатель на структуру <code class="docutils literal notranslate"><span class="pre">zend_reference</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_REFVAL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">zval</span> <span class="pre">*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IS_REFERENCE</span></code></p></td>
+<td><p>Указатель на zval, который оборачивает ссылка.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Когда вы хотите получить доступ к содержимому zval, вам следует всегда использовать эти макросы, а не обращаться к
+его членам напрямую. Это сохраняет уровень абстракции и в некоторой степени защищает вас от изменений в реализации.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../zvals.html">Zval’ы</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="memory_management.html">Управление памятью</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

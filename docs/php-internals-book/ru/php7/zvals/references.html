@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ссылки &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Приведения типов и операции" href="casts_and_operations.html" />
+    <link rel="prev" title="Управление памятью" href="memory_management.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Ссылки</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="memory_management.html">Управление памятью</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="casts_and_operations.html">Приведения типов и операции</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Ссылки<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>Ссылки PHP (в смысле символа <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>) в основном прозрачны для пользовательского кода, но требуют последовательной
+особой обработки в реализации. В этой главе рассматривается, как ссылки представлены внутри, и как внутренний код
+должен с ними работать.</p>
+<section id="id2">
+<h2>Семантика ссылок<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Прежде чем переходить к внутреннему представлению ссылок PHP, может быть полезно разъяснить некоторые
+распространённые заблуждения о семантике ссылок в PHP. Рассмотрим этот базовый пример:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nv">$b</span> <span class="o">=&amp;</span> <span class="nv">$a</span><span class="p">;</span>
+<span class="nv">$a</span><span class="o">++</span><span class="p">;</span>
+<span class="nv">$b</span><span class="o">++</span><span class="p">;</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$a</span><span class="p">);</span> <span class="c1">// int(2)</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$b</span><span class="p">);</span> <span class="c1">// int(2)</span>
+</pre></div>
+</div>
+<p>Люди часто говорят, что “<code class="docutils literal notranslate"><span class="pre">$b</span></code> является ссылкой на <code class="docutils literal notranslate"><span class="pre">$a</span></code>”. Однако это не совсем верно, поскольку ссылки в PHP не
+имеют понятия направленности. После <code class="docutils literal notranslate"><span class="pre">$b</span> <span class="pre">=&amp;</span> <span class="pre">$a</span></code> и <code class="docutils literal notranslate"><span class="pre">$a</span></code>, и <code class="docutils literal notranslate"><span class="pre">$b</span></code> ссылаются на общее значение, и ни одна из
+переменных не является привилегированной в каком-либо смысле.</p>
+<p>Это становится особенно проблематичным, когда мы рассматриваем взаимодействие ссылок и копий массивов:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="nv">$ref</span> <span class="o">=&amp;</span> <span class="nv">$array</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="nv">$array2</span> <span class="o">=</span> <span class="nv">$array</span><span class="p">;</span>
+<span class="nv">$array2</span><span class="p">[]</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="c1">// Triggering copy-on-write makes no difference here.</span>
+<span class="nv">$ref</span><span class="o">++</span><span class="p">;</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$array</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span> <span class="c1">// int(1)</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$array2</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span> <span class="c1">// int(1)</span>
+</pre></div>
+</div>
+<p>Строка <code class="docutils literal notranslate"><span class="pre">$ref</span> <span class="pre">=&amp;</span> <span class="pre">$array[0]</span></code> создаёт ссылку между <code class="docutils literal notranslate"><span class="pre">$ref</span></code> и <code class="docutils literal notranslate"><span class="pre">$array[0]</span></code>. Когда массив впоследствии копируется, она
+становится ссылкой между <code class="docutils literal notranslate"><span class="pre">$ref</span></code>, <code class="docutils literal notranslate"><span class="pre">$array[0]</span></code> и <code class="docutils literal notranslate"><span class="pre">$array2[0]</span></code>, так как ссылка также копируется.</p>
+<p>Интуитивно это поведение кажется неправильным. Есть две причины, почему это происходит: первая — упомянутое выше
+отсутствие направленности. Это поведение <em>имело</em> бы смысл, если бы мы написали <code class="docutils literal notranslate"><span class="pre">$array[0]</span> <span class="pre">=&amp;</span> <span class="pre">$ref</span></code>. В этом случае
+было бы ожидаемо, что копия <code class="docutils literal notranslate"><span class="pre">$array2[0]</span></code> также указывает на <code class="docutils literal notranslate"><span class="pre">$ref</span></code>. Однако мы на самом деле не можем различить
+эти два случая.</p>
+<p>Вторая и более важная причина носит более технический характер: <code class="docutils literal notranslate"><span class="pre">$array2</span> <span class="pre">=</span> <span class="pre">$array</span></code> выполняет только увеличение
+счётчика ссылок, что означает, что у нас не было бы возможности отказаться от ссылки, даже если бы мы хотели.</p>
+</section>
+<section id="id3">
+<h2>Представление<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Ссылки представлены с помощью zval типа <code class="docutils literal notranslate"><span class="pre">IS_REFERENCE</span></code>, который указывает на структуру <code class="docutils literal notranslate"><span class="pre">zend_reference</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_reference</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_refcounted_h</span><span class="w">              </span><span class="n">gc</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zval</span><span class="w">                           </span><span class="n">val</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_property_info_source_list</span><span class="w"> </span><span class="n">sources</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>У самих zval нет счётчика ссылок, и они не могут быть общими. Структура <code class="docutils literal notranslate"><span class="pre">zend_reference</span></code> по сути представляет
+собой zval с подсчётом ссылок, который <em>может</em> быть общим. Несколько zval могут указывать на одну и ту же
+<code class="docutils literal notranslate"><span class="pre">zend_reference</span></code>, и любое изменение содержащегося в ней <code class="docutils literal notranslate"><span class="pre">val</span></code> будет наблюдаемо из всех источников.</p>
+<section id="id4">
+<h3>Источники типов<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Обычно PHP не отслеживает, кто или что использует данную ссылку. Единственное знание, которое сохраняется, — это
+сколько у неё пользователей (через счётчик ссылок), чтобы ссылка могла быть своевременно уничтожена.</p>
+<p>Однако из-за введения типизированных свойств в PHP 7.4, нам действительно нужно отслеживать, какие типизированные
+свойства используют определённую ссылку, чтобы обеспечить соблюдение типов свойств при косвенных изменениях через
+ссылки:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Test</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="nx">int</span> <span class="nv">$prop</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nv">$test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Test</span><span class="p">;</span>
+<span class="nv">$ref</span> <span class="o">=&amp;</span> <span class="nv">$test</span><span class="o">-&gt;</span><span class="na">prop</span><span class="p">;</span>
+<span class="nv">$ref</span> <span class="o">=</span> <span class="s2">"string"</span><span class="p">;</span> <span class="c1">// TypeError</span>
+</pre></div>
+</div>
+<p>Член <code class="docutils literal notranslate"><span class="pre">sources</span></code> структуры <code class="docutils literal notranslate"><span class="pre">zend_reference</span></code> хранит список указателей на <code class="docutils literal notranslate"><span class="pre">zend_property_info</span></code>, чтобы отслеживать
+типизированные свойства, использующие эту ссылку. Макросы, такие как <code class="docutils literal notranslate"><span class="pre">ZEND_REF_HAS_TYPE_SOURCES()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ZEND_REF_ADD_TYPE_SOURCE()</span></code> и <code class="docutils literal notranslate"><span class="pre">ZEND_REF_DEL_TYPE_SOURCE()</span></code>, используются для управления этим списком источников,
+но обычно только коду движка нужно иметь с этим дело.</p>
+</section>
+</section>
+<section id="id5">
+<h2>Инициализация ссылок<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Как и другие zval, ссылки инициализируются через набор макросов. Самый базовый принимает уже созданный указатель
+<code class="docutils literal notranslate"><span class="pre">zend_reference</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="n">ref</span><span class="p">;</span>
+<span class="n">ZVAL_REF</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="n">zend_reference_ptr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Чтобы создать ссылку с нуля, можно использовать <code class="docutils literal notranslate"><span class="pre">ZVAL_NEW_REF()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="n">ref</span><span class="p">;</span>
+<span class="n">zval</span><span class="w"> </span><span class="n">initial_val</span><span class="p">;</span>
+<span class="n">ZVAL_STRING</span><span class="p">(</span><span class="n">initial_val</span><span class="p">,</span><span class="w"> </span><span class="s">"test"</span><span class="p">);</span>
+<span class="n">ZVAL_NEW_REF</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">initial_val</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Этот макрос принимает начальное значение для ссылки. Обратите внимание, что оно <em>перемещается</em> в ссылку с помощью
+<code class="docutils literal notranslate"><span class="pre">ZVAL_COPY_VALUE</span></code>, счётчик ссылок не увеличивается. В качестве альтернативы, <code class="docutils literal notranslate"><span class="pre">ZVAL_NEW_EMPTY_REF()</span></code> оставляет
+значение неинициализированным:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="n">ref</span><span class="p">;</span>
+<span class="n">ZVAL_NEW_EMPTY_REF</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ref</span><span class="p">);</span>
+<span class="n">ZVAL_STRING</span><span class="p">(</span><span class="n">Z_REFVAL</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span><span class="w"> </span><span class="s">"test"</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Здесь мы создаём пустую ссылку, а затем инициализируем значение ссылки <code class="docutils literal notranslate"><span class="pre">Z_REFVAL(ref)</span></code> напрямую. Наконец,
+<code class="docutils literal notranslate"><span class="pre">ZVAL_MAKE_REF()</span></code> можно использовать для преобразования существующего zval в ссылку:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">zv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">;</span>
+<span class="n">ZVAL_MAKE_REF</span><span class="p">(</span><span class="n">zv</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Если <code class="docutils literal notranslate"><span class="pre">zv</span></code> уже был ссылкой, это ничего не делает. Если он ещё не был ссылкой, это превратит <code class="docutils literal notranslate"><span class="pre">zv</span></code> в ссылку и
+установит в качестве её начального значения старое значение <code class="docutils literal notranslate"><span class="pre">zv</span></code>.</p>
+</section>
+<section id="id6">
+<h2>Разыменование и разворачивание<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Большая часть кода не хочет обрабатывать ссылки каким-либо особым образом и просто хочет “смотреть насквозь” на
+лежащее в основе значение:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">zv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Z_ISREF_P</span><span class="p">(</span><span class="n">zv</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Z_REFVAL_P</span><span class="p">(</span><span class="n">zv</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Если значение является ссылкой (<code class="docutils literal notranslate"><span class="pre">Z_ISREF</span></code>), мы переключаемся на просмотр значения, которое оно содержит. Эта
+операция называется “разыменованием” и более компактно записывается как <code class="docutils literal notranslate"><span class="pre">ZVAL_DEREF(zv)</span></code>. Она крайне
+распространена и должна применяться практически в любом месте, где могут встретиться ссылочные zval. Например, вот
+как может выглядеть типичный цикл по массиву:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">val</span><span class="p">;</span>
+<span class="n">ZEND_HASH_FOREACH_VAL</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ZVAL_DEREF</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* Do something with val, now a guaranteed non-reference. */</span>
+<span class="p">}</span><span class="w"> </span><span class="n">ZEND_HASH_FOREACH_END</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Макрос <code class="docutils literal notranslate"><span class="pre">ZVAL_COPY_DEREF(target,</span> <span class="pre">source)</span></code> — это комбинированная форма <code class="docutils literal notranslate"><span class="pre">ZVAL_COPY</span></code> и <code class="docutils literal notranslate"><span class="pre">ZVAL_DEREF</span></code>. Он копирует
+разыменованное значение <code class="docutils literal notranslate"><span class="pre">source</span></code> в <code class="docutils literal notranslate"><span class="pre">target</span></code>.</p>
+<p>Разыменование просто перемещает указатель с внешнего zval на внутренний, не изменяя ни тот, ни другой. Также
+возможно фактически убрать обёртку ссылки, выполнив разворачивание. Проще всего понять эту операцию, посмотрев на
+её реализацию:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">zend_always_inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">zend_unwrap_reference</span><span class="p">(</span><span class="n">zval</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Z_REFCOUNT_P</span><span class="p">(</span><span class="n">op</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ZVAL_UNREF</span><span class="p">(</span><span class="n">op</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Z_DELREF_P</span><span class="p">(</span><span class="n">op</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ZVAL_COPY</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">Z_REFVAL_P</span><span class="p">(</span><span class="n">op</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Если счётчик ссылок равен 1, то внутреннее значение перемещается в <code class="docutils literal notranslate"><span class="pre">op</span></code>, а обёртка ссылки уничтожается. Это то,
+что делает <code class="docutils literal notranslate"><span class="pre">ZVAL_UNREF()</span></code>. Если счётчик ссылок больше единицы, то мы уменьшаем счётчик ссылок обёртки ссылки и
+копируем (с увеличением счётчика ссылок) внутреннее значение в <code class="docutils literal notranslate"><span class="pre">op</span></code>. Это означает, что операция разворачивания не
+обязательно уничтожает ссылку (если у неё есть другие пользователи), но удалит одно конкретное использование.</p>
+</section>
+<section id="zval">
+<h2>Косвенные zval<a class="headerlink" href="#zval" title="Link to this heading">¶</a></h2>
+<p>Помимо ссылок, у PHP также есть более прямой механизм для совместного использования zval. Тип <code class="docutils literal notranslate"><span class="pre">IS_INDIRECT</span></code>
+хранит прямой указатель на другой zval:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">zval</span><span class="w"> </span><span class="n">val1</span><span class="p">;</span>
+<span class="n">ZVAL_LONG</span><span class="p">(</span><span class="o">&amp;</span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+
+<span class="n">zval</span><span class="w"> </span><span class="n">val2</span><span class="p">;</span>
+<span class="n">ZVAL_INDIRECT</span><span class="p">(</span><span class="o">&amp;</span><span class="n">val2</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">val1</span><span class="p">);</span>
+
+<span class="n">ZEND_ASSERT</span><span class="p">(</span><span class="n">Z_INDIRECT</span><span class="p">(</span><span class="n">val2</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">&amp;</span><span class="n">val1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Хотя здесь есть некоторое внешнее сходство со ссылками, этот механизм в целом непригоден для использования, потому
+что ничто не гарантирует, что zval, на который указывает указатель, не будет освобождён. По этой причине косвенные
+zval могут использоваться только в контролируемых ситуациях, например, для указания из хеш-таблицы свойств на
+таблицу слотов свойств. Это возможно, потому что мы знаем, что таблица слотов свойств не переаллоцируется в течение
+жизни объекта, а хеш-таблица свойств и таблица слотов свойств освобождаются одновременно, так что никаких висячих
+указателей не остаётся.</p>
+<p>Таким образом, косвенные zval могут встречаться только в определённых ситуациях и не могут храниться в
+универсальных zval, экспонируемых в пользовательский код.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="memory_management.html">Управление памятью</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="casts_and_operations.html">Приведения типов и операции</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

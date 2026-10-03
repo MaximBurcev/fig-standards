@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Введение &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=38da9290" />
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Использование системы сборки PHP" href="build_system.html" />
+    <link rel="prev" title="Русский перевод: PHP 7 и PHP 8" href="../index.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Введение</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../index.html">Русский перевод: PHP 7 и PHP 8</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="build_system.html">Использование системы сборки PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="id1">
+<h1>Введение<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>Эта книга — результат совместной работы нескольких разработчиков языка PHP, цель которой — лучше документировать и
+описать, как PHP устроен внутри.</p>
+<p>У книги три основные цели:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Документировать и описывать, как устроены внутренности PHP.</p></li>
+<li><p>Документировать и описывать, как расширять язык с помощью расширений.</p></li>
+<li><p>Документировать и описывать, как вы можете взаимодействовать с сообществом, чтобы участвовать в разработке самого PHP.</p></li>
+</ul>
+</div></blockquote>
+<p>Эта книга в первую очередь рассчитана на разработчиков, имеющих опыт работы с языком C. Однако там, где это возможно, мы
+постараемся упростить и обобщить информацию, чтобы разработчики, не очень хорошо знающие C, тоже могли понять материал.</p>
+<p>Тем не менее позвольте настоять: вы не сможете добиться чего-то продуктивного, стабильного (без падений на любой
+платформе), производительного и полезного, если не знаете язык C. Вот несколько неплохих онлайн-ресурсов о самом языке
+C, его экосистеме и инструментах сборки, а также об API операционных систем:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://www.tenouk.com/">http://www.tenouk.com/</a></p></li>
+<li><p><a class="reference external" href="https://en.wikibooks.org/wiki/C_Programming">https://en.wikibooks.org/wiki/C_Programming</a></p></li>
+<li><p><a class="reference external" href="http://c-faq.com/">http://c-faq.com/</a></p></li>
+<li><p><a class="reference external" href="https://www.gnu.org/software/libc/">https://www.gnu.org/software/libc/</a></p></li>
+<li><p><a class="reference external" href="http://www.faqs.org/docs/Linux-HOWTO/Program-Library-HOWTO.html">http://www.faqs.org/docs/Linux-HOWTO/Program-Library-HOWTO.html</a></p></li>
+</ul>
+<p>Мы также настоятельно рекомендуем несколько книг. С их помощью вы научитесь эффективно использовать язык C и переводить
+его в эффективные инструкции CPU, чтобы создавать мощные/быстрые/надёжные и безопасные программы.</p>
+<ul class="simple">
+<li><p>The C Programming Language (Ritchie &amp; Kernighan)</p></li>
+<li><p>Advanced Topics in C Core Concepts in Data Structures</p></li>
+<li><p>Learn C the Hard Way</p></li>
+<li><p>The Art of Debugging with GDB DDD and Eclipse</p></li>
+<li><p>The Linux Programming Interface</p></li>
+<li><p>Advanced Linux Programming</p></li>
+<li><p>Hackers Delight</p></li>
+<li><p>Write Great Code (2 Volumes)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Эта книга находится в процессе написания (Work-In-Progress), и некоторые главы ещё не написаны. Мы не
+придерживаемся строгого порядка, а добавляем материал по мере готовности.</p>
+</div>
+<p>Репозиторий этой книги доступен на <a class="reference external" href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>. Пожалуйста, сообщайте о проблемах и оставляйте отзывы на <a class="reference external" href="https://github.com/phpinternalsbook/PHP-Internals-Book/issues">issue tracker</a>.</p>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../index.html">Русский перевод: PHP 7 и PHP 8</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="build_system.html">Использование системы сборки PHP</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

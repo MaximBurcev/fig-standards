@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Объявление и использование настроек INI &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Zend-расширения" href="zend_extensions.html" />
+    <link rel="prev" title="Хуки, предоставляемые PHP" href="hooks.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Объявление и использование настроек INI</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="hooks.html">Хуки, предоставляемые PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="zend_extensions.html">Zend-расширения</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="ini">
+<h1>Объявление и использование настроек INI<a class="headerlink" href="#ini" title="Link to this heading">¶</a></h1>
+<p>В этой главе подробно рассматривается, как PHP работает со своей конфигурацией и как расширение должно подключаться
+к основному этапу конфигурирования PHP, регистрируя и используя настройки INI.</p>
+<section id="id1">
+<h2>Напоминание о настройках INI<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Прежде чем идти дальше, нужно вспомнить, как работают настройки INI и конфигурация PHP. Ниже перечислены шаги, ещё
+раз представленные как трактовка исходного кода. Этапы разбора INI-файлов PHP происходят в
+<a class="reference external" href="https://github.com/php/php-src/blob/4903f044d3a65de5b1c457d9eb618c9e247f7086/main/php_ini.c#L382">php_init_config()</a>,
+а всё, что связано с INI, в основном происходит в
+<a class="reference external" href="https://github.com/php/php-src/blob/4903f044d3a65de5b1c457d9eb618c9e247f7086/Zend/zend_ini.c">Zend/zend_ini.c</a>.</p>
+<p>Сначала PHP пытается разобрать один или несколько INI-файлов. Эти файлы могут объявлять некоторые настройки, которые
+в дальнейшем могут оказаться релевантными, а могут и не оказаться. На этом самом раннем этапе (разбор INI-файлов) PHP
+ничего не знает о том, что ожидать в этих файлах. Он просто разбирает содержимое и сохраняет его для последующего
+использования.</p>
+<p>Затем на втором этапе PHP запускает свои расширения, вызывая их <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>. Если нужно вспомнить о жизненном цикле
+PHP, <a class="reference internal" href="php_lifecycle.html"><span class="doc">прочитайте соответствующую главу</span></a>. <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> теперь может зарегистрировать нужные
+настройки INI текущего расширения. При регистрации настройки движок проверяет, не разобрал ли он её определение
+ранее, в рамках этапа разбора INI-файлов. Если это так, то настройка INI регистрируется в движке и получает
+значение, разобранное из INI-файлов. Если определения в разобранных INI-файлах не было, то она регистрируется со
+значением по умолчанию, которое разработчик расширения передал в API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Значение по умолчанию, которое получит настройка, определяется по результатам разбора INI-файлов. Если
+ничего не найдено, то значением по умолчанию становится то, что указал разработчик расширения, а не
+наоборот.</p>
+</div>
+<p>Значение по умолчанию, о котором мы здесь говорим, называется <strong>«master value»</strong> (основное значение). Вы могли
+видеть его в выводе <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code>, не так ли?</p>
+<img alt="../../../_images/php_extensions_ini1.png" class="align-center" src="../../../_images/php_extensions_ini1.png" />
+<p>Основное значение (master value) не может изменяться. Если во время запроса пользователь хочет изменить
+конфигурацию, например, с помощью <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code>, и если ему это разрешено, то изменённое значение станет
+<strong>«локальным значением»</strong> (local value) — текущим значением для текущего запроса. В конце запроса движок
+автоматически восстановит локальное значение до основного, тем самым сбрасывая его и забывая об изменениях,
+сделанных во время запроса.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ini_get()</span></code> считывает текущее локальное значение, привязанное к запросу, тогда как <code class="docutils literal notranslate"><span class="pre">get_cfg_var()</span></code> в любом
+случае считывает основное значение.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если вы правильно поняли, <code class="docutils literal notranslate"><span class="pre">get_cfg_var()</span></code> вернёт false для любого запрошенного значения, которое не было
+частью разбора INI-файла, даже если такое значение существует и было объявлено расширением.
+И верно обратное: <code class="docutils literal notranslate"><span class="pre">ini_get()</span></code> вернёт false, если запрошена настройка, к которой ни одно расширение не
+проявило интереса, даже если эта настройка была частью разбора INI-файла (например, php.ini).</p>
+</div>
+</section>
+<section id="id2">
+<h2>Подробнее о настройках INI<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Внутри движка настройка INI представлена структурой <code class="docutils literal notranslate"><span class="pre">zend_ini_entry</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_ini_entry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">on_modify</span><span class="p">)(</span><span class="n">zend_ini_entry</span><span class="w"> </span><span class="o">*</span><span class="n">entry</span><span class="p">,</span><span class="w"> </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">new_value</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg1</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg2</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg3</span><span class="p">,</span>
+<span class="w">                     </span><span class="kt">int</span><span class="w"> </span><span class="n">stage</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg3</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">zend_string</span><span class="w"> </span><span class="o">*</span><span class="n">orig_value</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">displayer</span><span class="p">)(</span><span class="n">zend_ini_entry</span><span class="w"> </span><span class="o">*</span><span class="n">ini_entry</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">modifiable</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">orig_modifiable</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">modified</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">module_number</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>В этой структуре нет ничего сложного.</p>
+<ul class="simple">
+<li><p>Поля настройки <code class="docutils literal notranslate"><span class="pre">name</span></code> и <code class="docutils literal notranslate"><span class="pre">value</span></code> используются чаще всего. Обратите внимание, что значение — это строка (как
+<a class="reference internal" href="../internal_types/strings/zend_strings.html"><span class="doc">zend_string *</span></a>) и ничего более.</p></li>
+<li><p>Далее, как мы подробно рассмотрели во вступительной главе выше, мы находим поля <code class="docutils literal notranslate"><span class="pre">orig_value</span></code>, <code class="docutils literal notranslate"><span class="pre">orig_modified</span></code>,
+<code class="docutils literal notranslate"><span class="pre">modifiable</span></code> и <code class="docutils literal notranslate"><span class="pre">modified</span></code>, которые связаны с изменением значения настройки. Настройка должна хранить в памяти
+своё исходное значение (как «основное значение»).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modifiable</span></code> указывает, можно ли изменять настройку, и должен принимать одно из значений <code class="docutils literal notranslate"><span class="pre">ZEND_INI_USER</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ZEND_INI_PERDIR</span></code>, <code class="docutils literal notranslate"><span class="pre">ZEND_INI_SYSTEM</span></code> или <code class="docutils literal notranslate"><span class="pre">ZEND_INI_ALL</span></code>; они могут комбинироваться флагами, подробности
+описаны <a class="reference external" href="http://php.net/configuration.changes.modes">в руководстве по PHP</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modified</span></code> устанавливается в единицу каждый раз, когда настройка изменяется во время запроса, чтобы движок знал
+при завершении запроса, что должен восстановить значение этой настройки INI до основного значения для обработки
+следующего запроса.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">on_modify()</span></code> — это обработчик, вызываемый каждый раз, когда значение текущей настройки изменяется, например,
+с помощью вызова <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code> (но не только). Мы подробнее разберём <code class="docutils literal notranslate"><span class="pre">on_modify()</span></code> позже, но пока считайте его
+<em>функцией-валидатором</em> (например, если настройка должна представлять целое число, вы можете проверять передаваемые
+значения на соответствие целым числам). Он также служит мостом в памяти для обновления глобальных значений, к
+этому мы тоже вернёмся позже.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">displayer()</span></code> менее полезен, и обычно его не передают. <code class="docutils literal notranslate"><span class="pre">displayer()</span></code> отвечает за то, как отображается ваша
+настройка. Например, вы могли заметить, что PHP обычно отображает <em>On</em> для булевых значений <em>true</em>/<em>yes</em>/<em>on</em>/<em>1</em>
+и так далее. Это и есть задача <code class="docutils literal notranslate"><span class="pre">displayer()</span></code>: превратить текущее значение в «отображаемое» значение.</p></li>
+</ul>
+<p>Вам также придётся иметь дело со структурой <code class="docutils literal notranslate"><span class="pre">zend_ini_entry_def</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_ini_entry_def</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ZEND_INI_MH</span><span class="p">((</span><span class="o">*</span><span class="n">on_modify</span><span class="p">));</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg3</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">displayer</span><span class="p">)(</span><span class="n">zend_ini_entry</span><span class="w"> </span><span class="o">*</span><span class="n">ini_entry</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">modifiable</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">uint</span><span class="w"> </span><span class="n">name_length</span><span class="p">;</span>
+<span class="w">    </span><span class="n">uint</span><span class="w"> </span><span class="n">value_length</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">zend_ini_entry_def</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Структура <code class="docutils literal notranslate"><span class="pre">zend_ini_entry_def</span></code>, во многом похожая на <code class="docutils literal notranslate"><span class="pre">zend_ini_entry</span></code>, используется программистом (то есть
+вами) при регистрации настройки INI в движке. Движок считывает <code class="docutils literal notranslate"><span class="pre">zend_ini_entry_def</span></code> и создаёт внутри себя
+<code class="docutils literal notranslate"><span class="pre">zend_ini_entry</span></code> для собственного использования, основываясь на предоставленной вами модели определения. Просто.</p>
+</section>
+<section id="id3">
+<h2>Регистрация и использование записей INI<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id4">
+<h3>Регистрация<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Настройки INI сохраняются между запросами. Они могут менять своё значение во время выполнения запроса, но
+возвращаются к исходному значению при завершении запроса. Поэтому регистрация настроек INI выполняется один раз и
+навсегда, в хуке <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> вашего расширения.</p>
+<p>Всё, что нужно сделать — это объявить вектор <code class="docutils literal notranslate"><span class="pre">zend_ini_entry_def</span></code>, и для этого вам помогут специальные макросы.
+Затем вы регистрируете свой вектор в движке, и объявление готово. Рассмотрим это на примере из предыдущей главы о
+выборе и угадывании случайного числа, снова показывая только значимые для нас сейчас части:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">PHP_INI_BEGIN</span><span class="p">()</span>
+<span class="n">PHP_INI_ENTRY</span><span class="p">(</span><span class="s">"pib.rnd_max"</span><span class="p">,</span><span class="w"> </span><span class="s">"100"</span><span class="p">,</span><span class="w"> </span><span class="n">PHP_INI_ALL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span>
+<span class="n">PHP_INI_END</span><span class="p">()</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">REGISTER_INI_ENTRIES</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINFO_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">DISPLAY_INI_ENTRIES</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">UNREGISTER_INI_ENTRIES</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Это было самое простое объявление INI, мы не оставим его в таком виде, но шаги элементарны: вы объявляете вектор
+<code class="docutils literal notranslate"><span class="pre">zend_ini_entry_def[]</span></code> с помощью макросов <code class="docutils literal notranslate"><span class="pre">PHP_INI_BEGIN</span></code> и <code class="docutils literal notranslate"><span class="pre">PHP_INI_END</span></code>. В середине вы добавляете отдельные
+записи <code class="docutils literal notranslate"><span class="pre">zend_ini_entry_def</span></code>, тоже с помощью макросов. Мы использовали самый простой — <code class="docutils literal notranslate"><span class="pre">PHP_INI_ENTRY()</span></code>, который
+принимает только четыре параметра: имя регистрируемой записи, её значение по умолчанию, если оно не было частью
+разбора INI-файла (подробности см. в главе выше), уровень модификации — <code class="docutils literal notranslate"><span class="pre">PHP_INI_ALL</span></code> означает «везде». С
+валидатором мы пока не играли и передали NULL.</p>
+<p>В хуке <code class="docutils literal notranslate"><span class="pre">MINIT</span></code> мы используем макрос <code class="docutils literal notranslate"><span class="pre">REGISTER_INI_ENTRIES</span></code>, который выполняет описанную работу, тогда как его
+противоположность <code class="docutils literal notranslate"><span class="pre">UNREGISTER_INI_ENTRIES</span></code> используется при завершении работы модуля для освобождения выделенных
+ресурсов.</p>
+<p>Теперь новая настройка INI <em>«pib.rnd_max»</em> объявлена — как <code class="docutils literal notranslate"><span class="pre">PHP_INI_ALL</span></code> — это означает, что пользователь может
+изменить её значение с помощью <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code> (и считать обратно с помощью <code class="docutils literal notranslate"><span class="pre">ini_get()</span></code>).</p>
+<p>Мы не забыли отобразить эти настройки INI как часть информации о расширении, используя <code class="docutils literal notranslate"><span class="pre">DISPLAY_INI_ENTRIES()</span></code>.
+Если забыть это сделать при объявлении хука <code class="docutils literal notranslate"><span class="pre">MINFO()</span></code>, наши настройки INI окажутся скрыты от пользователя на
+странице информации (<code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code>). При необходимости обратитесь к <a class="reference internal" href="extension_infos.html"><span class="doc">главе об информации о расширении</span></a>.</p>
+</section>
+<section id="id5">
+<h3>Использование<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>Со своей стороны как разработчику расширения, нам может потребоваться самостоятельно считывать значения настроек
+INI. Самый простой способ сделать это в расширении — использовать макросы, которые найдут значение в основном
+массиве, хранящем все настройки INI, и вернут его в виде запрошенного типа. В нашем распоряжении есть несколько
+макросов в зависимости от того, какой C-тип мы хотим получить обратно.</p>
+<p><code class="docutils literal notranslate"><span class="pre">INI_INT(val)</span></code>, <code class="docutils literal notranslate"><span class="pre">INI_FLT(val)</span></code>, <code class="docutils literal notranslate"><span class="pre">INI_STR(val)</span></code>, <code class="docutils literal notranslate"><span class="pre">INI_BOOL(val)</span></code> — все четыре макроса ищут указанное значение
+в массиве настроек INI и возвращают его (если найдено) с приведением к запрошенному типу.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Помните, что в <code class="docutils literal notranslate"><span class="pre">zend_ini_entry</span></code> значение имеет тип <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>. В нашем примере мы зарегистрировали
+настройку INI типа ‘long’ — <code class="docutils literal notranslate"><span class="pre">pib.rnd_max</span></code> со значением по умолчанию 100. Но её значение регистрируется
+в массиве настроек INI как <code class="docutils literal notranslate"><span class="pre">zend_string</span></code>, и поэтому каждый раз при считывании значения его нужно
+приводить к типу ‘long’. Именно эту работу выполняет <code class="docutils literal notranslate"><span class="pre">INI_INT()</span></code>.</p>
+</div>
+<p>Пример:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">php_printf</span><span class="p">(</span><span class="s">"The value is : %lu"</span><span class="p">,</span><span class="w"> </span><span class="n">INI_INT</span><span class="p">(</span><span class="s">"pib.rnd_max"</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Если значение не найдено, возвращается 0, поскольку мы запрашивали long. 0.0 было бы возвращено в том же
+случае, но при преобразовании в float, и так далее.</p>
+</div>
+<p>Если бы пользователь изменил настройку, а мы хотели бы отобразить «основное» исходное значение (в нашем случае:
+100), то вместо <code class="docutils literal notranslate"><span class="pre">INI_INT()</span></code> мы использовали бы <code class="docutils literal notranslate"><span class="pre">INI_ORIG_INT()</span></code>. Разумеется, такие вариации макросов существуют
+и для других типов.</p>
+</section>
+</section>
+<section id="id6">
+<h2>Валидаторы и мост в памяти к глобальным переменным<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Пока всё неплохо: регистрация и считывание значений настроек INI не так уж сложны. Но способ, которым мы
+использовали их в строках выше, далёк от оптимального.</p>
+<p>Есть две проблемы, которые одновременно решаются использованием «продвинутого» API настроек INI:</p>
+<ul class="simple">
+<li><p>Каждый раз, когда нужно считать наше значение, требуется поиск в основной таблице настроек INI, а также (часто)
+приведение к нужному типу. Эти операции стоят некоторого количества циклов CPU.</p></li>
+<li><p>Мы не предоставили никакого валидатора, поэтому пользователь мог изменить нашу настройку и указать в качестве
+значения всё, что захочет.</p></li>
+</ul>
+<p>Решение — использовать валидатор <code class="docutils literal notranslate"><span class="pre">on_modify()</span></code> и мост в памяти для обновления глобальной переменной.</p>
+<p>Используя продвинутый API управления настройками INI, мы можем попросить движок зарегистрировать наши настройки
+обычным образом, но также можем указать ему обновлять выбранную нами глобальную переменную каждый раз, когда
+значение настройки INI изменяется. Таким образом, когда нам нужно будет считать наше значение обратно, достаточно
+будет прочитать нашу глобальную переменную. Это даст прирост производительности в случае, когда значение настройки
+INI требуется считывать часто, поскольку поиск в хеш-таблице и операция приведения типа больше не понадобятся.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Чтобы продолжить читать эту главу, вам нужно хорошо понимать работу с глобальными переменными. Управление
+глобальным пространством рассматривается <a class="reference internal" href="globals_management.html"><span class="doc">в отдельной главе</span></a>.</p>
+</div>
+<p>Чтобы объявить мост в памяти к глобальной переменной, нам нужно создать глобальную переменную запроса и изменить
+способ объявления нашей настройки INI. Вот так:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_BEGIN_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="w">    </span><span class="n">zend_ulong</span><span class="w"> </span><span class="n">max_rnd</span><span class="p">;</span>
+<span class="n">ZEND_END_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="n">ZEND_DECLARE_MODULE_GLOBALS</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+
+<span class="n">PHP_INI_BEGIN</span><span class="p">()</span>
+<span class="w">    </span><span class="n">STD_PHP_INI_ENTRY</span><span class="p">(</span><span class="s">"pib.rnd_max"</span><span class="p">,</span><span class="w"> </span><span class="s">"100"</span><span class="p">,</span><span class="w"> </span><span class="n">PHP_INI_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">OnUpdateLongGEZero</span><span class="p">,</span><span class="w"> </span><span class="n">max_rnd</span><span class="p">,</span><span class="w"> </span><span class="n">zend_pib_globals</span><span class="p">,</span><span class="w"> </span><span class="n">pib_globals</span><span class="p">)</span>
+<span class="n">PHP_INI_END</span><span class="p">()</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">pib</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">REGISTER_INI_ENTRIES</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Мы объявляем глобальную переменную <code class="docutils literal notranslate"><span class="pre">max_rnd</span></code> типа <code class="docutils literal notranslate"><span class="pre">zend_ulong</span></code>. Затем мы регистрируем нашу INI-настройку
+<em>‘pib.rnd_max’</em>, на этот раз используя <code class="docutils literal notranslate"><span class="pre">STD_PHP_INI_ENTRY()</span></code>. Это позволяет передать макросу больше параметров.
+Первые три нам уже известны, мы подробно разбирали их выше в главе.</p>
+<p>Четыре последних параметра представляют мост к глобальным переменным. Мы указываем, что хотим обновлять <code class="docutils literal notranslate"><span class="pre">max_rnd</span></code>
+в структуре <code class="docutils literal notranslate"><span class="pre">zend_pib_globals</span></code>, представленной символом <code class="docutils literal notranslate"><span class="pre">pib_globals</span></code>. Если не уверены в этом, прочитайте
+<a class="reference internal" href="globals_management.html"><span class="doc">главу об управлении глобальными переменными</span></a>. Для краткого напоминания:
+<code class="docutils literal notranslate"><span class="pre">ZEND_BEGIN_MODULE_GLOBALS()</span></code> объявляет структуру <code class="docutils literal notranslate"><span class="pre">zend_pib_globals</span></code>, а <code class="docutils literal notranslate"><span class="pre">ZEND_DECLARE_MODULE_GLOBALS()</span></code>
+объявляет символ <code class="docutils literal notranslate"><span class="pre">pib_globals</span></code> такого типа.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Внутри для вычисления смещения в байтах нашего члена <code class="docutils literal notranslate"><span class="pre">max_rnd</span></code> в структуре <code class="docutils literal notranslate"><span class="pre">zend_pib_globals</span></code>
+используется <a class="reference external" href="https://en.wikipedia.org/wiki/Offsetof">offsetof</a>, чтобы можно было обновлять эту область
+памяти каждый раз при изменении <em>‘pib.rnd_max’</em>.</p>
+</div>
+<p>Валидатор <code class="docutils literal notranslate"><span class="pre">on_modify()</span></code>, используемый здесь — <code class="docutils literal notranslate"><span class="pre">onUpdateLongGEZero()</span></code> — это стандартный валидатор, существующий
+в PHP, который проверяет значение на соответствие long, большему или равному нулю. Валидатор необходим для
+обновления глобальной переменной, поскольку именно эта работа выполняется внутри валидатора.</p>
+<p>Теперь, чтобы считать значение нашей настройки INI обратно, нам нужно просто прочитать значение нашей глобальной
+переменной <code class="docutils literal notranslate"><span class="pre">max_rnd</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">php_printf</span><span class="p">(</span><span class="s">"The value is : %lu"</span><span class="p">,</span><span class="w"> </span><span class="n">PIB_G</span><span class="p">(</span><span class="n">max_rnd</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>И мы закончили.</p>
+<p>Теперь посмотрим на валидатор (обработчик <code class="docutils literal notranslate"><span class="pre">on_modify()</span></code>). У валидатора две цели:</p>
+<ul class="simple">
+<li><p>Проверить переданное значение</p></li>
+<li><p>Обновить глобальную переменную, если проверка прошла успешно</p></li>
+</ul>
+<p>Валидатор вызывается только тогда, когда настройка INI устанавливается или изменяется (записывается), в любой
+момент, когда происходит этот шаг.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Если вы хотите, чтобы глобальная переменная обновлялась значением настройки INI, вам понадобится
+валидатор. Такой механизм не выполняется движком «магическим образом» — его нужно явно реализовать в
+валидаторе.</p>
+</div>
+<p>Посмотрим на исходный код <code class="docutils literal notranslate"><span class="pre">onUpdateLongGEZero()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define ZEND_INI_MH(name) int name(zend_ini_entry *entry, zend_string *new_value,</span>
+<span class="w">                                    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg1</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg2</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mh_arg3</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stage</span><span class="p">)</span>
+
+<span class="n">ZEND_API</span><span class="w"> </span><span class="n">ZEND_INI_MH</span><span class="p">(</span><span class="n">OnUpdateLongGEZero</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+<span class="cp">#ifndef ZTS</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">mh_arg2</span><span class="p">;</span>
+<span class="cp">#else</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">base</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ts_resource</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">mh_arg2</span><span class="p">));</span>
+<span class="cp">#endif</span>
+
+<span class="w">    </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_atol</span><span class="p">(</span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">new_value</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">new_value</span><span class="p">));</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tmp</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">zend_long</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">base</span><span class="o">+</span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="w"> </span><span class="n">mh_arg1</span><span class="p">);</span>
+<span class="w">    </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Как видите, здесь нет ничего сложного. Вашему валидатору передаётся <code class="docutils literal notranslate"><span class="pre">new_value</span></code>, по которому он должен выполнить
+проверку. Помните, что <code class="docutils literal notranslate"><span class="pre">new_value</span></code> имеет тип <a class="reference internal" href="../internal_types/strings/zend_strings.html"><span class="doc">zend_string *</span></a>.
+<code class="docutils literal notranslate"><span class="pre">onUpdateLongGEZero()</span></code> принимает значение как long и проверяет, является ли оно положительным целым числом. Из
+валидатора нужно возвращать <code class="docutils literal notranslate"><span class="pre">SUCCESS</span></code>, если всё прошло успешно, и <code class="docutils literal notranslate"><span class="pre">FAILURE</span></code> — если нет.</p>
+<p>Далее идёт часть, обновляющая глобальную переменную. Переменные <code class="docutils literal notranslate"><span class="pre">mh_arg</span></code> используются для передачи любой
+информации вашему валидатору.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>‘mh’</em> означает <em>modify handler</em> (обработчик изменения). Функции обратного вызова валидаторов также
+называют <em>обработчиками изменения (modification handler callbacks)</em>.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">mh_arg2</span></code> — это указатель на область памяти, представляющую начало памяти структуры вашей глобальной переменной,
+в нашем случае — начало выделенной памяти <code class="docutils literal notranslate"><span class="pre">pib_globals</span></code>. Обратите внимание, что, поскольку речь идёт о памяти
+глобальной переменной запроса, доступ к ней отличается в зависимости от того, используете вы режим ZTS или нет.
+Больше информации о ZTS <a class="reference internal" href="globals_management.html"><span class="doc">можно найти здесь</span></a>.</p>
+<p>В <code class="docutils literal notranslate"><span class="pre">mh_arg1</span></code> передаётся вычисленное смещение вашего члена глобальной переменной (<code class="docutils literal notranslate"><span class="pre">max_rnd</span></code> в нашем случае), и вы
+должны самостоятельно вычислить срез памяти, чтобы получить указатель на него. Именно поэтому мы сохранили
+<code class="docutils literal notranslate"><span class="pre">mh_arg2</span></code> как обобщённый указатель <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code> и привели <code class="docutils literal notranslate"><span class="pre">mh_arg1</span></code> к <code class="docutils literal notranslate"><span class="pre">size_t</span></code>.</p>
+<p>Затем вы просто обновляете содержимое проверенным значением, записывая его через указатель. <code class="docutils literal notranslate"><span class="pre">mh_arg3</span></code> на самом
+деле не используется.</p>
+<p>Стандартными валидаторами PHP являются <code class="docutils literal notranslate"><span class="pre">OnUpdateLongGEZero()</span></code>, <code class="docutils literal notranslate"><span class="pre">OnUpdateLong()</span></code>, <code class="docutils literal notranslate"><span class="pre">OnUpdateBool()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">OnUpdateReal()</span></code>, <code class="docutils literal notranslate"><span class="pre">OnUpdateString()</span></code> и <code class="docutils literal notranslate"><span class="pre">OnUpdateStringUnempty()</span></code>. Их названия говорят сами за себя, как и их
+исходный код (вы можете его прочитать).</p>
+<p>По такой же модели мы можем разработать собственный валидатор, который, например, проверяет значение на
+соответствие положительному целому числу от 0 до 1000:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ZEND_INI_MH</span><span class="p">(</span><span class="n">onUpdateMaxRnd</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">zend_long</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">;</span>
+<span class="cp">#ifndef ZTS</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">mh_arg2</span><span class="p">;</span>
+<span class="cp">#else</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">base</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ts_resource</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">mh_arg2</span><span class="p">));</span>
+<span class="cp">#endif</span>
+
+<span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">zend_long</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="n">base</span><span class="o">+</span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="w"> </span><span class="n">mh_arg1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zend_atol</span><span class="p">(</span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">new_value</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">ZSTR_LEN</span><span class="p">(</span><span class="n">new_value</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tmp</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">FAILURE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_INI_BEGIN</span><span class="p">()</span>
+<span class="w">    </span><span class="n">STD_PHP_INI_ENTRY</span><span class="p">(</span><span class="s">"pib.rnd_max"</span><span class="p">,</span><span class="w"> </span><span class="s">"100"</span><span class="p">,</span><span class="w"> </span><span class="n">PHP_INI_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">onUpdateMaxRnd</span><span class="p">,</span><span class="w"> </span><span class="n">max_rnd</span><span class="p">,</span><span class="w"> </span><span class="n">zend_pib_globals</span><span class="p">,</span><span class="w"> </span><span class="n">pib_globals</span><span class="p">)</span>
+<span class="n">PHP_INI_END</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Записывать значение типа <em>long</em> в <em>unsigned long</em> безопасно, если диапазоны проверены, а именно это и
+делает валидатор.</p>
+</div>
+<p>Теперь, если пользователь хочет изменить настройку и передаёт неверное значение, не проходящее проверку,
+<code class="docutils literal notranslate"><span class="pre">ini_set()</span></code> просто вернёт false в пользовательский код и не изменит значение:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nb">ini_set</span><span class="p">(</span><span class="s1">'pib.rnd_max'</span><span class="p">,</span> <span class="mi">2048</span><span class="p">);</span> <span class="cm">/* returns false as 2048 is &gt; 1000 */</span>
+</pre></div>
+</div>
+<p>В противоположном случае <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code> возвращает старое значение и изменяет текущее значение. Новое переданное
+значение становится текущим «локальным» значением, тогда как предыдущее значение по умолчанию остаётся «основным
+значением». <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code> или <code class="docutils literal notranslate"><span class="pre">ini_get_all()</span></code> подробно показывают такие значения. Пример:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nb">ini_set</span><span class="p">(</span><span class="s1">'pib.rnd_max'</span><span class="p">,</span> <span class="mi">500</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nb">ini_get_all</span><span class="p">(</span><span class="s1">'pib'</span><span class="p">));</span>
+
+<span class="cm">/*</span>
+<span class="cm">array(1) {</span>
+<span class="cm">  ["pib.rnd_max"]=&gt;</span>
+<span class="cm">  array(3) {</span>
+<span class="cm">    ["global_value"]=&gt;</span>
+<span class="cm">    string(3) "100"</span>
+<span class="cm">    ["local_value"]=&gt;</span>
+<span class="cm">    string(3) "500"</span>
+<span class="cm">    ["access"]=&gt;</span>
+<span class="cm">    int(7)</span>
+<span class="cm">  }</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>Учтите, что ваша функция обратного вызова валидатора будет вызываться каждый раз при изменении значения, а
+изменяется оно несколько раз. Например, в нашем маленьком примере спроектированный нами валидатор вызывается три
+раза:</p>
+<ul class="simple">
+<li><p>Один раз в <code class="docutils literal notranslate"><span class="pre">REGISTER_INI_ENTRY()</span></code>, в <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>. Здесь мы устанавливаем значение по умолчанию для нашей
+настройки, и это делается с помощью нашего валидатора. Помните, что значение по умолчанию может приходить из
+разбора INI-файлов.</p></li>
+<li><p>Один раз на каждый пользовательский вызов <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code>.</p></li>
+<li><p>Один раз в <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code>, когда движок попытается восстановить локальное значение до основного, если значение
+было изменено во время текущего запроса. Пользовательская функция <code class="docutils literal notranslate"><span class="pre">ini_restore()</span></code> выполняет ту же работу.</p></li>
+</ul>
+<p>Также учтите, что уровень доступа к значению проверяется в <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code>. Если бы мы спроектировали настройку
+<code class="docutils literal notranslate"><span class="pre">PHP_INI_SYSTEM</span></code>, пользователь не смог бы изменить её с помощью <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code>, поскольку <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code> использует
+в качестве уровня доступа <code class="docutils literal notranslate"><span class="pre">PHP_INI_USER</span></code>. Несовпадение было бы обнаружено, и в этом случае движок не стал бы
+вызывать валидатор.</p>
+<p>Если вам нужно изменить значение настройки INI внутри вашего расширения во время выполнения, внутренний вызов —
+<code class="docutils literal notranslate"><span class="pre">zend_alter_ini_entry()</span></code>, именно его использует пользовательская функция <code class="docutils literal notranslate"><span class="pre">ini_set()</span></code>.</p>
+</section>
+<section id="displayer">
+<h2>Использование displayer<a class="headerlink" href="#displayer" title="Link to this heading">¶</a></h2>
+<p>Последнее, что нужно знать о настройках INI — это callback-функция <code class="docutils literal notranslate"><span class="pre">displayer()</span></code>. На практике она используется
+реже, и срабатывает каждый раз, когда пользовательский код просит «вывести» значение вашей настройки INI, то есть
+при использовании <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code> или <code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">--ri</span></code>.</p>
+<p>Если вы не предоставите displayer, будет использован стандартный. Посмотрите:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="w"> </span><span class="n">php</span><span class="w"> </span><span class="o">-</span><span class="n">dextension</span><span class="o">=</span><span class="n">pib</span><span class="p">.</span><span class="n">so</span><span class="w"> </span><span class="o">-</span><span class="n">dpib</span><span class="p">.</span><span class="n">rnd_max</span><span class="o">=</span><span class="mi">120</span><span class="w"> </span><span class="o">--</span><span class="n">ri</span><span class="w"> </span><span class="n">pib</span>
+
+<span class="n">Directive</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Local</span><span class="w"> </span><span class="n">Value</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Master</span><span class="w"> </span><span class="n">Value</span>
+<span class="n">pib</span><span class="p">.</span><span class="n">rnd_max</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">120</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">120</span>
+</pre></div>
+</div>
+<p>Стандартный displayer берёт значение настройки INI (которое, напомним, имеет тип <code class="docutils literal notranslate"><span class="pre">zend_string</span> <span class="pre">*</span></code>), и просто
+отображает его. Если значение не найдено или оно является пустой строкой, отображается строка “no value”.</p>
+<p>Чтобы взять этот процесс под контроль, нам нужно объявить callback-функцию <code class="docutils literal notranslate"><span class="pre">displayer()</span></code>, которая будет
+вызываться. Попробуем представить значение нашей <em>‘pib.rnd_max’</em> в виде процентной шкалы, из символов <em>‘#’</em> и <em>‘.’</em>.
+Просто пример:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define ZEND_INI_DISP(name) void name(zend_ini_entry *ini_entry, int type)</span>
+
+<span class="n">ZEND_INI_DISP</span><span class="p">(</span><span class="n">MaxRnd</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">disp</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="n">zend_ulong</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ZEND_INI_DISPLAY_ORIG</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ini_entry</span><span class="o">-&gt;</span><span class="n">modified</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ini_entry</span><span class="o">-&gt;</span><span class="n">orig_value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZEND_STRTOUL</span><span class="p">(</span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">ini_entry</span><span class="o">-&gt;</span><span class="n">orig_value</span><span class="p">),</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ini_entry</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZEND_STRTOUL</span><span class="p">(</span><span class="n">ZSTR_VAL</span><span class="p">(</span><span class="n">ini_entry</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">),</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">tmp</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span><span class="w"> </span><span class="sc">'#'</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">);</span>
+<span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="n">disp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tmp</span><span class="p">,</span><span class="w"> </span><span class="sc">'.'</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tmp</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">php_write</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_INI_BEGIN</span><span class="p">()</span>
+<span class="w">    </span><span class="n">STD_PHP_INI_ENTRY_EX</span><span class="p">(</span><span class="s">"pib.rnd_max"</span><span class="p">,</span><span class="w"> </span><span class="s">"100"</span><span class="p">,</span><span class="w"> </span><span class="n">PHP_INI_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">onUpdateMaxRnd</span><span class="p">,</span><span class="w"> </span><span class="n">max_rnd</span><span class="p">,</span><span class="w"> </span><span class="n">zend_pib_globals</span><span class="p">,</span>
+<span class="w">                          </span><span class="n">pib_globals</span><span class="p">,</span><span class="w"> </span><span class="n">MaxRnd</span><span class="p">)</span>
+<span class="n">PHP_INI_END</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>На этот раз мы используем вариант макроса <code class="docutils literal notranslate"><span class="pre">_EX()</span></code> для объявления нашей настройки INI. Этот макрос принимает в
+качестве последнего параметра функцию displayer. Используется <code class="docutils literal notranslate"><span class="pre">STD_PHP_INI_ENTRY_EX()</span></code>.</p>
+<p>Затем <code class="docutils literal notranslate"><span class="pre">ZEND_INI_DISP()</span></code> используется для объявления нашей функции displayer. Она получает в качестве аргумента
+настройку INI, к которой она привязана, и значение, которое PHP просит отобразить: <code class="docutils literal notranslate"><span class="pre">ZEND_INI_DISPLAY_ORIG</span></code>
+означает основное значение, а <code class="docutils literal notranslate"><span class="pre">ZEND_INI_DISPLAY_ACTIVE</span></code> означает текущее локальное значение, привязанное к
+запросу.</p>
+<p>Затем мы играем со значением и представляем его символами ‘#’ и ‘.’, что-то вроде этого:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nb">ini_set</span><span class="p">(</span><span class="s1">'pib.rnd_max'</span><span class="p">,</span> <span class="mi">500</span><span class="p">);</span>
+<span class="nb">phpinfo</span><span class="p">(</span><span class="nx">INFO_MODULES</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Если мы вызовем это с помощью:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="w"> </span><span class="n">php</span><span class="w"> </span><span class="o">-</span><span class="n">dextension</span><span class="o">=</span><span class="n">pib</span><span class="p">.</span><span class="n">so</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">file</span><span class="p">.</span><span class="n">php</span>
+</pre></div>
+</div>
+<p>Тогда отображается:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pib
+
+Directive =&gt; Local Value =&gt; Master Value
+pib.rnd_max =&gt; ##################################################..................................................
+            =&gt; ##########..........................................................................................
+</pre></div>
+</div>
+<p>А если мы вызовем это с помощью:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="w"> </span><span class="n">php</span><span class="w"> </span><span class="o">-</span><span class="n">dextension</span><span class="o">=</span><span class="n">pib</span><span class="p">.</span><span class="n">so</span><span class="w"> </span><span class="o">-</span><span class="n">dpib</span><span class="p">.</span><span class="n">rnd_max</span><span class="o">=</span><span class="mi">10</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">file</span><span class="p">.</span><span class="n">php</span>
+</pre></div>
+</div>
+<p>Тогда отображается:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pib
+
+Directive =&gt; Local Value =&gt; Master Value
+pib.rnd_max =&gt; ##################################################..................................................
+            =&gt; ....................................................................................................
+</pre></div>
+</div>
+<p>Поскольку PHP отображает и наше локальное, и основное значение, здесь наша callback-функция displayer будет вызвана
+два раза. Локальное значение фактически представляет значение “500”, тогда как основное значение показывает жёстко
+заданное значение по умолчанию “100”, если мы его не меняем, а если мы меняем его с помощью <code class="docutils literal notranslate"><span class="pre">-d</span></code> из php-cli, оно
+фактически используется.</p>
+<p>Если вы хотите использовать один из существующих displayer’ов PHP, вы можете использовать
+<code class="docutils literal notranslate"><span class="pre">zend_ini_boolean_displayer_cb()</span></code>, <code class="docutils literal notranslate"><span class="pre">zend_ini_color_displayer_cb()</span></code> или <code class="docutils literal notranslate"><span class="pre">display_link_numbers()</span></code></p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="hooks.html">Хуки, предоставляемые PHP</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="zend_extensions.html">Zend-расширения</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>

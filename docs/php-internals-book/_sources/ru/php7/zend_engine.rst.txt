@@ -1,0 +1,18 @@
+Zend engine
+===========
+
+Zend engine — это набор компонентов, которые и делают PHP тем, что он есть. Самый важный компонент Zend engine —
+*виртуальная машина Zend* (Zend Virtual Machine), которая состоит из компонентов *компилятора Zend* (Zend Compiler) и
+*исполнителя Zend* (Zend Executor). К этой же категории можно отнести и zend-расширение opcache. Эти три компонента —
+сердце PHP (или мозг, как вам больше нравится), они критически важны и являются самыми сложными частями всего
+исходного кода PHP. В этой главе мы попробуем вскрыть их и подробно рассмотреть.
+
+Содержание:
+
+.. toctree::
+    :maxdepth: 2
+
+    zend_engine/zend_compiler.rst
+    zend_engine/zend_executor.rst
+    zend_engine/zend_opcache.rst
+

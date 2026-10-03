@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Изучаем жизненный цикл PHP &#8212; PHP Internals Book</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/haiku.css?v=fce32b03" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=38da9290" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Взгляд на расширение PHP и скелет расширения" href="extension_skeleton.html" />
+    <link rel="prev" title="Проектирование расширений" href="../extensions_design.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>PHP Internals Book</span></a></h1>
+        <h2 class="heading"><span>Изучаем жизненный цикл PHP</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="Top">
+      
+        <p>
+        «&#160;&#160;<a href="../extensions_design.html">Проектирование расширений</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="extension_skeleton.html">Взгляд на расширение PHP и скелет расширения</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="php">
+<span id="ru-php-lifecycle"></span><h1>Изучаем жизненный цикл PHP<a class="headerlink" href="#php" title="Link to this heading">¶</a></h1>
+<p>PHP — это сложный механизм, чей жизненный цикл действительно должен понимать каждый, кто хочет понять, как работает
+PHP. Основная последовательность такая:</p>
+<p>PHP запускается. Если это CLI или FPM, выполняется его C-функция <code class="docutils literal notranslate"><span class="pre">main()</span></code>. Если PHP работает как модуль веб-сервера,
+например, используя SAPI apxs2 (Apache 2), PHP запускается чуть позже самого Apache и переходит к выполнению
+последовательности запуска своего модуля, одним из которых является PHP. Этот запуск внутри называется <strong>шагом
+запуска модуля</strong>. Мы также сокращаем его как шаг <strong>MINIT</strong>.</p>
+<p>После запуска PHP ожидает обработки одного или нескольких запросов. Когда мы говорим о PHP CLI, там будет только один
+запрос: текущий запускаемый скрипт. Однако, когда мы говорим о веб-окружении — будь то PHP-FPM или модуль
+веб-сервера — PHP может обслуживать несколько запросов один за другим. Всё зависит от того, как вы настроили свой
+веб-сервер: вы можете указать ему обслуживать бесконечное количество запросов или определённое число перед
+завершением и переработкой процесса. Каждый раз, когда приходит новый запрос для обработки, PHP выполняет <strong>шаг
+запуска запроса</strong>. Мы называем его <strong>RINIT</strong>.</p>
+<p>Запрос обслужен, какой-то контент (вероятно) сгенерирован, отлично. Время завершить запрос и подготовиться к
+обработке, возможно, следующего. Завершение запроса называется <strong>шагом завершения запроса</strong>. Мы называем его
+<strong>RSHUTDOWN</strong>.</p>
+<p>После обработки X запросов (одного, нескольких десятков, тысяч и т.д.) PHP наконец завершит сам себя и умрёт.
+Завершение процесса PHP называется <strong>шагом завершения модуля</strong>. Мы сокращаем его как <strong>MSHUTDOWN</strong>.</p>
+<p>Если бы мы изобразили эти шаги, получилось бы что-то вроде этого:</p>
+<img alt="../../../_images/php_classic_lifetime1.png" class="align-center" src="../../../_images/php_classic_lifetime1.png" />
+<section id="id1">
+<h2>Модели параллелизма<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>В окружении CLI всё просто: один процесс PHP обрабатывает один запрос — он запустит один-единственный PHP-скрипт, а
+затем умрёт.
+Окружение CLI — это частный случай веб-окружения, которое более сложно.</p>
+<p>Чтобы обрабатывать несколько запросов одновременно, вам нужно использовать модель параллелизма. В PHP их существует
+две:</p>
+<ul class="simple">
+<li><p>Модель на основе процессов</p></li>
+<li><p>Модель на основе потоков</p></li>
+</ul>
+<p>При использовании модели на основе процессов каждый интерпретатор PHP изолируется операционной системой в
+собственном процессе. Эта модель очень распространена в Unix. Каждый запрос живёт в своём собственном процессе. Эта
+модель используется PHP-CLI, PHP-FPM и PHP-CGI.</p>
+<p>При модели на основе потоков каждый интерпретатор PHP изолируется в потоке с помощью библиотеки потоков. Эта модель в
+основном используется в операционной системе Microsoft Windows, но может применяться и в большинстве систем Unix.
+Для этого требуется, чтобы PHP и его расширения <a class="reference internal" href="../build_system/building_extensions.html"><span class="doc">были собраны</span></a> в режиме
+ZTS.</p>
+<p>Вот модель на основе процессов:</p>
+<img alt="../../../_images/php_lifetime_process1.png" class="align-center" src="../../../_images/php_lifetime_process1.png" />
+<p>А вот модель на основе потоков:</p>
+<img alt="../../../_images/php_lifetime_thread1.png" class="align-center" src="../../../_images/php_lifetime_thread1.png" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Модель многопроцессности PHP не выбирается вами как разработчиком расширения. Вам придётся её поддерживать.
+Вам придётся учитывать то, что ваше расширение может работать в многопоточном окружении, особенно на
+платформах Windows, и вам придётся программировать с учётом этого.</p>
+</div>
+</section>
+<section id="id2">
+<h2>Хуки расширений PHP<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Как вы могли догадаться, движок PHP будет вызывать ваше расширение в нескольких точках жизненного цикла. Мы называем
+их <em>хук-функциями</em>. Ваше расширение может заявить интерес к конкретным точкам жизненного цикла, объявив функции-хуки
+при регистрации в движке.</p>
+<p>Эти хуки можно ясно увидеть, если проанализировать структуру расширения PHP, структуру <code class="docutils literal notranslate"><span class="pre">zend_module_entry</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_module_entry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">zend_api</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">zend_debug</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">zts</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_ini_entry</span><span class="w"> </span><span class="o">*</span><span class="n">ini_entry</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_module_dep</span><span class="w"> </span><span class="o">*</span><span class="n">deps</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_zend_function_entry</span><span class="w"> </span><span class="o">*</span><span class="n">functions</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">module_startup_func</span><span class="p">)(</span><span class="n">INIT_FUNC_ARGS</span><span class="p">);</span><span class="w">        </span><span class="cm">/* MINIT() */</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">module_shutdown_func</span><span class="p">)(</span><span class="n">SHUTDOWN_FUNC_ARGS</span><span class="p">);</span><span class="w">   </span><span class="cm">/* MSHUTDOWN() */</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">request_startup_func</span><span class="p">)(</span><span class="n">INIT_FUNC_ARGS</span><span class="p">);</span><span class="w">       </span><span class="cm">/* RINIT() */</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">request_shutdown_func</span><span class="p">)(</span><span class="n">SHUTDOWN_FUNC_ARGS</span><span class="p">);</span><span class="w">  </span><span class="cm">/* RSHUTDOWN() */</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">info_func</span><span class="p">)(</span><span class="n">ZEND_MODULE_INFO_FUNC_ARGS</span><span class="p">);</span><span class="w">     </span><span class="cm">/* PHPINFO() */</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">version</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">globals_size</span><span class="p">;</span>
+<span class="cp">#ifdef ZTS</span>
+<span class="w">        </span><span class="n">ts_rsrc_id</span><span class="o">*</span><span class="w"> </span><span class="n">globals_id_ptr</span><span class="p">;</span>
+<span class="cp">#else</span>
+<span class="w">        </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">globals_ptr</span><span class="p">;</span>
+<span class="cp">#endif</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">globals_ctor</span><span class="p">)(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">global</span><span class="p">);</span><span class="w">                </span><span class="cm">/* GINIT() */</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">globals_dtor</span><span class="p">)(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">global</span><span class="p">);</span><span class="w">                </span><span class="cm">/* GSHUTDOWN */</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">post_deactivate_func</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* PRSHUTDOWN() */</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">module_started</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">handle</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">module_number</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">build_id</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Теперь давайте посмотрим, какой код следует писать в каждом из этих хуков.</p>
+<section id="minit">
+<h3>Инициализация модуля: MINIT()<a class="headerlink" href="#minit" title="Link to this heading">¶</a></h3>
+<p>Это шаг запуска процесса PHP. В <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> вашего расширения вы загружаете и выделяете любой постоянный объект или
+фрагмент информации, который вам понадобится для всех будущих запросов.
+Для большей части из них это будут объекты, предназначенные только для чтения.</p>
+<p>В <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> ещё не появился ни один поток или процесс, так что вы можете полностью обращаться к глобальным
+переменным без какой-либо защиты. Также вы не должны выделять память, привязанную к запросу, так как запрос ещё не
+начался. Вы никогда не используете выделения через
+<a class="reference internal" href="../memory_management/zend_memory_manager.html"><span class="doc">менеджер памяти Zend</span></a> на шаге <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>, а только постоянные
+(persistent) выделения. Не <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code>, а <code class="docutils literal notranslate"><span class="pre">pemalloc()</span></code>. Если этого не сделать, это приведёт к падениям.</p>
+<p>На шаге <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> движок выполнения ещё не запущен, так что будьте осторожны и не пытайтесь обращаться к каким-либо
+его структурам без особой осторожности.</p>
+<p>Если вам нужно зарегистрировать INI-записи для вашего расширения, <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> — правильный шаг для этого.</p>
+<p>Если вам нужно зарегистрировать доступные только для чтения <a class="reference internal" href="../internal_types/strings.html"><span class="doc">zend_strings</span></a> для
+дальнейшего использования, это нужно сделать здесь (с постоянным выделением).</p>
+<p>Если вам нужно выделить объекты, в которые будет происходить запись при обслуживании запроса, то вам нужно будет
+продублировать их выделение памяти в пул, специфичный для потока, для конкретного запроса. Помните, что безопасно
+писать в глобальное пространство можно только внутри <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Управление памятью, выделения и отладка рассматриваются в главе о
+<a class="reference internal" href="../memory_management.html"><span class="doc">управлении памятью</span></a>.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> вызывается функцией <code class="docutils literal notranslate"><span class="pre">zend_startup_modules()</span></code> внутри функции
+<a class="reference external" href="https://github.com/php/php-src/blob/3704947696fe0ee93e025fa85621d297ac7a1e4d/main/main.c#L2009">php_module_startup()</a>.</p>
+</section>
+<section id="mshutdown">
+<h3>Завершение модуля: MSHUTDOWN()<a class="headerlink" href="#mshutdown" title="Link to this heading">¶</a></h3>
+<p>Это шаг завершения процесса PHP. Довольно просто — вы, по сути, выполняете здесь прямо противоположное тому, что
+делали в <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>. Вы освобождаете свои ресурсы, снимаете регистрацию своих INI-настроек и так далее.</p>
+<p>Будьте осторожны и здесь: движок выполнения уже завершён, так что вы не должны обращаться к каким-либо его
+переменным (но здесь это и не должно понадобиться).</p>
+<p>Поскольку здесь вы не живёте внутри запроса, вам не следует освобождать ресурсы с помощью <code class="docutils literal notranslate"><span class="pre">efree()</span></code> или подобных
+функций <a class="reference internal" href="../memory_management/zend_memory_manager.html"><span class="doc">менеджера памяти Zend</span></a>, а освобождать постоянные выделения,
+то есть использовать <code class="docutils literal notranslate"><span class="pre">pefree()</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code> вызывается функцией <code class="docutils literal notranslate"><span class="pre">zend_destroy_modules()</span></code> из <code class="docutils literal notranslate"><span class="pre">zend_shutdown()</span></code> внутри функции
+<a class="reference external" href="https://github.com/php/php-src/blob/3704947696fe0ee93e025fa85621d297ac7a1e4d/main/main.c#L2335">php_module_shutdown()</a>.</p>
+</section>
+<section id="rinit">
+<h3>Инициализация запроса: RINIT()<a class="headerlink" href="#rinit" title="Link to this heading">¶</a></h3>
+<p>Только что поступил запрос, и PHP готовится его обработать здесь. В <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code> вы инициализируете ресурсы,
+необходимые для обработки именно этого запроса. PHP построен по архитектуре “share-nothing” и, как таковой,
+предоставляет возможности <a class="reference internal" href="../memory_management.html"><span class="doc">управления памятью</span></a>.</p>
+<p>В <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code>, если вам нужно выделить динамическую память, вы будете использовать
+<a class="reference internal" href="../memory_management/zend_memory_manager.html"><span class="doc">менеджер памяти Zend</span></a>. Вы будете вызывать <code class="docutils literal notranslate"><span class="pre">emalloc()</span></code>.
+<a class="reference internal" href="../memory_management/zend_memory_manager.html"><span class="doc">Менеджер памяти Zend</span></a> отслеживает память, которую вы выделяете
+через него, и когда запрос завершается, он попытается освободить память, привязанную к запросу, если вы забыли
+сделать это сами (чего делать не следует).</p>
+<p>Здесь вам не должна требоваться постоянная динамическая память, то есть <code class="docutils literal notranslate"><span class="pre">malloc()</span></code> из libc или <code class="docutils literal notranslate"><span class="pre">pemalloc()</span></code> из
+Zend. Если вам здесь требуется постоянная память и вы забываете её освободить, вы создадите утечки, которые будут
+накапливаться по мере того, как PHP обрабатывает всё больше и больше запросов, и в итоге приведёт к падению процесса
+(OOM ядра) и истощению памяти машины.</p>
+<p>Также будьте очень осторожны и не пишите здесь в глобальное пространство. Если PHP работает в потоке как выбранной
+модели параллелизма, то вы измените контекст для каждого потока пула (каждого другого запроса, обрабатываемого
+параллельно с вашим), и вы также можете спровоцировать состояния гонки, если не заблокируете память.
+Если вам нужны глобальные переменные, вам нужно их защитить.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Управление глобальной областью видимости объясняется в <a class="reference internal" href="globals_management.html"><span class="doc">отдельной главе</span></a>.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">RINIT()</span></code> вызывается функцией <code class="docutils literal notranslate"><span class="pre">zend_activate_module()</span></code> внутри функции
+<a class="reference external" href="https://github.com/php/php-src/blob/3704947696fe0ee93e025fa85621d297ac7a1e4d/main/main.c#L1558">php_request_startup()</a>.</p>
+</section>
+<section id="rshutdown">
+<h3>Завершение запроса: RSHUTDOWN()<a class="headerlink" href="#rshutdown" title="Link to this heading">¶</a></h3>
+<p>Это шаг завершения запроса PHP. PHP только что закончил обрабатывать свой запрос, и теперь он очищает часть своей
+памяти в рамках архитектуры “share-nothing”. Следующий запрос, который придёт, не должен помнить ничего из текущего
+запроса. Довольно просто — вы, по сути, выполняете здесь прямо противоположное тому, что делали в <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code>. Вы
+освобождаете ресурсы, привязанные к запросу.</p>
+<p>Поскольку здесь вы живёте внутри запроса, вам следует освобождать ресурсы с помощью <code class="docutils literal notranslate"><span class="pre">efree()</span></code> менеджера памяти Zend
+или подобных функций. Если вы забудете освободить память и допустите утечку, в debug-сборках менеджер памяти выведет
+в <em>stderr</em> процесса лог об утекающих указателях, и сам их освободит за вас.</p>
+<p>Чтобы дать представление, <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code> вызывается:</p>
+<ul class="simple">
+<li><p>После того как выполнены пользовательские функции завершения (<code class="docutils literal notranslate"><span class="pre">register_shutdown_function()</span></code>)</p></li>
+<li><p>После того как вызваны все деструкторы объектов</p></li>
+<li><p>После того как сброшен буфер вывода PHP</p></li>
+<li><p>После того как отключён max_execution_time</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code> вызывается функцией <code class="docutils literal notranslate"><span class="pre">zend_deactivate_modules()</span></code> внутри функции
+<a class="reference external" href="https://github.com/php/php-src/blob/3704947696fe0ee93e025fa85621d297ac7a1e4d/main/main.c#L1758">php_request_shutdown()</a>.</p>
+</section>
+<section id="prshutdown">
+<h3>Пост-завершение запроса: PRSHUTDOWN()<a class="headerlink" href="#prshutdown" title="Link to this heading">¶</a></h3>
+<p>Этот хук используется редко. Он вызывается после <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code>, но между ними выполняется некоторый дополнительный
+код движка.</p>
+<p>В частности, на этапе Post-RSHUTDOWN:</p>
+<ul class="simple">
+<li><p>Буфер вывода PHP закрыт, а его обработчики сброшены</p></li>
+<li><p>Суперглобальные переменные PHP уничтожены</p></li>
+<li><p>Движок выполнения завершён</p></li>
+</ul>
+<p>Этот хук используется очень редко. Он вызывается немного позже <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code>, функцией
+<code class="docutils literal notranslate"><span class="pre">zend_post_deactivate_modules()</span></code> внутри функции
+<a class="reference external" href="https://github.com/php/php-src/blob/3704947696fe0ee93e025fa85621d297ac7a1e4d/main/main.c#L1758">php_request_shutdown()</a>.</p>
+</section>
+<section id="ginit">
+<h3>Инициализация глобальных переменных: GINIT()<a class="headerlink" href="#ginit" title="Link to this heading">¶</a></h3>
+<p>Этот хук вызывается каждый раз, когда библиотека потоков создаёт новый поток. Если в качестве средства
+многопроцессности вы используете процессы, эта функция вызывается только один раз, при запуске PHP, непосредственно
+перед вызовом <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code>.</p>
+<p>Не вдаваясь здесь в слишком много подробностей, вы просто должны инициализировать свои глобальные переменные здесь,
+обычно нулевым значением. Управление глобальными переменными будет рассмотрено в отдельной главе.</p>
+<p>Помните, что глобальные переменные не очищаются после каждого запроса. Если вам нужно сбрасывать их для каждого
+нового запроса (что вероятно), то такую процедуру нужно поместить в <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Управление глобальной областью видимости объясняется в <a class="reference internal" href="globals_management.html"><span class="doc">отдельной главе</span></a>.</p>
+</div>
+</section>
+<section id="gshutdown">
+<h3>Завершение глобальных переменных: GSHUTDOWN()<a class="headerlink" href="#gshutdown" title="Link to this heading">¶</a></h3>
+<p>Этот хук вызывается каждый раз, когда поток завершается в библиотеке потоков. Если в качестве средства
+многопроцессности вы используете процессы, эта функция вызывается только один раз, как часть завершения PHP (во
+время <code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code>).</p>
+<p>Не вдаваясь здесь в слишком много подробностей, вы просто должны деинициализировать свои глобальные переменные здесь;
+обычно вам нечего делать, но если вы выделяли ресурсы при конструировании глобальных переменных (<code class="docutils literal notranslate"><span class="pre">GINIT()</span></code>), то
+здесь тот шаг, где их следует освободить.</p>
+<p>Управление глобальными переменными будет рассмотрено в отдельной главе.</p>
+<p>Помните, что глобальные переменные не очищаются после каждого запроса; то есть <code class="docutils literal notranslate"><span class="pre">GSHUTDOWN()</span></code> не вызывается как
+часть <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Управление глобальной областью видимости объясняется в <a class="reference internal" href="globals_management.html"><span class="doc">отдельной главе</span></a>.</p>
+</div>
+</section>
+<section id="minfo">
+<h3>Сбор информации: MINFO()<a class="headerlink" href="#minfo" title="Link to this heading">¶</a></h3>
+<p>Этот хук особенный, так как он никогда не вызывается движком автоматически, а только когда вы запрашиваете у него
+информацию о расширении. Типичный сценарий использования — вызов <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code>. Эта функция затем выполняется, и
+ожидается, что она выведет в поток специальную информацию о текущем расширении.</p>
+<p>Информация на панели <code class="docutils literal notranslate"><span class="pre">phpinfo()</span></code>, короче говоря.</p>
+<p>Эта функция также может быть вызвана через CLI, с помощью одного из переключателей reflection, например
+<code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">--ri</span> <span class="pre">pib</span></code>, либо из пользовательского пространства вызовом <code class="docutils literal notranslate"><span class="pre">ini_get_all()</span></code>, например.</p>
+<p>Вы можете оставить её пустой, в таком случае будет отображаться только имя расширения и ничего больше (возможные
+INI-настройки не отображаются, так как это происходит как часть MINFO()).</p>
+</section>
+<section id="id4">
+<h3>Размышления о жизненном цикле PHP<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<img alt="../../../_images/php_extensions_lifecycle1.png" class="align-center" src="../../../_images/php_extensions_lifecycle1.png" />
+<p>Как вы могли заметить, <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code> и <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code> особенно важны, так как они могут вызываться тысячи раз для
+вашего расширения. Если настройка PHP ориентирована на веб (не CLI) и настроена так, чтобы обрабатывать бесконечное
+количество запросов, то пара <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code>/<code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code> будет вызываться бесконечное количество раз.</p>
+<p>Мы хотели бы ещё раз обратить ваше внимание на управление памятью. Крошечный байт, который вы в итоге где-то упустите
+при обработке запроса (между <code class="docutils literal notranslate"><span class="pre">RINIT()</span></code> и <code class="docutils literal notranslate"><span class="pre">RSHUTDOWN()</span></code>), будет иметь драматические последствия на полностью
+загруженных серверах. Поэтому вам советуют использовать
+<a class="reference internal" href="../memory_management/zend_memory_manager.html"><span class="doc">менеджер памяти Zend</span></a> для таких выделений и быть готовыми
+<a class="reference internal" href="../memory_management/memory_debugging.html"><span class="doc">отлаживать свою раскладку памяти</span></a>.
+PHP забудет и освободит память запроса в конце каждого запроса как часть архитектуры “share-nothing” — это
+внутренний замысел PHP.</p>
+<p>Также, если вы падаете с сигналом SIGSEGV (некорректный доступ к памяти), вы обрушиваете весь процесс. Если настройка
+PHP использовала потоки как движок многопроцессности, то вы обрушите с собой и все остальные потоки, и даже можете
+обрушить веб-сервер.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Язык C — это не язык PHP. Используя C, ошибки и просчёты в вашей программе с очень высокой вероятностью
+приведут к падению и завершению программы.</p>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>Хуки через перезапись указателей на функции<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Теперь вы знаете, когда движок вызовет ваш код, но существуют также заметные указатели на функции, которые вы можете
+заменить, чтобы встроиться в движок.
+Поскольку эти указатели являются глобальными переменными, вы можете заменить их на шаге <code class="docutils literal notranslate"><span class="pre">MINIT()</span></code> и вернуть их
+обратно на шаге <code class="docutils literal notranslate"><span class="pre">MSHUTDOWN()</span></code>.</p>
+<p>Интересны следующие из них:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>AST, Zend/zend_ast.h:</dt><dd><ul>
+<li><p><cite>void (*zend_ast_process_t)(zend_ast *ast)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Компилятор, Zend/zend_compile.h:</dt><dd><ul>
+<li><p><cite>zend_op_array *(*zend_compile_file)(zend_file_handle *file_handle, int type)</cite></p></li>
+<li><p><cite>zend_op_array *(*zend_compile_string)(zval *source_string, char *filename)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Исполнитель, Zend/zend_execute.h:</dt><dd><ul>
+<li><p><cite>void (*zend_execute_ex)(zend_execute_data *execute_data)</cite></p></li>
+<li><p><cite>void (*zend_execute_internal)(zend_execute_data *execute_data, zval *return_value)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>GC, Zend/zend_gc.h:</dt><dd><ul>
+<li><p><cite>int (*gc_collect_cycles)(void)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>TSRM, TSRM/TSRM.h:</dt><dd><ul>
+<li><p><cite>void (*tsrm_thread_begin_func_t)(THREAD_T thread_id)</cite></p></li>
+<li><p><cite>void (*tsrm_thread_end_func_t)(THREAD_T thread_id)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Ошибки, Zend/zend.h:</dt><dd><ul>
+<li><p><cite>void (*zend_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format,
+va_list args)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Исключения, Zend/zend_exceptions.h:</dt><dd><ul>
+<li><p><cite>void (*zend_throw_exception_hook)(zval *ex)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Жизненный цикл, Zend/zend.h:</dt><dd><ul>
+<li><p><cite>void (*zend_on_timeout)(int seconds)</cite></p></li>
+<li><p><cite>void (*zend_interrupt_function)(zend_execute_data *execute_data)</cite></p></li>
+<li><p><cite>void (*zend_ticks_function)(int ticks)</cite></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Существуют и другие, но перечисленные выше наиболее важны из тех, что могут понадобиться при проектировании
+расширений PHP. Поскольку их названия говорят сами за себя, разбирать каждый из них подробно не нужно.</p>
+<p>Если вам нужна дополнительная информация, вы можете поискать их в исходном коде PHP и выяснить, когда и как они
+вызываются.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
+      
+        <p>
+        «&#160;&#160;<a href="../extensions_design.html">Проектирование расширений</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../../../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="extension_skeleton.html">Взгляд на расширение PHP и скелет расширения</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer feedback">
+        The repository for this book is available on <a href="https://github.com/phpinternalsbook/PHP-Internals-Book">GitHub</a>.
+        <br/><br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+        </a>
+        <br />
+        The PHP internals book is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-41617167-1', 'phpinternalsbook.com');
+      ga('send', 'pageview');
+    </script>
+
+  </body>
+</html>
